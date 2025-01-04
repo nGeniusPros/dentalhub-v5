@@ -10,8 +10,8 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@dentalhub/core/*": ["../../packages/core/dist/*"],
-      "@dentalhub/database/*": ["../../packages/database/dist/*"]
+      "@dentalhub/core/*": ["../../packages/core/src/*"],
+      "@dentalhub/database/*": ["../../packages/database/src/*"]
     }
   },
   "include": ["src/**/*"],

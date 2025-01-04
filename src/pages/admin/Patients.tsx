@@ -1,23 +1,64 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import supabase from '../../lib/supabase/client';
 
 const Patients = () => {
-  // Mock data - would come from PMS API
-  const patients = [
-    {
-      id: '1',
-      name: 'Sarah Johnson',
-      email: 'sarah.j@example.com',
-      phone: '(555) 123-4567',
-      nextAppointment: '2024-03-15',
-      status: 'active',
-      balance: 150.00,
-      lastVisit: '2024-02-01'
-    },
-    // Add more mock patients...
-  ];
+  const [patients, setPatients] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('patients')
+          .select(`
+            *,
+            appointments(
+              id,
+              start_time,
+              status
+            ),
+            billing_records(
+              id,
+              amount,
+              status
+            )
+          `)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching patients:', error);
+        } else {
+          const patientsWithMetrics = data.map((patient: any) => ({
+            ...patient,
+            nextAppointment: patient.appointments
+              ?.filter((apt: any) => new Date(apt.start_time) > new Date())
+              ?.sort((a: any, b: any) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())[0]?.start_time,
+            balance: patient.billing_records
+              ?.filter((record: any) => record.status === 'unpaid')
+              ?.reduce((total: number, record: any) => total + record.amount, 0) || 0,
+            lastVisit: patient.appointments
+              ?.filter((apt: any) => new Date(apt.start_time) < new Date())
+              ?.sort((a: any, b: any) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime())[0]?.start_time,
+          }));
+          setPatients(patientsWithMetrics);
+        }
+      } catch (error) {
+        console.error('Error fetching patients:', error);
+      }
+    };
+
+    fetchPatients();
+  }, [supabase]);
+
+  const filteredPatients = patients.filter(patient => 
+    patient.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    patient.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    patient.phone.includes(searchQuery)
+  );
 
   return (
     <div className="space-y-6">
@@ -28,11 +69,15 @@ const Patients = () => {
         </div>
         <div className="flex gap-3">
           <Button variant="outline">
-            <Icons.Upload className="w-4 h-4 mr-2" />
+            {React.createElement((Icons as any).Upload, {
+              className: "w-4 h-4 mr-2"
+            })}
             Import
           </Button>
           <Button className="bg-primary hover:bg-primary/90">
-            <Icons.UserPlus className="w-4 h-4 mr-2" />
+            {React.createElement((Icons as any).UserPlus, {
+              className: "w-4 h-4 mr-2"
+            })}
             Add Patient
           </Button>
         </div>
@@ -43,16 +88,22 @@ const Patients = () => {
           <div className="flex gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                {React.createElement((Icons as any).Search, {
+                  className: "absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                })}
                 <input
                   type="text"
                   placeholder="Search patients..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
               </div>
             </div>
             <Button variant="outline">
-              <Icons.Filter className="w-4 h-4 mr-2" />
+              {React.createElement((Icons as any).Filter, {
+                className: "w-4 h-4 mr-2"
+              })}
               Filters
             </Button>
           </div>
@@ -83,18 +134,20 @@ const Patients = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {patients.map((patient) => (
+              {filteredPatients.map((patient) => (
                 <tr key={patient.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
                         <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Icons.User className="w-5 h-5 text-primary" />
+                          {React.createElement((Icons as any).User, {
+                            className: "w-5 h-5 text-primary"
+                          })}
                         </div>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{patient.name}</div>
-                        <div className="text-sm text-gray-500">Last visit: {patient.lastVisit}</div>
+                        <div className="text-sm font-medium text-gray-900">{patient.first_name} {patient.last_name}</div>
+                        <div className="text-sm text-gray-500">Last visit: {patient.lastVisit ? new Date(patient.lastVisit).toLocaleDateString() : 'No visits'}</div>
                       </div>
                     </div>
                   </td>
@@ -103,11 +156,11 @@ const Patients = () => {
                     <div className="text-sm text-gray-500">{patient.phone}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{patient.nextAppointment}</div>
+                    <div className="text-sm text-gray-900">{patient.nextAppointment ? new Date(patient.nextAppointment).toLocaleDateString() : 'None scheduled'}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                      {patient.status}
+                      {patient.status || 'active'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -115,7 +168,9 @@ const Patients = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Button variant="ghost" size="sm">
-                      <Icons.MoreHorizontal className="w-4 h-4" />
+                      {React.createElement((Icons as any).MoreHorizontal, {
+                        className: "w-4 h-4"
+                      })}
                     </Button>
                   </td>
                 </tr>

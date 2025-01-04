@@ -1,20 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { EditDialog } from '../../../components/EditDialog';
 import { CommentDialog } from '../../../components/CommentDialog';
+import supabase from '../../../lib/supabase/client';
+import { syncManager } from '../../../lib/utils/sync';
 
 export const TasksSection = () => {
-  const [showEdit, setShowEdit] = React.useState(false);
-  const [showComment, setShowComment] = React.useState(false);
-  const [selectedTask, setSelectedTask] = React.useState<any>(null);
+  const [showEdit, setShowEdit] = useState(false);
+  const [showComment, setShowComment] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<any>(null);
+  const [tasks, setTasks] = useState<any[]>([]);
 
-  const tasks = [
-    { title: 'Review Patient Records', priority: 'High', due: 'Today' },
-    { title: 'Update Treatment Plans', priority: 'Medium', due: 'Tomorrow' },
-    { title: 'Follow-up Calls', priority: 'Low', due: 'This Week' },
-  ];
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('tasks')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        if (error) {
+          console.error('Error fetching tasks:', error);
+        } else {
+          setTasks(data);
+        }
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    fetchTasks();
+  }, [supabase]);
 
   return (
     <motion.div
@@ -38,7 +57,7 @@ export const TasksSection = () => {
                 {task.priority}
               </span>
             </div>
-            <p className="text-sm text-gray-500">Due: {task.due}</p>
+            <p className="text-sm text-gray-500">Due: {task.due_date}</p>
             <div className="mt-2 flex gap-2">
               <Button
                 variant="ghost"
@@ -68,35 +87,66 @@ export const TasksSection = () => {
       </div>
 
       {/* Edit Dialog */}
-      <EditDialog
-        isOpen={showEdit}
-        onClose={() => {
-          setShowEdit(false);
-          setSelectedTask(null);
-        }}
-        onSave={(data) => {
-          console.log('Saving task changes:', data);
-          setShowEdit(false);
-          setSelectedTask(null);
-        }}
-        data={selectedTask}
-        type="staff"
-      />
+      {selectedTask && (
+        <EditDialog
+          isOpen={showEdit}
+          onClose={() => {
+            setShowEdit(false);
+            setSelectedTask(null);
+          }}
+          onSave={async (data) => {
+            try {
+              await syncManager.addOperation({
+                table: 'tasks',
+                type: 'UPDATE',
+                data: {
+                  ...data,
+                  updated_at: new Date().toISOString(),
+                },
+                timestamp: Date.now(),
+              });
+              console.log('Task update queued');
+            } catch (error) {
+              console.error('Error queueing task update:', error);
+            }
+            setShowEdit(false);
+            setSelectedTask(null);
+          }}
+          data={selectedTask}
+          type="staff"
+        />
+      )}
 
       {/* Comment Dialog */}
-      <CommentDialog
-        isOpen={showComment}
-        onClose={() => {
-          setShowComment(false);
-          setSelectedTask(null);
-        }}
-        onSubmit={(comment) => {
-          console.log('Adding task comment:', comment);
-          setShowComment(false);
-          setSelectedTask(null);
-        }}
-        title={`Add Comment - ${selectedTask?.title}`}
-      />
+      {selectedTask && (
+        <CommentDialog
+          isOpen={showComment}
+          onClose={() => {
+            setShowComment(false);
+            setSelectedTask(null);
+          }}
+          onSubmit={async (comment) => {
+            try {
+              await syncManager.addOperation({
+                table: 'comments',
+                type: 'INSERT',
+                data: {
+                  content: comment,
+                  task_id: selectedTask.id,
+                  created_at: new Date().toISOString(),
+                },
+                timestamp: Date.now(),
+              });
+              console.log('Task comment queued for adding');
+            } catch (error) {
+              console.error('Error queueing task comment:', error);
+            }
+            setShowComment(false);
+            setSelectedTask(null);
+          }}
+          title={`Add Comment - ${selectedTask?.title}`}
+        />
+      )}
     </motion.div>
   );
 };

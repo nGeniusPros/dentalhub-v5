@@ -1,22 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link,  } from 'react-router-dom';
 import { cn } from '../../utils/cn';
+import supabase from '../../lib/supabase/client';
+import { syncManager } from '../../lib/utils/sync';
 
 const PatientDashboard = () => {
-  const patientInfo = {
-    name: "Sarah Johnson",
-    dob: "04/15/1985",
-    email: "sarah.johnson@email.com",
-    phone: "(555) 123-4567"
-  };
-
-  const familyMembers = [
-    { name: "John Johnson", relation: "Spouse", nextAppointment: "Mar 20, 2024" },
-    { name: "Emily Johnson", relation: "Daughter", nextAppointment: "Apr 5, 2024" },
-    { name: "Michael Johnson", relation: "Son", nextAppointment: "None Scheduled" }
-  ];
+  const [patientInfo, setPatientInfo] = useState<any>(null);
+  const [familyMembers, setFamilyMembers] = useState<any[]>([]);
 
   const quickActions = [
     { label: "Book Appointment", icon: "Calendar", path: "/patient-dashboard/appointments" },
@@ -24,6 +16,79 @@ const PatientDashboard = () => {
     { label: "View Documents", icon: "FileText", path: "/patient-dashboard/documents" },
     { label: "Make Payment", icon: "CreditCard", path: "/patient-dashboard/billing" }
   ];
+
+  useEffect(() => {
+    const fetchPatientData = async () => {
+      try {
+        const { data: patient, error: patientError } = await supabase
+          .from('patients')
+          .select(`
+            *,
+            appointments (
+              id,
+              appointment_date,
+              type,
+              status
+            )
+          `)
+          .eq('id', 'user-id-1') // Replace with actual user ID
+          .single();
+
+        if (patientError) {
+          console.error('Error fetching patient data:', patientError);
+        } else {
+          setPatientInfo(patient);
+        }
+
+        const { data: family, error: familyError } = await supabase
+          .from('family_relationships')
+          .select(`
+            related_patient:patients!related_patient_id (
+              id,
+              first_name,
+              last_name,
+              appointments (
+                id,
+                appointment_date,
+                type,
+                status
+              )
+            ),
+            relationship_type
+          `)
+          .eq('patient_id', 'user-id-1'); // Replace with actual user ID
+
+        if (familyError) {
+          console.error('Error fetching family members:', familyError);
+        } else {
+          setFamilyMembers(family.map((item: any) => ({
+            name: `${item.related_patient.first_name} ${item.related_patient.last_name}`,
+            relation: item.relationship_type,
+            nextAppointment: item.related_patient.appointments[0]?.appointment_date || 'None Scheduled'
+          })));
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchPatientData();
+
+    syncManager.subscribeToTable('patients', (payload) => {
+      console.log('Patient data sync update:', payload);
+      fetchPatientData();
+    });
+
+    syncManager.subscribeToTable('family_relationships', (payload) => {
+      console.log('Family relationships sync update:', payload);
+      fetchPatientData();
+    });
+
+    return () => {
+      syncManager.unsubscribeFromTable('patients');
+      syncManager.unsubscribeFromTable('family_relationships');
+    };
+  }, [supabase, syncManager]);
 
   return (
     <div className="space-y-6">
@@ -38,8 +103,8 @@ const PatientDashboard = () => {
             <Icons.User className="w-8 h-8 text-primary-600" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">{patientInfo.name}</h2>
-            <p className="text-gray-500">DOB: {patientInfo.dob}</p>
+            <h2 className="text-2xl font-bold text-gray-900">{patientInfo?.first_name} {patientInfo?.last_name}</h2>
+            <p className="text-gray-500">DOB: {patientInfo?.date_of_birth}</p>
           </div>
         </div>
       </motion.div>
@@ -58,7 +123,7 @@ const PatientDashboard = () => {
               className="block p-4 bg-white rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-shadow"
             >
               <div className="flex flex-col items-center text-center">
-                {React.createElement(Icons[action.icon as keyof typeof Icons], {
+                {React.createElement((Icons as any)[action.icon], {
                   className: "w-6 h-6 text-primary-600 mb-2"
                 })}
                 <span className="text-sm font-medium text-gray-900">{action.label}</span>

@@ -1,27 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as Icons from 'lucide-react';
 import { Button } from '../ui/button';
 import { MessageDialog } from '../MessageDialog';
 import { ReminderDialog } from '../ReminderDialog';
 import { CommentDialog } from '../CommentDialog';
 import { EditDialog } from '../EditDialog';
+import supabase from '../../lib/supabase/client';
+import { syncManager } from '../../lib/utils/sync';
 
 interface AppointmentActionsProps {
-  appointment: {
-    patient: string;
-    time: string;
-    type: string;
-    status: string;
-  };
+  patient: string;
+  time: string;
+  type: string;
+  status: string;
+  id: string;
 }
 
 export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
-  appointment
+  patient,
+  time,
+  type,
+  status,
+  id
 }) => {
   const [showMessage, setShowMessage] = useState(false);
   const [showReminder, setShowReminder] = useState(false);
   const [showComment, setShowComment] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [appointment, setAppointment] = useState<any>(null);
+
+  useEffect(() => {
+    // Subscribe to relevant tables
+    syncManager.subscribeToTable('messages_notifications', (payload) => {
+      console.log('Messages/Notifications sync update:', payload);
+    });
+    
+    syncManager.subscribeToTable('comments', (payload) => {
+      console.log('Comments sync update:', payload);
+    });
+    
+    syncManager.subscribeToTable('appointments', (payload) => {
+      console.log('Appointments sync update:', payload);
+    });
+
+    // Fetch appointment details
+    const fetchAppointment = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('appointments')
+          .select(`
+            *,
+            patient:patients!inner(id, first_name, last_name, email, phone),
+            provider:users!provider_id(id, email, raw_user_meta_data),
+            resources:appointment_resources(
+              id,
+              resource:resources(id, name, type)
+            ),
+            comments:appointment_comments(
+              id,
+              content,
+              created_at,
+              user:users(id, email, raw_user_meta_data)
+            )
+          `)
+          .eq('id', id)
+          .single();
+        if (error) {
+          console.error('Error fetching appointment:', error);
+        } else {
+          setAppointment(data);
+        }
+      } catch (error) {
+        console.error('Error fetching appointment:', error);
+      }
+    };
+
+    fetchAppointment();
+
+    // Cleanup subscriptions on unmount
+    return () => {
+      syncManager.unsubscribeFromTable('messages_notifications');
+      syncManager.unsubscribeFromTable('comments');
+      syncManager.unsubscribeFromTable('appointments');
+    };
+  }, [id, supabase, syncManager]);
 
   return (
     <>
@@ -71,13 +133,9 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
       <MessageDialog
         isOpen={showMessage}
         onClose={() => setShowMessage(false)}
-        onSend={(message) => {
-          console.log('Sending message:', message);
-          setShowMessage(false);
-        }}
         recipient={{
-          name: appointment.patient,
-          email: `${appointment.patient.toLowerCase().replace(' ', '.')}@example.com`
+          name: patient,
+          email: `${patient.toLowerCase().replace(' ', '.')}@example.com`
         }}
       />
 
@@ -85,16 +143,33 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
       <ReminderDialog
         isOpen={showReminder}
         onClose={() => setShowReminder(false)}
-        onSend={(reminder) => {
-          console.log('Sending reminder:', reminder);
+        onSend={async (reminder) => {
+          try {
+            await syncManager.addOperation({
+              table: 'messages_notifications',
+              type: 'INSERT',
+              data: {
+                message: reminder,
+                recipient: patient,
+                type: 'reminder',
+                status: 'scheduled',
+                created_at: new Date().toISOString(),
+                scheduled_for: reminder.date,
+              },
+              timestamp: Date.now(),
+            });
+            console.log('Reminder queued for scheduling');
+          } catch (error) {
+            console.error('Error queueing reminder:', error);
+          }
           setShowReminder(false);
         }}
         recipient={{
-          name: appointment.patient,
+          name: patient,
           appointment: {
-            date: appointment.time.split(' ')[0],
-            time: appointment.time.split(' ')[1],
-            type: appointment.type
+            date: time.split(' ')[0],
+            time: time.split(' ')[1],
+            type: type
           }
         }}
       />
@@ -103,24 +178,58 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
       <CommentDialog
         isOpen={showComment}
         onClose={() => setShowComment(false)}
-        onSubmit={(comment) => {
-          console.log('Adding comment:', comment);
+        onSubmit={async (comment) => {
+          try {
+            await syncManager.addOperation({
+              table: 'comments',
+              type: 'INSERT',
+              data: {
+                comment,
+                patient: patient,
+                appointment_type: type,
+                created_at: new Date().toISOString(),
+              },
+              timestamp: Date.now(),
+            });
+            console.log('Comment queued for adding');
+          } catch (error) {
+            console.error('Error queueing comment:', error);
+          }
           setShowComment(false);
         }}
-        title={`Add Comment - ${appointment.patient}`}
+        title={`Add Comment - ${patient}`}
       />
 
       {/* Edit Dialog */}
-      <EditDialog
-        isOpen={showEdit}
-        onClose={() => setShowEdit(false)}
-        onSave={(data) => {
-          console.log('Saving changes:', data);
-          setShowEdit(false);
-        }}
-        data={appointment}
-        type="patient"
-      />
+      {appointment && (
+        <EditDialog
+          isOpen={showEdit}
+          onClose={() => setShowEdit(false)}
+          onSave={async (data) => {
+            try {
+              await syncManager.addOperation({
+                table: 'appointments',
+                type: 'UPDATE',
+                data: {
+                  id: id,
+                  patient: data.patient,
+                  time: data.time,
+                  type: data.type,
+                  status: data.status,
+                  updated_at: new Date().toISOString(),
+                },
+                timestamp: Date.now(),
+              });
+              console.log('Appointment update queued');
+            } catch (error) {
+              console.error('Error queueing appointment update:', error);
+            }
+            setShowEdit(false);
+          }}
+          data={appointment}
+          type="patient"
+        />
+      )}
     </>
   );
 };
