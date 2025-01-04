@@ -6,7 +6,8 @@
   "scripts": {
     "dev:frontend": "pnpm --filter frontend dev",
     "build:frontend": "pnpm --filter frontend build",
-    "lint": "pnpm -r lint"
+    "lint": "pnpm -r lint",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +15,32 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "rimraf": "^5.0.10",
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.1.1",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.47.10",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@types/jest": "^29.5.14",
+    "@types/recharts": "^1.8.29",
+    "class-variance-authority": "^0.7.1",
+    "framer-motion": "^11.15.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "lucide-react": "^0.469.0",
+    "openai": "^4.28.0",
+    "react-router-dom": "^6.28.1",
+    "recharts": "^2.12.2",
+    "tailwind-merge": "^2.2.1",
+    "ts-jest": "^29.2.5"
   }
 }

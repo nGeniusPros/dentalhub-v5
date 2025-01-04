@@ -1,32 +1,86 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { formatTime } from '../../../lib/utils/date';
+import supabase from '../../../lib/supabase/client';
 
 export const RecentActivitySection = () => {
-  const activities = [
-    { 
-      type: 'appointment',
-      message: 'New appointment scheduled',
-      patient: 'John Smith',
-      time: '09:30',
-      icon: 'Calendar'
-    },
-    {
-      type: 'treatment',
-      message: 'Treatment plan updated',
-      patient: 'Sarah Johnson',
-      time: '10:15',
-      icon: 'FileText'
-    },
-    {
-      type: 'message',
-      message: 'Message sent to patient',
-      patient: 'Mike Davis',
-      time: '11:00',
-      icon: 'MessageSquare'
-    }
-  ];
+  const [activities, setActivities] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const { data: appointments, error: appointmentsError } = await supabase
+          .from('appointments')
+          .select(`
+            *,
+            patient:patients!inner(id, first_name, last_name)
+          `)
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        if (appointmentsError) {
+          console.error('Error fetching appointments:', appointmentsError);
+        }
+
+        const { data: treatmentPlans, error: treatmentError } = await supabase
+          .from('treatment_plans')
+          .select(`
+            *,
+            patient:patients!inner(id, first_name, last_name)
+          `)
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        if (treatmentError) {
+          console.error('Error fetching treatment plans:', treatmentError);
+        }
+
+        const { data: messages, error: messageError } = await supabase
+          .from('messages_notifications')
+          .select(`
+            *,
+            recipient:patients!inner(id, first_name, last_name)
+          `)
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        if (messageError) {
+          console.error('Error fetching messages:', messageError);
+        }
+
+        const combinedActivities = [
+          ...(appointments || []).map((apt: any) => ({
+            type: 'appointment',
+            message: 'New appointment scheduled',
+            patient: `${apt.patient?.first_name} ${apt.patient?.last_name}`,
+            time: apt.start_time,
+            icon: 'Calendar'
+          })),
+          ...(treatmentPlans || []).map((plan: any) => ({
+            type: 'treatment',
+            message: 'Treatment plan updated',
+            patient: `${plan.patient?.first_name} ${plan.patient?.last_name}`,
+            time: plan.created_at,
+            icon: 'FileText'
+          })),
+          ...(messages || []).map((msg: any) => ({
+            type: 'message',
+            message: 'Message sent to patient',
+            patient: `${msg.recipient?.first_name} ${msg.recipient?.last_name}`,
+            time: msg.created_at,
+            icon: 'MessageSquare'
+          }))
+        ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 3);
+
+        setActivities(combinedActivities);
+      } catch (error) {
+        console.error('Error fetching recent activity:', error);
+      }
+    };
+
+    fetchActivities();
+  }, [supabase]);
 
   return (
     <motion.div
@@ -43,7 +97,7 @@ export const RecentActivitySection = () => {
               activity.type === 'treatment' ? 'bg-purple-100 text-purple-600' :
               'bg-green-100 text-green-600'
             }`}>
-              {React.createElement(Icons[activity.icon as keyof typeof Icons], {
+              {React.createElement((Icons as any)[activity.icon], {
                 className: 'w-5 h-5'
               })}
             </div>

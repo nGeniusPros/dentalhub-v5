@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../../../components/ui/button';
@@ -11,45 +11,52 @@ import { useNotifications } from '../../../../contexts/NotificationContext';
 import { ExportDialog } from './ExportDialog';
 import { exportToCSV, exportToExcel, exportToPDF } from '../../../../lib/utils/export';
 import { StaffHRAccess } from './staff/StaffHRAccess';
+import supabase from '../../../../lib/supabase/client';
 
 export const StaffDirectory = () => {
-  const [staff, setStaff] = React.useState([
-    {
-      id: '1',
-      name: 'Dr. Sarah Wilson',
-      role: 'Lead Dentist',
-      department: 'Clinical',
-      email: 'sarah.w@example.com',
-      phone: '(555) 123-4567',
-      status: 'active',
-      startDate: '2020-01-15'
-    },
-    {
-      id: '2',
-      name: 'John Smith',
-      role: 'Dental Hygienist',
-      department: 'Clinical',
-      email: 'john.s@example.com',
-      phone: '(555) 234-5678',
-      status: 'active',
-      startDate: '2021-03-01'
-    }
-  ]);
-
-  const [selectedStaff, setSelectedStaff] = React.useState<any>(null);
-  const [showViewProfile, setShowViewProfile] = React.useState(false);
-  const [showEditStaff, setShowEditStaff] = React.useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
-  const [showAddStaff, setShowAddStaff] = React.useState(false);
-  const [showExportDialog, setShowExportDialog] = React.useState(false);
-  const [showHRAccess, setShowHRAccess] = React.useState(false);
-  const [showAddEmployee, setShowAddEmployee] = React.useState(false);
+  const [staff, setStaff] = useState<any[]>([]);
+  const [selectedStaff, setSelectedStaff] = useState<any>(null);
+  const [showViewProfile, setShowViewProfile] = useState(false);
+  const [showEditStaff, setShowEditStaff] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showAddStaff, setShowAddStaff] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
+  const [showHRAccess, setShowHRAccess] = useState(false);
+  const [showAddEmployee, setShowAddEmployee] = useState(false);
 
   const { dispatch: notifyDispatch } = useNotifications();
 
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('staff_profiles')
+          .select(`
+            *,
+            user:auth.users!user_id(
+              id,
+              email,
+              raw_user_meta_data
+            )
+          `)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching staff:', error);
+        } else {
+          setStaff(data);
+        }
+      } catch (error) {
+        console.error('Error fetching staff:', error);
+      }
+    };
+
+    fetchStaff();
+  }, [supabase]);
+
   const handleEditStaff = (updatedStaff: any) => {
     setStaff(staff.map(member => 
-      member.email === updatedStaff.email ? updatedStaff : member
+      member.user.email === updatedStaff.user.email ? updatedStaff : member
     ));
     
     notifyDispatch({
@@ -58,7 +65,7 @@ export const StaffDirectory = () => {
         id: Date.now().toString(),
         type: 'message',
         title: 'Staff Member Updated',
-        message: `${updatedStaff.name}'s information has been updated`,
+        message: `${updatedStaff.user.raw_user_meta_data.full_name}'s information has been updated`,
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'medium'
@@ -67,8 +74,8 @@ export const StaffDirectory = () => {
   };
 
   const handleDeleteStaff = (staffEmail: string) => {
-    const staffMember = staff.find(s => s.email === staffEmail);
-    setStaff(staff.filter(member => member.email !== staffEmail));
+    const staffMember = staff.find(s => s.user.email === staffEmail);
+    setStaff(staff.filter(member => member.user.email !== staffEmail));
     
     notifyDispatch({
       type: 'ADD_NOTIFICATION',
@@ -76,7 +83,7 @@ export const StaffDirectory = () => {
         id: Date.now().toString(),
         type: 'alert',
         title: 'Staff Member Removed',
-        message: `${staffMember?.name} has been removed from the directory`,
+        message: `${staffMember?.user.raw_user_meta_data.full_name} has been removed from the directory`,
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'high'
@@ -97,11 +104,15 @@ export const StaffDirectory = () => {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
-            <Icons.Download className="w-4 h-4 mr-2" />
+            {React.createElement((Icons as any).Download, {
+              className: "w-4 h-4 mr-2"
+            })}
             <span onClick={() => setShowExportDialog(true)}>Export Directory</span>
           </Button>
           <Button size="sm" onClick={() => setShowAddEmployee(true)}>
-            <Icons.UserPlus className="w-4 h-4 mr-2" />
+            {React.createElement((Icons as any).UserPlus, {
+              className: "w-4 h-4 mr-2"
+            })}
             Add Employee
           </Button>
         </div>
@@ -112,13 +123,13 @@ export const StaffDirectory = () => {
         onClose={() => setShowExportDialog(false)}
         onExport={(format, options) => {
           const exportData = staff.map(member => ({
-            name: member.name,
+            name: member.user.raw_user_meta_data.full_name,
             role: member.role,
-            department: member.department,
-            email: member.email,
-            phone: member.phone,
+            department: member.specialization,
+            email: member.user.email,
+            phone: member.contact_info?.phone,
             status: member.status,
-            startDate: member.startDate
+            startDate: member.hire_date
           }));
 
           if (format === 'csv') {
@@ -137,10 +148,12 @@ export const StaffDirectory = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Icons.User className="w-6 h-6 text-primary" />
+                  {React.createElement((Icons as any).User, {
+                    className: "w-6 h-6 text-primary"
+                  })}
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{member.name}</p>
+                  <p className="font-medium text-gray-900">{member.user.raw_user_meta_data.full_name}</p>
                   <p className="text-sm text-gray-500">{member.role}</p>
                 </div>
               </div>
@@ -155,15 +168,15 @@ export const StaffDirectory = () => {
             <div className="mt-4 grid grid-cols-3 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Department</p>
-                <p className="font-medium">{member.department}</p>
+                <p className="font-medium">{member.specialization}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Email</p>
-                <p className="font-medium">{member.email}</p>
+                <p className="font-medium">{member.user.email}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Phone</p>
-                <p className="font-medium">{member.phone}</p>
+                <p className="font-medium">{member.contact_info?.phone}</p>
               </div>
             </div>
 
@@ -176,7 +189,9 @@ export const StaffDirectory = () => {
                   setShowHRAccess(true);
                 }}
               >
-                <Icons.FileText className="w-4 h-4 mr-2" />
+                {React.createElement((Icons as any).FileText, {
+                  className: "w-4 h-4 mr-2"
+                })}
                 HR Files
               </Button>
               <Button 
@@ -187,7 +202,9 @@ export const StaffDirectory = () => {
                   setShowViewProfile(true);
                 }}
               >
-                <Icons.FileText className="w-4 h-4 mr-2" />
+                {React.createElement((Icons as any).FileText, {
+                  className: "w-4 h-4 mr-2"
+                })}
                 View Profile
               </Button>
               <Button 
@@ -198,7 +215,9 @@ export const StaffDirectory = () => {
                   setShowEditStaff(true);
                 }}
               >
-                <Icons.Edit2 className="w-4 h-4 mr-2" />
+                {React.createElement((Icons as any).Edit2, {
+                  className: "w-4 h-4 mr-2"
+                })}
                 Edit
               </Button>
               <Button 
@@ -210,7 +229,9 @@ export const StaffDirectory = () => {
                   setShowDeleteConfirm(true);
                 }}
               >
-                <Icons.Trash2 className="w-4 h-4 mr-2" />
+                {React.createElement((Icons as any).Trash2, {
+                  className: "w-4 h-4 mr-2"
+                })}
                 Remove
               </Button>
             </div>
@@ -243,8 +264,8 @@ export const StaffDirectory = () => {
           setShowDeleteConfirm(false);
           setSelectedStaff(null);
         }}
-        onConfirm={() => handleDeleteStaff(selectedStaff?.email)}
-        staffName={selectedStaff?.name}
+        onConfirm={() => handleDeleteStaff(selectedStaff?.user.email)}
+        staffName={selectedStaff?.user.raw_user_meta_data.full_name}
       />
       
       {/* Add Staff/Employee Modal - Used for both buttons */}

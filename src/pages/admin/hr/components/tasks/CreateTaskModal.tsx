@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../../../../components/ui/button';
 import type { Task } from '../../../../../types/task';
+import supabase from '../../../../../lib/supabase/client';
 
 interface CreateTaskModalProps {
   isOpen: boolean;
@@ -24,6 +25,35 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
       value: ''
     }
   });
+  const [staff, setStaff] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('staff_profiles')
+          .select(`
+            id,
+            user:auth.users!user_id(
+              id,
+              email,
+              raw_user_meta_data
+            ),
+            role
+          `);
+
+        if (error) {
+          console.error('Error fetching staff:', error);
+        } else {
+          setStaff(data);
+        }
+      } catch (error) {
+        console.error('Error fetching staff:', error);
+      }
+    };
+
+    fetchStaff();
+  }, [supabase]);
 
   const departments = [
     'Clinical',
@@ -39,12 +69,6 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     'Evening Shift',
     'Weekend Team',
     'On-Call Team'
-  ];
-
-  const staff = [
-    { id: '1', name: 'Dr. Sarah Wilson', role: 'Dentist' },
-    { id: '2', name: 'John Smith', role: 'Hygienist' },
-    { id: '3', name: 'Emily Parker', role: 'Front Desk' }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -74,7 +98,9 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">Create New Task</h2>
             <Button variant="ghost" size="sm" onClick={onClose}>
-              <Icons.X className="w-5 h-5" />
+              {React.createElement((Icons as any).X, {
+                className: "w-5 h-5"
+              })}
             </Button>
           </div>
         </div>
@@ -142,8 +168,8 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               >
                 <option value="">Select...</option>
                 {task.assignee?.type === 'individual' && staff.map(person => (
-                  <option key={person.id} value={person.name}>
-                    {person.name} ({person.role})
+                  <option key={person.id} value={person.user?.raw_user_meta_data?.full_name}>
+                    {person.user?.raw_user_meta_data?.full_name} ({person.role})
                   </option>
                 ))}
                 {task.assignee?.type === 'department' && departments.map(dept => (

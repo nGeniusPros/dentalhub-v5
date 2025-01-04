@@ -1,0 +1,8 @@
+The tech stack for this project includes:
+
+Languages: TypeScript (primarily), JavaScript (for specific cases like configuration, third-party libraries, or legacy code), CSS, HTML, SQL
+Frontend: React, Vite, Tailwind CSS, Radix UI, Framer Motion, Lucide React, Recharts
+Backend: Express.js, Supabase
+Other Libraries: Axios, Zod, OpenAI, class-variance-authority, clsx, tailwind-merge, etc.
+Package Manager: pnpm
+Coding Rule: Prefer .ts files for all new code. Use .js files only when necessary for configuration, third-party libraries without type definitions, or legacy code.

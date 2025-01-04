@@ -1,42 +1,37 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { supabaseService } from '../services/supabase';
 import type { User } from '../types';
+import { convertSupabaseUser } from '../lib/utils';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    supabaseService.auth.getSession().then((session) => {
+      if (session) {
+        supabaseService.auth.getUser().then((response) => {
+          if (response.data?.user) {
+            setUser(convertSupabaseUser(response.data.user));
+          }
+        });
+      }
+    });
+  }, []);
+
   const login = useCallback(async (email: string, password: string) => {
     setLoading(true);
     setError(null);
     try {
-      // Mock user data based on email
-      const mockUsers: Record<string, User> = {
-        'sarah.wilson@example.com': {
-          id: '1',
-          name: 'Dr. Sarah Wilson',
-          email: 'sarah.wilson@example.com',
-          role: 'staff',
-          title: 'Lead Dentist',
-          department: 'General Dentistry'
-        },
-        'admin@example.com': {
-          id: '2',
-          name: 'Dr. Emily Parker',
-          email: 'admin@example.com',
-          role: 'admin',
-          title: 'Practice Administrator',
-          department: 'Administration'
-        }
-      };
-
-      const mockUser = mockUsers[email];
-      if (!mockUser) {
-        throw new Error('Invalid credentials');
+      const { data, error } = await supabaseService.auth.signInWithPassword(email, password);
+      if (error) {
+        throw new Error(error.message);
       }
-
-      setUser(mockUser);
-      return mockUser;
+      if (data.user) {
+        setUser(convertSupabaseUser(data.user as any));
+      }
+      return data.user as User;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       throw err;
@@ -45,7 +40,8 @@ export const useAuth = () => {
     }
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    await supabaseService.auth.signOut();
     setUser(null);
   }, []);
 
@@ -54,6 +50,6 @@ export const useAuth = () => {
     loading,
     error,
     login,
-    logout
+    logout,
   };
 };

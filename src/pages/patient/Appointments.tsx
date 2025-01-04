@@ -1,27 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { cn } from '../../utils/cn';
+import supabase from '../../lib/supabase/client';
+import { formatTime } from '../../lib/utils/date';
 
 const Appointments = () => {
-  const appointments = [
-    { 
-      date: 'Mar 15, 2024', 
-      time: '10:00 AM', 
-      type: 'Regular Checkup', 
-      provider: 'Dr. Smith',
-      member: 'Self',
-      status: 'Confirmed'
-    },
-    { 
-      date: 'Mar 20, 2024', 
-      time: '2:30 PM', 
-      type: 'Cleaning', 
-      provider: 'Dr. Johnson',
-      member: 'Sarah (Child)',
-      status: 'Pending'
-    }
-  ];
+  const [appointments, setAppointments] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('appointments')
+          .select(`
+            *,
+            patient:patients!inner(id, first_name, last_name),
+            provider:users!provider_id(id, raw_user_meta_data)
+          `)
+          .order('start_time', { ascending: true });
+
+        if (error) {
+          console.error('Error fetching appointments:', error);
+        } else {
+          setAppointments(data);
+        }
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+      }
+    };
+
+    fetchAppointments();
+  }, [supabase]);
 
   return (
     <div className="space-y-6">
@@ -46,15 +56,17 @@ const Appointments = () => {
               <div key={index} className="flex items-center justify-between p-4 bg-ngenius-gray-50 rounded-lg">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-white rounded-lg shadow-sm">
-                    <Icons.Calendar className="w-5 h-5 text-ngenius-primary" />
+                    {React.createElement((Icons as any).Calendar, {
+                      className: "w-5 h-5 text-ngenius-primary"
+                    })}
                   </div>
                   <div>
                     <p className="font-medium text-ngenius-gray-900">{appointment.type}</p>
                     <p className="text-sm text-ngenius-gray-500">
-                      {appointment.date} at {appointment.time}
+                      {new Date(appointment.start_time).toLocaleDateString()} at {formatTime(appointment.start_time)}
                     </p>
                     <p className="text-sm text-ngenius-gray-500">
-                      {appointment.provider} - {appointment.member}
+                      {appointment.provider?.raw_user_meta_data?.full_name} - {appointment.patient?.first_name} {appointment.patient?.last_name}
                     </p>
                   </div>
                 </div>
