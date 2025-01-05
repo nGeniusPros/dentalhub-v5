@@ -3,12 +3,68 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { Router as ExpressRouter } from 'express';
+import { z } from 'zod';
 
 const router: ExpressRouter = Router();
 
+const sendEmailSchema = z.object({
+  recipient_id: z.string().min(1),
+  subject: z.string().min(1),
+  content: z.string().min(1),
+  template_id: z.string().optional(),
+});
+
+const createTemplateSchema = z.object({
+  name: z.string().min(1),
+  subject: z.string().min(1),
+  content: z.string().min(1),
+  variables: z.any().optional(),
+});
+
+const updateTemplateSchema = z.object({
+  name: z.string().min(1).optional(),
+  subject: z.string().min(1).optional(),
+  content: z.string().min(1).optional(),
+  variables: z.any().optional(),
+});
+
+const templateIdSchema = z.object({
+  id: z.string().min(1),
+});
+
+const deliveryIdSchema = z.object({
+  delivery_id: z.string().min(1),
+});
+
+const trackClickSchema = z.object({
+  url: z.string().url(),
+});
+
+const emailAnalyticsSchema = z.object({
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+});
+
+const emailWebhookSchema = z.object({
+  provider_message_id: z.string().min(1),
+  status: z.string().min(1),
+  error_message: z.string().optional(),
+});
+
+const sendEmail = async (recipient_email: string, subject: string, content: string) => {
+  // TODO: Implement email provider integration
+  console.log(`Sending email to ${recipient_email} with subject "${subject}" and content "${content}"`);
+  return { success: true, messageId: `msg_${Date.now()}` };
+};
+
 // Send individual email
 router.post('/send', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { recipient_id, subject, content, template_id } = req.body;
+  const validationResult = sendEmailSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid email data' });
+  }
+
+  const { recipient_id, subject, content, template_id } = validationResult.data;
 
   // Get recipient details
   const { data: recipient, error: recipientError } = await req.supabase
@@ -26,7 +82,6 @@ router.post('/send', asyncHandler(async (req: Request & { supabase: SupabaseClie
   }
 
   try {
-    // TODO: Implement email provider integration
     // For now, just record the attempt
     const { data: delivery, error: deliveryError } = await req.supabase
       .from('campaign_deliveries')
@@ -48,7 +103,9 @@ router.post('/send', asyncHandler(async (req: Request & { supabase: SupabaseClie
       throw deliveryError;
     }
 
-    return res.json(delivery);
+    const emailResult = await sendEmail(recipient.email, subject, content);
+
+    return res.json({...delivery, emailResult});
   } catch (error) {
     return res.status(500).json({ 
       error: error instanceof Error ? error.message : 'Failed to send email' 
@@ -72,7 +129,12 @@ router.get('/templates', asyncHandler(async (req: Request & { supabase: Supabase
 
 // Create email template
 router.post('/templates', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { name, subject, content, variables } = req.body;
+  const validationResult = createTemplateSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid template data' });
+  }
+
+  const { name, subject, content, variables } = validationResult.data;
 
   const { data: template, error } = await req.supabase
     .from('email_templates')
@@ -94,8 +156,17 @@ router.post('/templates', asyncHandler(async (req: Request & { supabase: Supabas
 
 // Update email template
 router.put('/templates/:id', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { id } = req.params;
-  const { name, subject, content, variables } = req.body;
+  const validationResult = updateTemplateSchema.safeParse(req.body);
+  const idValidationResult = templateIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid template data' });
+  }
+  if (!idValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid template ID' });
+  }
+
+  const { id } = idValidationResult.data;
+  const { name, subject, content, variables } = validationResult.data;
 
   const { data: template, error } = await req.supabase
     .from('email_templates')
@@ -118,7 +189,12 @@ router.put('/templates/:id', asyncHandler(async (req: Request & { supabase: Supa
 
 // Delete email template
 router.delete('/templates/:id', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { id } = req.params;
+  const validationResult = templateIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid template ID' });
+  }
+
+  const { id } = validationResult.data;
 
   const { error } = await req.supabase
     .from('email_templates')
@@ -134,7 +210,12 @@ router.delete('/templates/:id', asyncHandler(async (req: Request & { supabase: S
 
 // Track email open
 router.get('/track/open/:delivery_id', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { delivery_id } = req.params;
+  const validationResult = deliveryIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid delivery ID' });
+  }
+
+  const { delivery_id } = validationResult.data;
 
   // Record email open
   await req.supabase
@@ -156,8 +237,17 @@ router.get('/track/open/:delivery_id', asyncHandler(async (req: Request & { supa
 
 // Track email click
 router.get('/track/click/:delivery_id', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { delivery_id } = req.params;
-  const { url } = req.query;
+  const validationResult = deliveryIdSchema.safeParse(req.params);
+  const clickValidationResult = trackClickSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid delivery ID' });
+  }
+  if (!clickValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid click data' });
+  }
+
+  const { delivery_id } = validationResult.data;
+  const { url } = clickValidationResult.data;
 
   // Record email click
   await req.supabase
@@ -173,12 +263,17 @@ router.get('/track/click/:delivery_id', asyncHandler(async (req: Request & { sup
     });
 
   // Redirect to original URL
-  res.redirect(url as string);
+  res.redirect(url);
 }));
 
 // Get email analytics
 router.get('/analytics', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { start_date, end_date } = req.query;
+  const validationResult = emailAnalyticsSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid analytics parameters' });
+  }
+
+  const { start_date, end_date } = validationResult.data;
 
   const { data: analytics, error } = await req.supabase
     .from('campaign_analytics')
@@ -206,7 +301,12 @@ router.get('/analytics', asyncHandler(async (req: Request & { supabase: Supabase
 
 // Handle email webhook
 router.post('/webhook', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { provider_message_id, status, error_message } = req.body;
+  const validationResult = emailWebhookSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid webhook data' });
+  }
+
+  const { provider_message_id, status, error_message } = validationResult.data;
 
   // Update delivery status
   const { data: delivery, error } = await req.supabase

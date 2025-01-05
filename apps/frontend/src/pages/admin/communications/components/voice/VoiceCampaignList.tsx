@@ -1,78 +1,35 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../../../../components/ui/button';
 import { cn } from '../../../../../lib/utils';
 import { ScheduleDialog } from './ScheduleDialog';
 import { EditCampaignDialog } from './EditCampaignDialog';
-
-export interface Campaign {
-  id: string;
-  name: string;
-  type: 'recall' | 'reactivation' | 'treatment' | 'appointment' | 'event' | 'custom';
-  status: 'active' | 'scheduled' | 'completed' | 'paused';
-  targetCount: number;
-  completedCalls: number;
-  successRate: number;
-  scheduledDate?: string;
-  lastRun?: string;
-  schedule?: {
-    startDate: string;
-    startTime: string;
-    maxAttempts: number;
-    timeBetweenAttempts: number;
-  };
-}
-
-export const mockCampaigns: Campaign[] = [
-  {
-    id: '1',
-    name: 'Recall Campaign - March',
-    type: 'recall',
-    status: 'active',
-    targetCount: 150,
-    completedCalls: 89,
-    successRate: 45,
-    lastRun: '2024-03-10'
-  },
-  {
-    id: '2',
-    name: 'Treatment Follow-up',
-    type: 'treatment',
-    status: 'scheduled',
-    targetCount: 75,
-    completedCalls: 0,
-    successRate: 0,
-    scheduledDate: '2024-03-20'
-  }
-];
+import { useCampaigns, Campaign } from '../../../../../hooks/use-campaigns';
+import { useCampaignActions } from '../../../../../hooks/use-campaign-actions';
 
 export const VoiceCampaignList = () => {
-  const [campaigns, setCampaigns] = useState<Campaign[]>(mockCampaigns);
-  const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
-  const [showScheduleDialog, setShowScheduleDialog] = useState(false);
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+  const { campaigns, loading, error, updateCampaignStatus, deleteCampaign } = useCampaigns();
+  const { editingCampaign, showScheduleDialog, selectedCampaign, handleEditCampaign, handleScheduleCampaign, handleCloseScheduleDialog, handleCloseEditDialog, setEditingCampaign } = useCampaignActions();
 
-  const handleStatusChange = (campaignId: string, status: Campaign['status']) => {
-    setCampaigns(prev => prev.map(campaign => 
-      campaign.id === campaignId ? { ...campaign, status } : campaign
-    ));
+  const handleStatusChange = async (campaignId: string, status: Campaign['status']) => {
+    await updateCampaignStatus(campaignId, status);
   };
 
-  const handleEditCampaign = (campaign: Campaign) => {
-    setEditingCampaign(campaign);
-  };
-
-  const handleScheduleCampaign = (campaign: Campaign) => {
-    setSelectedCampaign(campaign);
-    setShowScheduleDialog(true);
-  };
-
-  const handleDeleteCampaign = (campaignId: string) => {
+  const handleDeleteCampaign = async (campaignId: string) => {
     if (window.confirm('Are you sure you want to delete this campaign?')) {
-      setCampaigns(prev => prev.filter(campaign => campaign.id !== campaignId));
+      await deleteCampaign(campaignId);
     }
   };
+
+  if (loading) {
+    return <div>Loading campaigns...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200">
       <div className="p-6 border-b border-gray-200">
@@ -107,7 +64,7 @@ export const VoiceCampaignList = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {mockCampaigns.map((campaign) => (
+            {campaigns.map((campaign) => (
               <tr key={campaign.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
@@ -228,20 +185,12 @@ export const VoiceCampaignList = () => {
       <ScheduleDialog
         open={showScheduleDialog}
         campaign={selectedCampaign}
-        onClose={() => {
-          setShowScheduleDialog(false);
-          setSelectedCampaign(null);
-        }}
+        onClose={handleCloseScheduleDialog}
         onSchedule={(schedule) => {
           if (selectedCampaign) {
-            setCampaigns(prev => prev.map(campaign =>
-              campaign.id === selectedCampaign.id
-                ? { ...campaign, schedule, status: 'scheduled' }
-                : campaign
-            ));
+            
           }
-          setShowScheduleDialog(false);
-          setSelectedCampaign(null);
+          handleCloseScheduleDialog();
         }}
       />
       
@@ -249,11 +198,8 @@ export const VoiceCampaignList = () => {
       <EditCampaignDialog
         open={!!editingCampaign}
         campaign={editingCampaign}
-        onClose={() => setEditingCampaign(null)}
+        onClose={handleCloseEditDialog}
         onSave={(updatedCampaign) => {
-          setCampaigns(prev => prev.map(campaign =>
-            campaign.id === updatedCampaign.id ? updatedCampaign : campaign
-          ));
           setEditingCampaign(null);
         }}
       />

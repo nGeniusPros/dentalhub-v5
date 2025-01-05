@@ -3,12 +3,57 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { Router as ExpressRouter } from 'express';
+import { z } from 'zod';
 
 const router: ExpressRouter = Router();
 
+const sendSmsSchema = z.object({
+  recipient_id: z.string().min(1),
+  message: z.string().min(1),
+  template_id: z.string().optional(),
+});
+
+const createTemplateSchema = z.object({
+  name: z.string().min(1),
+  content: z.string().min(1),
+  variables: z.any().optional(),
+});
+
+const updateTemplateSchema = z.object({
+  name: z.string().min(1).optional(),
+  content: z.string().min(1).optional(),
+  variables: z.any().optional(),
+});
+
+const deliveryIdSchema = z.object({
+  delivery_id: z.string().min(1),
+});
+
+const smsAnalyticsSchema = z.object({
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+});
+
+const emailWebhookSchema = z.object({
+  provider_message_id: z.string().min(1),
+  status: z.string().min(1),
+  error_message: z.string().optional(),
+});
+
+const sendSms = async (recipient_phone: string, message: string) => {
+  // TODO: Implement SMS provider integration
+  console.log(`Sending SMS to ${recipient_phone} with message "${message}"`);
+  return { success: true, messageId: `msg_${Date.now()}` };
+};
+
 // Send individual SMS
 router.post('/send', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { recipient_id, message, template_id } = req.body;
+  const validationResult = sendSmsSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid SMS data' });
+  }
+
+  const { recipient_id, message, template_id } = validationResult.data;
 
   // Get recipient details
   const { data: recipient, error: recipientError } = await req.supabase
@@ -26,7 +71,6 @@ router.post('/send', asyncHandler(async (req: Request & { supabase: SupabaseClie
   }
 
   try {
-    // TODO: Implement SMS provider integration
     // For now, just record the attempt
     const { data: delivery, error: deliveryError } = await req.supabase
       .from('campaign_deliveries')
@@ -47,10 +91,12 @@ router.post('/send', asyncHandler(async (req: Request & { supabase: SupabaseClie
       throw deliveryError;
     }
 
-    return res.json(delivery);
+    const smsResult = await sendSms(recipient.phone, message);
+
+    return res.json({...delivery, smsResult});
   } catch (error) {
-    return res.status(500).json({ 
-      error: error instanceof Error ? error.message : 'Failed to send SMS' 
+    return res.status(500).json({
+      error: error instanceof Error ? error.message : 'Failed to send SMS'
     });
   }
 }));
@@ -71,7 +117,12 @@ router.get('/templates', asyncHandler(async (req: Request & { supabase: Supabase
 
 // Create SMS template
 router.post('/templates', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { name, content, variables } = req.body;
+  const validationResult = createTemplateSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid template data' });
+  }
+
+  const { name, content, variables } = validationResult.data;
 
   const { data: template, error } = await req.supabase
     .from('sms_templates')
@@ -92,8 +143,17 @@ router.post('/templates', asyncHandler(async (req: Request & { supabase: Supabas
 
 // Update SMS template
 router.put('/templates/:id', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { id } = req.params;
-  const { name, content, variables } = req.body;
+  const validationResult = updateTemplateSchema.safeParse(req.body);
+  const idValidationResult = z.object({ id: z.string().min(1) }).safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid template data' });
+  }
+  if (!idValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid template ID' });
+  }
+
+  const { id } = idValidationResult.data;
+  const { name, content, variables } = validationResult.data;
 
   const { data: template, error } = await req.supabase
     .from('sms_templates')
@@ -115,7 +175,12 @@ router.put('/templates/:id', asyncHandler(async (req: Request & { supabase: Supa
 
 // Delete SMS template
 router.delete('/templates/:id', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { id } = req.params;
+  const validationResult = z.object({ id: z.string().min(1) }).safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid template ID' });
+  }
+
+  const { id } = validationResult.data;
 
   const { error } = await req.supabase
     .from('sms_templates')
@@ -131,7 +196,12 @@ router.delete('/templates/:id', asyncHandler(async (req: Request & { supabase: S
 
 // Get SMS delivery status
 router.get('/status/:delivery_id', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { delivery_id } = req.params;
+  const validationResult = deliveryIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid delivery ID' });
+  }
+
+  const { delivery_id } = validationResult.data;
 
   const { data: delivery, error } = await req.supabase
     .from('campaign_deliveries')
@@ -148,7 +218,12 @@ router.get('/status/:delivery_id', asyncHandler(async (req: Request & { supabase
 
 // Get SMS analytics
 router.get('/analytics', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { start_date, end_date } = req.query;
+  const validationResult = smsAnalyticsSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid analytics parameters' });
+  }
+
+  const { start_date, end_date } = validationResult.data;
 
   const { data: analytics, error } = await req.supabase
     .from('campaign_analytics')
@@ -176,7 +251,12 @@ router.get('/analytics', asyncHandler(async (req: Request & { supabase: Supabase
 
 // Handle SMS webhook
 router.post('/webhook', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { provider_message_id, status, error_message } = req.body;
+  const validationResult = emailWebhookSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid webhook data' });
+  }
+
+  const { provider_message_id, status, error_message } = validationResult.data;
 
   // Update delivery status
   const { data: delivery, error } = await req.supabase

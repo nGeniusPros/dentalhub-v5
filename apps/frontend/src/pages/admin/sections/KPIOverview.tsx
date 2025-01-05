@@ -1,66 +1,68 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import StatsCard from '../../../components/dashboard/StatsCard';
+import { dashboardService } from '../../../services/dashboard';
 
 export const KPIOverview = () => {
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await dashboardService.getStats();
+        setStats(data.stats);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch dashboard stats');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatsCard
         title="Monthly Revenue"
-        value="$145,678"
-        change={8}
+        value={`$${stats?.monthlyRevenue?.value?.toLocaleString() || '0'}`}
+        change={stats?.monthlyRevenue?.change || 0}
         icon="DollarSign"
         variant="primary"
       />
       <StatsCard
         title="Patient Growth"
-        value="3,456"
-        change={12}
+        value={stats?.totalPatients?.value || '0'}
+        change={stats?.totalPatients?.change || 0}
         icon="Users"
         variant="secondary"
       />
       <StatsCard
-        title="Treatment Acceptance"
-        value="78%"
-        change={5}
-        icon="CheckCircle"
+        title="Pending Reports"
+        value={stats?.pendingReports?.value || '0'}
+        change={0}
+        icon="FileCheck"
         variant="accent1"
       />
-      <StatsCard
-        title="Appointment Fill Rate"
-        value="92%"
-        change={3}
+       <StatsCard
+        title="Today Appointments"
+        value={stats?.todayAppointments?.value || '0'}
+        change={0}
         icon="Calendar"
         variant="accent2"
       />
-      <StatsCard
-        title="Insurance Claims"
-        value="245"
-        change={7}
-        icon="FileCheck"
-        variant="primary"
-      />
-      <StatsCard
-        title="Average Wait Time"
-        value="12min"
-        change={-4}
-        icon="Clock"
-        variant="secondary"
-      />
-      <StatsCard
-        title="Patient Satisfaction"
-        value="4.8"
-        change={2}
-        icon="Star"
-        variant="accent1"
-      />
-      <StatsCard
-        title="Staff Productivity"
-        value="94%"
-        change={6}
-        icon="TrendingUp"
-        variant="accent2"
-      />
-    </div>
-  );
+				</div>
+		);
 };

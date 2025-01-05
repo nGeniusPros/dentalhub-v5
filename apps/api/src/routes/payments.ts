@@ -3,6 +3,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { Router as ExpressRouter } from 'express';
+import { z } from 'zod';
 
 interface AuthenticatedRequest extends Request {
   supabase: SupabaseClient<Database>;
@@ -15,9 +16,50 @@ interface AuthenticatedRequest extends Request {
 
 const router: ExpressRouter = Router();
 
+const getPaymentsSchema = z.object({
+  status: z.string().optional(),
+  method: z.string().optional(),
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+});
+
+const paymentIdSchema = z.object({
+  id: z.string().min(1),
+});
+
+const processPaymentSchema = z.object({
+  patient_id: z.string().min(1),
+  appointment_id: z.string().optional(),
+  amount: z.number().min(0),
+  method: z.string().min(1),
+  reference_number: z.string().optional(),
+  notes: z.string().optional(),
+  metadata: z.any().optional(),
+});
+
+const updatePaymentStatusSchema = z.object({
+  status: z.string().min(1),
+  notes: z.string().optional(),
+});
+
+const refundPaymentSchema = z.object({
+  amount: z.number().min(0),
+  reason: z.string().min(1),
+});
+
+const paymentAnalyticsSchema = z.object({
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+});
+
 // Get all payments
 router.get('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { status, method, start_date, end_date } = req.query;
+  const validationResult = getPaymentsSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+  const { status, method, start_date, end_date } = validationResult.data;
   let query = req.supabase
     .from('payments')
     .select(`
@@ -58,7 +100,12 @@ router.get('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =>
 
 // Get payment by ID
 router.get('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
+  const validationResult = paymentIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid payment ID' });
+  }
+
+  const { id } = validationResult.data;
 
   const { data: payment, error } = await req.supabase
     .from('payments')
@@ -87,6 +134,11 @@ router.get('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response)
 
 // Process new payment
 router.post('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  const validationResult = processPaymentSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid payment data' });
+  }
+
   const {
     patient_id,
     appointment_id,
@@ -95,7 +147,7 @@ router.post('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =
     reference_number,
     notes,
     metadata
-  } = req.body;
+  } = validationResult.data;
 
   // Process payment through payment gateway
   // This is a placeholder for actual payment processing logic
@@ -157,8 +209,17 @@ router.post('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =
 
 // Update payment status
 router.put('/:id/status', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
-  const { status, notes } = req.body;
+  const validationResult = paymentIdSchema.safeParse(req.params);
+  const statusValidationResult = updatePaymentStatusSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid payment ID' });
+  }
+  if (!statusValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid payment status data' });
+  }
+
+  const { id } = validationResult.data;
+  const { status, notes } = statusValidationResult.data;
 
   const { data: payment, error } = await req.supabase
     .from('payments')
@@ -191,8 +252,17 @@ router.put('/:id/status', asyncHandler(async (req: AuthenticatedRequest, res: Re
 
 // Process refund
 router.post('/:id/refund', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
-  const { amount, reason } = req.body;
+  const validationResult = paymentIdSchema.safeParse(req.params);
+  const refundValidationResult = refundPaymentSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid payment ID' });
+  }
+  if (!refundValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid refund data' });
+  }
+
+  const { id } = validationResult.data;
+  const { amount, reason } = refundValidationResult.data;
 
   // Get original payment
   const { data: originalPayment, error: fetchError } = await req.supabase
@@ -269,7 +339,12 @@ router.post('/:id/refund', asyncHandler(async (req: AuthenticatedRequest, res: R
 
 // Get payment analytics
 router.get('/analytics/summary', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { start_date, end_date } = req.query;
+  const validationResult = paymentAnalyticsSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid analytics parameters' });
+  }
+
+  const { start_date, end_date } = validationResult.data;
 
   // Get total payments
   const { data: payments, error: paymentsError } = await req.supabase

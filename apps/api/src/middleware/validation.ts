@@ -32,7 +32,43 @@ export const validateCampaign = (req: Request, res: Response, next: NextFunction
   }
 };
 
+import crypto from 'crypto';
+
 export const validateWebhookSignature = (req: Request, res: Response, next: NextFunction) => {
-  // TODO: Implement webhook signature validation
-  next();
+		const signature = req.headers['x-retell-signature'];
+		const webhookSecret = process.env.RETELL_WEBHOOK_SECRET;
+
+		if (!webhookSecret) {
+				console.error('RETELL_WEBHOOK_SECRET is not configured');
+				return res.status(500).json({ error: 'Webhook secret not configured' });
+		}
+
+		if (!signature || typeof signature !== 'string') {
+				return res.status(401).json({ error: 'Missing webhook signature' });
+		}
+
+		try {
+				// Get raw body from the request
+				const rawBody = JSON.stringify(req.body);
+				
+				// Create HMAC using webhook secret
+				const hmac = crypto.createHmac('sha256', webhookSecret);
+				hmac.update(rawBody);
+				const calculatedSignature = hmac.digest('hex');
+
+				// Compare signatures using constant-time comparison
+				const isValid = crypto.timingSafeEqual(
+						Buffer.from(signature),
+						Buffer.from(calculatedSignature)
+				);
+
+				if (!isValid) {
+						return res.status(401).json({ error: 'Invalid webhook signature' });
+				}
+
+				next();
+		} catch (error) {
+				console.error('Error validating webhook signature:', error);
+				return res.status(401).json({ error: 'Invalid webhook signature' });
+		}
 };

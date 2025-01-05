@@ -4,12 +4,13 @@ import * as Icons from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 
 export const MarketingMetrics = () => {
+  // TODO: Connect this component to the backend API to fetch marketing metrics
   const channels = [
     { name: 'Patient Referrals', leads: 85, conversion: 65, cost: 25 },
     { name: 'Google Ads', leads: 120, conversion: 45, cost: 1200 },
     { name: 'Social Media', leads: 95, conversion: 38, cost: 800 },
     { name: 'Email Campaigns', leads: 65, conversion: 52, cost: 400 }
-  ];
+		];
 
   return (
     <motion.div
@@ -26,7 +27,7 @@ export const MarketingMetrics = () => {
           <Icons.TrendingUp className="w-4 h-4 mr-2" />
           View Trends
         </Button>
-      </div>
+						</div>
 
       <div className="space-y-4">
         {channels.map((channel, index) => (
@@ -53,7 +54,7 @@ export const MarketingMetrics = () => {
             </div>
           </div>
         ))}
-      </div>
+						</div>
 
       <div className="mt-6">
         <h3 className="text-sm font-medium text-gray-900 mb-3">Overall ROI</h3>
@@ -69,5 +70,5 @@ export const MarketingMetrics = () => {
         </div>
       </div>
     </motion.div>
-  );
+		);
 };

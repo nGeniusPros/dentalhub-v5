@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
+import { X as XIcon, FileText as FileTextIcon, Upload as UploadIcon } from 'lucide-react';
 import { Button } from './ui/button';
+import type { Patient, Staff } from '../types/models';
 
-interface EditDialogProps {
+type EditDialogProps<T extends 'staff' | 'provider' | 'patient'> = {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: any) => void;
-  data: any;
-  type: 'staff' | 'provider' | 'patient';
+  onSave: (data: T extends 'staff' ? Staff : T extends 'patient' ? Patient : any) => void;
+  data: T extends 'staff' ? Staff : T extends 'patient' ? Patient : any;
+  type: T;
 }
 
-export const EditDialog: React.FC<EditDialogProps> = ({
+export const EditDialog = <T extends 'staff' | 'provider' | 'patient'>({
   isOpen,
   onClose,
   onSave,
   data,
   type
-}) => {
-  const [formData, setFormData] = useState(data);
+}: EditDialogProps<T>) => {
+  const [formData, setFormData] = useState<T extends 'staff' ? Staff : T extends 'patient' ? Patient : any>(data);
 
   if (!isOpen) return null;
 
@@ -39,7 +40,7 @@ export const EditDialog: React.FC<EditDialogProps> = ({
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">Edit {type.charAt(0).toUpperCase() + type.slice(1)}</h2>
             <Button variant="ghost" size="sm" onClick={onClose}>
-              <Icons.X className="w-5 h-5" />
+              <XIcon className="w-5 h-5" aria-hidden="true" />
             </Button>
           </div>
         </div>
@@ -232,31 +233,31 @@ export const EditDialog: React.FC<EditDialogProps> = ({
             <div className="space-y-2">
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-2">
-                  <Icons.FileText className="w-5 h-5 text-gray-400" />
+                  <FileTextIcon className="w-5 h-5 text-gray-400" aria-hidden="true" />
                   <span>Employment Contract</span>
                 </div>
                 <Button variant="outline" size="sm">
-                  <Icons.Upload className="w-4 h-4 mr-2" />
+                  <UploadIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                   Upload
                 </Button>
               </div>
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-2">
-                  <Icons.FileText className="w-5 h-5 text-gray-400" />
+                  <FileTextIcon className="w-5 h-5 text-gray-400" aria-hidden="true" />
                   <span>Tax Forms</span>
                 </div>
                 <Button variant="outline" size="sm">
-                  <Icons.Upload className="w-4 h-4 mr-2" />
+                  <UploadIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                   Upload
                 </Button>
               </div>
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-2">
-                  <Icons.FileText className="w-5 h-5 text-gray-400" />
+                  <FileTextIcon className="w-5 h-5 text-gray-400" aria-hidden="true" />
                   <span>Training Certificates</span>
                 </div>
                 <Button variant="outline" size="sm">
-                  <Icons.Upload className="w-4 h-4 mr-2" />
+                  <UploadIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                   Upload
                 </Button>
               </div>

@@ -1,42 +1,87 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
+import { MoreVertical, Mail, MousePointer } from 'lucide-react';
 import { Avatar } from '../ui/avatar';
 import { Button } from '../ui/button';
+import { InstantlyService } from '../../services/instantlyService';
+import { BeehiivService } from '../../services/beehiivService';
 
 interface EmailListProps {
   type: 'all' | 'outbound' | 'newsletter';
 }
 
-const mockEmails = [
-  {
-    id: '1',
-    subject: 'Your Dental Appointment Reminder',
-    preview: 'This is a reminder for your upcoming dental appointment...',
-    sender: 'Dr. Sarah Wilson',
-    senderEmail: 'sarah.wilson@example.com',
-    date: '2024-03-15',
-    status: 'sent',
-    openRate: 68,
-    clickRate: 42
-  },
-  {
-    id: '2',
-    subject: 'Monthly Newsletter - March 2024',
-    preview: 'Check out our latest dental care tips and practice updates...',
-    sender: 'NGenius Dental',
-    senderEmail: 'newsletter@example.com',
-    date: '2024-03-10',
-    status: 'scheduled',
-    openRate: 55,
-    clickRate: 35
-  }
-];
+interface EmailData {
+  id: string;
+  subject: string;
+  preview: string;
+  sender: string;
+  senderEmail: string;
+  date: string;
+  status: 'sent' | 'scheduled';
+  openRate: number;
+  clickRate: number;
+}
 
 export const EmailList = ({ type }: EmailListProps) => {
+  const [emails, setEmails] = useState<EmailData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const instantlyService = InstantlyService.getInstance();
+  const beehiivService = BeehiivService.getInstance();
+
+  useEffect(() => {
+    const fetchEmails = async () => {
+      setLoading(true);
+      try {
+        let fetchedEmails: EmailData[] = [];
+        if (type === 'outbound') {
+          const campaigns = await instantlyService.getCampaigns();
+          if (campaigns && Array.isArray(campaigns)) {
+            fetchedEmails = campaigns.map((campaign: any) => ({
+              id: campaign.id,
+              subject: campaign.name,
+              preview: campaign.description,
+              sender: 'Instantly',
+              senderEmail: 'no-reply@instantly.ai',
+              date: new Date(campaign.created_at).toLocaleDateString(),
+              status: 'sent' as const, // Assuming all campaigns are sent
+              openRate: 0, // Placeholder
+              clickRate: 0, // Placeholder
+            }));
+          }
+        } else if (type === 'newsletter') {
+          const publications = await beehiivService.getPublications();
+          if (publications && Array.isArray(publications)) {
+            fetchedEmails = publications.map((publication: any) => ({
+              id: publication.id,
+              subject: publication.name,
+              preview: publication.description,
+              sender: 'Beehiiv',
+              senderEmail: 'no-reply@beehiiv.com',
+              date: new Date(publication.created_at).toLocaleDateString(),
+              status: 'scheduled' as const, // Assuming all publications are scheduled
+              openRate: 0, // Placeholder
+              clickRate: 0, // Placeholder
+            }));
+          }
+        }
+        setEmails(fetchedEmails);
+      } catch (error) {
+        console.error('Failed to fetch emails:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmails();
+  }, [type, instantlyService, beehiivService]);
+
+  if (loading) {
+    return <div>Loading emails...</div>;
+  }
+
   return (
     <div className="space-y-4">
-      {mockEmails.map((email) => (
+      {emails.map((email) => (
         <motion.div
           key={email.id}
           initial={{ opacity: 0, y: 20 }}
@@ -63,7 +108,7 @@ export const EmailList = ({ type }: EmailListProps) => {
                 </span>
               </div>
               <Button variant="ghost" size="sm">
-                <Icons.MoreVertical className="w-4 h-4" />
+                <MoreVertical className="w-4 h-4" aria-hidden="true" />
               </Button>
             </div>
           </div>
@@ -72,13 +117,13 @@ export const EmailList = ({ type }: EmailListProps) => {
           
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Icons.Mail className="w-4 h-4 text-gray-400" />
+              <Mail className="w-4 h-4 text-gray-400" aria-hidden="true" />
               <span className="text-sm text-gray-600">
                 {email.openRate}% open rate
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <Icons.MousePointer className="w-4 h-4 text-gray-400" />
+              <MousePointer className="w-4 h-4 text-gray-400" aria-hidden="true" />
               <span className="text-sm text-gray-600">
                 {email.clickRate}% click rate
               </span>

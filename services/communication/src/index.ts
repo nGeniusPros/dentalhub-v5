@@ -4,6 +4,8 @@ import cors from 'cors';
 import campaignRoutes from './routes/campaigns';
 import { createRetellService } from './services/retell/RetellService';
 import type { RetellConfig } from './services/retell/types';
+import { CallService } from './services/callService';
+import { WebhookService } from './services/webhookService';
 
 // Load environment variables
 config();
@@ -25,6 +27,8 @@ const retellConfig: RetellConfig = {
 };
 
 const retellService = createRetellService(retellConfig);
+const callService = new CallService(retellConfig);
+const webhookService = new WebhookService();
 
 // Campaign routes
 app.use('/api/campaigns', campaignRoutes);
@@ -33,7 +37,7 @@ app.use('/api/campaigns', campaignRoutes);
 app.post('/api/calls', async (req, res) => {
   try {
     const { phoneNumber, config } = req.body;
-    const call = await retellService.initiateCall(phoneNumber, config);
+    const call = await callService.initiateCall(phoneNumber, config);
     res.json(call);
   } catch (error) {
     console.error('Error initiating call:', error);
@@ -44,7 +48,7 @@ app.post('/api/calls', async (req, res) => {
 app.get('/api/calls/:callId/recording', async (req, res) => {
   try {
     const { callId } = req.params;
-    const recording = await retellService.getCallRecording(callId);
+    const recording = await callService.getCallRecording(callId);
     res.type('audio/mpeg').send(recording);
   } catch (error) {
     console.error('Error getting call recording:', error);
@@ -56,7 +60,7 @@ app.put('/api/calls/:callId/config', async (req, res) => {
   try {
     const { callId } = req.params;
     const config = req.body;
-    await retellService.updateCallConfig(callId, config);
+    await callService.updateCallConfig(callId, config);
     res.sendStatus(200);
   } catch (error) {
     console.error('Error updating call config:', error);
@@ -65,26 +69,12 @@ app.put('/api/calls/:callId/config', async (req, res) => {
 });
 
 // Webhook endpoints
-app.post('/webhooks/retell', (req, res) => {
+app.post('/webhooks/retell', async (req, res) => {
   try {
     const event = req.body;
     console.log('Received Retell webhook event:', event);
     
-    // Handle different event types
-    switch (event.type) {
-      case 'call.started':
-        // Update campaign metrics
-        break;
-      case 'call.ended':
-        // Update campaign metrics and status
-        break;
-      case 'call.transcription':
-        // Store transcription data
-        break;
-      default:
-        console.log(`Unhandled event type: ${event.type}`);
-    }
-    
+    await webhookService.handleWebhook(event);
     res.sendStatus(200);
   } catch (error) {
     console.error('Error processing webhook:', error);
@@ -93,7 +83,7 @@ app.post('/webhooks/retell', (req, res) => {
 });
 
 // Error handling middleware
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
   res.status(500).json({ error: 'Internal server error' });
 });
