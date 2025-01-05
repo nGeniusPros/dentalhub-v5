@@ -32,7 +32,6 @@ import syncRouter from './edge-functions/sync';
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 import { config } from 'dotenv';
-import { MonitoringService } from './services/monitoring';
 import { PatientService } from './services/patientService';
 
 // ---------------------------- Environment Setup -----------------------------
@@ -117,7 +116,6 @@ app.listen(PORT, async () => {
   if (currentInstance > instances) {
     currentInstance = 1;
   }
-  MonitoringService.logServerStart(PORT, currentInstance);
   console.log(`API Gateway running on port ${PORT}`);
   console.log(`Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
 
