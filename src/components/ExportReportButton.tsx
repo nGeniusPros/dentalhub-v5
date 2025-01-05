@@ -1,27 +1,58 @@
 import React, { useState } from 'react';
 import { Button } from './ui/button';
-import * as Icons from 'lucide-react';
-import { ExportReportDialog } from './ExportReportDialog';
+import { Download as DownloadIcon } from 'lucide-react';
+import  ExportReportDialog  from './ExportReportDialog';
 import { useNotifications } from '../contexts/NotificationContext';
+import type { Staff } from '../types/models';
 
-interface ExportReportButtonProps {
-  data?: any;
-  type?: 'staff' | 'performance' | 'training' | 'financial';
+/**
+ * Properties for the ExportReportButton component.
+ * @template T - The type of data being exported ('staff', 'performance', 'training', or 'financial').
+ */
+interface ExportReportButtonProps<T extends 'staff' | 'performance' | 'training' | 'financial'> {
+  /**
+   * Optional data to be exported.
+   */
+  data?: T extends 'staff' ? Staff[] | undefined : any;
+  /**
+   * The type of report to export.
+   */
+  type?: T;
+  /**
+   * The variant of the button.
+   */
   variant?: 'default' | 'outline' | 'ghost';
+  /**
+   * The size of the button.
+   */
   size?: 'default' | 'sm' | 'lg';
+  /**
+   * Additional CSS class names for the button.
+   */
   className?: string;
 }
 
-export const ExportReportButton: React.FC<ExportReportButtonProps> = ({
+/**
+ * A button component that triggers the export report dialog.
+ * @template T - The type of data being exported ('staff', 'performance', 'training', or 'financial').
+ * @param {ExportReportButtonProps<T>} props - The component props.
+ * @returns {JSX.Element} The ExportReportButton component.
+ */
+export const ExportReportButton = <T extends 'staff' | 'performance' | 'training' | 'financial'>({
   data,
-  type = 'staff',
+  type = 'staff' as T,
   variant = 'outline',
   size = 'default',
   className
-}) => {
+}: ExportReportButtonProps<T>) => {
   const [showExportDialog, setShowExportDialog] = useState(false);
   const { dispatch: notifyDispatch } = useNotifications();
 
+  /**
+   * Handles the export action.
+   * @param {string} format - The format to export the report in.
+   * @param {any} options - The export options.
+   */
   const handleExport = (format: string, options: any) => {
     notifyDispatch({
       type: 'ADD_NOTIFICATION',
@@ -45,7 +76,7 @@ export const ExportReportButton: React.FC<ExportReportButtonProps> = ({
         className={className}
         onClick={() => setShowExportDialog(true)}
       >
-        <Icons.Download className="w-4 h-4 mr-2" />
+        <DownloadIcon className="w-4 h-4 mr-2" aria-hidden="true" />
         Export Report
       </Button>
 

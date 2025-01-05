@@ -3,6 +3,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { Router as ExpressRouter } from 'express';
+import { z } from 'zod';
 
 interface AuthenticatedRequest extends Request {
   supabase: SupabaseClient<Database>;
@@ -15,9 +16,49 @@ interface AuthenticatedRequest extends Request {
 
 const router: ExpressRouter = Router();
 
+const verifyInsuranceSchema = z.object({
+  patient_id: z.string().min(1),
+  provider_id: z.string().min(1),
+  policy_number: z.string().min(1),
+});
+
+const submitClaimSchema = z.object({
+  patient_id: z.string().min(1),
+  provider_id: z.string().min(1),
+  appointment_id: z.string().min(1),
+  total_amount: z.number().min(0),
+  diagnosis_codes: z.array(z.string()),
+  procedure_codes: z.array(z.string()),
+  attachments: z.array(z.string()).optional(),
+});
+
+const insuranceIdSchema = z.object({
+  id: z.string().min(1),
+});
+
+const claimStatusSchema = z.object({
+  status: z.string().min(1),
+  notes: z.string().optional(),
+  response_details: z.any().optional(),
+});
+
+const claimsAnalyticsSchema = z.object({
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+});
+
+const getProvidersSchema = z.object({
+  active: z.string().optional(),
+});
+
 // Get all insurance providers
 router.get('/providers', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { active } = req.query;
+  const validationResult = getProvidersSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+  const { active } = validationResult.data;
 
   let query = req.supabase
     .from('insurance_providers')
@@ -38,7 +79,12 @@ router.get('/providers', asyncHandler(async (req: AuthenticatedRequest, res: Res
 
 // Get patient insurance information
 router.get('/patients/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
+  const validationResult = insuranceIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid patient ID' });
+  }
+
+  const { id } = validationResult.data;
 
   const { data: insurance, error } = await req.supabase
     .from('patient_insurance')
@@ -57,7 +103,12 @@ router.get('/patients/:id', asyncHandler(async (req: AuthenticatedRequest, res: 
 
 // Verify insurance coverage
 router.post('/verify', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { patient_id, provider_id, policy_number } = req.body;
+  const validationResult = verifyInsuranceSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid insurance verification data' });
+  }
+
+  const { patient_id, provider_id, policy_number } = validationResult.data;
 
   // This would integrate with Sikka's API for real verification
   // For now, we'll simulate a verification response
@@ -103,6 +154,11 @@ router.post('/verify', asyncHandler(async (req: AuthenticatedRequest, res: Respo
 
 // Submit insurance claim
 router.post('/claims', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  const validationResult = submitClaimSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid claim data' });
+  }
+
   const {
     patient_id,
     provider_id,
@@ -111,7 +167,7 @@ router.post('/claims', asyncHandler(async (req: AuthenticatedRequest, res: Respo
     diagnosis_codes,
     procedure_codes,
     attachments
-  } = req.body;
+  } = validationResult.data;
 
   // This would integrate with Sikka's API for real claim submission
   // For now, we'll simulate a claim submission
@@ -136,11 +192,7 @@ router.post('/claims', asyncHandler(async (req: AuthenticatedRequest, res: Respo
     .select(`
       *,
       provider:insurance_providers(*),
-      patient:auth.users!patient_id(
-        id,
-        email,
-        raw_user_meta_data
-      )
+      patient:users(*)
     `)
     .single();
 
@@ -152,7 +204,7 @@ router.post('/claims', asyncHandler(async (req: AuthenticatedRequest, res: Respo
   await req.supabase
     .from('claim_history')
     .insert({
-      claim_id: claim.id,
+      claim_id: claim?.id || null,
       status: 'submitted',
       notes: 'Claim submitted successfully',
       created_by: req.user?.id
@@ -163,8 +215,17 @@ router.post('/claims', asyncHandler(async (req: AuthenticatedRequest, res: Respo
 
 // Update claim status
 router.put('/claims/:id/status', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
-  const { status, notes, response_details } = req.body;
+  const validationResult = claimStatusSchema.safeParse(req.body);
+  const idValidationResult = insuranceIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid claim status data' });
+  }
+  if (!idValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid claim ID' });
+  }
+
+  const { id } = idValidationResult.data;
+  const { status, notes, response_details } = validationResult.data;
 
   const { data: claim, error } = await req.supabase
     .from('insurance_claims')
@@ -176,7 +237,7 @@ router.put('/claims/:id/status', asyncHandler(async (req: AuthenticatedRequest, 
     .select(`
       *,
       provider:insurance_providers(*),
-      patient:auth.users!patient_id(
+      patient:auth.users(
         id,
         email,
         raw_user_meta_data
@@ -203,7 +264,12 @@ router.put('/claims/:id/status', asyncHandler(async (req: AuthenticatedRequest, 
 
 // Get claim history
 router.get('/claims/:id/history', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
+  const validationResult = insuranceIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid claim ID' });
+  }
+
+  const { id } = validationResult.data;
 
   const { data: history, error } = await req.supabase
     .from('claim_history')
@@ -227,7 +293,12 @@ router.get('/claims/:id/history', asyncHandler(async (req: AuthenticatedRequest,
 
 // Get claims analytics
 router.get('/claims/analytics/summary', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { start_date, end_date } = req.query;
+  const validationResult = claimsAnalyticsSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid analytics parameters' });
+  }
+
+  const { start_date, end_date } = validationResult.data;
 
   // Get claims within date range
   const { data: claims, error } = await req.supabase

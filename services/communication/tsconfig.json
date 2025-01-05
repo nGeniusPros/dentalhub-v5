@@ -1,9 +1,10 @@
 {
-  "extends": "@dentalhub/tsconfig/base.json",
+  "extends": "../../../packages/tsconfig/base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "esModuleInterop": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+		"exclude": ["node_modules", "dist"]
 }

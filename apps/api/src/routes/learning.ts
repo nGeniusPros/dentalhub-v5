@@ -3,6 +3,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { Router as ExpressRouter } from 'express';
+import { z } from 'zod';
 
 interface AuthenticatedRequest extends Request {
   supabase: SupabaseClient<Database>;
@@ -15,9 +16,96 @@ interface AuthenticatedRequest extends Request {
 
 const router: ExpressRouter = Router();
 
+const getCoursesSchema = z.object({
+  status: z.string().optional(),
+  category: z.string().optional(),
+});
+
+const courseIdSchema = z.object({
+  id: z.string().min(1),
+});
+
+const createCourseSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  category: z.string().min(1),
+  duration: z.number().min(0),
+  prerequisites: z.array(z.string()).optional(),
+  learning_objectives: z.array(z.string()).optional(),
+  thumbnail_url: z.string().url().optional(),
+});
+
+const updateCourseSchema = z.object({
+  title: z.string().min(1).optional(),
+  description: z.string().min(1).optional(),
+  status: z.string().optional(),
+  category: z.string().min(1).optional(),
+  duration: z.number().min(0).optional(),
+  prerequisites: z.array(z.string()).optional(),
+  learning_objectives: z.array(z.string()).optional(),
+  thumbnail_url: z.string().url().optional(),
+});
+
+const createModuleSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  order_index: z.number().min(0),
+  duration: z.number().min(0),
+});
+
+const createContentSchema = z.object({
+  title: z.string().min(1),
+  content_type: z.string().min(1),
+  content_url: z.string().url().optional(),
+  content_data: z.any().optional(),
+  order_index: z.number().min(0),
+  duration: z.number().min(0),
+});
+
+const updateProgressSchema = z.object({
+  enrollment_id: z.string().min(1),
+  module_id: z.string().min(1),
+  content_id: z.string().min(1),
+  completed: z.boolean(),
+  quiz_score: z.number().optional(),
+  time_spent: z.number().optional(),
+});
+
+const getResourcesSchema = z.object({
+  type: z.string().optional(),
+  category: z.string().optional(),
+});
+
+const createResourceSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  resource_type: z.string().min(1),
+  category: z.string().min(1),
+  tags: z.array(z.string()).optional(),
+  url: z.string().url().optional(),
+  file_data: z.any().optional(),
+});
+
+const certificationIdSchema = z.object({
+  id: z.string().min(1),
+});
+
+const updateCertificationSchema = z.object({
+  status: z.string().min(1).optional(),
+  issue_date: z.string().optional(),
+  expiry_date: z.string().optional(),
+  certificate_url: z.string().url().optional(),
+  verification_code: z.string().optional(),
+});
+
 // Get all courses
 router.get('/courses', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { status, category } = req.query;
+  const validationResult = getCoursesSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+  const { status, category } = validationResult.data;
 
   let query = req.supabase
     .from('courses')
@@ -50,7 +138,12 @@ router.get('/courses', asyncHandler(async (req: AuthenticatedRequest, res: Respo
 
 // Get course by ID
 router.get('/courses/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
+  const validationResult = courseIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid course ID' });
+  }
+
+  const { id } = validationResult.data;
 
   const { data: course, error } = await req.supabase
     .from('courses')
@@ -85,6 +178,11 @@ router.get('/courses/:id', asyncHandler(async (req: AuthenticatedRequest, res: R
 
 // Create course
 router.post('/courses', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  const validationResult = createCourseSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid course data' });
+  }
+
   const {
     title,
     description,
@@ -93,7 +191,7 @@ router.post('/courses', asyncHandler(async (req: AuthenticatedRequest, res: Resp
     prerequisites,
     learning_objectives,
     thumbnail_url
-  } = req.body;
+  } = validationResult.data;
 
   const { data: course, error } = await req.supabase
     .from('courses')
@@ -119,7 +217,16 @@ router.post('/courses', asyncHandler(async (req: AuthenticatedRequest, res: Resp
 
 // Update course
 router.put('/courses/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
+  const validationResult = courseIdSchema.safeParse(req.params);
+  const updateValidationResult = updateCourseSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid course ID' });
+  }
+  if (!updateValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid course data' });
+  }
+
+  const { id } = validationResult.data;
   const {
     title,
     description,
@@ -129,7 +236,7 @@ router.put('/courses/:id', asyncHandler(async (req: AuthenticatedRequest, res: R
     prerequisites,
     learning_objectives,
     thumbnail_url
-  } = req.body;
+  } = updateValidationResult.data;
 
   const updates: any = {
     title,
@@ -161,8 +268,17 @@ router.put('/courses/:id', asyncHandler(async (req: AuthenticatedRequest, res: R
 
 // Add module to course
 router.post('/courses/:id/modules', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
-  const { title, description, order_index, duration } = req.body;
+  const validationResult = courseIdSchema.safeParse(req.params);
+  const moduleValidationResult = createModuleSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid course ID' });
+  }
+  if (!moduleValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid module data' });
+  }
+
+  const { id } = validationResult.data;
+  const { title, description, order_index, duration } = moduleValidationResult.data;
 
   const { data: module, error } = await req.supabase
     .from('course_modules')
@@ -185,8 +301,17 @@ router.post('/courses/:id/modules', asyncHandler(async (req: AuthenticatedReques
 
 // Add content to module
 router.post('/modules/:id/content', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
-  const { title, content_type, content_url, content_data, order_index, duration } = req.body;
+  const validationResult = courseIdSchema.safeParse(req.params);
+  const contentValidationResult = createContentSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid module ID' });
+  }
+  if (!contentValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid content data' });
+  }
+
+  const { id } = validationResult.data;
+  const { title, content_type, content_url, content_data, order_index, duration } = contentValidationResult.data;
 
   const { data: content, error } = await req.supabase
     .from('module_content')
@@ -211,7 +336,12 @@ router.post('/modules/:id/content', asyncHandler(async (req: AuthenticatedReques
 
 // Enroll in course
 router.post('/courses/:id/enroll', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
+  const validationResult = courseIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid course ID' });
+  }
+
+  const { id } = validationResult.data;
 
   const { data: enrollment, error } = await req.supabase
     .from('course_enrollments')
@@ -231,7 +361,12 @@ router.post('/courses/:id/enroll', asyncHandler(async (req: AuthenticatedRequest
 
 // Update progress
 router.post('/progress', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { enrollment_id, module_id, content_id, completed, quiz_score, time_spent } = req.body;
+  const validationResult = updateProgressSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid progress data' });
+  }
+
+  const { enrollment_id, module_id, content_id, completed, quiz_score, time_spent } = validationResult.data;
 
   const { data: progress, error } = await req.supabase
     .from('module_progress')
@@ -276,7 +411,12 @@ router.post('/progress', asyncHandler(async (req: AuthenticatedRequest, res: Res
 
 // Get learning resources
 router.get('/resources', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { type, category } = req.query;
+  const validationResult = getResourcesSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+  const { type, category } = validationResult.data;
 
   let query = req.supabase
     .from('learning_resources')
@@ -300,7 +440,12 @@ router.get('/resources', asyncHandler(async (req: AuthenticatedRequest, res: Res
 
 // Add learning resource
 router.post('/resources', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { title, description, resource_type, category, tags, url, file_data } = req.body;
+  const validationResult = createResourceSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid resource data' });
+  }
+
+  const { title, description, resource_type, category, tags, url, file_data } = validationResult.data;
 
   const { data: resource, error } = await req.supabase
     .from('learning_resources')
@@ -340,7 +485,12 @@ router.get('/certifications', asyncHandler(async (req: AuthenticatedRequest, res
 
 // Get user certifications
 router.get('/certifications/user/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
+  const validationResult = certificationIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid certification ID' });
+  }
+
+  const { id } = validationResult.data;
 
   const { data: certifications, error } = await req.supabase
     .from('user_certifications')
@@ -359,8 +509,17 @@ router.get('/certifications/user/:id', asyncHandler(async (req: AuthenticatedReq
 
 // Update certification status
 router.put('/certifications/:id/status', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
-  const { status, issue_date, expiry_date, certificate_url, verification_code } = req.body;
+  const validationResult = certificationIdSchema.safeParse(req.params);
+  const updateValidationResult = updateCertificationSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid certification ID' });
+  }
+  if (!updateValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid certification data' });
+  }
+
+  const { id } = validationResult.data;
+  const { status, issue_date, expiry_date, certificate_url, verification_code } = updateValidationResult.data;
 
   const { data: certification, error } = await req.supabase
     .from('user_certifications')

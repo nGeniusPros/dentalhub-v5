@@ -1,18 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from '../../../components/ui/button';
+import { dashboardService } from '../../../services/dashboard';
 
 export const RevenueAnalytics = () => {
-  const revenueData = [
-    { month: 'Jan', revenue: 125000, expenses: 85000, profit: 40000 },
-    { month: 'Feb', revenue: 132000, expenses: 88000, profit: 44000 },
-    { month: 'Mar', revenue: 141000, expenses: 92000, profit: 49000 },
-    { month: 'Apr', revenue: 145000, expenses: 94000, profit: 51000 },
-    { month: 'May', revenue: 138000, expenses: 90000, profit: 48000 },
-    { month: 'Jun', revenue: 152000, expenses: 95000, profit: 57000 },
-  ];
+  const [monthlyData, setMonthlyData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      setLoading(true);
+						setError(null);
+      try {
+        const data = await dashboardService.getStats();
+        setMonthlyData(data.monthlyData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch dashboard stats');
+      } finally {
+								setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   const revenueByService = [
     { name: 'General Dentistry', value: 45, color: '#4BC5BD' },
@@ -22,7 +43,7 @@ export const RevenueAnalytics = () => {
   ];
 
   return (
-    <motion.div
+				<motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white rounded-xl shadow-lg border border-gray-200 p-6"
@@ -49,7 +70,7 @@ export const RevenueAnalytics = () => {
         <div className="h-[300px]">
           <h3 className="text-sm font-medium text-gray-700 mb-4">Revenue Trend</h3>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={revenueData}>
+            <LineChart data={monthlyData}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -61,23 +82,8 @@ export const RevenueAnalytics = () => {
                 stroke="#4BC5BD"
                 strokeWidth={2}
                 dot={{ fill: '#4BC5BD', strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 8, strokeWidth: 2 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="expenses"
-                stroke="#C5A572"
-                strokeWidth={2}
-                dot={{ fill: '#C5A572', strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 8, strokeWidth: 2 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="profit"
-                stroke="#6B4C9A"
-                strokeWidth={2}
-                dot={{ fill: '#6B4C9A', strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 8, strokeWidth: 2 }}
+																activeDot={{ r: 8, strokeWidth: 2 }}
+                name="Revenue"
               />
             </LineChart>
           </ResponsiveContainer>
@@ -101,7 +107,7 @@ export const RevenueAnalytics = () => {
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip />
+														<Tooltip />
               <Legend />
             </PieChart>
           </ResponsiveContainer>
@@ -112,18 +118,17 @@ export const RevenueAnalytics = () => {
         <h3 className="text-sm font-medium text-gray-700 mb-4">Monthly Comparison</h3>
         <div className="h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={revenueData}>
+            <BarChart data={monthlyData}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
               <XAxis dataKey="month" />
               <YAxis />
               <Tooltip />
               <Legend />
               <Bar dataKey="revenue" fill="#4BC5BD" name="Revenue" />
-              <Bar dataKey="expenses" fill="#C5A572" name="Expenses" />
             </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </motion.div>
-  );
+										</ResponsiveContainer>
+								</div>
+						</div>
+				</motion.div>
+		);
 };

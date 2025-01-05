@@ -4,12 +4,13 @@ import * as Icons from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 
 export const TreatmentAnalytics = () => {
+  // TODO: Connect this component to the backend API to fetch treatment analytics
   const treatments = [
     { name: 'Cleanings', count: 245, revenue: 61250, growth: '+8%' },
     { name: 'Fillings', count: 180, revenue: 72000, growth: '+5%' },
     { name: 'Root Canals', count: 45, revenue: 67500, growth: '+3%' },
     { name: 'Crowns', count: 65, revenue: 130000, growth: '+12%' }
-  ];
+		];
 
   return (
     <motion.div
@@ -26,7 +27,7 @@ export const TreatmentAnalytics = () => {
           <Icons.FileText className="w-4 h-4 mr-2" />
           View Report
         </Button>
-      </div>
+						</div>
 
       <div className="space-y-4">
         {treatments.map((treatment, index) => (
@@ -50,7 +51,7 @@ export const TreatmentAnalytics = () => {
             </div>
           </div>
         ))}
-      </div>
+						</div>
 
       <div className="mt-6">
         <h3 className="text-sm font-medium text-gray-900 mb-3">Treatment Success Rate</h3>
@@ -63,5 +64,5 @@ export const TreatmentAnalytics = () => {
         </div>
       </div>
     </motion.div>
-  );
+		);
 };

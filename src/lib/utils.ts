@@ -12,6 +12,9 @@ import {
   RetellAnalysisResponse,
   OpenAICompletionResponse,
 } from '../types/api';
+import type { Patient, Appointment, Staff } from '../types/models';
+import type { PaginatedResponse } from '../types/utils/helpers';
+import type { ExternalServiceError, RateLimitError, AuthenticationError } from '../types/api';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -114,5 +117,97 @@ export function isOpenAICompletionResponse(
     typeof response.created === 'number' &&
     typeof response.model === 'string' &&
     Array.isArray(response.choices)
+  );
+}
+
+export function isPatient(obj: any): obj is Patient {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof obj.id === 'string' &&
+    typeof obj.firstName === 'string' &&
+    typeof obj.lastName === 'string' &&
+    typeof obj.email === 'string' &&
+    typeof obj.phone === 'string' &&
+    typeof obj.dateOfBirth === 'string' &&
+    typeof obj.gender === 'string' &&
+    typeof obj.address === 'string'
+  );
+}
+
+export function isAppointment(obj: any): obj is Appointment {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof obj.id === 'string' &&
+    typeof obj.patientId === 'string' &&
+    typeof obj.staffId === 'string' &&
+    typeof obj.date === 'string' &&
+    typeof obj.time === 'string' &&
+    typeof obj.duration === 'number' &&
+    typeof obj.status === 'string'
+  );
+}
+
+export function isStaff(obj: any): obj is Staff {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof obj.id === 'string' &&
+    typeof obj.firstName === 'string' &&
+    typeof obj.lastName === 'string' &&
+    typeof obj.email === 'string' &&
+    typeof obj.phone === 'string' &&
+    typeof obj.role === 'string' &&
+    typeof obj.department === 'string'
+  );
+}
+
+export function isUser(obj: any): obj is User {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof obj.id === 'string' &&
+    typeof obj.email === 'string' &&
+    typeof obj.name === 'string' &&
+    typeof obj.role === 'string'
+  );
+}
+
+export function isPaginatedResponse<T>(obj: any): obj is PaginatedResponse<T> {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    Array.isArray(obj.data) &&
+    typeof obj.total === 'number' &&
+    typeof obj.page === 'number' &&
+    typeof obj.pageSize === 'number'
+  );
+}
+
+export function isExternalServiceError(obj: any): obj is ExternalServiceError {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof obj.service === 'string' &&
+    (typeof obj.statusCode === 'number' || typeof obj.statusCode === 'undefined') &&
+    typeof obj.message === 'string' &&
+    typeof obj.details !== 'undefined'
+  );
+}
+
+export function isRateLimitError(obj: any): obj is RateLimitError {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof obj.message === 'string'
+  );
+}
+
+export function isAuthenticationError(obj: any): obj is AuthenticationError {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof obj.message === 'string'
   );
 }

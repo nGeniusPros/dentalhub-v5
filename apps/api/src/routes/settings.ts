@@ -3,6 +3,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { Router as ExpressRouter } from 'express';
+import { z } from 'zod';
 
 interface AuthenticatedRequest extends Request {
   supabase: SupabaseClient<Database>;
@@ -14,6 +15,68 @@ interface AuthenticatedRequest extends Request {
 }
 
 const router: ExpressRouter = Router();
+
+const practiceSettingSchema = z.object({
+  setting_key: z.string().min(1),
+  setting_value: z.any(),
+  setting_type: z.string().min(1),
+  description: z.string().optional(),
+});
+
+const updatePracticeSettingSchema = z.object({
+  setting_value: z.any(),
+  description: z.string().optional(),
+});
+
+const practiceSettingKeySchema = z.object({
+  key: z.string().min(1),
+});
+
+const userPermissionSchema = z.object({
+  user_id: z.string().min(1),
+  permission_key: z.string().min(1),
+  permission_type: z.string().min(1),
+});
+
+const userPermissionIdSchema = z.object({
+  id: z.string().min(1),
+});
+
+const updateUserPermissionSchema = z.object({
+  permission_type: z.string().min(1),
+});
+
+const systemConfigSchema = z.object({
+  config_key: z.string().min(1),
+  config_value: z.any(),
+  config_type: z.string().min(1),
+  description: z.string().optional(),
+});
+
+const systemConfigKeySchema = z.object({
+  key: z.string().min(1),
+});
+
+const updateSystemConfigSchema = z.object({
+  config_value: z.any(),
+  description: z.string().optional(),
+});
+
+const integrationSettingSchema = z.object({
+  integration_key: z.string().min(1),
+  settings_value: z.any(),
+  settings_type: z.string().min(1),
+  description: z.string().optional(),
+});
+
+const integrationSettingKeySchema = z.object({
+  key: z.string().min(1),
+});
+
+const updateIntegrationSettingSchema = z.object({
+  settings_value: z.any(),
+  description: z.string().optional(),
+});
 
 // Get all practice settings
 router.get('/practice', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
@@ -31,7 +94,12 @@ router.get('/practice', asyncHandler(async (req: AuthenticatedRequest, res: Resp
 
 // Get practice setting by key
 router.get('/practice/:key', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { key } = req.params;
+  const validationResult = practiceSettingKeySchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid setting key' });
+  }
+
+  const { key } = validationResult.data;
 
   const { data: setting, error } = await req.supabase
     .from('practice_settings')
@@ -48,7 +116,12 @@ router.get('/practice/:key', asyncHandler(async (req: AuthenticatedRequest, res:
 
 // Create practice setting
 router.post('/practice', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { setting_key, setting_value, setting_type, description } = req.body;
+  const validationResult = practiceSettingSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid practice setting data' });
+  }
+
+  const { setting_key, setting_value, setting_type, description } = validationResult.data;
 
   const { data: setting, error } = await req.supabase
     .from('practice_settings')
@@ -71,8 +144,17 @@ router.post('/practice', asyncHandler(async (req: AuthenticatedRequest, res: Res
 
 // Update practice setting
 router.put('/practice/:key', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { key } = req.params;
-  const { setting_value, description } = req.body;
+  const validationResult = practiceSettingKeySchema.safeParse(req.params);
+  const updateValidationResult = updatePracticeSettingSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid setting key' });
+  }
+  if (!updateValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid setting data' });
+  }
+
+  const { key } = validationResult.data;
+  const { setting_value, description } = updateValidationResult.data;
 
   const { data: setting, error } = await req.supabase
     .from('practice_settings')
@@ -114,7 +196,12 @@ router.get('/permissions', asyncHandler(async (req: AuthenticatedRequest, res: R
 
 // Get user permissions by user ID
 router.get('/permissions/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
+  const validationResult = userPermissionIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid user ID' });
+  }
+
+  const { id } = validationResult.data;
 
   const { data: permissions, error } = await req.supabase
     .from('user_permissions')
@@ -138,7 +225,12 @@ router.get('/permissions/:id', asyncHandler(async (req: AuthenticatedRequest, re
 
 // Set user permission
 router.post('/permissions', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { user_id, permission_key, permission_type } = req.body;
+  const validationResult = userPermissionSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid user permission data' });
+  }
+
+  const { user_id, permission_key, permission_type } = validationResult.data;
 
   const { data: permission, error } = await req.supabase
     .from('user_permissions')
@@ -167,8 +259,17 @@ router.post('/permissions', asyncHandler(async (req: AuthenticatedRequest, res: 
 
 // Update user permission
 router.put('/permissions/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
-  const { permission_type } = req.body;
+  const validationResult = userPermissionIdSchema.safeParse(req.params);
+  const updateValidationResult = updateUserPermissionSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid user permission ID' });
+  }
+  if (!updateValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid user permission data' });
+  }
+
+  const { id } = validationResult.data;
+  const { permission_type } = updateValidationResult.data;
 
   const { data: permission, error } = await req.supabase
     .from('user_permissions')
@@ -209,7 +310,12 @@ router.get('/config', asyncHandler(async (req: AuthenticatedRequest, res: Respon
 
 // Get system configuration by key
 router.get('/config/:key', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { key } = req.params;
+  const validationResult = systemConfigKeySchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid config key' });
+  }
+
+  const { key } = validationResult.data;
 
   const { data: config, error } = await req.supabase
     .from('system_configuration')
@@ -226,7 +332,12 @@ router.get('/config/:key', asyncHandler(async (req: AuthenticatedRequest, res: R
 
 // Create system configuration
 router.post('/config', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { config_key, config_value, config_type, description } = req.body;
+  const validationResult = systemConfigSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid system configuration data' });
+  }
+
+  const { config_key, config_value, config_type, description } = validationResult.data;
 
   const { data: config, error } = await req.supabase
     .from('system_configuration')
@@ -249,8 +360,17 @@ router.post('/config', asyncHandler(async (req: AuthenticatedRequest, res: Respo
 
 // Update system configuration
 router.put('/config/:key', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { key } = req.params;
-  const { config_value, description } = req.body;
+  const validationResult = systemConfigKeySchema.safeParse(req.params);
+  const updateValidationResult = updateSystemConfigSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid config key' });
+  }
+  if (!updateValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid system configuration data' });
+  }
+
+  const { key } = validationResult.data;
+  const { config_value, description } = updateValidationResult.data;
 
   const { data: config, error } = await req.supabase
     .from('system_configuration')
@@ -285,7 +405,12 @@ router.get('/integrations', asyncHandler(async (req: AuthenticatedRequest, res: 
 
 // Get integration setting by key
 router.get('/integrations/:key', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { key } = req.params;
+  const validationResult = integrationSettingKeySchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid integration key' });
+  }
+
+  const { key } = validationResult.data;
 
   const { data: setting, error } = await req.supabase
     .from('integration_settings')
@@ -302,7 +427,12 @@ router.get('/integrations/:key', asyncHandler(async (req: AuthenticatedRequest, 
 
 // Create integration setting
 router.post('/integrations', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { integration_key, settings_value, settings_type, description } = req.body;
+  const validationResult = integrationSettingSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid integration setting data' });
+  }
+
+  const { integration_key, settings_value, settings_type, description } = validationResult.data;
 
   const { data: setting, error } = await req.supabase
     .from('integration_settings')
@@ -325,8 +455,17 @@ router.post('/integrations', asyncHandler(async (req: AuthenticatedRequest, res:
 
 // Update integration setting
 router.put('/integrations/:key', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { key } = req.params;
-  const { settings_value, description } = req.body;
+  const validationResult = integrationSettingKeySchema.safeParse(req.params);
+  const updateValidationResult = updateIntegrationSettingSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid integration key' });
+  }
+  if (!updateValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid integration setting data' });
+  }
+
+  const { key } = validationResult.data;
+  const { settings_value, description } = updateValidationResult.data;
 
   const { data: setting, error } = await req.supabase
     .from('integration_settings')

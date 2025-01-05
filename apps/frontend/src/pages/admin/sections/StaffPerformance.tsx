@@ -1,38 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../../components/ui/button';
+import { dashboardService } from '../../../services/dashboard';
 
 export const StaffPerformance = () => {
-  const staffMetrics = [
-    {
-      name: 'Dr. Emily Parker',
-      role: 'Lead Dentist',
-      metrics: {
-        patients: 45,
-        satisfaction: 98,
-        revenue: 52000
+  const [staffMetrics, setStaffMetrics] = useState<any[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchStaffMetrics = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await dashboardService.getStaffMetrics();
+        setStaffMetrics(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch staff metrics');
+      } finally {
+        setLoading(false);
       }
-    },
-    {
-      name: 'Dr. Michael Chen',
-      role: 'Dentist',
-      metrics: {
-        patients: 38,
-        satisfaction: 96,
-        revenue: 45000
-      }
-    },
-    {
-      name: 'Sarah Johnson',
-      role: 'Hygienist',
-      metrics: {
-        patients: 42,
-        satisfaction: 97,
-        revenue: 28000
-      }
-    }
-  ];
+    };
+
+    fetchStaffMetrics();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <motion.div
@@ -52,7 +52,7 @@ export const StaffPerformance = () => {
       </div>
 
       <div className="space-y-4">
-        {staffMetrics.map((staff, index) => (
+        {staffMetrics?.map((staff, index) => (
           <div key={index} className="p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
@@ -68,15 +68,15 @@ export const StaffPerformance = () => {
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Patients</p>
-                <p className="font-medium text-gray-900">{staff.metrics.patients}</p>
+                <p className="font-medium text-gray-900">{staff.metrics.appointmentsCompleted}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Satisfaction</p>
-                <p className="font-medium text-gray-900">{staff.metrics.satisfaction}%</p>
+                <p className="font-medium text-gray-900">{staff.metrics.patientSatisfaction}%</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Revenue</p>
-                <p className="font-medium text-gray-900">${staff.metrics.revenue.toLocaleString()}</p>
+                <p className="font-medium text-gray-900">${staff.metrics.revenue?.toLocaleString()}</p>
               </div>
             </div>
           </div>

@@ -2,27 +2,23 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { usePatients } from '../../hooks/use-patients';
 
 const Patients = () => {
-  // Mock data - would come from PMS API
-  const patients = [
-    {
-      id: '1',
-      name: 'Sarah Johnson',
-      email: 'sarah.j@example.com',
-      phone: '(555) 123-4567',
-      nextAppointment: '2024-03-15',
-      status: 'active',
-      balance: 150.00,
-      lastVisit: '2024-02-01'
-    },
-    // Add more mock patients...
-  ];
+  const { patients, loading, error } = usePatients();
+
+  if (loading) {
+    return <div>Loading patients...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div>
+								<div>
           <h1 className="text-2xl font-bold text-gray-900">Patient Management</h1>
           <p className="text-gray-500">View and manage patient records</p>
         </div>
@@ -41,7 +37,7 @@ const Patients = () => {
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
         <div className="p-4 border-b border-gray-200">
           <div className="flex gap-4">
-            <div className="flex-1">
+												<div className="flex-1">
               <div className="relative">
                 <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
@@ -61,7 +57,7 @@ const Patients = () => {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
-              <tr>
+														<tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Patient
                 </th>

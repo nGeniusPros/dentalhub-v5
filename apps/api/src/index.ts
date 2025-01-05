@@ -33,6 +33,7 @@ import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 import { config } from 'dotenv';
 import { MonitoringService } from './services/monitoring';
+import { PatientService } from './services/patientService';
 
 // ---------------------------- Environment Setup -----------------------------
 // Load environment variables
@@ -40,7 +41,7 @@ config();
 
 // ---------------------------- Service Initialization ------------------------
 // Initialize Supabase client
-const supabaseClient = createClient(
+const supabaseClient = createClient<Database>(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
@@ -111,9 +112,18 @@ const PORT = process.env.PORT || 3000;
 const instances = process.env.API_INSTANCES ? parseInt(process.env.API_INSTANCES) : 1;
 let currentInstance = 0;
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  currentInstance++;
+  if (currentInstance > instances) {
+    currentInstance = 1;
+  }
+  MonitoringService.logServerStart(PORT, currentInstance);
   console.log(`API Gateway running on port ${PORT}`);
   console.log(`Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+
+  // Sync patients from Sikka on server start
+  const patientService = new PatientService(supabaseClient);
+  await patientService.syncPatientsFromSikka();
 });
 
 // Load balancing middleware

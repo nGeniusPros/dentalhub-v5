@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { User } from '../types';
 
 export const useAuth = () => {
@@ -6,54 +6,84 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const fetchUser = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      // Mock user data based on email
-      const mockUsers: Record<string, User> = {
-        'sarah.wilson@example.com': {
-          id: '1',
-          name: 'Dr. Sarah Wilson',
-          email: 'sarah.wilson@example.com',
-          role: 'staff',
-          title: 'Lead Dentist',
-          department: 'General Dentistry'
-        },
-        'admin@example.com': {
-          id: '2',
-          name: 'Dr. Emily Parker',
-          email: 'admin@example.com',
-          role: 'admin',
-          title: 'Practice Administrator',
-          department: 'Administration'
-        }
-      };
-
-      const mockUser = mockUsers[email];
-      if (!mockUser) {
-        throw new Error('Invalid credentials');
+      const response = await fetch('/api/auth/me');
+      if (!response.ok) {
+        throw new Error('Failed to fetch user');
       }
-
-      setUser(mockUser);
-      return mockUser;
+      const userData = await response.json() as User;
+      setUser(userData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-      throw err;
+					setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const logout = useCallback(() => {
-    setUser(null);
-  }, []);
+  const login = useCallback(async (email: string, password: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+								headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+					});
 
-  return {
-    user,
-    loading,
-    error,
-    login,
-    logout
-  };
+      if (!response.ok) {
+        const errorData = await response.json();
+							throw new Error(errorData.error || 'Login failed');
+      }
+
+      const userData = await response.json() as User;
+      setUser(userData);
+      return userData;
+    } catch (err) {
+						setError(err instanceof Error ? err.message : 'An error occurred');
+						throw err;
+				} finally {
+						setLoading(false);
+				}
+		}, []);
+
+		const logout = useCallback(async () => {
+				setUser(null);
+				// Remove tokens from cookies or local storage
+		}, []);
+
+		const refreshSession = useCallback(async () => {
+				setLoading(true);
+				setError(null);
+				try {
+						const response = await fetch('/api/auth/refresh', {
+								method: 'POST',
+						});
+						if (!response.ok) {
+								throw new Error('Failed to refresh session');
+						}
+						await fetchUser();
+				} catch (err) {
+						setError(err instanceof Error ? err.message : 'An error occurred');
+				} finally {
+						setLoading(false);
+				}
+		}, [fetchUser]);
+
+		useEffect(() => {
+				fetchUser();
+		}, [fetchUser]);
+
+		return {
+				user,
+				loading,
+				error,
+				login,
+				logout,
+				refreshSession
+		};
 };

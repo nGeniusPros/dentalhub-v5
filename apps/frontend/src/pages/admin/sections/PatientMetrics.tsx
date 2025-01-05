@@ -1,22 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadialBarChart, RadialBar } from 'recharts';
 import { Button } from '../../../components/ui/button';
+import { dashboardService } from '../../../services/dashboard';
 
 export const PatientMetrics = () => {
-  const patientGrowth = [
-    { month: 'Jan', newPatients: 45, activePatients: 1200, retentionRate: 95 },
-    { month: 'Feb', newPatients: 52, activePatients: 1250, retentionRate: 94 },
-    { month: 'Mar', newPatients: 48, activePatients: 1290, retentionRate: 96 },
-    { month: 'Apr', newPatients: 61, activePatients: 1340, retentionRate: 95 },
-    { month: 'May', newPatients: 55, activePatients: 1380, retentionRate: 93 },
-    { month: 'Jun', newPatients: 67, activePatients: 1430, retentionRate: 97 },
-  ];
+  const [monthlyData, setMonthlyData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      setLoading(true);
+						setError(null);
+      try {
+        const data = await dashboardService.getStats();
+        setMonthlyData(data.monthlyData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch dashboard stats');
+      } finally {
+								setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   const satisfactionMetrics = [
     { name: 'Overall', value: 94, fill: '#4BC5BD' },
-    { name: 'Staff', value: 96, fill: '#6B4C9A' },
+				{ name: 'Staff', value: 96, fill: '#6B4C9A' },
     { name: 'Cleanliness', value: 98, fill: '#C5A572' },
     { name: 'Wait Time', value: 88, fill: '#1B2B5B' },
   ];
@@ -43,7 +64,7 @@ export const PatientMetrics = () => {
         <div className="h-[300px]">
           <h3 className="text-sm font-medium text-gray-700 mb-4">Patient Growth</h3>
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={patientGrowth}>
+            <AreaChart data={monthlyData}>
               <defs>
                 <linearGradient id="colorNewPatients" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#4BC5BD" stopOpacity={0.1}/>
@@ -51,13 +72,13 @@ export const PatientMetrics = () => {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
-              <XAxis dataKey="month" />
+														<XAxis dataKey="month" />
               <YAxis />
               <Tooltip />
               <Legend />
               <Area
                 type="monotone"
-                dataKey="newPatients"
+                dataKey="appointments"
                 stroke="#4BC5BD"
                 fillOpacity={1}
                 fill="url(#colorNewPatients)"
@@ -65,7 +86,7 @@ export const PatientMetrics = () => {
               />
               <Line
                 type="monotone"
-                dataKey="retentionRate"
+                dataKey="revenue"
                 stroke="#6B4C9A"
                 name="Retention Rate %"
               />
@@ -83,7 +104,7 @@ export const PatientMetrics = () => {
               innerRadius="30%"
               outerRadius="100%"
               data={satisfactionMetrics}
-              startAngle={180}
+														startAngle={180}
               endAngle={0}
             >
               <RadialBar
@@ -111,25 +132,25 @@ export const PatientMetrics = () => {
         <div className="space-y-4">
           {[
             { label: '18-30', percentage: 25 },
-            { label: '31-50', percentage: 45 },
-            { label: '51-70', percentage: 20 },
-            { label: '70+', percentage: 10 }
-          ].map((age, index) => (
-            <div key={index}>
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-600">{age.label}</span>
-                <span className="text-gray-900">{age.percentage}%</span>
-              </div>
-              <div className="h-2 bg-gray-100 rounded-full">
-                <div
-                  className="h-full bg-primary rounded-full"
-                  style={{ width: `${age.percentage}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  );
+												{ label: '31-50', percentage: 45 },
+												{ label: '51-70', percentage: 20 },
+												{ label: '70+', percentage: 10 }
+										].map((age, index) => (
+												<div key={index}>
+														<div className="flex justify-between text-sm mb-1">
+																<span className="text-gray-600">{age.label}</span>
+																<span className="text-gray-900">{age.percentage}%</span>
+														</div>
+														<div className="h-2 bg-gray-100 rounded-full">
+																<div
+																		className="h-full bg-primary rounded-full"
+																		style={{ width: `${age.percentage}%` }}
+																/>
+														</div>
+												</div>
+										))}
+								</div>
+						</div>
+				</motion.div>
+		);
 };

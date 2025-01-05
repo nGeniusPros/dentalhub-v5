@@ -3,6 +3,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../../types/database.types';
 import { asyncHandler } from '../../utils/asyncHandler';
 import { Router as ExpressRouter } from 'express';
+import { z } from 'zod';
 
 interface AuthenticatedRequest extends Request {
   supabase: SupabaseClient<Database>;
@@ -15,10 +16,52 @@ interface AuthenticatedRequest extends Request {
 
 const router: ExpressRouter = Router();
 
+const staffIdSchema = z.object({
+  id: z.string().min(1),
+});
+
+const getTasksSchema = z.object({
+  status: z.string().optional(),
+  priority: z.string().optional(),
+});
+
+const createTaskSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  priority: z.string().min(1),
+  due_date: z.string().min(1),
+  category: z.string().min(1),
+  tags: z.array(z.string()).optional(),
+  attachments: z.array(z.string()).optional(),
+});
+
+const updateTaskStatusSchema = z.object({
+  status: z.string().min(1),
+  completion_date: z.string().optional(),
+});
+
+const taskIdSchema = z.object({
+  task_id: z.string().min(1),
+});
+
+const addCommentSchema = z.object({
+  content: z.string().min(1),
+  attachments: z.array(z.string()).optional(),
+});
+
 // Get staff tasks
 router.get('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
-  const { status, priority } = req.query;
+  const validationResult = staffIdSchema.safeParse(req.params);
+  const queryValidationResult = getTasksSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid staff ID' });
+  }
+  if (!queryValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+  const { id } = validationResult.data;
+  const { status, priority } = queryValidationResult.data;
 
   let query = req.supabase
     .from('staff_tasks')
@@ -51,7 +94,16 @@ router.get('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response)
 
 // Add task
 router.post('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
+  const validationResult = staffIdSchema.safeParse(req.params);
+  const taskValidationResult = createTaskSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid staff ID' });
+  }
+  if (!taskValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid task data' });
+  }
+
+  const { id } = validationResult.data;
   const {
     title,
     description,
@@ -60,7 +112,7 @@ router.post('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response
     category,
     tags,
     attachments
-  } = req.body;
+  } = taskValidationResult.data;
 
   const { data: task, error } = await req.supabase
     .from('staff_tasks')
@@ -87,8 +139,21 @@ router.post('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response
 
 // Update task status
 router.put('/:id/:task_id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id, task_id } = req.params;
-  const { status, completion_date } = req.body;
+  const validationResult = staffIdSchema.safeParse(req.params);
+  const taskValidationResult = taskIdSchema.safeParse(req.params);
+    const updateValidationResult = updateTaskStatusSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid staff ID' });
+  }
+    if (!taskValidationResult.success) {
+        return res.status(400).json({ error: 'Invalid task ID' });
+    }
+    if (!updateValidationResult.success) {
+        return res.status(400).json({ error: 'Invalid task status data' });
+    }
+
+  const { id, task_id } = validationResult.data;
+  const { status, completion_date } = updateValidationResult.data;
 
   const { data: task, error } = await req.supabase
     .from('staff_tasks')
@@ -110,13 +175,22 @@ router.put('/:id/:task_id', asyncHandler(async (req: AuthenticatedRequest, res: 
 
 // Add task comment
 router.post('/:id/comments', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { task_id } = req.params;
-  const { content, attachments } = req.body;
+  const validationResult = staffIdSchema.safeParse(req.params);
+  const commentValidationResult = addCommentSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid staff ID' });
+  }
+  if (!commentValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid comment data' });
+  }
+
+  const { id } = validationResult.data;
+  const { content, attachments } = commentValidationResult.data;
 
   const { data: comment, error } = await req.supabase
     .from('staff_task_comments')
     .insert({
-      task_id,
+      task_id: id,
       user_id: req.user?.id,
       content,
       attachments

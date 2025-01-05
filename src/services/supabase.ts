@@ -1,49 +1,38 @@
-import supabase from '../lib/supabase/client';
+import { SupabaseService } from '../api/src/services/supabaseService';
 
-export const supabaseService = {
+const supabaseService = new SupabaseService();
+
+export const supabase = {
   auth: {
     getSession: async () => {
-      return await supabase.auth.getSession();
+      return await supabaseService.getSession();
     },
     getUser: async () => {
-      return await supabase.auth.getUser();
+      return await supabaseService.getUser();
     },
     signInWithPassword: async (email: string, password: string) => {
-      return await supabase.auth.signInWithPassword({ email, password });
+      return await supabaseService.signInWithPassword(email, password);
     },
     signUp: async (email: string, password: string) => {
-      return await supabase.auth.signUp({ email, password });
+      return await supabaseService.signUp(email, password);
     },
     signOut: async () => {
-      return await supabase.auth.signOut();
+      return await supabaseService.signOut();
     },
     resetPasswordForEmail: async (email: string) => {
-      return await supabase.auth.resetPasswordForEmail(email);
+      return await supabaseService.resetPasswordForEmail(email);
     },
     updateUser: async (password: string) => {
-      return await supabase.auth.updateUser({ password });
+      return await supabaseService.updateUser(password);
     },
     onAuthStateChange: (callback: any) => {
-      return supabase.auth.onAuthStateChange(callback);
+      return supabaseService.onAuthStateChange(callback);
     }
   },
   from: (table: string) => {
-    return {
-      select: async (select: string) => {
-        return await supabase.from(table).select(select);
-      },
-      insert: async (data: any) => {
-        return await supabase.from(table).insert(data);
-      },
-      update: async (data: any) => {
-        return await supabase.from(table).update(data);
-      },
-      delete: async () => {
-        return await supabase.from(table).delete();
-      }
-    }
+    return supabaseService.from(table);
   },
   rpc: async (fn: string, args: any) => {
-    return await supabase.rpc(fn, args);
+    return await supabaseService.rpc(fn, args);
   }
 };

@@ -7,9 +7,10 @@ import { profileRoutes } from './staff/profiles';
 import { performanceRoutes } from './staff/performance';
 import { trainingRoutes } from './staff/training';
 import { taskRoutes } from './staff/tasks';
+import { z } from 'zod';
 
 interface AuthenticatedRequest extends Request {
-		supabase: SupabaseClient<Database>;
+  supabase: SupabaseClient<Database>;
   user?: {
     id: string;
     email: string;
@@ -19,6 +20,45 @@ interface AuthenticatedRequest extends Request {
 
 const router: ExpressRouter = Router();
 
+const getStaffSchema = z.object({
+  role: z.string().optional(),
+  status: z.string().optional(),
+});
+
+const staffIdSchema = z.object({
+  id: z.string().min(1),
+});
+
+const createStaffSchema = z.object({
+  user_id: z.string().min(1),
+  role: z.string().min(1),
+  specialization: z.string().optional(),
+  license_number: z.string().optional(),
+  license_expiry: z.string().optional(),
+  certifications: z.array(z.string()).optional(),
+  education: z.array(z.string()).optional(),
+  skills: z.array(z.string()).optional(),
+  bio: z.string().optional(),
+  contact_info: z.any().optional(),
+  emergency_contact: z.any().optional(),
+  hire_date: z.string().optional(),
+});
+
+const updateStaffSchema = z.object({
+  role: z.string().min(1).optional(),
+  specialization: z.string().optional(),
+  license_number: z.string().optional(),
+  license_expiry: z.string().optional(),
+  certifications: z.array(z.string()).optional(),
+  education: z.array(z.string()).optional(),
+  skills: z.array(z.string()).optional(),
+  bio: z.string().optional(),
+  contact_info: z.any().optional(),
+  emergency_contact: z.any().optional(),
+  status: z.string().optional(),
+  termination_date: z.string().optional(),
+});
+
 // Mount sub-routers
 router.use('/profiles', profileRoutes);
 router.use('/performance', performanceRoutes);
@@ -27,7 +67,12 @@ router.use('/tasks', taskRoutes);
 
 // Get all staff profiles
 router.get('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { role, status } = req.query;
+  const validationResult = getStaffSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+  const { role, status } = validationResult.data;
   let query = req.supabase
     .from('staff_profiles')
     .select(`
@@ -57,7 +102,12 @@ router.get('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =>
 
 // Get staff profile by ID
 router.get('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
+  const validationResult = staffIdSchema.safeParse(req.params);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid staff ID' });
+  }
+
+  const { id } = validationResult.data;
 
   const { data: staff, error } = await req.supabase
     .from('staff_profiles')
@@ -82,6 +132,11 @@ router.get('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response)
 
 // Create staff profile
 router.post('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  const validationResult = createStaffSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid staff data' });
+  }
+
   const {
     user_id,
     role,
@@ -95,7 +150,7 @@ router.post('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =
     contact_info,
     emergency_contact,
     hire_date
-  } = req.body;
+  } = validationResult.data;
 
   const { data: staff, error } = await req.supabase
     .from('staff_profiles')
@@ -125,7 +180,16 @@ router.post('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =
 
 // Update staff profile
 router.put('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
+  const validationResult = staffIdSchema.safeParse(req.params);
+  const updateValidationResult = updateStaffSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid staff ID' });
+  }
+  if (!updateValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid staff data' });
+  }
+
+  const { id } = validationResult.data;
   const {
     role,
     specialization,
@@ -139,7 +203,7 @@ router.put('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response)
     emergency_contact,
     status,
     termination_date
-  } = req.body;
+  } = updateValidationResult.data;
 
   const { data: staff, error } = await req.supabase
     .from('staff_profiles')

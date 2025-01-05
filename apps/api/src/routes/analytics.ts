@@ -3,6 +3,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { Router as ExpressRouter } from 'express';
+import { z } from 'zod';
 
 interface AuthenticatedRequest extends Request {
   supabase: SupabaseClient<Database>;
@@ -15,9 +16,25 @@ interface AuthenticatedRequest extends Request {
 
 const router: ExpressRouter = Router();
 
+const analyticsSchema = z.object({
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+});
+
+const revenueAnalyticsSchema = z.object({
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+  group_by: z.enum(['month', 'year']).optional(),
+});
+
 // Revenue analytics
 router.get('/revenue', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { start_date, end_date, group_by = 'month' } = req.query;
+  const validationResult = revenueAnalyticsSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+  const { start_date, end_date, group_by = 'month' } = validationResult.data;
 
   // Get revenue entries
   const { data: entries, error } = await req.supabase
@@ -63,7 +80,12 @@ router.get('/revenue', asyncHandler(async (req: AuthenticatedRequest, res: Respo
 
 // Patient analytics
 router.get('/patients', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { start_date, end_date } = req.query;
+  const validationResult = analyticsSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+  const { start_date, end_date } = validationResult.data;
 
   // Get patient data
   const { data: patients, error } = await req.supabase
@@ -114,7 +136,12 @@ router.get('/patients', asyncHandler(async (req: AuthenticatedRequest, res: Resp
 
 // Treatment analytics
 router.get('/treatments', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const { start_date, end_date } = req.query;
+  const validationResult = analyticsSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+    const { start_date, end_date } = validationResult.data;
 
     // Get appointment data
     const { data: appointments, error } = await req.supabase
@@ -145,7 +172,12 @@ router.get('/treatments', asyncHandler(async (req: AuthenticatedRequest, res: Re
 
 // Campaign performance
 router.get('/campaigns', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { start_date, end_date } = req.query;
+  const validationResult = analyticsSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+  const { start_date, end_date } = validationResult.data;
 
   // Get campaign data
   const { data: campaigns, error } = await req.supabase
@@ -192,7 +224,12 @@ router.get('/campaigns', asyncHandler(async (req: AuthenticatedRequest, res: Res
 
 // Staff performance
 router.get('/staff', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { start_date, end_date } = req.query;
+  const validationResult = analyticsSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+  const { start_date, end_date } = validationResult.data;
 
   // Get staff performance data
   const { data: performance, error } = await req.supabase

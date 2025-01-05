@@ -3,6 +3,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { Router as ExpressRouter } from 'express';
+import { z } from 'zod';
 
 interface AuthenticatedRequest extends Request {
   supabase: SupabaseClient<Database>;
@@ -15,9 +16,61 @@ interface AuthenticatedRequest extends Request {
 
 const router: ExpressRouter = Router();
 
+const getRevenueEntriesSchema = z.object({
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+  category: z.string().optional(),
+});
+
+const createRevenueEntrySchema = z.object({
+  entry_date: z.string().min(1),
+  category: z.string().min(1),
+  amount: z.number().min(0),
+  source: z.string().min(1),
+  reference_id: z.string().optional(),
+  reference_type: z.string().optional(),
+  notes: z.string().optional(),
+});
+
+const revenueAnalyticsSchema = z.object({
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+  group_by: z.enum(['month', 'year']).optional(),
+});
+
+const getARSchema = z.object({
+  status: z.string().optional(),
+});
+
+const createPaymentPlanSchema = z.object({
+  patient_id: z.string().min(1),
+  total_amount: z.number().min(0),
+  installment_amount: z.number().min(0),
+  frequency: z.string().min(1),
+  start_date: z.string().min(1),
+  end_date: z.string().min(1),
+  notes: z.string().optional(),
+});
+
+const paymentPlanIdSchema = z.object({
+  id: z.string().min(1),
+});
+
+const updatePaymentPlanSchema = z.object({
+  remaining_amount: z.number().min(0).optional(),
+  next_payment_date: z.string().optional(),
+  status: z.string().optional(),
+  notes: z.string().optional(),
+});
+
 // Get revenue entries
 router.get('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { start_date, end_date, category } = req.query;
+  const validationResult = getRevenueEntriesSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+  const { start_date, end_date, category } = validationResult.data;
 
   let query = req.supabase
     .from('revenue_entries')
@@ -44,6 +97,11 @@ router.get('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =>
 
 // Add revenue entry
 router.post('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  const validationResult = createRevenueEntrySchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid revenue entry data' });
+  }
+
   const {
     entry_date,
     category,
@@ -52,7 +110,7 @@ router.post('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =
     reference_id,
     reference_type,
     notes
-  } = req.body;
+  } = validationResult.data;
 
   const { data: entry, error } = await req.supabase
     .from('revenue_entries')
@@ -78,7 +136,12 @@ router.post('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =
 
 // Get revenue analytics
 router.get('/analytics', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { start_date, end_date, group_by = 'month' } = req.query;
+  const validationResult = revenueAnalyticsSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid analytics parameters' });
+  }
+
+  const { start_date, end_date, group_by = 'month' } = validationResult.data;
 
   // Get revenue entries
   const { data: entries, error } = await req.supabase
@@ -109,7 +172,7 @@ router.get('/analytics', asyncHandler(async (req: AuthenticatedRequest, res: Res
     analytics.by_category[entry.category] += entry.amount;
 
     // Revenue by period
-    const period = group_by === 'month' 
+    const period = group_by === 'month'
       ? entry.entry_date.substring(0, 7) // YYYY-MM
       : entry.entry_date.substring(0, 4); // YYYY
 
@@ -124,7 +187,12 @@ router.get('/analytics', asyncHandler(async (req: AuthenticatedRequest, res: Res
 
 // Get accounts receivable
 router.get('/ar', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { status } = req.query;
+  const validationResult = getARSchema.safeParse(req.query);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid query parameters' });
+  }
+
+  const { status } = validationResult.data;
 
   let query = req.supabase
     .from('accounts_receivable')
@@ -190,6 +258,11 @@ router.get('/ar/aging', asyncHandler(async (req: AuthenticatedRequest, res: Resp
 
 // Create payment plan
 router.post('/payment-plans', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  const validationResult = createPaymentPlanSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid payment plan data' });
+  }
+
   const {
     patient_id,
     total_amount,
@@ -198,7 +271,7 @@ router.post('/payment-plans', asyncHandler(async (req: AuthenticatedRequest, res
     start_date,
     end_date,
     notes
-  } = req.body;
+  } = validationResult.data;
 
   const { data: plan, error } = await req.supabase
     .from('payment_plans')
@@ -226,13 +299,22 @@ router.post('/payment-plans', asyncHandler(async (req: AuthenticatedRequest, res
 
 // Update payment plan
 router.put('/payment-plans/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
+  const validationResult = paymentPlanIdSchema.safeParse(req.params);
+  const updateValidationResult = updatePaymentPlanSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res.status(400).json({ error: 'Invalid payment plan ID' });
+  }
+  if (!updateValidationResult.success) {
+    return res.status(400).json({ error: 'Invalid payment plan data' });
+  }
+
+  const { id } = validationResult.data;
   const {
     remaining_amount,
     next_payment_date,
     status,
     notes
-  } = req.body;
+  } = updateValidationResult.data;
 
   const { data: plan, error } = await req.supabase
     .from('payment_plans')
