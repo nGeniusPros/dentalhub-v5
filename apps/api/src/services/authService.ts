@@ -1,4 +1,4 @@
-import { SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient, Session } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 
 export class AuthService {
@@ -24,11 +24,11 @@ export class AuthService {
       throw userError;
     }
 
-    return user;
+    return {user, accessToken: data.session?.access_token, refreshToken: data.session?.refresh_token};
   }
 
-  async getCurrentUser() {
-    const { data: user, error } = await this.supabase.auth.getUser();
+  async getCurrentUser(accessToken: string) {
+    const { data: user, error } = await this.supabase.auth.getUser(accessToken);
 
     if (error) {
       throw error;
@@ -66,5 +66,17 @@ export class AuthService {
     }
 
     return profile;
+  }
+
+  async refreshSession(refreshToken: string): Promise<{ session: Session | null, error: any }> {
+    const { data, error } = await this.supabase.auth.refreshSession({
+      refresh_token: refreshToken,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return { session: data.session, error };
   }
 }
