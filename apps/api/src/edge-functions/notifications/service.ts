@@ -4,10 +4,11 @@ import {
   NotificationResult,
   EmailOptions,
   SmsOptions,
+  NotificationConfig,
 } from './types';
 import { handleNotificationError } from './error';
 import { v4 as uuidv4 } from 'uuid';
-import { NotificationConfig } from './config';
+import { notificationConfig } from './config';
 import { createTransport } from 'nodemailer';
 import { Twilio } from 'twilio';
 
@@ -54,7 +55,7 @@ async function sendSms(options: SmsOptions, config: NotificationConfig): Promise
       const message = await client.messages.create({
         body: options.text,
         from: options.from || process.env.TWILIO_FROM_NUMBER,
-        to: options.to,
+        to: Array.isArray(options.to) ? options.to[0] : options.to, // Convert array to single string for Twilio
       });
       return message;
     } else {

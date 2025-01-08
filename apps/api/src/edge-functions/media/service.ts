@@ -1,17 +1,9 @@
-import {
-  MediaData,
-  MediaOptions,
-  ProcessedMedia,
-  MediaProcessingResult,
-  MediaStorageOptions,
-  ImageProcessingOptions,
-} from './types';
 import { handleMediaError } from './error';
 import { v4 as uuidv4 } from 'uuid';
 import { mediaConfig } from './config';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { ImageProcessingOptions, MediaData, MediaOptions } from './types';
+import type { ImageProcessingOptions, MediaData, MediaOptions, ProcessedMedia, MediaProcessingResult, MediaStorageOptions } from './types';
 import { edgeCache } from '../../utils/cache';
 import { MonitoringService } from '../../services/monitoring';
 
