@@ -1,37 +1,64 @@
+# Build stage
 FROM node:18-alpine AS builder
 
-# Set working directory
+# Install pnpm
+RUN npm install -g pnpm
+
+# Create app directory
 WORKDIR /app
 
-# Copy package files
-COPY apps/api/package*.json ./
-COPY apps/api/tsconfig.json ./
-COPY package-lock.json ./
-COPY ../../packages ./packages
+# Copy workspace files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+# Copy API package files
+COPY apps/api/package.json ./apps/api/
+COPY packages/database/package.json ./packages/database/
 
 # Install dependencies
-RUN npm install --no-workspaces
+RUN pnpm install --frozen-lockfile
 
 # Copy source code
-COPY src ./src
+COPY apps/api ./apps/api
+COPY packages/database ./packages/database
 
 # Build the application
-RUN npm run build
+WORKDIR /app/apps/api
+RUN pnpm build
 
 # Production stage
 FROM node:18-alpine
 
+# Install production dependencies
+RUN apk add --no-cache dumb-init
+
+# Create app directory
 WORKDIR /app
 
-# Copy built assets from builder stage
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY apps/api/package*.json ./
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 -G nodejs
 
-# Security: Run as non-root user
-USER node
+# Copy built assets
+COPY --from=builder --chown=nodejs:nodejs /app/apps/api/dist ./dist
+COPY --from=builder --chown=nodejs:nodejs /app/apps/api/package.json ./
+COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
+
+# Set environment variables
+ENV NODE_ENV=production \
+    PORT=3000
+
+# Switch to non-root user
+USER nodejs
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
 # Expose API port
 EXPOSE 3000
 
-CMD ["npm", "start"]
+# Use dumb-init as PID 1
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# Start the application
+CMD ["node", "dist/index.js"]

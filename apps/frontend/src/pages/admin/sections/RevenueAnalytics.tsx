@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from '../../../components/ui/button';
-import { dashboardService } from '../../../services/dashboard';
+import { dashboardService } from '../services/dashboard';
 
 export const RevenueAnalytics = () => {
   const [monthlyData, setMonthlyData] = useState<any[]>([]);

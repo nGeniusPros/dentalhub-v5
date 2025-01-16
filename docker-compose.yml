@@ -1,14 +1,48 @@
 version: '3.8'
+
 services:
-  migration:
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - dentalhub-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  api:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
-    env_file:
-      - ./apps/api/.env
     ports:
       - "3000:3000"
-    command: ["npm", "run", "dev"]
-    volumes:
-      - ./apps/api:/app
-      - /app/node_modules
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    networks:
+      - dentalhub-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  dentalhub-network:
+    driver: bridge
