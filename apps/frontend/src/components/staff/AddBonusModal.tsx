@@ -2,12 +2,33 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../ui/button';
-import { cn } from '../../lib/utils';
+
+type BonusType = 'performance' | 'holiday' | 'referral' | 'retention' | 'spot' | 'commission';
+type BonusFrequency = 'one-time' | 'monthly' | 'quarterly' | 'annual';
+
+interface BonusMetric {
+  metric: string;
+  target: string;
+  achieved: string;
+}
+
+interface Bonus {
+  type: BonusType;
+  amount: number;
+  date: string;
+  reason: string;
+  recurring: boolean;
+  frequency: BonusFrequency;
+  endDate: string;
+  metrics: BonusMetric[];
+  staffId: string;
+  createdAt: string;
+}
 
 interface AddBonusModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (bonus: any) => void;
+  onAdd: (bonus: Bonus) => void;
   staffId: string;
   staffName: string;
 }
@@ -19,15 +40,15 @@ export const AddBonusModal: React.FC<AddBonusModalProps> = ({
   staffId,
   staffName
 }) => {
-  const [bonus, setBonus] = useState({
-    type: 'performance',
-    amount: '',
+  const [bonus, setBonus] = useState<Omit<Bonus, 'staffId' | 'createdAt'>>({
+    type: 'performance' as BonusType,
+    amount: 0,
     date: new Date().toISOString().split('T')[0],
     reason: '',
     recurring: false,
-    frequency: 'one-time',
+    frequency: 'one-time' as BonusFrequency,
     endDate: '',
-    metrics: [] as { metric: string; target: string; achieved: string }[]
+    metrics: []
   });
 
   if (!isOpen) return null;
@@ -37,7 +58,7 @@ export const AddBonusModal: React.FC<AddBonusModalProps> = ({
     onAdd({
       ...bonus,
       staffId,
-      amount: parseFloat(bonus.amount),
+      amount: bonus.amount,
       createdAt: new Date().toISOString()
     });
     onClose();
@@ -84,7 +105,7 @@ export const AddBonusModal: React.FC<AddBonusModalProps> = ({
               </label>
               <select
                 value={bonus.type}
-                onChange={(e) => setBonus({ ...bonus, type: e.target.value })}
+                onChange={(e) => setBonus({ ...bonus, type: e.target.value as BonusType })}
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -106,7 +127,7 @@ export const AddBonusModal: React.FC<AddBonusModalProps> = ({
                 <input
                   type="number"
                   value={bonus.amount}
-                  onChange={(e) => setBonus({ ...bonus, amount: e.target.value })}
+                  onChange={(e) => setBonus({ ...bonus, amount: parseFloat(e.target.value) })}
                   className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg"
                   placeholder="0.00"
                   step="0.01"
@@ -135,7 +156,7 @@ export const AddBonusModal: React.FC<AddBonusModalProps> = ({
               </label>
               <select
                 value={bonus.frequency}
-                onChange={(e) => setBonus({ ...bonus, frequency: e.target.value })}
+                onChange={(e) => setBonus({ ...bonus, frequency: e.target.value as BonusFrequency })}
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >

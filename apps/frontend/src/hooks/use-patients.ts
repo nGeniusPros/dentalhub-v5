@@ -1,6 +1,17 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database.types';
+import type { PostgrestError } from '@supabase/supabase-js';
+
+type Appointment = {
+  start_time: string;
+  status: string;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type PatientWithAppointments = Database['public']['Tables']['patients']['Row'] & {
+  appointments: Appointment[];
+};
 
 export interface Patient {
   id: string;
@@ -24,7 +35,7 @@ export const usePatients = () => {
     try {
       const { data, error: supabaseError } = await supabase
         .from('patients')
-        .select(`
+        .select<PatientWithAppointments, PatientWithAppointments>(`
           id,
           first_name,
           last_name,
@@ -32,12 +43,15 @@ export const usePatients = () => {
           phone,
           status,
           balance,
+          date_of_birth,
+          address,
+          medical_history,
           appointments (
             start_time,
             status
           )
         `)
-								.order('last_name', { ascending: true }) as { data: Database['public']['Tables']['patients']['Row'][], error: any };
+        .order('last_name', { ascending: true });
 
       if (supabaseError) {
         throw supabaseError;

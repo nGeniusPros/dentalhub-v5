@@ -3,11 +3,35 @@ import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from './ui/button';
 
+interface PersonData {
+  firstName: string;
+  lastName: string;
+  ssn: string;
+  dateOfBirth: string;
+  email: string;
+  phone: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    zip: string;
+  };
+  startDate: string;
+  terminationDate?: string;
+  department: string;
+  status: 'active' | 'inactive' | 'on-leave';
+  salary: number;
+  payFrequency: 'weekly' | 'bi-weekly' | 'monthly';
+  role?: string;
+  rdaLicense?: string;
+  rdaExpiration?: string;
+}
+
 interface EditDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: any) => void;
-  data: any;
+  onSave: (data: PersonData) => void;
+  data: PersonData;
   type: 'staff' | 'provider' | 'patient';
 }
 
@@ -312,7 +336,10 @@ export const EditDialog: React.FC<EditDialogProps> = ({
                 </label>
                 <select
                   value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    status: e.target.value as 'active' | 'inactive' | 'on-leave'
+                  })}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                   required
                 >
@@ -335,7 +362,10 @@ export const EditDialog: React.FC<EditDialogProps> = ({
                 <input
                   type="number"
                   value={formData.salary}
-                  onChange={(e) => setFormData({ ...formData, salary: e.target.value })}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    salary: Number(e.target.value)
+                  })}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -346,7 +376,10 @@ export const EditDialog: React.FC<EditDialogProps> = ({
                 </label>
                 <select
                   value={formData.payFrequency}
-                  onChange={(e) => setFormData({ ...formData, payFrequency: e.target.value })}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    payFrequency: e.target.value as 'weekly' | 'bi-weekly' | 'monthly'
+                  })}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                   required
                 >

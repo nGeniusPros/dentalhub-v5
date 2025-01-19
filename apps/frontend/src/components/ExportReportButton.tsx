@@ -4,8 +4,10 @@ import * as Icons from 'lucide-react';
 import { ExportReportDialog } from './ExportReportDialog';
 import { useNotifications } from '../contexts/NotificationContext';
 
+import { ReportData } from './types/reports';
+
 interface ExportReportButtonProps {
-  data?: any;
+  data?: ReportData[];
   type?: 'staff' | 'performance' | 'training' | 'financial';
   variant?: 'default' | 'outline' | 'ghost';
   size?: 'default' | 'sm' | 'lg';
@@ -22,7 +24,7 @@ export const ExportReportButton: React.FC<ExportReportButtonProps> = ({
   const [showExportDialog, setShowExportDialog] = useState(false);
   const { dispatch: notifyDispatch } = useNotifications();
 
-  const handleExport = (format: string, options: any) => {
+  const handleExport = () => {
     notifyDispatch({
       type: 'ADD_NOTIFICATION',
       payload: {

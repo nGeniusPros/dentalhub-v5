@@ -4,8 +4,15 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { Button } from '../ui/button';
 import * as Icons from 'lucide-react';
 
+interface MembershipData {
+  month: string;
+  active: number;
+  new: number;
+  cancelled: number;
+}
+
 interface MembershipAnalyticsProps {
-  data: any[];
+  data: MembershipData[];
 }
 
 export const MembershipAnalytics = ({ data }: MembershipAnalyticsProps) => {

@@ -1,11 +1,22 @@
-import { supabase } from '@dentalhub/database';
-import { 
-  Campaign, 
-  CreateCampaignDTO, 
-  UpdateCampaignDTO, 
+import { createClient } from '@supabase/supabase-js';
+import { Database } from '@dentalhub/database/src/types';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// Define the Campaign type based on the database schema
+type Campaign = Database['public']['Tables']['campaigns']['Row'];
+
+const supabase = createClient<Database>(
+  process.env.SUPABASE_URL || '',
+  process.env.SUPABASE_ANON_KEY || ''
+);
+import {
+  CreateCampaignDTO,
+  UpdateCampaignDTO,
   CampaignFilters,
   CampaignType,
-  CampaignStatus 
+  CampaignStatus
 } from './types';
 
 export class CampaignService {

@@ -4,7 +4,12 @@ import { Database } from '../types/database.types';
 export class AuthService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string): Promise<{
+    user: any;
+    accessToken: string | undefined;
+    refreshToken: string | undefined;
+    error?: Error;
+  }> {
     const { data, error } = await this.supabase.auth.signInWithPassword({
       email,
       password,

@@ -3,10 +3,16 @@ import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from './ui/button';
 
+interface ExportOptions {
+  dateRange: 'all' | 'year' | 'quarter' | 'month' | 'custom';
+  includePersonalInfo: boolean;
+  includeSensitiveData: boolean;
+}
+
 interface ExportDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onExport: (format: string, options: any) => void;
+  onExport: (format: 'csv' | 'excel' | 'pdf', options: ExportOptions) => void;
 }
 
 export const ExportDialog: React.FC<ExportDialogProps> = ({
@@ -46,7 +52,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
             </label>
             <select
               value={format}
-              onChange={(e) => setFormat(e.target.value)}
+              onChange={(e) => setFormat(e.target.value as 'csv' | 'excel' | 'pdf')}
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             >
               <option value="csv">CSV</option>

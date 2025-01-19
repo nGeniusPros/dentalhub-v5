@@ -3,15 +3,25 @@ import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from './ui/button';
 
+type CredentialType = 'License' | 'Certification' | 'Membership' | 'Insurance';
+
+interface Credential {
+  type: CredentialType;
+  number: string;
+  expirationDate: string;
+}
+
+interface RenewalDetails {
+  newExpirationDate: string;
+  documentFile: File | null;
+  notes: string;
+}
+
 interface RenewDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onRenew: (details: any) => void;
-  credential: {
-    type: string;
-    number: string;
-    expirationDate: string;
-  };
+  onRenew: (details: RenewalDetails) => void;
+  credential: Credential;
 }
 
 export const RenewDialog: React.FC<RenewDialogProps> = ({

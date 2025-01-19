@@ -84,6 +84,13 @@ export interface UpdateCampaignDTO {
     retryDelay?: number;
     callbackUrl?: string;
   };
+  metrics?: {
+    total?: number;
+    sent?: number;
+    delivered?: number;
+    engaged?: number;
+    failed?: number;
+  };
   metadata?: Record<string, any>;
 }
 

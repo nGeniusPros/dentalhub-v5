@@ -2,14 +2,31 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from './ui/button';
-import { cn } from '../lib/utils';
 import { saveAs } from 'file-saver';
+
+interface ReportOptions {
+  includeCharts: boolean;
+  includeTables: boolean;
+  dateRange: 'all' | 'today' | 'week' | 'month' | 'quarter' | 'year' | 'custom';
+  sections: {
+    overview: boolean;
+    details: boolean;
+    metrics: boolean;
+    trends: boolean;
+  };
+  customDateRange: {
+    start: string;
+    end: string;
+  };
+}
+
+import { ReportData } from './types/reports';
 
 interface ExportReportDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onExport: (format: string, options: any) => void;
-  data?: any;
+  onExport: (format: 'pdf' | 'excel' | 'csv', options: ReportOptions) => void;
+  data?: ReportData[];
   type?: 'staff' | 'performance' | 'training' | 'financial';
 }
 
@@ -21,7 +38,7 @@ export const ExportReportDialog: React.FC<ExportReportDialogProps> = ({
   type = 'staff'
 }) => {
   const [format, setFormat] = useState('pdf');
-  const [options, setOptions] = useState({
+  const [options, setOptions] = useState<ReportOptions>({
     includeCharts: true,
     includeTables: true,
     dateRange: 'all',
@@ -40,6 +57,11 @@ export const ExportReportDialog: React.FC<ExportReportDialogProps> = ({
   if (!isOpen) return null;
 
   const handleExport = () => {
+    if (!data) {
+      console.error('No data to export');
+      return;
+    }
+
     // Generate filename based on type and date
     const date = new Date().toISOString().split('T')[0];
     const filename = `${type}-report-${date}`;
@@ -52,31 +74,34 @@ export const ExportReportDialog: React.FC<ExportReportDialogProps> = ({
     };
 
     // Export based on format
-    switch (format) {
-      case 'pdf':
+    switch (format as 'pdf' | 'excel' | 'csv') {
+      case 'pdf': {
         // In production, this would generate a PDF
         console.log('Exporting PDF:', exportData);
         break;
+      }
 
-      case 'excel':
+      case 'excel': {
         // In production, this would generate an Excel file
         console.log('Exporting Excel:', exportData);
         break;
+      }
 
-      case 'csv':
+      case 'csv': {
         // Generate CSV content
-        const csvContent = 'data:text/csv;charset=utf-8,' + 
+        const csvContent = 'data:text/csv;charset=utf-8,' +
           Object.keys(data[0]).join(',') + '\n' +
-          data.map((row: any) => 
+          data.map((row: ReportData) =>
             Object.values(row).join(',')
           ).join('\n');
 
         const encodedUri = encodeURI(csvContent);
         saveAs(encodedUri, `${filename}.csv`);
         break;
+      }
     }
 
-    onExport(format, options);
+    onExport(format as 'pdf' | 'excel' | 'csv', options);
     onClose();
   };
 
@@ -120,7 +145,10 @@ export const ExportReportDialog: React.FC<ExportReportDialogProps> = ({
             </label>
             <select
               value={options.dateRange}
-              onChange={(e) => setOptions(prev => ({ ...prev, dateRange: e.target.value }))}
+              onChange={(e) => setOptions(prev => ({
+                ...prev,
+                dateRange: e.target.value as 'all' | 'today' | 'week' | 'month' | 'quarter' | 'year' | 'custom'
+              }))}
               className="w-full px-4 py-2 border border-gray-200 rounded-lg mb-2"
             >
               <option value="all">All Time</option>

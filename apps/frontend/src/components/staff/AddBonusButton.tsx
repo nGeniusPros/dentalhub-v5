@@ -4,10 +4,32 @@ import * as Icons from 'lucide-react';
 import { AddBonusModal } from './AddBonusModal';
 import { useNotifications } from '../../contexts/NotificationContext';
 
+type BonusType = 'performance' | 'holiday' | 'referral' | 'retention' | 'spot' | 'commission';
+type BonusFrequency = 'one-time' | 'monthly' | 'quarterly' | 'annual';
+
+interface BonusMetric {
+  metric: string;
+  target: string;
+  achieved: string;
+}
+
+interface Bonus {
+  type: BonusType;
+  amount: number;
+  date: string;
+  reason: string;
+  recurring: boolean;
+  frequency: BonusFrequency;
+  endDate: string;
+  metrics: BonusMetric[];
+  staffId: string;
+  createdAt: string;
+}
+
 interface AddBonusButtonProps {
   staffId: string;
   staffName: string;
-  onAdd?: (bonus: any) => void;
+  onAdd?: (bonus: Bonus) => void;
   variant?: 'default' | 'outline' | 'ghost';
   size?: 'default' | 'sm' | 'lg';
   className?: string;
@@ -24,7 +46,7 @@ export const AddBonusButton: React.FC<AddBonusButtonProps> = ({
   const [showModal, setShowModal] = useState(false);
   const { dispatch: notifyDispatch } = useNotifications();
 
-  const handleAddBonus = (bonus: any) => {
+  const handleAddBonus = (bonus: Bonus) => {
     if (onAdd) {
       onAdd(bonus);
     }

@@ -3,10 +3,17 @@ import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from './ui/button';
 
+interface Message {
+  subject: string;
+  content: string;
+  priority: 'low' | 'normal' | 'high' | 'urgent';
+  sendCopy: boolean;
+}
+
 interface MessageDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSend: (message: any) => void;
+  onSend: (message: Message) => void;
   recipient: {
     name: string;
     email: string;
@@ -19,7 +26,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
   onSend,
   recipient
 }) => {
-  const [message, setMessage] = useState({
+  const [message, setMessage] = useState<Message>({
     subject: '',
     content: '',
     priority: 'normal',
@@ -86,7 +93,10 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
             </label>
             <select
               value={message.priority}
-              onChange={(e) => setMessage(prev => ({ ...prev, priority: e.target.value }))}
+              onChange={(e) => setMessage(prev => ({
+                ...prev,
+                priority: e.target.value as 'low' | 'normal' | 'high' | 'urgent'
+              }))}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
             >
               <option value="low">Low</option>

@@ -2,13 +2,19 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { BaseChart } from './BaseChart';
 
+interface BarData {
+  [key: string]: string | number;
+}
+
+interface BarConfig {
+  key: string;
+  color: string;
+  name?: string;
+}
+
 interface BarChartProps {
-  data: any[];
-  bars: Array<{
-    key: string;
-    color: string;
-    name?: string;
-  }>;
+  data: BarData[];
+  bars: BarConfig[];
   xAxisKey: string;
   title?: string;
   height?: number;

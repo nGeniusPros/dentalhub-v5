@@ -9,11 +9,18 @@ import { MessageDialog } from '../../components/MessageDialog';
 import { ReminderDialog } from '../../components/ReminderDialog';
 import { CommentDialog } from '../../components/CommentDialog';
 
+interface Patient {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+}
+
 const StaffDashboard = () => {
   const [showMessage, setShowMessage] = React.useState(false);
   const [showReminder, setShowReminder] = React.useState(false);
   const [showComment, setShowComment] = React.useState(false);
-  const [selectedPatient, setSelectedPatient] = React.useState<any>(null);
+  const [selectedPatient, setSelectedPatient] = React.useState<Patient | null>(null);
 
   return (
     <div className="space-y-6">

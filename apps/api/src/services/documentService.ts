@@ -8,16 +8,16 @@ import {
 } from '../types/document.types';
 import { handleDocumentError } from '../edge-functions/documents/error';
 import { v4 as uuidv4 } from 'uuid';
-import * as pdfMake from 'pdfmake-wrapper';
+import pdfMake from 'pdfmake/build/pdfmake';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { edgeCache } from '../utils/cache';
 
-// Mock implementation for document generation
 async function generatePdf(data: DocumentData, config: any): Promise<Buffer> {
-  try {
-    const pdfDocument = new pdfMake({
+  return new Promise((resolve, reject) => {
+    try {
+      const docDefinition: TDocumentDefinitions = {
         content: [
           { text: `Document Type: ${data.type}`, style: 'header' },
           { text: `Template ID: ${data.templateId}`, style: 'subheader' },
@@ -27,19 +27,21 @@ async function generatePdf(data: DocumentData, config: any): Promise<Buffer> {
           header: { fontSize: 20, bold: true, margin: [0, 0, 0, 10] },
           subheader: { fontSize: 16, bold: true, margin: [0, 0, 0, 5] },
           body: { fontSize: 12, margin: [0, 0, 0, 5] },
-        },
-      } as TDocumentDefinitions
-    );
+        }
+      };
 
-    return await pdfDocument.create().toBuffer();
-  } catch (error) {
-    throw handleDocumentError(error, 'PDF_GENERATION_FAILED');
-  }
+      const pdfDoc = pdfMake.createPdf(docDefinition);
+      pdfDoc.getBuffer((buffer) => {
+        resolve(buffer);
+      });
+    } catch (error) {
+      reject(handleDocumentError(error, 'PDF_GENERATION_FAILED'));
+    }
+  });
 }
 
 async function generateDocx(data: DocumentData, config: any): Promise<Buffer> {
   try {
-    // Mock implementation for DOCX generation
     const docxContent = `
       <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
         <w:body>
@@ -60,7 +62,6 @@ async function storeDocument(
   options: DocumentStorageOptions
 ): Promise<string> {
   try {
-    // Mock implementation for storing document
     const documentId = uuidv4();
     const filePath = path.join(options.path, `${documentId}.${options.path.split('.').pop()}`);
     await fs.writeFile(filePath, buffer);
@@ -70,7 +71,6 @@ async function storeDocument(
   }
 }
 
-// Helper function to generate cache key for documents
 function generateDocumentCacheKey(data: DocumentData, options: DocumentGenerationOptions): string {
   const key = {
     type: data.type,
@@ -143,7 +143,6 @@ export class DocumentService {
     const cacheKey = `documentTemplate-${templateId}`;
     return edgeCache.get(cacheKey, async () => {
       try {
-        // Mock implementation for retrieving document template
         return {
           id: templateId,
           name: 'Default Template',

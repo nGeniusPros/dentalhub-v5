@@ -4,8 +4,16 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recha
 import { Button } from '../ui/button';
 import * as Icons from 'lucide-react';
 
+interface TrainingData {
+  name: string;
+  value: number;
+  color: string;
+  completed?: number;
+  total?: number;
+}
+
 interface StaffTrainingProps {
-  data: any[];
+  data: TrainingData[];
 }
 
 export const StaffTraining = ({ data }: StaffTrainingProps) => {

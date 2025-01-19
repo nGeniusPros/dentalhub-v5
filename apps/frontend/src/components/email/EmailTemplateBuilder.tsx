@@ -4,11 +4,46 @@ import * as Icons from 'lucide-react';
 import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
 
-interface Block {
-  id: string;
-  type: 'text' | 'image' | 'button' | 'spacer' | 'divider' | 'social' | 'variable';
-  content: any;
+interface TextContent {
+  html: string;
 }
+
+interface ImageContent {
+  url: string;
+  alt: string;
+}
+
+interface ButtonContent {
+  text: string;
+  style: 'primary' | 'secondary' | 'outline';
+  link?: string;
+}
+
+interface SpacerContent {
+  height: string;
+}
+
+interface DividerContent {
+  style: 'solid' | 'dashed' | 'dotted';
+}
+
+interface SocialContent {
+  networks: ('Facebook' | 'Twitter' | 'Instagram' | 'LinkedIn')[];
+}
+
+interface VariableContent {
+  name: string;
+  value: string;
+}
+
+type Block =
+  | { id: string; type: 'text', content: TextContent }
+  | { id: string; type: 'image', content: ImageContent }
+  | { id: string; type: 'button', content: ButtonContent }
+  | { id: string; type: 'spacer', content: SpacerContent }
+  | { id: string; type: 'divider', content: DividerContent }
+  | { id: string; type: 'social', content: SocialContent }
+  | { id: string; type: 'variable', content: VariableContent };
 
 interface EmailTemplateBuilderProps {
   content: Block[];
@@ -21,10 +56,6 @@ export const EmailTemplateBuilder: React.FC<EmailTemplateBuilderProps> = ({
 }) => {
   const [selectedBlock, setSelectedBlock] = useState<string | null>(null);
   const [draggedBlock, setDraggedBlock] = useState<Block | null>(null);
-
-  const handleDragStart = (block: Block) => {
-    setDraggedBlock(block);
-  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -39,10 +70,13 @@ export const EmailTemplateBuilder: React.FC<EmailTemplateBuilderProps> = ({
     }
   };
 
-  const handleBlockEdit = (id: string, updates: Partial<Block>) => {
-    const newContent = content.map(block => 
+  const handleBlockEdit = <T extends Block['type']>(
+    id: string,
+    updates: Partial<Extract<Block, { type: T }>>
+  ) => {
+    const newContent = content.map(block =>
       block.id === id ? { ...block, ...updates } : block
-    );
+    ) as Block[];
     onChange(newContent);
   };
 
@@ -58,8 +92,10 @@ export const EmailTemplateBuilder: React.FC<EmailTemplateBuilderProps> = ({
           <div className="prose max-w-none">
             <div
               contentEditable
-              dangerouslySetInnerHTML={{ __html: block.content }}
-              onBlur={(e) => handleBlockEdit(block.id, { content: e.currentTarget.innerHTML })}
+              dangerouslySetInnerHTML={{ __html: block.content.html }}
+              onBlur={(e) => handleBlockEdit(block.id, {
+                content: { html: e.currentTarget.innerHTML }
+              })}
               className="outline-none"
             />
           </div>
@@ -113,12 +149,12 @@ export const EmailTemplateBuilder: React.FC<EmailTemplateBuilderProps> = ({
       case 'social':
         return (
           <div className="flex justify-center gap-4">
-            {block.content.networks.map((network: string) => (
+            {block.content.networks.map((network) => (
               <button
                 key={network}
                 className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
               >
-                {React.createElement(Icons[network as keyof typeof Icons], {
+                {React.createElement(Icons[network], {
                   className: "w-5 h-5"
                 })}
               </button>
