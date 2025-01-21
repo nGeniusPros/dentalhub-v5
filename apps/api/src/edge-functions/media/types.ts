@@ -8,6 +8,13 @@ export interface MediaConfig {
 }
 
 export interface ImageProcessingOptions {
+  width?: number;
+  height?: number;
+  fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
+  position?: 'center' | 'top' | 'right top' | 'right' | 'right bottom' | 'bottom' | 'left bottom' | 'left' | 'left top';
+  format?: 'jpeg' | 'png' | 'webp' | 'tiff' | 'raw';
+  quality?: number;
+  progressive?: boolean;
   resize?: {
     width: number;
     height: number;
@@ -20,8 +27,6 @@ export interface ImageProcessingOptions {
     height: number;
   };
   rotate?: number;
-  format?: 'jpeg' | 'png' | 'webp';
-  quality?: number;
   effect?: 'grayscale' | 'sepia' | 'blur';
 }
 

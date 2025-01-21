@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { dashboardService } from '../../../services/dashboard';
+import { StaffMetrics } from '../../../types/dashboard';
 
 export const StaffPerformance = () => {
-  const [staffMetrics, setStaffMetrics] = useState<any[] | null>(null);
+  const [staffMetrics, setStaffMetrics] = useState<StaffMetrics[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

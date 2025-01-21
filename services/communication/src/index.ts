@@ -1,11 +1,11 @@
 import express from 'express';
 import { config } from 'dotenv';
 import cors from 'cors';
-import campaignRoutes from './routes/campaigns';
-import { createRetellService } from './services/retell/RetellService';
-import type { RetellConfig } from './services/retell/types';
-import { CallService } from './services/callService';
-import { WebhookService } from './services/webhookService';
+import { campaignsRouter } from './routes/campaigns.js';
+import { createRetellService } from './services/retell/RetellService.js';
+import type { RetellConfig } from './services/retell/types.js';
+import { CallService } from './services/callService.js';
+import { WebhookService } from './services/webhookService.js';
 
 // Load environment variables
 config();
@@ -31,7 +31,7 @@ const callService = new CallService(retellConfig);
 const webhookService = new WebhookService();
 
 // Campaign routes
-app.use('/api/campaigns', campaignRoutes);
+app.use('/api/campaigns', campaignsRouter);
 
 // Voice call routes
 app.post('/api/calls', async (req, res) => {
@@ -83,7 +83,7 @@ app.post('/webhooks/retell', async (req, res) => {
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Unhandled error:', err);
   res.status(500).json({ error: 'Internal server error' });
 });

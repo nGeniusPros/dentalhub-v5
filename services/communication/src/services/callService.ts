@@ -1,5 +1,5 @@
-import { RetellService } from './retell/RetellService';
-import { RetellConfig, CallConfig } from './retell/types';
+import { RetellService } from './retell/RetellService.js';
+import { RetellConfig, CallConfig } from './retell/types.js';
 
 export class CallService {
   private retellService: RetellService;

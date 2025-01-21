@@ -1,36 +1,39 @@
-# Build stage
+# Use official Node.js image
 FROM node:18-alpine AS builder
-
-# Install pnpm
-RUN npm install -g pnpm
 
 # Set working directory
 WORKDIR /app
 
-# Copy root workspace files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Install pnpm
+RUN npm install -g pnpm
 
-# Copy frontend package.json
+# Copy root workspace files first
+COPY pnpm-workspace.yaml ./
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+
+# Copy all package.json files from workspaces
 COPY apps/frontend/package.json ./apps/frontend/
+COPY apps/api/package.json ./apps/api/
+COPY packages/*/package.json ./packages/*/
 
-# Install dependencies
+# Install all dependencies
 RUN pnpm install --frozen-lockfile
 
-# Copy frontend source code
-COPY apps/frontend ./apps/frontend
+# Copy the rest of the source code
+COPY . .
 
-# Build frontend
-WORKDIR /app/apps/frontend
-RUN pnpm build
+# Build the frontend application
+RUN cd /app/apps/frontend && pnpm build
 
-# Production stage
+# Use nginx to serve the application
 FROM nginx:alpine
 
-# Copy built assets to nginx
-COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html
-
-# Copy nginx config
+# Copy nginx configuration
 COPY apps/frontend/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy built files from builder
+COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html
 
 # Expose port
 EXPOSE 80

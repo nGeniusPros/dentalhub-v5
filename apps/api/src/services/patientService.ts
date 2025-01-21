@@ -2,6 +2,8 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 import axios from 'axios';
 import { SIKKA_API_URL, SIKKA_API_KEY, SIKKA_PRACTICE_ID } from '../integrations/sikka/config';
+import { MonitoringService, logger } from './monitoring';
+import { ErrorCode } from '../types/errors';
 
 export class PatientService {
   protected supabase: SupabaseClient<Database>;
@@ -195,54 +197,71 @@ export class PatientService {
 
 		async syncPatientsFromSikka() {
 				try {
-						const response = await this.sikkaApi.get(`/practices/${SIKKA_PRACTICE_ID}/patients`);
-						const sikkaPatients = response.data;
+				  const response = await this.sikkaApi.get(`/practices/${SIKKA_PRACTICE_ID}/patients`);
+				  const sikkaPatients = response.data;
 
-						if (!sikkaPatients || !Array.isArray(sikkaPatients)) {
-								console.error('Invalid Sikka patient data:', sikkaPatients);
-								return;
-						}
+				  if (!sikkaPatients || !Array.isArray(sikkaPatients)) {
+				    await MonitoringService.logError(
+				      new Error('Invalid Sikka patient data'),
+				      ErrorCode.VALIDATION_ERROR,
+				      { sikkaPatients }
+				    );
+				    return;
+				  }
 
-						for (const sikkaPatient of sikkaPatients) {
-								const { data: existingPatient } = await this.supabase
-										.from('patients')
-										.select('id')
-										.eq('id', sikkaPatient.patient_id)
-										.single();
+				  let updatedCount = 0;
+				  let createdCount = 0;
 
-								if (existingPatient) {
-										// Update existing patient
-										await this.supabase
-												.from('patients')
-												.update({
-														first_name: sikkaPatient.first_name,
-														last_name: sikkaPatient.last_name,
-														email: sikkaPatient.email,
-														phone: sikkaPatient.phone,
-														date_of_birth: sikkaPatient.date_of_birth,
-														address: sikkaPatient.address,
-														medical_history: sikkaPatient.medical_history
-												})
-												.eq('id', sikkaPatient.patient_id);
-								} else {
-										// Insert new patient
-										await this.supabase
-												.from('patients')
-												.insert({
-														id: sikkaPatient.patient_id,
-														first_name: sikkaPatient.first_name,
-														last_name: sikkaPatient.last_name,
-														email: sikkaPatient.email,
-														phone: sikkaPatient.phone,
-														date_of_birth: sikkaPatient.date_of_birth,
-														address: sikkaPatient.address,
-														medical_history: sikkaPatient.medical_history
-												});
-								}
-						}
-						console.log('Successfully synced patients from Sikka');
-				} catch (error) {
-						console.error('Error syncing patients from Sikka:', error);
+				  for (const sikkaPatient of sikkaPatients) {
+				    const { data: existingPatient } = await this.supabase
+				      .from('patients')
+				      .select('id')
+				      .eq('id', sikkaPatient.patient_id)
+				      .single();
+
+				    if (existingPatient) {
+				      await this.supabase
+				        .from('patients')
+				        .update({
+				          first_name: sikkaPatient.first_name,
+				          last_name: sikkaPatient.last_name,
+				          email: sikkaPatient.email,
+				          phone: sikkaPatient.phone,
+				          date_of_birth: sikkaPatient.date_of_birth,
+				          address: sikkaPatient.address,
+				          medical_history: sikkaPatient.medical_history
+				        })
+				        .eq('id', sikkaPatient.patient_id);
+				      updatedCount++;
+				    } else {
+				      await this.supabase
+				        .from('patients')
+				        .insert({
+				          id: sikkaPatient.patient_id,
+				          first_name: sikkaPatient.first_name,
+				          last_name: sikkaPatient.last_name,
+				          email: sikkaPatient.email,
+				          phone: sikkaPatient.phone,
+				          date_of_birth: sikkaPatient.date_of_birth,
+				          address: sikkaPatient.address,
+				          medical_history: sikkaPatient.medical_history
+				        });
+				      createdCount++;
+				    }
+				  }
+
+				  logger.info('Successfully synced patients from Sikka', {
+				    totalPatients: sikkaPatients.length,
+				    updatedCount,
+				    createdCount
+				  });
+				} catch (error: unknown) {
+				  await MonitoringService.logError(
+				    error instanceof Error ? error : new Error(String(error)),
+				    ErrorCode.INTERNAL_ERROR,
+				    { practiceId: SIKKA_PRACTICE_ID }
+				  );
+				  throw new Error('Failed to sync patients from Sikka');
 				}
 		}
 }
