@@ -1,0 +1,32 @@
+
+> @dentalhub/api@1.0.0 build C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\apps\api
+> tsc
+
+src/integrations/sikka/index.ts(6,7): error TS2742: The inferred type of 'router' cannot be named without a reference to '.pnpm/@types+express-serve-static-core@4.19.6/node_modules/@types/express-serve-static-core'. This is likely not portable. A type annotation is necessary.
+src/middleware/errorHandler.ts(12,35): error TS2345: Argument of type 'string' is not assignable to parameter of type 'ErrorCode'.
+src/routes/appointments/availability.ts(5,7): error TS2742: The inferred type of 'router' cannot be named without a reference to '.pnpm/@types+express-serve-static-core@4.19.6/node_modules/@types/express-serve-static-core'. This is likely not portable. A type annotation is necessary.
+src/routes/appointments/resources.ts(5,7): error TS2742: The inferred type of 'router' cannot be named without a reference to '.pnpm/@types+express-serve-static-core@4.19.6/node_modules/@types/express-serve-static-core'. This is likely not portable. A type annotation is necessary.
+src/routes/patients.ts(12,7): error TS2742: The inferred type of 'router' cannot be named without a reference to '.pnpm/@types+express-serve-static-core@4.19.6/node_modules/@types/express-serve-static-core'. This is likely not portable. A type annotation is necessary.
+src/routes/providers.ts(6,7): error TS2742: The inferred type of 'router' cannot be named without a reference to '.pnpm/@types+express-serve-static-core@4.19.6/node_modules/@types/express-serve-static-core'. This is likely not portable. A type annotation is necessary.
+src/routes/staff/performance.ts(152,15): error TS2339: Property 'record_id' does not exist on type '{ id: string; }'.
+src/routes/staff/performance.ts(192,15): error TS2339: Property 'record_id' does not exist on type '{ id: string; }'.
+src/routes/staff/tasks.ts(155,15): error TS2339: Property 'task_id' does not exist on type '{ id: string; }'.
+src/services/patientService.ts(117,9): error TS2742: The inferred type of 'uploadPatientDocument' cannot be named without a reference to '.pnpm/@supabase+storage-js@2.7.1/node_modules/@supabase/storage-js'. This is likely not portable. A type annotation is necessary.
+src/services/procedureCategoryMappingService.ts(32,31): error TS2551: Property 'procedure_categories' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCategory'?
+src/services/procedureCategoryMappingService.ts(48,14): error TS2551: Property 'procedure_category_mappings' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCategoryMapping'?
+src/services/procedureCategoryMappingService.ts(82,13): error TS2551: Property 'procedure_category_mappings' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCategoryMapping'?
+src/services/procedureCategoryMappingService.ts(100,13): error TS2551: Property 'procedure_category_mappings' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCategoryMapping'?
+src/services/procedureCategoryMappingService.ts(119,13): error TS2551: Property 'procedure_categories' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCategory'?
+src/services/procedureCategoryMappingService.ts(135,13): error TS2551: Property 'procedure_category_mappings' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCategoryMapping'?
+src/services/procedureCategoryMappingService.ts(154,13): error TS2551: Property 'procedure_category_mapping_history' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCategoryMappingHistory'?
+src/services/procedureCategoryMappingService.ts(171,12): error TS2551: Property 'procedure_category_mappings' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCategoryMapping'?
+src/services/procedureCodeService.ts(28,31): error TS2551: Property 'procedure_categories' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCategory'?
+src/services/procedureCodeService.ts(44,14): error TS2551: Property 'procedure_codes' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCode'?
+src/services/procedureCodeService.ts(99,30): error TS2551: Property 'procedure_codes' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCode'?
+src/services/procedureCodeService.ts(113,12): error TS2551: Property 'procedure_fee_schedule' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureFeeSchedule'?
+src/services/procedureCodeService.ts(124,12): error TS2551: Property 'procedure_fee_schedule' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureFeeSchedule'?
+src/services/procedureCodeService.ts(138,13): error TS2551: Property 'procedure_codes' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCode'?
+src/services/supabaseService.ts(3,10): error TS2305: Module '"@dentalhub/database"' has no exported member 'createClient'.
+src/utils/cache.ts(30,32): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'string | number'.
+  Type 'undefined' is not assignable to type 'string | number'.
+ ELIFECYCLE  Command failed with exit code 1.

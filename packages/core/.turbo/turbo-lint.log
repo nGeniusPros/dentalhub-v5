@@ -1,0 +1,26 @@
+
+> @dentalhub/core@1.0.0 lint C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\packages\core
+> eslint .
+
+(node:19716) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/micha/OneDrive/Desktop/Projects/Dental%20Hub/dentalhub-v5/eslint.config.js?mtime=1736112994970 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+TypeError: Error while loading rule '@typescript-eslint/no-unused-expressions': Cannot read properties of undefined (reading 'allowShortCircuit')
+Occurred while linting C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\packages\core\src\index.ts
+    at Object.create (C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\node_modules\.pnpm\eslint@9.17.0_jiti@1.21.7\node_modules\eslint\lib\rules\no-unused-expressions.js:75:13)
+    at create (C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\node_modules\.pnpm\@typescript-eslint+eslint-plugin@8.19.0_@typescript-eslint+parser@8.19.0_eslint@9.17.0_jiti@1_cfqq6ocogpalwwiwkhr3mob7za\node_modules\@typescript-eslint\eslint-plugin\dist\rules\no-unused-expressions.js:30:32)
+    at Object.create (C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\node_modules\.pnpm\@typescript-eslint+utils@8.19.0_eslint@9.17.0_jiti@1.21.7__typescript@5.7.2\node_modules\@typescript-eslint\utils\dist\eslint-utils\RuleCreator.js:31:20)
+    at createRuleListeners (C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\node_modules\.pnpm\eslint@8.57.1\node_modules\eslint\lib\linter\linter.js:895:21)
+    at C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\node_modules\.pnpm\eslint@8.57.1\node_modules\eslint\lib\linter\linter.js:1066:110
+    at Array.forEach (<anonymous>)
+    at runRules (C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\node_modules\.pnpm\eslint@8.57.1\node_modules\eslint\lib\linter\linter.js:1003:34)
+    at Linter._verifyWithFlatConfigArrayAndWithoutProcessors (C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\node_modules\.pnpm\eslint@8.57.1\node_modules\eslint\lib\linter\linter.js:1730:31)
+    at Linter._verifyWithFlatConfigArray (C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\node_modules\.pnpm\eslint@8.57.1\node_modules\eslint\lib\linter\linter.js:1861:21)
+    at Linter.verify (C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\node_modules\.pnpm\eslint@8.57.1\node_modules\eslint\lib\linter\linter.js:1433:65)
+ ELIFECYCLE  Command failed with exit code 2.
