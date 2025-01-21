@@ -1,7 +1,0 @@
-packages:
-  # Frontend and backend applications
-  - 'apps/*'
-  # Shared packages
-  - 'packages/*'
-  # Backend services
-  - 'services/*'
