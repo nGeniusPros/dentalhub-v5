@@ -16,7 +16,12 @@ class CacheManager {
         return value;
     }
     set(key, value, ttl) {
-        this.cache.set(key, value, ttl);
+        if (ttl !== undefined) {
+            this.cache.set(key, value, ttl);
+        }
+        else {
+            this.cache.set(key, value);
+        }
     }
     del(key) {
         this.cache.del(key);
@@ -28,7 +33,24 @@ class CacheManager {
         return this.cache.getStats();
     }
 }
-export const apiCache = new CacheManager({ ttl: 60, maxSize: 1000 }); // Default API cache
-export const dbCache = new CacheManager({ ttl: 300, maxSize: 500 }); // Default DB cache
-export const edgeCache = new CacheManager({ ttl: 300, maxSize: 500 }); // Default edge function cache
+// Read cache settings from environment variables with defaults
+const API_CACHE_TTL = parseInt(process.env.API_CACHE_TTL || '60', 10);
+const API_CACHE_MAX_SIZE = parseInt(process.env.API_CACHE_MAX_SIZE || '1000', 10);
+const DB_CACHE_TTL = parseInt(process.env.DB_CACHE_TTL || '300', 10);
+const DB_CACHE_MAX_SIZE = parseInt(process.env.DB_CACHE_MAX_SIZE || '500', 10);
+const EDGE_CACHE_TTL = parseInt(process.env.EDGE_CACHE_TTL || '300', 10);
+const EDGE_CACHE_MAX_SIZE = parseInt(process.env.EDGE_CACHE_MAX_SIZE || '500', 10);
+// Initialize cache instances with environment variables
+export const apiCache = new CacheManager({
+    ttl: API_CACHE_TTL,
+    maxSize: API_CACHE_MAX_SIZE
+});
+export const dbCache = new CacheManager({
+    ttl: DB_CACHE_TTL,
+    maxSize: DB_CACHE_MAX_SIZE
+});
+export const edgeCache = new CacheManager({
+    ttl: EDGE_CACHE_TTL,
+    maxSize: EDGE_CACHE_MAX_SIZE
+});
 export default CacheManager;

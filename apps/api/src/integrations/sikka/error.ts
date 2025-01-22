@@ -1,124 +1,104 @@
-import { AxiosError } from 'axios';
-import { SikkaApiError } from './types';
+import axios, { AxiosError } from 'axios';
 
 interface ErrorDetails {
   status?: number;
   response?: any;
   originalError?: unknown;
-  [key: string]: any;
+  attempts?: number;
 }
 
-export class SikkaIntegrationError extends Error {
-  constructor(
-    message: string,
-    public code: string,
-    public details?: ErrorDetails
-  ) {
+export class SikkaBaseError extends Error {
+  public readonly details?: ErrorDetails;
+  public readonly errorType: string;
+
+  constructor(message: string, errorType: string, details?: ErrorDetails) {
     super(message);
-    this.name = 'SikkaIntegrationError';
+    this.name = 'SikkaBaseError';
+    this.errorType = errorType;
+    this.details = details;
   }
 }
 
-export class SikkaAuthenticationError extends SikkaIntegrationError {
+export class SikkaAuthenticationError extends SikkaBaseError {
   constructor(message: string, details?: ErrorDetails) {
     super(message, 'AUTHENTICATION_ERROR', details);
     this.name = 'SikkaAuthenticationError';
   }
 }
 
-export class SikkaValidationError extends SikkaIntegrationError {
-  constructor(message: string, details?: ErrorDetails) {
-    super(message, 'VALIDATION_ERROR', details);
-    this.name = 'SikkaValidationError';
-  }
-}
-
-export class SikkaRateLimitError extends SikkaIntegrationError {
+export class SikkaRateLimitError extends SikkaBaseError {
   constructor(message: string, details?: ErrorDetails) {
     super(message, 'RATE_LIMIT_ERROR', details);
     this.name = 'SikkaRateLimitError';
   }
 }
 
-export class SikkaNetworkError extends SikkaIntegrationError {
-  constructor(message: string, details?: ErrorDetails) {
-    super(message, 'NETWORK_ERROR', details);
-    this.name = 'SikkaNetworkError';
-  }
-}
-
-export class SikkaTimeoutError extends SikkaIntegrationError {
+export class SikkaTimeoutError extends SikkaBaseError {
   constructor(message: string, details?: ErrorDetails) {
     super(message, 'TIMEOUT_ERROR', details);
     this.name = 'SikkaTimeoutError';
   }
 }
 
-export function handleSikkaError(error: unknown): never {
-  if (error instanceof AxiosError) {
-    const errorDetails: ErrorDetails = {
-      status: error.response?.status,
-      response: error.response?.data,
-      headers: error.response?.headers
-    };
-
-    console.log('Sikka API Error Response:', errorDetails);
-
-    const status = error.response?.status;
-    const sikkaError: SikkaApiError = error.response?.data?.error || {
-      code: 'UNKNOWN_ERROR',
-      message: 'An unknown error occurred with the Sikka API',
-    };
-
-    // Handle specific error types
-    if (status === 401 || status === 403) {
-      throw new SikkaAuthenticationError(sikkaError.message, errorDetails);
-    }
-
-    if (status === 422) {
-      throw new SikkaValidationError(sikkaError.message, errorDetails);
-    }
-
-    if (status === 429) {
-      throw new SikkaRateLimitError(sikkaError.message, errorDetails);
-    }
-
-    if (error.code === 'ECONNABORTED') {
-      throw new SikkaTimeoutError('Request timed out', errorDetails);
-    }
-
-    if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
-      throw new SikkaNetworkError('Network connection failed', errorDetails);
-    }
-
-    throw new SikkaIntegrationError(
-      sikkaError.message,
-      sikkaError.code,
-      errorDetails
-    );
+export class SikkaApiError extends SikkaBaseError {
+  constructor(message: string, details?: ErrorDetails) {
+    super(message, 'API_ERROR', details);
+    this.name = 'SikkaApiError';
   }
-
-  if (error instanceof Error) {
-    throw new SikkaIntegrationError(
-      error.message,
-      'INTERNAL_ERROR',
-      { originalError: error }
-    );
-  }
-
-  throw new SikkaIntegrationError(
-    'An unexpected error occurred',
-    'UNEXPECTED_ERROR',
-    { originalError: error }
-  );
 }
 
-export function isRetryableError(error: unknown): boolean {
-  return (
-    error instanceof SikkaRateLimitError ||
-    error instanceof SikkaNetworkError ||
-    error instanceof SikkaTimeoutError ||
-    (error instanceof SikkaIntegrationError &&
-      error.code === 'SERVICE_UNAVAILABLE')
+export function handleSikkaError(error: unknown): never {
+  if (axios.isAxiosError(error)) {
+    const axiosError = error as AxiosError;
+    const status = axiosError.response?.status;
+    const details: ErrorDetails = {
+      status,
+      response: axiosError.response?.data,
+      originalError: error
+    };
+
+    // Handle specific HTTP status codes
+    switch (status) {
+      case 401:
+      case 403:
+        throw new SikkaAuthenticationError(
+          'Authentication failed with Sikka API',
+          details
+        );
+      case 429:
+        throw new SikkaRateLimitError(
+          'Rate limit exceeded for Sikka API',
+          details
+        );
+      case 408:
+      case 504:
+        throw new SikkaTimeoutError(
+          'Request to Sikka API timed out',
+          details
+        );
+      default:
+        // Handle specific Sikka API error codes if present in response
+        const sikkaError = axiosError.response?.data?.error;
+        if (sikkaError) {
+          throw new SikkaApiError(
+            sikkaError.long_message || sikkaError.short_message || 'Unknown Sikka API error',
+            {
+              ...details,
+              sikkaErrorCode: sikkaError.error_code
+            }
+          );
+        }
+        
+        throw new SikkaApiError(
+          axiosError.message || 'Unknown error occurred while calling Sikka API',
+          details
+        );
+    }
+  }
+
+  // Handle non-Axios errors
+  throw new SikkaApiError(
+    error instanceof Error ? error.message : 'Unknown error occurred',
+    { originalError: error }
   );
 }

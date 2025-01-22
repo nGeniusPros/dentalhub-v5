@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { SIKKA_API_URL, SIKKA_API_KEY, SIKKA_PRACTICE_ID } from '../integrations/sikka/config';
+import { MonitoringService, logger } from './monitoring';
+import { ErrorCode } from '../types/errors';
 export class PatientService {
     constructor(supabase) {
         this.sikkaApi = axios.create({
@@ -146,9 +148,11 @@ export class PatientService {
             const response = await this.sikkaApi.get(`/practices/${SIKKA_PRACTICE_ID}/patients`);
             const sikkaPatients = response.data;
             if (!sikkaPatients || !Array.isArray(sikkaPatients)) {
-                console.error('Invalid Sikka patient data:', sikkaPatients);
+                await MonitoringService.logError(new Error('Invalid Sikka patient data'), ErrorCode.VALIDATION_ERROR, { sikkaPatients });
                 return;
             }
+            let updatedCount = 0;
+            let createdCount = 0;
             for (const sikkaPatient of sikkaPatients) {
                 const { data: existingPatient } = await this.supabase
                     .from('patients')
@@ -156,7 +160,6 @@ export class PatientService {
                     .eq('id', sikkaPatient.patient_id)
                     .single();
                 if (existingPatient) {
-                    // Update existing patient
                     await this.supabase
                         .from('patients')
                         .update({
@@ -169,9 +172,9 @@ export class PatientService {
                         medical_history: sikkaPatient.medical_history
                     })
                         .eq('id', sikkaPatient.patient_id);
+                    updatedCount++;
                 }
                 else {
-                    // Insert new patient
                     await this.supabase
                         .from('patients')
                         .insert({
@@ -184,12 +187,18 @@ export class PatientService {
                         address: sikkaPatient.address,
                         medical_history: sikkaPatient.medical_history
                     });
+                    createdCount++;
                 }
             }
-            console.log('Successfully synced patients from Sikka');
+            logger.info('Successfully synced patients from Sikka', {
+                totalPatients: sikkaPatients.length,
+                updatedCount,
+                createdCount
+            });
         }
         catch (error) {
-            console.error('Error syncing patients from Sikka:', error);
+            await MonitoringService.logError(error instanceof Error ? error : new Error(String(error)), ErrorCode.INTERNAL_ERROR, { practiceId: SIKKA_PRACTICE_ID });
+            throw new Error('Failed to sync patients from Sikka');
         }
     }
 }

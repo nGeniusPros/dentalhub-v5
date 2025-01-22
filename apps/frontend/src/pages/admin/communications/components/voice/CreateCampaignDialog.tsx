@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../../../../components/ui/button';
+import { useVoice } from '../../../../../contexts/VoiceContext';
+import type { RetellAgent } from '../../../../../types/voice';
 
 interface CreateCampaignDialogProps {
   open: boolean;
@@ -12,11 +14,13 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
   open,
   onClose
 }) => {
+  const { state } = useVoice();
   const [step, setStep] = useState(1);
   const [campaignType, setCampaignType] = useState('');
   const [patientSelection, setPatientSelection] = useState('group');
   const [selectedPatients, setSelectedPatients] = useState<string[]>([]);
   const [schedule, setSchedule] = useState<Date | null>(null);
+  const [selectedAgent, setSelectedAgent] = useState<string>('auto');
   const [customCriteria, setCustomCriteria] = useState<Array<{
     field: string;
     operator: string;
@@ -313,6 +317,76 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
 
           {step === 3 && (
             <div className="space-y-6">
+              {/* Agent Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Voice Agent Selection
+                </label>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+                    <input
+                      type="radio"
+                      id="auto-agent"
+                      name="agent-selection"
+                      value="auto"
+                      checked={selectedAgent === 'auto'}
+                      onChange={(e) => setSelectedAgent(e.target.value)}
+                      className="h-4 w-4 text-primary border-gray-300"
+                    />
+                    <div className="flex-1">
+                      <label htmlFor="auto-agent" className="font-medium text-gray-900">Automatic Selection</label>
+                      <p className="text-sm text-gray-500">Let the system choose the best available agent</p>
+                    </div>
+                  </div>
+
+                  {state.agents.map((agent) => {
+                    const stats = state.agentStats[agent.id];
+                    const isAvailable = agent.status === 'active';
+                    
+                    return (
+                      <div 
+                        key={agent.id}
+                        className={`flex items-start gap-3 p-4 bg-gray-50 rounded-lg ${!isAvailable ? 'opacity-50' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          id={`agent-${agent.id}`}
+                          name="agent-selection"
+                          value={agent.id}
+                          checked={selectedAgent === agent.id}
+                          onChange={(e) => setSelectedAgent(e.target.value)}
+                          disabled={!isAvailable}
+                          className="h-4 w-4 text-primary border-gray-300 mt-1"
+                        />
+                        <div className="flex-1">
+                          <label htmlFor={`agent-${agent.id}`} className="font-medium text-gray-900">
+                            {agent.name}
+                          </label>
+                          <div className="mt-1 text-sm text-gray-500">
+                            <div className="flex items-center gap-4">
+                              <span className={`inline-flex items-center ${isAvailable ? 'text-green-600' : 'text-gray-500'}`}>
+                                <Icons.Circle className="w-2 h-2 mr-1" fill="currentColor" />
+                                {isAvailable ? 'Available' : 'Unavailable'}
+                              </span>
+                              {stats && (
+                                <>
+                                  <span>Success Rate: {Math.round((stats.successfulCalls / stats.totalCalls) * 100)}%</span>
+                                  <span>Avg Duration: {Math.round(stats.avgDuration)}s</span>
+                                </>
+                              )}
+                            </div>
+                            <div className="mt-1">
+                              Capabilities: {agent.capabilities.join(', ')}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Schedule Campaign */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Schedule Campaign
@@ -335,6 +409,7 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
                 </div>
               </div>
 
+              {/* Call Settings */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Call Settings
@@ -364,6 +439,7 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
                 </div>
               </div>
 
+              {/* Message Preview */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Message Preview

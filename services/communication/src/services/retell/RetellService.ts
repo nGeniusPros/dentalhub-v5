@@ -1,5 +1,5 @@
 import WebSocket from 'ws';
-import { RetellConfig, CallEventPayload, CallResponse, CallConfig } from './types';
+import { RetellConfig, CallEventPayload, CallResponse, CallConfig } from './types.js';
 
 export class RetellService {
   private config: RetellConfig;

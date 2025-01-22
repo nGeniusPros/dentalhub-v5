@@ -7,10 +7,12 @@ import { ScheduleDialog } from './ScheduleDialog';
 import { EditCampaignDialog } from './EditCampaignDialog';
 import { useCampaigns, Campaign } from '../../../../../hooks/use-campaigns';
 import { useCampaignActions } from '../../../../../hooks/use-campaign-actions';
+import { useVoice } from '../../../../../contexts/VoiceContext';
 
 export const VoiceCampaignList = () => {
   const { campaigns, loading, error, updateCampaignStatus, deleteCampaign } = useCampaigns();
   const { editingCampaign, showScheduleDialog, selectedCampaign, handleEditCampaign, handleScheduleCampaign, handleCloseScheduleDialog, handleCloseEditDialog, setEditingCampaign } = useCampaignActions();
+  const { state: voiceState, assignCampaignAgent } = useVoice();
 
   const handleStatusChange = async (campaignId: string, status: Campaign['status']) => {
     await updateCampaignStatus(campaignId, status);
@@ -57,6 +59,7 @@ export const VoiceCampaignList = () => {
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Campaign</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Agent</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Progress</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Success Rate</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Schedule</th>
@@ -64,119 +67,151 @@ export const VoiceCampaignList = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {campaigns.map((campaign) => (
-              <tr key={campaign.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <Icons.Phone className="w-5 h-5 text-primary" />
+            {campaigns.map((campaign) => {
+              const agent = campaign.agentId ? voiceState.agents.find(a => a.id === campaign.agentId) : null;
+              const agentStats = agent ? voiceState.agentStats[agent.id] : null;
+
+              return (
+                <tr key={campaign.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Icons.Phone className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-900">{campaign.name}</div>
+                        <div className="text-sm text-gray-500 capitalize">{campaign.type} Campaign</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-medium text-gray-900">{campaign.name}</div>
-                      <div className="text-sm text-gray-500 capitalize">{campaign.type} Campaign</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={cn(
-                    "px-3 py-1 text-xs font-medium rounded-full",
-                    campaign.status === 'active' && "bg-green-100 text-green-800",
-                    campaign.status === 'scheduled' && "bg-blue-100 text-blue-800",
-                    campaign.status === 'completed' && "bg-gray-100 text-gray-800",
-                    campaign.status === 'paused' && "bg-yellow-100 text-yellow-800"
-                  )}>
-                    {campaign.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-primary rounded-full"
-                        style={{ width: `${(campaign.completedCalls / campaign.targetCount) * 100}%` }}
-                      />
-                    </div>
-                    <span className="text-sm text-gray-500">
-                      {campaign.completedCalls}/{campaign.targetCount}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={cn(
+                      "px-3 py-1 text-xs font-medium rounded-full",
+                      campaign.status === 'active' && "bg-green-100 text-green-800",
+                      campaign.status === 'scheduled' && "bg-blue-100 text-blue-800",
+                      campaign.status === 'completed' && "bg-gray-100 text-gray-800",
+                      campaign.status === 'paused' && "bg-yellow-100 text-yellow-800"
+                    )}>
+                      {campaign.status}
                     </span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{campaign.successRate}%</span>
-                    {campaign.successRate > 0 && (
-                      <Icons.TrendingUp className="w-4 h-4 text-green-500" />
-                    )}
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm">
-                    {campaign.scheduledDate ? (
-                      <>
-                        <Icons.Calendar className="w-4 h-4 inline-block mr-1 text-gray-400" />
-                        {campaign.scheduledDate}
-                      </>
+                  </td>
+                  <td className="px-6 py-4">
+                    {agent ? (
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-900">{agent.name}</div>
+                          <div className="text-sm text-gray-500">{agent.phoneNumber}</div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            const newAgent = prompt('Select new agent ID:');
+                            if (newAgent) {
+                              assignCampaignAgent(campaign.id, newAgent);
+                            }
+                          }}
+                          title="Reassign Agent"
+                        >
+                          <Icons.UserPlus className="w-4 h-4" />
+                        </Button>
+                      </div>
                     ) : (
-                      <>
-                        <Icons.Clock className="w-4 h-4 inline-block mr-1 text-gray-400" />
-                        Last run: {campaign.lastRun}
-                      </>
+                      <div className="text-sm text-gray-500">
+                        Auto-assigned
+                      </div>
                     )}
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <div className="flex justify-end gap-2">
-                    {campaign.status === 'active' ? (
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-primary rounded-full"
+                          style={{ width: `${(campaign.completedCalls / campaign.targetCount) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-sm text-gray-500">
+                        {campaign.completedCalls}/{campaign.targetCount}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{campaign.successRate}%</span>
+                      {campaign.successRate > 0 && (
+                        <Icons.TrendingUp className="w-4 h-4 text-green-500" />
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm">
+                      {campaign.scheduledDate ? (
+                        <>
+                          <Icons.Calendar className="w-4 h-4 inline-block mr-1 text-gray-400" />
+                          {campaign.scheduledDate}
+                        </>
+                      ) : (
+                        <>
+                          <Icons.Clock className="w-4 h-4 inline-block mr-1 text-gray-400" />
+                          Last run: {campaign.lastRun}
+                        </>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      {campaign.status === 'active' ? (
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleStatusChange(campaign.id, 'paused')}
+                          title="Pause Campaign"
+                        >
+                          <Icons.PauseCircle className="w-4 h-4" />
+                        </Button>
+                      ) : campaign.status === 'paused' ? (
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleStatusChange(campaign.id, 'active')}
+                          title="Resume Campaign"
+                        >
+                          <Icons.PlayCircle className="w-4 h-4" />
+                        </Button>
+                      ) : null}
+                      
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => handleStatusChange(campaign.id, 'paused')}
-                        title="Pause Campaign"
+                        onClick={() => handleEditCampaign(campaign)}
+                        title="Edit Campaign"
                       >
-                        <Icons.PauseCircle className="w-4 h-4" />
+                        <Icons.Edit2 className="w-4 h-4" />
                       </Button>
-                    ) : campaign.status === 'paused' ? (
+                      
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => handleStatusChange(campaign.id, 'active')}
-                        title="Resume Campaign"
+                        onClick={() => handleScheduleCampaign(campaign)}
+                        title="Schedule Campaign"
                       >
-                        <Icons.PlayCircle className="w-4 h-4" />
+                        <Icons.Calendar className="w-4 h-4" />
                       </Button>
-                    ) : null}
-                    
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => handleEditCampaign(campaign)}
-                      title="Edit Campaign"
-                    >
-                      <Icons.Edit2 className="w-4 h-4" />
-                    </Button>
-                    
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => handleScheduleCampaign(campaign)}
-                      title="Schedule Campaign"
-                    >
-                      <Icons.Calendar className="w-4 h-4" />
-                    </Button>
-                    
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => handleDeleteCampaign(campaign.id)}
-                      title="Delete Campaign"
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Icons.Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleDeleteCampaign(campaign.id)}
+                        title="Delete Campaign"
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Icons.Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

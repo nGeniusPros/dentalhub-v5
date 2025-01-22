@@ -1,51 +1,30 @@
-function validateConfig(config) {
-    const required = ['baseUrl', 'apiKey', 'practiceId'];
-    const missing = required.filter(key => !config[key]);
-    if (missing.length > 0) {
-        throw new Error(`Missing required Sikka configuration: ${missing.join(', ')}. ` +
-            'Please ensure all required environment variables are set.');
-    }
+export const SIKKA_API_URL = process.env.SIKKA_API_URL;
+export const SIKKA_API_KEY = process.env.SIKKA_API_KEY;
+export const SIKKA_PRACTICE_ID = process.env.SIKKA_PRACTICE_ID;
+export const SIKKA_MASTER_CUSTOMER_ID = process.env.SIKKA_MASTER_CUSTOMER_ID;
+export const SIKKA_PRACTICE_KEY = process.env.SIKKA_PRACTICE_KEY;
+if (!process.env.SIKKA_APP_ID) {
+    throw new Error('SIKKA_APP_ID environment variable is required');
 }
-function loadConfig() {
-    const config = {
-        baseUrl: process.env.SIKKA_API_URL,
-        apiKey: process.env.SIKKA_API_KEY,
-        practiceId: process.env.SIKKA_PRACTICE_ID,
-    };
-    validateConfig(config);
-    return config;
+if (!process.env.SIKKA_APP_KEY) {
+    throw new Error('SIKKA_APP_KEY environment variable is required');
 }
-// Configuration with defaults and validation
-export const sikkaConfig = {
-    ...loadConfig(),
-    // Add any additional configuration options here
-};
-// Export individual config values for convenience
-export const { baseUrl: SIKKA_API_URL, apiKey: SIKKA_API_KEY, practiceId: SIKKA_PRACTICE_ID, } = sikkaConfig;
-// Retry configuration
+if (!process.env.SIKKA_PRACTICE_ID) {
+    throw new Error('SIKKA_PRACTICE_ID environment variable is required');
+}
 export const RETRY_OPTIONS = {
-    maxRetries: 3,
-    initialDelayMs: 1000,
-    maxDelayMs: 5000,
+    retries: 3,
+    retryDelay: 1000,
+    retryCondition: (error) => {
+        return error.response?.status === 429 || error.response?.status >= 500;
+    }
 };
-// Timeout configuration
 export const TIMEOUT_OPTIONS = {
-    request: 30000, // 30 seconds
-    connect: 5000, // 5 seconds
+    timeout: 30000 // 30 seconds
 };
-// Rate limiting configuration
-export const RATE_LIMIT = {
-    windowMs: 60 * 1000, // 1 minute
-    maxRequests: 100, // max 100 requests per minute
-};
-// Cache configuration
-export const CACHE_OPTIONS = {
-    eligibility: {
-        ttl: 24 * 60 * 60 * 1000, // 24 hours
-        maxSize: 1000, // max 1000 items
-    },
-    benefits: {
-        ttl: 12 * 60 * 60 * 1000, // 12 hours
-        maxSize: 1000, // max 1000 items
-    },
+export const sikkaConfig = {
+    baseUrl: process.env.SIKKA_API_URL || 'https://api.sikkasoft.com/v4',
+    appId: process.env.SIKKA_APP_ID,
+    appKey: process.env.SIKKA_APP_KEY,
+    practiceId: process.env.SIKKA_PRACTICE_ID
 };

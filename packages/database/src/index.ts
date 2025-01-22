@@ -1,2 +1,3 @@
-export { db } from './client';
+export { db, createClient } from './client';
 export type * from '@prisma/client';
+export * from './types';

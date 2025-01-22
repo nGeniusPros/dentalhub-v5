@@ -6,6 +6,7 @@ import { EmailProvider } from './contexts/EmailContext';
 import { LearningProvider } from './contexts/LearningContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { SettingsProvider } from './contexts/SettingsContext';
+import { VoiceProvider } from './contexts/VoiceContext';
 import { AppRoutes } from './routes';
 import { TooltipProvider } from './components/ui/tooltip';
 
@@ -41,11 +42,18 @@ function App() {
             <LearningProvider>
               <SettingsProvider>
                 <EmailProvider>
-                  <TooltipProvider>
-                    <BrowserRouter>
-                      <AppRoutes />
-                    </BrowserRouter>
-                  </TooltipProvider>
+                  <VoiceProvider>
+                    <TooltipProvider>
+                      <BrowserRouter
+                        future={{
+                          v7_startTransition: true,
+                          v7_relativeSplatPath: true
+                        } as any}
+                      >
+                        <AppRoutes />
+                      </BrowserRouter>
+                    </TooltipProvider>
+                  </VoiceProvider>
                 </EmailProvider>
               </SettingsProvider>
             </LearningProvider>

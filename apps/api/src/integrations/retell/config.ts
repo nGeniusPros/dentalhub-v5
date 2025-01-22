@@ -1,7 +1,7 @@
-import { RetellConfig } from './types';
+import { RetellConfig, AgentConfig } from './types';
 
 function validateConfig(config: Partial<RetellConfig>): asserts config is RetellConfig {
-  const required: (keyof RetellConfig)[] = ['apiKey', 'baseUrl', 'webhookSecret'];
+  const required: (keyof RetellConfig)[] = ['apiKey', 'baseUrl', 'webhookUrl'];
   const missing = required.filter(key => !config[key]);
 
   if (missing.length > 0) {
@@ -12,11 +12,30 @@ function validateConfig(config: Partial<RetellConfig>): asserts config is Retell
   }
 }
 
+function loadAgentConfigs(): AgentConfig[] {
+  const agents: AgentConfig[] = [];
+  
+  // Load all configured agents (up to 3 in current env)
+  for (let i = 1; i <= 3; i++) {
+    const agentId = process.env[`RETELL_AGENT_${i}_ID`];
+    const llmId = process.env[`RETELL_AGENT_${i}_LLM`];
+    const phoneNumber = process.env[`RETELL_AGENT_${i}_PHONE`];
+    
+    if (agentId && llmId && phoneNumber) {
+      agents.push({ agentId, llmId, phoneNumber });
+    }
+  }
+  
+  return agents;
+}
+
 function loadConfig(): RetellConfig {
   const config: Partial<RetellConfig> = {
     apiKey: process.env.RETELL_API_KEY,
-    baseUrl: process.env.RETELL_API_URL || 'https://api.retell.ai/v1',
-    webhookSecret: process.env.RETELL_WEBHOOK_SECRET,
+    baseUrl: process.env.RETELL_BASE_URL || 'https://api.retellai.com/v1',
+    wsUrl: process.env.RETELL_WEBSOCKET_URL || 'wss://api.retellai.com/v1/websocket',
+    webhookUrl: process.env.RETELL_WEBHOOK_URL,
+    agents: loadAgentConfigs()
   };
 
   validateConfig(config);
@@ -31,13 +50,15 @@ export const retellConfig: RetellConfig = {
 // Export individual config values for convenience
 export const {
   apiKey: RETELL_API_KEY,
-  baseUrl: RETELL_API_URL,
-  webhookSecret: RETELL_WEBHOOK_SECRET,
+  baseUrl: RETELL_BASE_URL,
+  wsUrl: RETELL_WS_URL,
+  webhookUrl: RETELL_WEBHOOK_URL,
+  agents: RETELL_AGENTS
 } = retellConfig;
 
 // Call configuration
 export const CALL_CONFIG = {
-  maxDuration: 10 * 60, // 10 minutes in seconds
+  maxDuration: 30 * 60, // 30 minutes in seconds
   maxRetries: 2,
   minDelayBetweenCalls: 60, // 1 minute in seconds
   defaultLanguage: 'en-US',
@@ -55,7 +76,7 @@ export const QUEUE_CONFIG = {
     low: 3,
   },
   retryDelays: [5000, 15000, 30000], // Delays in milliseconds
-		maxRetries: 3,
+  maxRetries: 3,
 };
 
 // Webhook configuration
@@ -84,22 +105,4 @@ export const ANALYSIS_CONFIG = {
     enabled: true,
     maxLength: 500,
   },
-};
-
-// Cache configuration
-export const CACHE_CONFIG = {
-  transcripts: {
-    ttl: 7 * 24 * 60 * 60 * 1000, // 7 days
-    maxSize: 1000,
-  },
-  analysis: {
-    ttl: 7 * 24 * 60 * 60 * 1000, // 7 days
-    maxSize: 1000,
-  },
-};
-
-// Rate limiting configuration
-export const RATE_LIMIT = {
-  windowMs: 60 * 1000, // 1 minute
-  maxRequests: 50,     // max 50 requests per minute
 };

@@ -1,4 +1,4 @@
-import { CallEventPayload } from './retell/types';
+import { CallEventPayload } from './retell/types.js';
 
 export class WebhookService {
   async handleWebhook(event: CallEventPayload) {

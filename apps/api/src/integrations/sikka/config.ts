@@ -1,5 +1,11 @@
 import { SikkaConfig } from './types';
 
+export const SIKKA_API_URL = process.env.SIKKA_API_URL;
+export const SIKKA_API_KEY = process.env.SIKKA_API_KEY;
+export const SIKKA_PRACTICE_ID = process.env.SIKKA_PRACTICE_ID;
+export const SIKKA_MASTER_CUSTOMER_ID = process.env.SIKKA_MASTER_CUSTOMER_ID;
+export const SIKKA_PRACTICE_KEY = process.env.SIKKA_PRACTICE_KEY;
+
 if (!process.env.SIKKA_APP_ID) {
   throw new Error('SIKKA_APP_ID environment variable is required');
 }

@@ -4,27 +4,113 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { edgeCache } from '../../utils/cache';
 import { MonitoringService } from '../../services/monitoring';
+import sharp from 'sharp';
+import ffmpeg from 'fluent-ffmpeg';
+import { Readable } from 'stream';
 const instances = process.env.EDGE_INSTANCES ? parseInt(process.env.EDGE_INSTANCES) : 1;
 let currentInstance = 0;
-// Mock implementation for image processing
 async function processImage(url, options) {
     try {
-        // Mock implementation for image processing
-        console.log('Processing image:', url, options);
-        const imageBuffer = Buffer.from('mock image data', 'base64');
-        return imageBuffer;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch image: ${response.statusText}`);
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        let image = sharp(buffer);
+        if (options.width || options.height) {
+            image = image.resize(options.width, options.height, {
+                fit: options.fit || 'cover',
+                position: options.position || 'center'
+            });
+        }
+        if (options.resize) {
+            image = image.resize(options.resize.width, options.resize.height, {
+                fit: options.resize.fit || 'cover'
+            });
+        }
+        if (options.crop) {
+            image = image.extract({
+                left: options.crop.x,
+                top: options.crop.y,
+                width: options.crop.width,
+                height: options.crop.height
+            });
+        }
+        if (options.rotate) {
+            image = image.rotate(options.rotate);
+        }
+        if (options.effect) {
+            switch (options.effect) {
+                case 'grayscale':
+                    image = image.grayscale();
+                    break;
+                case 'sepia':
+                    image = image.tint({ r: 112, g: 66, b: 20 });
+                    break;
+                case 'blur':
+                    image = image.blur(10);
+                    break;
+            }
+        }
+        return image
+            .toFormat(options.format || 'jpeg', {
+            quality: options.quality || 80,
+            progressive: options.progressive || true
+        })
+            .toBuffer();
     }
     catch (error) {
         throw handleMediaError(error, 'IMAGE_PROCESSING_FAILED');
     }
 }
-// Mock implementation for video processing
 async function processVideo(url) {
     try {
-        // Mock implementation for video processing
-        console.log('Processing video:', url);
-        const videoBuffer = Buffer.from('mock video data', 'base64');
-        return videoBuffer;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch video: ${response.statusText}`);
+        }
+        if (!response.body) {
+            throw new Error('No video data received');
+        }
+        const chunks = [];
+        const reader = response.body.getReader();
+        return new Promise((resolve, reject) => {
+            const stream = new Readable({
+                async read() {
+                    try {
+                        const { done, value } = await reader.read();
+                        if (done) {
+                            this.push(null);
+                            return;
+                        }
+                        this.push(value);
+                    }
+                    catch (error) {
+                        if (error instanceof Error) {
+                            this.destroy(error);
+                        }
+                        else {
+                            this.destroy(new Error(String(error)));
+                        }
+                    }
+                }
+            });
+            ffmpeg(stream)
+                .outputFormat('mp4')
+                .videoCodec('libx264')
+                .audioCodec('aac')
+                .on('error', (err) => {
+                reject(handleMediaError(err, 'VIDEO_PROCESSING_FAILED'));
+            })
+                .on('end', () => {
+                resolve(Buffer.concat(chunks));
+            })
+                .pipe()
+                .on('data', (chunk) => {
+                chunks.push(chunk);
+            });
+        });
     }
     catch (error) {
         throw handleMediaError(error, 'VIDEO_PROCESSING_FAILED');

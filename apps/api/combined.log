@@ -364,3 +364,26 @@
 {"duration":0,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/staff-metrics","statusCode":304,"timestamp":"2025-01-21T20:04:41.505Z"}
 {"duration":1,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/stats","statusCode":304,"timestamp":"2025-01-21T20:04:41.509Z"}
 {"duration":2,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/stats","statusCode":304,"timestamp":"2025-01-21T20:04:41.515Z"}
+{"level":"info","message":"API server running on port 3001","timestamp":"2025-01-22T03:49:47.011Z"}
+{"NEXT_PUBLIC_SUPABASE_ANON_KEY":"set","NEXT_PUBLIC_SUPABASE_URL":"set","SIKKA_APP_ID":"set","SIKKA_APP_KEY":"set","SIKKA_PRACTICE_ID":"set","SUPABASE_SERVICE_ROLE_KEY":"set","level":"info","message":"Environment variables:","timestamp":"2025-01-22T03:49:47.014Z"}
+{"duration":44,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/stats","statusCode":304,"timestamp":"2025-01-22T03:53:27.395Z"}
+{"duration":4,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/stats","statusCode":304,"timestamp":"2025-01-22T03:53:27.416Z"}
+{"duration":2,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/stats","statusCode":304,"timestamp":"2025-01-22T03:53:27.431Z"}
+{"duration":1,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/stats","statusCode":304,"timestamp":"2025-01-22T03:53:27.435Z"}
+{"duration":3,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/revenue-analytics","statusCode":304,"timestamp":"2025-01-22T03:53:27.448Z"}
+{"duration":3,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/patient-metrics","statusCode":304,"timestamp":"2025-01-22T03:53:27.457Z"}
+{"duration":3,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/staff-metrics","statusCode":304,"timestamp":"2025-01-22T03:53:27.463Z"}
+{"duration":3,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/revenue-analytics","statusCode":304,"timestamp":"2025-01-22T03:53:27.474Z"}
+{"duration":3,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/patient-metrics","statusCode":304,"timestamp":"2025-01-22T03:53:27.481Z"}
+{"duration":3,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/staff-metrics","statusCode":304,"timestamp":"2025-01-22T03:53:27.487Z"}
+{"duration":6,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/stats","statusCode":304,"timestamp":"2025-01-22T03:55:08.806Z"}
+{"duration":1,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/stats","statusCode":304,"timestamp":"2025-01-22T03:55:08.814Z"}
+{"duration":1,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/stats","statusCode":304,"timestamp":"2025-01-22T03:55:08.819Z"}
+{"duration":1,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/stats","statusCode":304,"timestamp":"2025-01-22T03:55:08.826Z"}
+{"duration":2,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/revenue-analytics","statusCode":304,"timestamp":"2025-01-22T03:55:08.832Z"}
+{"duration":2,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/patient-metrics","statusCode":304,"timestamp":"2025-01-22T03:55:08.837Z"}
+{"duration":3,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/staff-metrics","statusCode":304,"timestamp":"2025-01-22T03:55:08.843Z"}
+{"duration":2,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/revenue-analytics","statusCode":304,"timestamp":"2025-01-22T03:55:08.848Z"}
+{"duration":2,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/patient-metrics","statusCode":304,"timestamp":"2025-01-22T03:55:08.860Z"}
+{"duration":3,"level":"info","message":"HTTP Request","method":"GET","route":"/api/dashboard/staff-metrics","statusCode":304,"timestamp":"2025-01-22T03:55:08.865Z"}
+{"level":"info","message":"SIGINT received. Shutting down gracefully...","timestamp":"2025-01-22T03:58:11.992Z"}

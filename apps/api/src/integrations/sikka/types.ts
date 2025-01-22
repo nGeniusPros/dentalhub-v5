@@ -3,6 +3,11 @@ export interface SikkaConfig {
   appId: string;
   appKey: string;
   practiceId: string;
+  masterCustomerId: string;
+  practiceKey: string;
+  tokenRefreshThreshold?: number; // minutes before expiration to refresh
+  maxRetryAttempts?: number;
+  rateLimitDelay?: number; // ms to wait when rate limited
 }
 
 export interface TokenResponse {
@@ -33,6 +38,23 @@ export interface TokenInfo {
   refreshKey?: string;
   expiresAt: Date;
   scope: string[];
+}
+
+export interface TokenMetrics {
+  refreshAttempts: number;
+  lastRefreshTime: Date;
+  rateLimitHits: number;
+  totalRefreshes: number;
+  failedRefreshes: number;
+  averageRefreshTime: number;
+}
+
+export interface TokenStatus {
+  isValid: boolean;
+  isExpired: boolean;
+  isRevoked: boolean;
+  expiresIn: number; // minutes
+  metrics: TokenMetrics;
 }
 
 export interface InsuranceVerificationRequest {

@@ -1,6 +1,6 @@
-import { RetellConfig } from './types';
+import { RetellConfig, AgentConfig } from './types';
 export declare const retellConfig: RetellConfig;
-export declare const RETELL_API_KEY: string, RETELL_API_URL: string, RETELL_WEBHOOK_SECRET: string;
+export declare const RETELL_API_KEY: string, RETELL_BASE_URL: string, RETELL_WS_URL: string, RETELL_WEBHOOK_URL: string, RETELL_AGENTS: AgentConfig[];
 export declare const CALL_CONFIG: {
     maxDuration: number;
     maxRetries: number;
@@ -43,18 +43,4 @@ export declare const ANALYSIS_CONFIG: {
         enabled: boolean;
         maxLength: number;
     };
-};
-export declare const CACHE_CONFIG: {
-    transcripts: {
-        ttl: number;
-        maxSize: number;
-    };
-    analysis: {
-        ttl: number;
-        maxSize: number;
-    };
-};
-export declare const RATE_LIMIT: {
-    windowMs: number;
-    maxRequests: number;
 };

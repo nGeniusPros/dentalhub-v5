@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../../../../components/ui/button';
 import { Toggle } from '../../../../../components/ui/toggle';
+import { useVoice } from '../../../../../contexts/VoiceContext';
+import type { RetellAgent } from '../../../../../types/voice';
 
 interface AIAgentSettingsProps {
   open: boolean;
@@ -13,6 +15,7 @@ export const AIAgentSettings: React.FC<AIAgentSettingsProps> = ({
   open,
   onClose
 }) => {
+  const { state, updateAgentSettings } = useVoice();
   const [settings, setSettings] = useState({
     enabled: true,
     afterHours: true,
@@ -39,7 +42,7 @@ export const AIAgentSettings: React.FC<AIAgentSettingsProps> = ({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-white rounded-xl shadow-xl w-full max-w-3xl"
+        className="bg-white rounded-xl shadow-xl w-full max-w-3xl overflow-y-auto max-h-[90vh]"
       >
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
@@ -158,6 +161,77 @@ export const AIAgentSettings: React.FC<AIAgentSettingsProps> = ({
               <p className="text-sm text-gray-500">
                 Your request will be sent to Ngenius support for review and implementation.
               </p>
+            </div>
+          </div>
+
+          {/* RetellAI Agents Configuration */}
+          <div className="space-y-4 border-t border-gray-200 pt-6">
+            <h3 className="font-medium text-gray-900">Voice Agents Configuration</h3>
+            <div className="space-y-4">
+              {state.agents.map((agent) => (
+                <div key={agent.id} className="p-4 bg-gray-50 rounded-lg space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-medium text-gray-900">{agent.name}</h4>
+                      <p className="text-sm text-gray-500">{agent.phoneNumber}</p>
+                    </div>
+                    <Toggle
+                      checked={agent.status === 'active'}
+                      onChange={(checked) => updateAgentSettings(agent.id, {
+                        status: checked ? 'active' : 'inactive'
+                      })}
+                    />
+                  </div>
+                  
+                  {/* Agent Stats */}
+                  {state.agentStats[agent.id] && (
+                    <div className="grid grid-cols-3 gap-4 pt-2">
+                      <div className="text-center">
+                        <p className="text-sm text-gray-500">Total Calls</p>
+                        <p className="font-medium">{state.agentStats[agent.id].totalCalls}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm text-gray-500">Success Rate</p>
+                        <p className="font-medium">
+                          {Math.round((state.agentStats[agent.id].successfulCalls / state.agentStats[agent.id].totalCalls) * 100)}%
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm text-gray-500">Avg Duration</p>
+                        <p className="font-medium">{Math.round(state.agentStats[agent.id].avgDuration)}s</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Agent Priority */}
+                  <div className="pt-2">
+                    <label className="block text-sm text-gray-500 mb-2">Priority Level</label>
+                    <select
+                      value={agent.priority}
+                      onChange={(e) => updateAgentSettings(agent.id, {
+                        priority: parseInt(e.target.value)
+                      })}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
+                    >
+                      <option value={1}>High</option>
+                      <option value={2}>Medium</option>
+                      <option value={3}>Low</option>
+                    </select>
+                  </div>
+
+                  {/* Agent Capabilities */}
+                  <div className="pt-2">
+                    <label className="block text-sm text-gray-500 mb-2">Capabilities</label>
+                    <div className="flex flex-wrap gap-2">
+                      {agent.capabilities.map((capability) => (
+                        <span key={capability} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                          {capability}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

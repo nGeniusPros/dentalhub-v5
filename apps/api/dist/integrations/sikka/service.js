@@ -1,30 +1,64 @@
 import axios from 'axios';
-import { handleSikkaError, isRetryableError } from './error';
+import { handleSikkaError } from './error';
 import { sikkaConfig, RETRY_OPTIONS, TIMEOUT_OPTIONS } from './config';
-import { apiCache } from '../../utils/cache';
+import CacheManager from '../../utils/cache';
+// Sikka API Cache Configuration
+const sikkaApiCache = new CacheManager({});
+import SikkaTokenService from './token-service';
+// Cache TTL configurations (in seconds)
+const CACHE_TTL = {
+    SHORT: 5 * 60, // 5 minutes
+    MEDIUM: 30 * 60, // 30 minutes
+    LONG: 24 * 60 * 60, // 24 hours
+};
+const tokenManager = new SikkaTokenService({
+    baseUrl: sikkaConfig.baseUrl,
+    appId: sikkaConfig.appId,
+    appKey: sikkaConfig.appKey,
+    practiceId: sikkaConfig.practiceId,
+});
 // Initialize axios instance for Sikka API
 const sikkaApi = axios.create({
     baseURL: sikkaConfig.baseUrl,
     headers: {
-        'Authorization': `Bearer ${sikkaConfig.apiKey}`,
-        'X-Practice-ID': sikkaConfig.practiceId,
         'Content-Type': 'application/json',
     },
-    timeout: TIMEOUT_OPTIONS.request,
+    timeout: TIMEOUT_OPTIONS.timeout,
+});
+// Add token interceptor
+sikkaApi.interceptors.request.use(async (config) => {
+    const token = await tokenManager.getAccessToken();
+    config.headers['Authorization'] = `Bearer ${token}`;
+    config.headers['X-Practice-ID'] = sikkaConfig.practiceId;
+    config.headers['Accept'] = 'application/json';
+    return config;
 });
 // Add retry interceptor
 sikkaApi.interceptors.response.use(response => response, async (error) => {
-    let retryCount = 0;
-    const originalRequest = error.config;
-    while (retryCount < RETRY_OPTIONS.maxRetries && isRetryableError(error)) {
-        retryCount++;
-        const delayMs = Math.min(RETRY_OPTIONS.initialDelayMs * Math.pow(2, retryCount - 1), RETRY_OPTIONS.maxDelayMs);
-        await new Promise(resolve => setTimeout(resolve, delayMs));
+    // If token is expired, it will be refreshed by tokenManager on next request
+    if (error.response?.status === 401) {
+        const originalRequest = error.config;
         try {
+            // Force token refresh
+            await tokenManager.refreshToken();
+            // Retry the request
             return await sikkaApi(originalRequest);
         }
-        catch (retryError) {
-            error = retryError;
+        catch (refreshError) {
+            throw refreshError;
+        }
+    }
+    // Handle other retryable errors
+    if (RETRY_OPTIONS.retryCondition(error)) {
+        const originalRequest = error.config;
+        if (!originalRequest._retry) {
+            originalRequest._retry = 0;
+        }
+        if (originalRequest._retry < RETRY_OPTIONS.retries) {
+            originalRequest._retry++;
+            const delay = RETRY_OPTIONS.retryDelay * Math.pow(2, originalRequest._retry - 1);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return sikkaApi(originalRequest);
         }
     }
     throw error;
@@ -34,7 +68,7 @@ sikkaApi.interceptors.response.use(response => response, async (error) => {
  */
 export async function verifyInsurance(data) {
     const cacheKey = `verifyInsurance-${JSON.stringify(data)}`;
-    return apiCache.get(cacheKey, async () => {
+    return sikkaApiCache.get(cacheKey, async () => {
         try {
             const response = await sikkaApi.post('/insurance/verify', {
                 practice_id: sikkaConfig.practiceId,
@@ -59,7 +93,7 @@ export async function verifyInsurance(data) {
  */
 export async function checkEligibility(data) {
     const cacheKey = `checkEligibility-${JSON.stringify(data)}`;
-    return apiCache.get(cacheKey, async () => {
+    return sikkaApiCache.get(cacheKey, async () => {
         try {
             const response = await sikkaApi.post('/eligibility/check', {
                 practice_id: sikkaConfig.practiceId,
@@ -84,7 +118,7 @@ export async function checkEligibility(data) {
  */
 export async function verifyBenefits(data) {
     const cacheKey = `verifyBenefits-${JSON.stringify(data)}`;
-    return apiCache.get(cacheKey, async () => {
+    return sikkaApiCache.get(cacheKey, async () => {
         try {
             const response = await sikkaApi.post('/benefits/verify', {
                 practice_id: sikkaConfig.practiceId,
@@ -117,6 +151,182 @@ export async function processClaim(data) {
             procedures: data.claimDetails.procedures,
             diagnosis_codes: data.claimDetails.diagnosisCodes,
             place_of_service: data.claimDetails.placeOfService,
+        });
+        return {
+            claimId: response.data.claim_id,
+            status: response.data.status,
+            acknowledgement: response.data.acknowledgement,
+            timestamp: response.data.timestamp,
+        };
+    }
+    catch (error) {
+        throw handleSikkaError(error);
+    }
+}
+// Practice Management
+/**
+ * Get dental practice information
+ */
+export async function getPracticeInfo(params = {}) {
+    try {
+        const response = await sikkaApi.get('/practices', { params });
+        return response.data;
+    }
+    catch (error) {
+        throw handleSikkaError(error);
+    }
+}
+// Appointment Management
+/**
+ * Get dental appointments
+ */
+export async function getAppointments(params = {}) {
+    const cacheKey = `appointments-${JSON.stringify(params)}`;
+    return sikkaApiCache.get(cacheKey, async () => {
+        try {
+            const response = await sikkaApi.get('/appointments', { params });
+            const data = response.data;
+            sikkaApiCache.set(cacheKey, data, CACHE_TTL.SHORT);
+            return data;
+        }
+        catch (error) {
+            throw handleSikkaError(error);
+        }
+    });
+}
+/**
+ * Get available appointment slots
+ */
+export async function getAvailableSlots(params = {}) {
+    try {
+        const response = await sikkaApi.get('/appointments_available_slots', { params });
+        return response.data;
+    }
+    catch (error) {
+        throw handleSikkaError(error);
+    }
+}
+// Patient Management
+/**
+ * Get patient information
+ */
+export async function getPatients(params = {}) {
+    const cacheKey = `patients-${JSON.stringify(params)}`;
+    return sikkaApiCache.get(cacheKey, async () => {
+        try {
+            const response = await sikkaApi.get('/patients', { params });
+            const data = response.data;
+            sikkaApiCache.set(cacheKey, data, CACHE_TTL.MEDIUM);
+            return data;
+        }
+        catch (error) {
+            throw handleSikkaError(error);
+        }
+    });
+}
+/**
+ * Get dental-specific patient information
+ */
+export async function getDentalPatients(params = {}) {
+    const cacheKey = `dental-patients-${JSON.stringify(params)}`;
+    return sikkaApiCache.get(cacheKey, async () => {
+        try {
+            const response = await sikkaApi.get('/patients/dental_patients', { params });
+            const data = response.data;
+            sikkaApiCache.set(cacheKey, data, CACHE_TTL.MEDIUM);
+            return data;
+        }
+        catch (error) {
+            throw handleSikkaError(error);
+        }
+    });
+}
+/**
+ * Get patient treatment history
+ */
+export async function getPatientTreatmentHistory(patientId, params = {}) {
+    const cacheKey = `treatment-history-${patientId}-${JSON.stringify(params)}`;
+    return sikkaApiCache.get(cacheKey, async () => {
+        try {
+            const response = await sikkaApi.get('/patient_treatment_history', {
+                params: { patient_id: patientId, ...params }
+            });
+            const data = response.data;
+            sikkaApiCache.set(cacheKey, data, CACHE_TTL.MEDIUM);
+            return data;
+        }
+        catch (error) {
+            throw handleSikkaError(error);
+        }
+    });
+}
+// Treatment Plans
+/**
+ * Get dental treatment plans
+ */
+export async function getTreatmentPlans(params = {}) {
+    const cacheKey = `treatment-plans-${JSON.stringify(params)}`;
+    return sikkaApiCache.get(cacheKey, async () => {
+        try {
+            const response = await sikkaApi.get('/treatment_plans', { params });
+            const data = response.data;
+            sikkaApiCache.set(cacheKey, data, CACHE_TTL.SHORT);
+            return data;
+        }
+        catch (error) {
+            throw handleSikkaError(error);
+        }
+    });
+}
+// Insurance Companies
+/**
+ * Get dental insurance companies
+ */
+export async function getInsuranceCompanies(params = {}) {
+    const cacheKey = `insurance-companies-${JSON.stringify(params)}`;
+    return sikkaApiCache.get(cacheKey, async () => {
+        try {
+            const response = await sikkaApi.get('/insurance_companies', { params });
+            const data = response.data;
+            sikkaApiCache.set(cacheKey, data, CACHE_TTL.LONG);
+            return data;
+        }
+        catch (error) {
+            throw handleSikkaError(error);
+        }
+    });
+}
+/**
+ * Get dental insurance coverage details
+ */
+export async function getInsurancePlanCoverage(insuranceCompanyId, practiceId) {
+    const cacheKey = `insurance-coverage-${insuranceCompanyId}-${practiceId}`;
+    return sikkaApiCache.get(cacheKey, async () => {
+        try {
+            const response = await sikkaApi.get('/insurance_plan_coverage', {
+                params: {
+                    insurance_company_id: insuranceCompanyId,
+                    practice_id: practiceId
+                }
+            });
+            const data = response.data;
+            sikkaApiCache.set(cacheKey, data, CACHE_TTL.LONG);
+            return data;
+        }
+        catch (error) {
+            throw handleSikkaError(error);
+        }
+    });
+}
+/**
+ * Update claim status
+ */
+export async function updateClaimStatus(data) {
+    try {
+        const response = await sikkaApi.put(`/claims/${data.claimId}/status`, {
+            practice_id: sikkaConfig.practiceId,
+            status: data.status,
+            notes: data.notes,
         });
         return {
             claimId: response.data.claim_id,

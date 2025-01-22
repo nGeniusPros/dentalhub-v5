@@ -2,16 +2,29 @@
 > @dentalhub/api@1.0.0 build C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\apps\api
 > tsc
 
+src/integrations/retell/validators.ts(10,10): error TS2724: '"./config"' has no exported member named 'RETELL_WEBHOOK_SECRET'. Did you mean 'RETELL_WEBHOOK_URL'?
+src/integrations/sikka/config.ts(27,14): error TS2739: Type '{ baseUrl: string; appId: string; appKey: string; practiceId: string; }' is missing the following properties from type 'SikkaConfig': masterCustomerId, practiceKey
+src/integrations/sikka/error.ts(81,55): error TS2339: Property 'error' does not exist on type '{}'.
+src/integrations/sikka/error.ts(87,15): error TS2353: Object literal may only specify known properties, and 'sikkaErrorCode' does not exist in type 'ErrorDetails'.
 src/integrations/sikka/index.ts(6,7): error TS2742: The inferred type of 'router' cannot be named without a reference to '.pnpm/@types+express-serve-static-core@4.19.6/node_modules/@types/express-serve-static-core'. This is likely not portable. A type annotation is necessary.
-src/middleware/errorHandler.ts(12,35): error TS2345: Argument of type 'string' is not assignable to parameter of type 'ErrorCode'.
+src/integrations/sikka/service.ts(12,28): error TS2305: Module '"./error"' has no exported member 'isRetryableError'.
+src/integrations/sikka/service.ts(18,40): error TS2345: Argument of type '{}' is not assignable to parameter of type 'CacheOptions'.
+  Property 'ttl' is missing in type '{}' but required in type 'CacheOptions'.
+src/integrations/sikka/service.ts(28,44): error TS2345: Argument of type '{ baseUrl: string; appId: string; appKey: string; practiceId: string; }' is not assignable to parameter of type 'SikkaConfig'.
+  Type '{ baseUrl: string; appId: string; appKey: string; practiceId: string; }' is missing the following properties from type 'SikkaConfig': masterCustomerId, practiceKey
 src/routes/appointments/availability.ts(5,7): error TS2742: The inferred type of 'router' cannot be named without a reference to '.pnpm/@types+express-serve-static-core@4.19.6/node_modules/@types/express-serve-static-core'. This is likely not portable. A type annotation is necessary.
 src/routes/appointments/resources.ts(5,7): error TS2742: The inferred type of 'router' cannot be named without a reference to '.pnpm/@types+express-serve-static-core@4.19.6/node_modules/@types/express-serve-static-core'. This is likely not portable. A type annotation is necessary.
-src/routes/patients.ts(12,7): error TS2742: The inferred type of 'router' cannot be named without a reference to '.pnpm/@types+express-serve-static-core@4.19.6/node_modules/@types/express-serve-static-core'. This is likely not portable. A type annotation is necessary.
+src/routes/patients.ts(16,7): error TS2742: The inferred type of 'router' cannot be named without a reference to '.pnpm/@types+express-serve-static-core@4.19.6/node_modules/@types/express-serve-static-core'. This is likely not portable. A type annotation is necessary.
 src/routes/providers.ts(6,7): error TS2742: The inferred type of 'router' cannot be named without a reference to '.pnpm/@types+express-serve-static-core@4.19.6/node_modules/@types/express-serve-static-core'. This is likely not portable. A type annotation is necessary.
+src/routes/sikka.ts(10,44): error TS2345: Argument of type '{ baseUrl: string; appId: string; appKey: string; practiceId: string; }' is not assignable to parameter of type 'SikkaConfig'.
+  Type '{ baseUrl: string; appId: string; appKey: string; practiceId: string; }' is missing the following properties from type 'SikkaConfig': masterCustomerId, practiceKey
 src/routes/staff/performance.ts(152,15): error TS2339: Property 'record_id' does not exist on type '{ id: string; }'.
 src/routes/staff/performance.ts(192,15): error TS2339: Property 'record_id' does not exist on type '{ id: string; }'.
 src/routes/staff/tasks.ts(155,15): error TS2339: Property 'task_id' does not exist on type '{ id: string; }'.
-src/services/patientService.ts(117,9): error TS2742: The inferred type of 'uploadPatientDocument' cannot be named without a reference to '.pnpm/@supabase+storage-js@2.7.1/node_modules/@supabase/storage-js'. This is likely not portable. A type annotation is necessary.
+src/services/patientService.ts(4,10): error TS2305: Module '"../integrations/sikka/config"' has no exported member 'SIKKA_API_URL'.
+src/services/patientService.ts(4,25): error TS2305: Module '"../integrations/sikka/config"' has no exported member 'SIKKA_API_KEY'.
+src/services/patientService.ts(4,40): error TS2305: Module '"../integrations/sikka/config"' has no exported member 'SIKKA_PRACTICE_ID'.
+src/services/patientService.ts(119,9): error TS2742: The inferred type of 'uploadPatientDocument' cannot be named without a reference to '.pnpm/@supabase+storage-js@2.7.1/node_modules/@supabase/storage-js'. This is likely not portable. A type annotation is necessary.
 src/services/procedureCategoryMappingService.ts(32,31): error TS2551: Property 'procedure_categories' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCategory'?
 src/services/procedureCategoryMappingService.ts(48,14): error TS2551: Property 'procedure_category_mappings' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCategoryMapping'?
 src/services/procedureCategoryMappingService.ts(82,13): error TS2551: Property 'procedure_category_mappings' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCategoryMapping'?
@@ -26,7 +39,13 @@ src/services/procedureCodeService.ts(99,30): error TS2551: Property 'procedure_c
 src/services/procedureCodeService.ts(113,12): error TS2551: Property 'procedure_fee_schedule' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureFeeSchedule'?
 src/services/procedureCodeService.ts(124,12): error TS2551: Property 'procedure_fee_schedule' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureFeeSchedule'?
 src/services/procedureCodeService.ts(138,13): error TS2551: Property 'procedure_codes' does not exist on type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>'. Did you mean 'procedureCode'?
-src/services/supabaseService.ts(3,10): error TS2305: Module '"@dentalhub/database"' has no exported member 'createClient'.
-src/utils/cache.ts(30,32): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'string | number'.
-  Type 'undefined' is not assignable to type 'string | number'.
+src/services/supabaseService.ts(9,21): error TS2352: Conversion of type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>' to type 'SupabaseClient<Database, "public", any>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'PrismaClient<{ log: ("query" | "warn" | "error")[]; }, never, DefaultArgs>' is missing the following properties from type 'SupabaseClient<Database, "public", any>': supabaseUrl, supabaseKey, auth, realtime, and 21 more.
+src/tests/sikka.test.ts(5,10): error TS2305: Module '"../integrations/sikka/error"' has no exported member 'SikkaIntegrationError'.
+src/utils/errorHandler.ts(2,10): error TS2305: Module '"../integrations/sikka/error"' has no exported member 'SikkaIntegrationError'.
+src/utils/errorHandler.ts(14,38): error TS18046: 'error' is of type 'unknown'.
+src/utils/errorHandler.ts(16,15): error TS18046: 'error' is of type 'unknown'.
+src/utils/errorHandler.ts(17,18): error TS18046: 'error' is of type 'unknown'.
+src/utils/errorHandler.ts(18,18): error TS18046: 'error' is of type 'unknown'.
+src/utils/errorHandler.ts(82,38): error TS18046: 'error' is of type 'unknown'.
  ELIFECYCLE  Command failed with exit code 1.

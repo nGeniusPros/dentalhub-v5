@@ -1,133 +1,57 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+export class WebhookService {
+    async handleWebhook(event) {
+        try {
+            console.log('Processing webhook event:', event);
+            switch (event.eventType) {
+                case 'call.started':
+                    await this.handleCallStarted(event);
+                    break;
+                case 'call.ended':
+                    await this.handleCallEnded(event);
+                    break;
+                case 'call.transcription':
+                    await this.handleCallTranscription(event);
+                    break;
                 default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
+                    console.log(`Unhandled event type: ${event.eventType}`);
             }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+        }
+        catch (error) {
+            console.error('Error handling webhook:', error);
+            throw error;
+        }
     }
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WebhookService = void 0;
-var WebhookService = /** @class */ (function () {
-    function WebhookService() {
+    async handleCallStarted(event) {
+        try {
+            // Update campaign metrics
+            // TODO: Implement campaign metrics update logic
+            console.log('Call started:', event.callId);
+        }
+        catch (error) {
+            console.error('Error handling call started event:', error);
+            throw error;
+        }
     }
-    WebhookService.prototype.handleWebhook = function (event) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a, error_1;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _b.trys.push([0, 9, , 10]);
-                        console.log('Processing webhook event:', event);
-                        _a = event.eventType;
-                        switch (_a) {
-                            case 'call.started': return [3 /*break*/, 1];
-                            case 'call.ended': return [3 /*break*/, 3];
-                            case 'call.transcription': return [3 /*break*/, 5];
-                        }
-                        return [3 /*break*/, 7];
-                    case 1: return [4 /*yield*/, this.handleCallStarted(event)];
-                    case 2:
-                        _b.sent();
-                        return [3 /*break*/, 8];
-                    case 3: return [4 /*yield*/, this.handleCallEnded(event)];
-                    case 4:
-                        _b.sent();
-                        return [3 /*break*/, 8];
-                    case 5: return [4 /*yield*/, this.handleCallTranscription(event)];
-                    case 6:
-                        _b.sent();
-                        return [3 /*break*/, 8];
-                    case 7:
-                        console.log("Unhandled event type: ".concat(event.eventType));
-                        _b.label = 8;
-                    case 8: return [3 /*break*/, 10];
-                    case 9:
-                        error_1 = _b.sent();
-                        console.error('Error handling webhook:', error_1);
-                        throw error_1;
-                    case 10: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    WebhookService.prototype.handleCallStarted = function (event) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                try {
-                    // Update campaign metrics
-                    // TODO: Implement campaign metrics update logic
-                    console.log('Call started:', event.callId);
-                }
-                catch (error) {
-                    console.error('Error handling call started event:', error);
-                    throw error;
-                }
-                return [2 /*return*/];
-            });
-        });
-    };
-    WebhookService.prototype.handleCallEnded = function (event) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                try {
-                    // Update campaign metrics and status
-                    // TODO: Implement campaign metrics and status update logic
-                    console.log('Call ended:', event.callId);
-                }
-                catch (error) {
-                    console.error('Error handling call ended event:', error);
-                    throw error;
-                }
-                return [2 /*return*/];
-            });
-        });
-    };
-    WebhookService.prototype.handleCallTranscription = function (event) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                try {
-                    // Store transcription data
-                    // TODO: Implement transcription storage logic
-                    console.log('Call transcription received:', event.callId);
-                }
-                catch (error) {
-                    console.error('Error handling call transcription event:', error);
-                    throw error;
-                }
-                return [2 /*return*/];
-            });
-        });
-    };
-    return WebhookService;
-}());
-exports.WebhookService = WebhookService;
+    async handleCallEnded(event) {
+        try {
+            // Update campaign metrics and status
+            // TODO: Implement campaign metrics and status update logic
+            console.log('Call ended:', event.callId);
+        }
+        catch (error) {
+            console.error('Error handling call ended event:', error);
+            throw error;
+        }
+    }
+    async handleCallTranscription(event) {
+        try {
+            // Store transcription data
+            // TODO: Implement transcription storage logic
+            console.log('Call transcription received:', event.callId);
+        }
+        catch (error) {
+            console.error('Error handling call transcription event:', error);
+            throw error;
+        }
+    }
+}

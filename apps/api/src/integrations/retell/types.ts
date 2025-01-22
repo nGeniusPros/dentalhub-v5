@@ -1,7 +1,15 @@
+export interface AgentConfig {
+  agentId: string;
+  llmId: string;
+  phoneNumber: string;
+}
+
 export interface RetellConfig {
   apiKey: string;
   baseUrl: string;
-  webhookSecret: string;
+  wsUrl: string;
+  webhookUrl: string;
+  agents: AgentConfig[];
 }
 
 export interface VoiceCallRequest {
@@ -11,6 +19,7 @@ export interface VoiceCallRequest {
   customScript?: string;
   language?: string;
   priority?: 'high' | 'normal' | 'low';
+  agentId?: string; // Optional - will use first available agent if not specified
 }
 
 export interface CallStatus {
@@ -19,6 +28,8 @@ export interface CallStatus {
   duration?: number;
   startTime?: string;
   endTime?: string;
+  agentId: string;
+  phoneNumber: string;
 }
 
 export interface TranscriptionResult {
@@ -26,10 +37,11 @@ export interface TranscriptionResult {
   transcript: string;
   confidence: number;
   segments: Array<{
-    speaker: 'ai' | 'human';
+    speaker: 'agent' | 'customer';
     text: string;
     startTime: number;
     endTime: number;
+    confidence: number;
   }>;
 }
 
@@ -40,11 +52,13 @@ export interface AIAnalysisResult {
     segments: Array<{
       text: string;
       score: number;
+      timestamp: string;
     }>;
   };
   intents: Array<{
     name: string;
     confidence: number;
+    timestamp: string;
   }>;
   entities: Array<{
     type: string;
@@ -59,6 +73,7 @@ export interface WebhookEvent {
   type: 'call.completed' | 'call.failed' | 'transcription.completed' | 'analysis.completed';
   timestamp: string;
   data: CallStatus | TranscriptionResult | AIAnalysisResult;
+  signature?: string;
 }
 
 export interface RetellApiError {

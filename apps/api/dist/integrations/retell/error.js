@@ -1,4 +1,5 @@
 import { AxiosError } from 'axios';
+import { createHmac, timingSafeEqual } from 'crypto';
 export class RetellIntegrationError extends Error {
     constructor(message, code, details) {
         super(message);
@@ -39,10 +40,9 @@ export function validateWebhookSignature(signature, body, secret) {
     try {
         // In a real implementation, this would use crypto to validate
         // the webhook signature using HMAC
-        const crypto = require('crypto');
-        const hmac = crypto.createHmac('sha256', secret);
+        const hmac = createHmac('sha256', secret);
         const calculatedSignature = hmac.update(body).digest('hex');
-        return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(calculatedSignature));
+        return timingSafeEqual(Buffer.from(signature), Buffer.from(calculatedSignature));
     }
     catch (error) {
         throw new RetellIntegrationError('Failed to validate webhook signature', 'INVALID_SIGNATURE', { error });

@@ -2,10 +2,14 @@ import { Router } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { z } from 'zod';
 const router = Router();
+import { verifyInsurance, processClaim, updateClaimStatus, getInsurancePlanCoverage, getInsuranceCompanies } from '../integrations/sikka/service';
 const verifyInsuranceSchema = z.object({
     patient_id: z.string().min(1),
-    provider_id: z.string().min(1),
-    policy_number: z.string().min(1),
+    insurance_info: z.object({
+        carrier_id: z.string().min(1),
+        member_id: z.string().min(1),
+        group_number: z.string().optional(),
+    }),
 });
 const submitClaimSchema = z.object({
     patient_id: z.string().min(1),
@@ -75,44 +79,44 @@ router.post('/verify', asyncHandler(async (req, res) => {
     if (!validationResult.success) {
         return res.status(400).json({ error: 'Invalid insurance verification data' });
     }
-    const { patient_id, provider_id, policy_number } = validationResult.data;
-    // This would integrate with Sikka's API for real verification
-    // For now, we'll simulate a verification response
-    const verificationResult = {
-        status: 'verified',
-        coverage: {
-            active: true,
-            start_date: '2024-01-01',
-            end_date: '2024-12-31',
-            benefits: {
-                preventive: { coverage: 100, deductible: 0 },
-                basic: { coverage: 80, deductible: 50 },
-                major: { coverage: 50, deductible: 100 }
-            }
+    const { patient_id, insurance_info } = validationResult.data;
+    try {
+        const verificationResult = await verifyInsurance({
+            patientId: patient_id,
+            insuranceInfo: {
+                carrierId: insurance_info.carrier_id,
+                memberId: insurance_info.member_id,
+                groupNumber: insurance_info.group_number,
+            },
+        });
+        // Update patient insurance record
+        const { data: insurance, error } = await req.supabase
+            .from('patient_insurance')
+            .update({
+            verification_status: verificationResult.verified ? 'verified' : 'unverified',
+            last_verified_at: verificationResult.timestamp,
+            benefits_summary: verificationResult.details
+        })
+            .eq('patient_id', patient_id)
+            .select(`
+        *,
+        provider:insurance_providers(*)
+      `)
+            .single();
+        if (error) {
+            return res.status(500).json({ error: error.message });
         }
-    };
-    // Update patient insurance record
-    const { data: insurance, error } = await req.supabase
-        .from('patient_insurance')
-        .update({
-        verification_status: verificationResult.status,
-        last_verified_at: new Date().toISOString(),
-        benefits_summary: verificationResult.coverage
-    })
-        .eq('patient_id', patient_id)
-        .eq('provider_id', provider_id)
-        .select(`
-      *,
-      provider:insurance_providers(*)
-    `)
-        .single();
-    if (error) {
-        return res.status(500).json({ error: error.message });
+        return res.json({
+            verification: verificationResult,
+            insurance
+        });
     }
-    return res.json({
-        verification: verificationResult,
-        insurance
-    });
+    catch (error) {
+        if (error instanceof Error) {
+            return res.status(500).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'An unexpected error occurred' });
+    }
 }));
 // Submit insurance claim
 router.post('/claims', asyncHandler(async (req, res) => {
@@ -121,44 +125,66 @@ router.post('/claims', asyncHandler(async (req, res) => {
         return res.status(400).json({ error: 'Invalid claim data' });
     }
     const { patient_id, provider_id, appointment_id, total_amount, diagnosis_codes, procedure_codes, attachments } = validationResult.data;
-    // This would integrate with Sikka's API for real claim submission
-    // For now, we'll simulate a claim submission
-    const claimNumber = `CLM${Date.now()}`;
-    const { data: claim, error } = await req.supabase
-        .from('insurance_claims')
-        .insert({
-        patient_id,
-        provider_id,
-        appointment_id,
-        claim_number: claimNumber,
-        status: 'submitted',
-        submission_date: new Date().toISOString(),
-        service_date: new Date().toISOString(),
-        total_amount,
-        diagnosis_codes,
-        procedure_codes,
-        attachments,
-        created_by: req.user?.id
-    })
-        .select(`
-      *,
-      provider:insurance_providers(*),
-      patient:users(*)
-    `)
-        .single();
-    if (error) {
-        return res.status(500).json({ error: error.message });
+    try {
+        // Submit claim through Sikka API
+        const sikkaResponse = await processClaim({
+            patientId: patient_id,
+            claimDetails: {
+                serviceDate: new Date().toISOString(),
+                procedures: procedure_codes.map((code, index) => ({
+                    code,
+                    fee: total_amount / procedure_codes.length, // Distribute total amount across procedures
+                    diagnosis: [diagnosis_codes[index] || diagnosis_codes[0]], // Map diagnosis codes to procedures
+                })),
+                diagnosisCodes: diagnosis_codes,
+                placeOfService: 'office', // Default to office, could be made configurable
+            },
+        });
+        // Store claim in database with Sikka response
+        const { data: claim, error } = await req.supabase
+            .from('insurance_claims')
+            .insert({
+            patient_id,
+            provider_id,
+            appointment_id,
+            claim_number: sikkaResponse.claimId,
+            status: sikkaResponse.status,
+            submission_date: sikkaResponse.timestamp,
+            service_date: new Date().toISOString(),
+            total_amount,
+            diagnosis_codes,
+            procedure_codes,
+            attachments,
+            created_by: req.user?.id,
+            sikka_acknowledgement: sikkaResponse.acknowledgement
+        })
+            .select(`
+        *,
+        provider:insurance_providers(*),
+        patient:users(*)
+      `)
+            .single();
+        if (error) {
+            return res.status(500).json({ error: error.message });
+        }
+        // Record claim history with Sikka details
+        await req.supabase
+            .from('claim_history')
+            .insert({
+            claim_id: claim?.id || null,
+            status: sikkaResponse.status,
+            notes: `Claim submitted successfully. Sikka Claim ID: ${sikkaResponse.claimId}`,
+            created_by: req.user?.id,
+            response_details: sikkaResponse
+        });
+        return res.status(201).json({
+            claim,
+            sikka_response: sikkaResponse
+        });
     }
-    // Record claim history
-    await req.supabase
-        .from('claim_history')
-        .insert({
-        claim_id: claim?.id || null,
-        status: 'submitted',
-        notes: 'Claim submitted successfully',
-        created_by: req.user?.id
-    });
-    return res.status(201).json(claim);
+    catch (error) {
+        return res.status(500).json({ error: error?.message || 'An unexpected error occurred while submitting the claim' });
+    }
 }));
 // Update claim status
 router.put('/claims/:id/status', asyncHandler(async (req, res) => {
@@ -170,38 +196,69 @@ router.put('/claims/:id/status', asyncHandler(async (req, res) => {
     if (!idValidationResult.success) {
         return res.status(400).json({ error: 'Invalid claim ID' });
     }
-    const { id } = idValidationResult.data;
-    const { status, notes, response_details } = validationResult.data;
-    const { data: claim, error } = await req.supabase
-        .from('insurance_claims')
-        .update({
-        status,
-        response_details
-    })
-        .eq('id', id)
-        .select(`
-      *,
-      provider:insurance_providers(*),
-      patient:auth.users(
-        id,
-        email,
-        raw_user_meta_data
-      )
-    `)
-        .single();
-    if (error) {
-        return res.status(500).json({ error: error.message });
+    try {
+        const { id } = idValidationResult.data;
+        const { status, notes, response_details } = validationResult.data;
+        // First, get the existing claim to get the Sikka claim ID
+        const { data: existingClaim, error: fetchError } = await req.supabase
+            .from('insurance_claims')
+            .select('*')
+            .eq('id', id)
+            .single();
+        if (fetchError || !existingClaim) {
+            return res.status(404).json({ error: 'Claim not found' });
+        }
+        // Update status in Sikka
+        const sikkaResponse = await updateClaimStatus({
+            claimId: existingClaim.claim_number,
+            status,
+            notes,
+        });
+        // Update claim in database with Sikka response
+        const { data: claim, error } = await req.supabase
+            .from('insurance_claims')
+            .update({
+            status: sikkaResponse.status,
+            response_details: {
+                ...response_details,
+                sikka_acknowledgement: sikkaResponse.acknowledgement,
+                sikka_timestamp: sikkaResponse.timestamp
+            }
+        })
+            .eq('id', id)
+            .select(`
+        *,
+        provider:insurance_providers(*),
+        patient:auth.users(
+          id,
+          email,
+          raw_user_meta_data
+        )
+      `)
+            .single();
+        if (error) {
+            return res.status(500).json({ error: error.message });
+        }
+        // Record claim history with Sikka details
+        await req.supabase
+            .from('claim_history')
+            .insert({
+            claim_id: id,
+            status: sikkaResponse.status,
+            notes: notes || `Status updated to: ${sikkaResponse.status}`,
+            created_by: req.user?.id,
+            response_details: {
+                sikka_response: sikkaResponse
+            }
+        });
+        return res.json({
+            claim,
+            sikka_response: sikkaResponse
+        });
     }
-    // Record claim history
-    await req.supabase
-        .from('claim_history')
-        .insert({
-        claim_id: id,
-        status,
-        notes,
-        created_by: req.user?.id
-    });
-    return res.json(claim);
+    catch (error) {
+        return res.status(500).json({ error: error?.message || 'An unexpected error occurred while updating claim status' });
+    }
 }));
 // Get claim history
 router.get('/claims/:id/history', asyncHandler(async (req, res) => {
@@ -262,5 +319,45 @@ router.get('/claims/analytics/summary', asyncHandler(async (req, res) => {
         summary.by_status[claim.status].amount += claim.total_amount;
     });
     return res.json(summary);
+}));
+// Get fee schedules
+router.get('/fee-schedules', asyncHandler(async (req, res) => {
+    try {
+        const { data: feeSchedules, error } = await req.supabase
+            .from('fee_schedules')
+            .select('*')
+            .order('name', { ascending: true });
+        if (error) {
+            return res.status(500).json({ error: error.message });
+        }
+        return res.json(feeSchedules);
+    }
+    catch (error) {
+        return res.status(500).json({ error: error?.message || 'An unexpected error occurred' });
+    }
+}));
+// Get insurance plan coverage
+router.get('/plan-coverage/:insurance_company_id', asyncHandler(async (req, res) => {
+    try {
+        const { insurance_company_id } = req.params;
+        const { practice_id } = req.query;
+        const coverage = await getInsurancePlanCoverage(insurance_company_id, practice_id);
+        return res.json(coverage);
+    }
+    catch (error) {
+        return res.status(500).json({ error: error?.message || 'An unexpected error occurred' });
+    }
+}));
+// Get insurance companies
+router.get('/companies', asyncHandler(async (req, res) => {
+    try {
+        const companies = await getInsuranceCompanies({
+            practice_id: req.query.practice_id
+        });
+        return res.json(companies);
+    }
+    catch (error) {
+        return res.status(500).json({ error: error?.message || 'An unexpected error occurred' });
+    }
 }));
 export default router;

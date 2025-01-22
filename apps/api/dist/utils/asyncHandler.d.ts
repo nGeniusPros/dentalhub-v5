@@ -1,2 +1,3 @@
 import { Request, Response, NextFunction } from 'express';
-export declare const asyncHandler: (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) => (req: Request, res: Response, next: NextFunction) => void;
+import { AsyncHandler } from '../types/common';
+export declare const asyncHandler: <T = void>(fn: AsyncHandler<T>) => (req: Request, res: Response, next: NextFunction) => void;

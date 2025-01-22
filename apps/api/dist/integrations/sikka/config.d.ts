@@ -1,26 +1,15 @@
 import { SikkaConfig } from './types';
-export declare const sikkaConfig: SikkaConfig;
-export declare const SIKKA_API_URL: string, SIKKA_API_KEY: string, SIKKA_PRACTICE_ID: string;
+export declare const SIKKA_API_URL: string | undefined;
+export declare const SIKKA_API_KEY: string | undefined;
+export declare const SIKKA_PRACTICE_ID: string | undefined;
+export declare const SIKKA_MASTER_CUSTOMER_ID: string | undefined;
+export declare const SIKKA_PRACTICE_KEY: string | undefined;
 export declare const RETRY_OPTIONS: {
-    maxRetries: number;
-    initialDelayMs: number;
-    maxDelayMs: number;
+    retries: number;
+    retryDelay: number;
+    retryCondition: (error: any) => boolean;
 };
 export declare const TIMEOUT_OPTIONS: {
-    request: number;
-    connect: number;
+    timeout: number;
 };
-export declare const RATE_LIMIT: {
-    windowMs: number;
-    maxRequests: number;
-};
-export declare const CACHE_OPTIONS: {
-    eligibility: {
-        ttl: number;
-        maxSize: number;
-    };
-    benefits: {
-        ttl: number;
-        maxSize: number;
-    };
-};
+export declare const sikkaConfig: SikkaConfig;

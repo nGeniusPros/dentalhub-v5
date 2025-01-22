@@ -1,6 +1,9 @@
 import { PrismaClient } from '@prisma/client';
-// Initialize Prisma Client
-const db = new PrismaClient({
+// Main database client instance
+export const db = new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
 });
-export { db };
+// Factory function for creating new clients
+export const createClient = () => new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+});

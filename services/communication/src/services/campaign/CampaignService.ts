@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '@dentalhub/database/src/types';
+import { Database } from '@dentalhub/database';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -17,7 +17,7 @@ import {
   CampaignFilters,
   CampaignType,
   CampaignStatus
-} from './types';
+} from './types.js';
 
 export class CampaignService {
   private readonly tableName = 'campaigns';
