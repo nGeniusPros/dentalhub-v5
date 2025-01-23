@@ -1,30 +1,25 @@
 import { useState, useCallback, useEffect } from 'react';
-import { AgentFactory } from '../lib/ai-agents/agent-factory';
-import type { 
-  AIMessage, 
-  PracticeMetrics, 
-  GenerationOptions,
-  AIResponse 
-} from '../lib/ai-agents/types';
+import { HeadBrainOrchestrator } from '../lib/ai-agents/orchestration/head-brain-orchestrator';
+import { AIMessage, PracticeMetrics, GenerationOptions } from '../lib/ai-agents/types/frontend-types';
+import { AgentError } from '../lib/ai-agents/types/errors';
 
 export const useAIAgent = (metrics: PracticeMetrics) => {
   const [messages, setMessages] = useState<AIMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [agentFactory, setAgentFactory] = useState<AgentFactory | null>(null);
+  const [orchestrator, setOrchestrator] = useState<HeadBrainOrchestrator | null>(null);
 
   useEffect(() => {
-    const factory = AgentFactory.getInstance();
-    factory.updateMetrics(metrics);
-    setAgentFactory(factory);
-  }, [metrics]);
+    const instance = HeadBrainOrchestrator.getInstance();
+    setOrchestrator(instance);
+  }, []);
 
   const sendMessage = useCallback(async (
     content: string,
     options?: GenerationOptions
   ) => {
-    if (!agentFactory) {
-      setError('Agent system not initialized');
+    if (!orchestrator) {
+      setError('AI system not initialized');
       return;
     }
 
@@ -35,33 +30,59 @@ export const useAIAgent = (metrics: PracticeMetrics) => {
     const userMessage: AIMessage = {
       role: 'user',
       content,
-      timestamp: Date.now()
+      metadata: {
+        timestamp: Date.now()
+      }
     };
     setMessages(prev => [...prev, userMessage]);
 
     try {
-      // Use the head brain agent to process the query
-      const headBrain = agentFactory.createAgent('head-brain');
-      const response = await headBrain.processQuery(content);
+      const result = await orchestrator.processQuery(content);
       
       // Add AI response
       const aiMessage: AIMessage = {
         role: 'assistant',
-        content: response.content,
-        timestamp: Date.now(),
+        content: result.summary,
         metadata: {
-          ...response.metadata,
-          agentId: 'head-brain'
+          timestamp: Date.now(),
+          agentId: 'BRAIN_CONSULTANT',
+          confidence: 1.0,
+          sources: result.agentsInvolved,
+          metrics: result.metrics as Partial<PracticeMetrics>
         }
       };
-      setMessages(prev => [...prev, aiMessage]);
+
+      // Add individual agent responses if any
+      const agentMessages: AIMessage[] = result.recommendations.map(rec => ({
+        role: 'agent',
+        content: rec,
+        metadata: {
+          timestamp: Date.now(),
+          agentId: result.agentsInvolved[0]
+        }
+      }));
+
+      setMessages(prev => [...prev, aiMessage, ...agentMessages]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-      console.error('Error in AI response:', err);
+      const errorMessage = err instanceof AgentError 
+        ? err.message
+        : 'An unexpected error occurred';
+      setError(errorMessage);
+      
+      // Add error message to chat
+      const errorAiMessage: AIMessage = {
+        role: 'assistant',
+        content: `I apologize, but I encountered an error: ${errorMessage}. Please try again.`,
+        metadata: {
+          timestamp: Date.now(),
+          agentId: 'BRAIN_CONSULTANT'
+        }
+      };
+      setMessages(prev => [...prev, errorAiMessage]);
     } finally {
       setIsLoading(false);
     }
-  }, [agentFactory]);
+  }, [orchestrator]);
 
   const clearMessages = useCallback(() => {
     setMessages([]);

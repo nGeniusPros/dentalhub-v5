@@ -1,104 +1,177 @@
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
+import { DentalAgentType } from '../../../../frontend/src/lib/ai-agents/types/agent-types';
+import { 
+  SikkaErrorCode, 
+  SikkaApiError, 
+  SikkaErrorDetails,
+  SikkaAuthenticationError,
+  SikkaRateLimitError 
+} from '../../../../frontend/src/lib/ai-agents/types/errors';
 
-interface ErrorDetails {
-  status?: number;
-  response?: any;
-  originalError?: unknown;
-  attempts?: number;
-}
-
-export class SikkaBaseError extends Error {
-  public readonly details?: ErrorDetails;
-  public readonly errorType: string;
-
-  constructor(message: string, errorType: string, details?: ErrorDetails) {
-    super(message);
-    this.name = 'SikkaBaseError';
-    this.errorType = errorType;
-    this.details = details;
+// Base Sikka error classes for backend
+export class SikkaAuthorizationError extends SikkaApiError {
+  constructor(message: string, details: SikkaErrorDetails, underlying?: Error) {
+    super(
+      message,
+      DentalAgentType.SIKKA,
+      SikkaErrorCode.UNAUTHORIZED,
+      false,
+      details,
+      underlying
+    );
+    this.name = 'SikkaAuthorizationError';
   }
 }
 
-export class SikkaAuthenticationError extends SikkaBaseError {
-  constructor(message: string, details?: ErrorDetails) {
-    super(message, 'AUTHENTICATION_ERROR', details);
-    this.name = 'SikkaAuthenticationError';
+export class SikkaValidationError extends SikkaApiError {
+  constructor(message: string, details: SikkaErrorDetails, underlying?: Error) {
+    super(
+      message,
+      DentalAgentType.SIKKA,
+      SikkaErrorCode.VALIDATION_ERROR,
+      false,
+      details,
+      underlying
+    );
+    this.name = 'SikkaValidationError';
   }
 }
 
-export class SikkaRateLimitError extends SikkaBaseError {
-  constructor(message: string, details?: ErrorDetails) {
-    super(message, 'RATE_LIMIT_ERROR', details);
-    this.name = 'SikkaRateLimitError';
+export class SikkaNotFoundError extends SikkaApiError {
+  constructor(message: string, details: SikkaErrorDetails, underlying?: Error) {
+    super(
+      message,
+      DentalAgentType.SIKKA,
+      SikkaErrorCode.RESOURCE_NOT_FOUND,
+      false,
+      details,
+      underlying
+    );
+    this.name = 'SikkaNotFoundError';
   }
 }
 
-export class SikkaTimeoutError extends SikkaBaseError {
-  constructor(message: string, details?: ErrorDetails) {
-    super(message, 'TIMEOUT_ERROR', details);
-    this.name = 'SikkaTimeoutError';
+export class SikkaServerError extends SikkaApiError {
+  constructor(message: string, details: SikkaErrorDetails, underlying?: Error) {
+    super(
+      message,
+      DentalAgentType.SIKKA,
+      SikkaErrorCode.SERVER_ERROR,
+      true,
+      details,
+      underlying
+    );
+    this.name = 'SikkaServerError';
   }
 }
 
-export class SikkaApiError extends SikkaBaseError {
-  constructor(message: string, details?: ErrorDetails) {
-    super(message, 'API_ERROR', details);
-    this.name = 'SikkaApiError';
+export class SikkaNetworkError extends SikkaApiError {
+  constructor(message: string, details: SikkaErrorDetails = {}, underlying?: Error) {
+    super(
+      message,
+      DentalAgentType.SIKKA,
+      SikkaErrorCode.SERVICE_UNAVAILABLE,
+      true,
+      details,
+      underlying
+    );
+    this.name = 'SikkaNetworkError';
   }
 }
 
 export function handleSikkaError(error: unknown): never {
-  if (axios.isAxiosError(error)) {
-    const axiosError = error as AxiosError;
-    const status = axiosError.response?.status;
-    const details: ErrorDetails = {
-      status,
-      response: axiosError.response?.data,
-      originalError: error
+  if (error instanceof AxiosError) {
+    const response = error.response?.data;
+    const status = error.response?.status || 500;
+    const requestId = error.response?.headers['x-request-id'];
+    const details: SikkaErrorDetails = {
+      requestId,
+      statusCode: status,
+      path: error.config?.url,
+      timestamp: new Date().toISOString()
     };
-
-    // Handle specific HTTP status codes
-    switch (status) {
-      case 401:
-      case 403:
-        throw new SikkaAuthenticationError(
-          'Authentication failed with Sikka API',
-          details
-        );
-      case 429:
-        throw new SikkaRateLimitError(
-          'Rate limit exceeded for Sikka API',
-          details
-        );
-      case 408:
-      case 504:
-        throw new SikkaTimeoutError(
-          'Request to Sikka API timed out',
-          details
-        );
-      default:
-        // Handle specific Sikka API error codes if present in response
-        const sikkaError = axiosError.response?.data?.error;
-        if (sikkaError) {
-          throw new SikkaApiError(
-            sikkaError.long_message || sikkaError.short_message || 'Unknown Sikka API error',
-            {
-              ...details,
-              sikkaErrorCode: sikkaError.error_code
-            }
-          );
-        }
-        
-        throw new SikkaApiError(
-          axiosError.message || 'Unknown error occurred while calling Sikka API',
-          details
-        );
+    
+    // Handle rate limiting
+    if (status === 429) {
+      const retryAfter = parseInt(error.response?.headers['retry-after'] || '60');
+      details.retryAfter = retryAfter;
+      throw new SikkaRateLimitError(
+        'Rate limit exceeded',
+        DentalAgentType.SIKKA,
+        details,
+        error
+      );
     }
+
+    // Handle authentication errors
+    if (status === 401) {
+      throw new SikkaAuthenticationError(
+        response?.error?.message || 'Authentication failed',
+        DentalAgentType.SIKKA,
+        details,
+        error
+      );
+    }
+
+    // Handle authorization errors
+    if (status === 403) {
+      throw new SikkaAuthorizationError(
+        response?.error?.message || 'Authorization failed',
+        details,
+        error
+      );
+    }
+
+    // Handle validation errors
+    if (status === 400) {
+      throw new SikkaValidationError(
+        response?.error?.message || 'Validation failed',
+        details,
+        error
+      );
+    }
+
+    // Handle not found errors
+    if (status === 404) {
+      throw new SikkaNotFoundError(
+        response?.error?.message || 'Resource not found',
+        details,
+        error
+      );
+    }
+
+    // Handle server errors
+    if (status >= 500) {
+      throw new SikkaServerError(
+        response?.error?.message || 'Server error occurred',
+        details,
+        error
+      );
+    }
+
+    // Handle all other errors
+    throw new SikkaApiError(
+      response?.error?.message || 'An unexpected error occurred',
+      DentalAgentType.SIKKA,
+      SikkaErrorCode.INVALID_REQUEST,
+      false,
+      details,
+      error
+    );
   }
 
-  // Handle non-Axios errors
+  // Handle network errors
+  if (error instanceof Error && error.message.includes('Network Error')) {
+    throw new SikkaNetworkError('Network connection failed', {}, error);
+  }
+
+  // Handle unknown errors
   throw new SikkaApiError(
-    error instanceof Error ? error.message : 'Unknown error occurred',
-    { originalError: error }
+    error instanceof Error ? error.message : 'An unknown error occurred',
+    DentalAgentType.SIKKA,
+    SikkaErrorCode.SERVER_ERROR,
+    false,
+    { details: error },
+    error instanceof Error ? error : undefined
   );
 }
