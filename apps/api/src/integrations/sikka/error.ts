@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { DentalAgentType } from '../../../../frontend/src/lib/ai-agents/types/agent-types';
+import { DentalAgentType } from '@dental/core/ai/types';
 import { 
   SikkaErrorCode, 
   SikkaApiError, 
@@ -76,6 +76,17 @@ export class SikkaNetworkError extends SikkaApiError {
       underlying
     );
     this.name = 'SikkaNetworkError';
+  }
+}
+
+export class SikkaError extends Error {
+  constructor(
+    message: string,
+    public readonly agentType: DentalAgentType,
+    public readonly cause?: unknown
+  ) {
+    super(message);
+    this.name = 'SikkaError';
   }
 }
 

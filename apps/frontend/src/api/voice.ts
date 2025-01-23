@@ -9,17 +9,24 @@ import type {
 class VoiceAPI {
   private baseUrl: string;
   private wsUrl: string;
+  private apiKey: string;
 
   constructor() {
     this.baseUrl = import.meta.env.VITE_RETELL_BASE_URL || 'https://api.retellai.com/v1';
     this.wsUrl = import.meta.env.VITE_RETELL_WEBSOCKET_URL || 'wss://api.retellai.com/v1/websocket';
+    this.apiKey = import.meta.env.VITE_RETELL_API_KEY || '';
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    if (!this.apiKey) {
+      throw new Error('Retell API key is not configured');
+    }
+
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.apiKey}`,
         ...options.headers,
       },
     });

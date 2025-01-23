@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@dentalhub/database": "workspace:*",
+    "@dentalhub/core": "workspace:*",
     "@fastify/cors": "^8.4.2",
     "@fastify/helmet": "^11.1.1",
     "@fastify/jwt": "^7.2.4",
@@ -30,6 +31,7 @@
     "axios": "^1.6.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -41,6 +43,7 @@
     "ioredis": "^5.3.2",
     "node-cache": "^5.1.2",
     "nodemailer": "^6.9.8",
+    "openai": "^4.28.0",
     "pdfmake-wrapper": "^1.0.1",
     "prom-client": "^14.2.0",
     "supabase": "^1.12.1",
@@ -69,6 +72,7 @@
     "sharp": "^0.33.2",
     "fluent-ffmpeg": "^2.1.2",
     "@types/sharp": "^0.32.0",
-    "@types/fluent-ffmpeg": "^2.1.20"
+    "@types/fluent-ffmpeg": "^2.1.20",
+    "@types/compression": "^1.7.5"
   }
 }

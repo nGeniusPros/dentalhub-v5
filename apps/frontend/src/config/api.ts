@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // API Configuration
 const API_CONFIG = {
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
+  baseURL: '/api',  // Use relative URL to work with Vite proxy
   timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000', 10),
   headers: {
     'Content-Type': 'application/json',

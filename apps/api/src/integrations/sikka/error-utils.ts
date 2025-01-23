@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { DentalAgentType } from '../../../../frontend/src/lib/ai-agents/types/agent-types';
+import { DentalAgentType } from '@dental/core/ai/types';
 import { SikkaErrorCode, SikkaErrorDetails } from '../../../../frontend/src/lib/ai-agents/types/errors';
 
 /**

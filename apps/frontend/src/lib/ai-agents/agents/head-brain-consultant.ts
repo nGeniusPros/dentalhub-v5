@@ -119,21 +119,52 @@ export class HeadBrainConsultant {
 
   private async determineRelevantAgents(request: ConsultationRequest): Promise<DentalAgentType[]> {
     return this.requestManager.executeWithRateLimit('HEAD_BRAIN_CONSULTANT', async () => {
-      // Implementation using OpenAI Assistant ID: asst_YEpG6gSfhbXQp5yzNueXGMK6
-      // Determine which agents are most relevant for the given query
-      return [];
+      const assistantId = import.meta.env.VITE_OPENAI_BRAIN_CONSULTANT_ID;
+      
+      const analysis = await this.requestManager.createAssistantMessage(
+        assistantId,
+        {
+          role: 'user',
+          content: JSON.stringify({
+            query: request.query,
+            context: request.context,
+            preferences: request.preferences,
+            availableAgents: Array.from(this.subAgents.keys())
+          })
+        }
+      );
+
+      try {
+        const relevantAgents = JSON.parse(analysis.content);
+        return relevantAgents.filter((agent: string) => 
+          this.subAgents.has(agent as DentalAgentType)
+        ) as DentalAgentType[];
+      } catch (error) {
+        console.error('Failed to parse relevant agents:', error);
+        return ['DATA_RETRIEVAL', 'RECOMMENDATION'] as DentalAgentType[];
+      }
     });
   }
 
   private async queryAgent(agent: any, request: ConsultationRequest): Promise<AgentResponse> {
+    const cacheKey = `${agent.type}_${request.query}`;
+    const cachedResponse = await this.responseCache.get(cacheKey);
+    
+    if (cachedResponse) {
+      return cachedResponse as AgentResponse;
+    }
+
     const response = await agent.processQuery(request.query);
-    return {
+    const agentResponse = {
       agentType: agent.type,
       analysis: response.content,
-      confidence: response.confidence,
+      confidence: response.confidence || 0.8,
       recommendations: response.recommendations || [],
-      metadata: response.metadata
+      metadata: response.metadata || {}
     };
+
+    await this.responseCache.set(cacheKey, agentResponse, 3600); // Cache for 1 hour
+    return agentResponse;
   }
 
   private async synthesizeResponses(
@@ -150,12 +181,36 @@ export class HeadBrainConsultant {
     }>;
   }> {
     return this.requestManager.executeWithRateLimit('HEAD_BRAIN_CONSULTANT', async () => {
-      // Synthesize responses from multiple agents into a cohesive analysis
-      return {
-        summary: '',
-        recommendations: [],
-        actions: []
-      };
+      const assistantId = import.meta.env.VITE_OPENAI_BRAIN_CONSULTANT_ID;
+      
+      const synthesis = await this.requestManager.createAssistantMessage(
+        assistantId,
+        {
+          role: 'user',
+          content: JSON.stringify({
+            query: request.query,
+            context: request.context,
+            preferences: request.preferences,
+            agentResponses: responses
+          })
+        }
+      );
+
+      try {
+        const result = JSON.parse(synthesis.content);
+        return {
+          summary: result.summary || '',
+          recommendations: result.recommendations || [],
+          actions: result.actions || []
+        };
+      } catch (error) {
+        console.error('Failed to parse synthesis:', error);
+        return {
+          summary: 'Failed to synthesize responses',
+          recommendations: [],
+          actions: []
+        };
+      }
     });
   }
 }

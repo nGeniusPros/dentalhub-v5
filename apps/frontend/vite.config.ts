@@ -9,14 +9,21 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
-    open: true
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    },
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
-    }
+      '@': path.resolve(__dirname, './src'),
+      '@dentalhub/core': path.resolve(__dirname, '../../packages/core/dist'),
+    },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'lucide-react']
+    include: ['react', 'react-dom', 'react-router-dom', 'lucide-react', '@dentalhub/core']
   }
 });

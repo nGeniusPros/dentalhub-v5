@@ -1,4 +1,4 @@
-import { DentalAgentType } from '../types/agent-types';
+import { DentalAgentType, AssistantMessage, AssistantResponse } from '@dentalhub/core';
 import { RateLimitError } from '../types/errors';
 
 class TokenBucket {
@@ -34,8 +34,11 @@ class TokenBucket {
 export class RequestManager {
   private static instance: RequestManager;
   private tokenBuckets = new Map<DentalAgentType, TokenBucket>();
+  private apiUrl: string;
 
   private constructor() {
+    this.apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+    
     // Initialize with default rate limits
     Object.values(DentalAgentType).forEach(agentType => {
       this.tokenBuckets.set(agentType as DentalAgentType, new TokenBucket(60, 1)); // 60 requests per minute
@@ -67,5 +70,39 @@ export class RequestManager {
 
   updateRateLimit(agentType: DentalAgentType, rpm: number): void {
     this.tokenBuckets.set(agentType, new TokenBucket(rpm, rpm / 60));
+  }
+
+  async createAssistantMessage(
+    assistantId: string,
+    message: AssistantMessage
+  ): Promise<AssistantResponse> {
+    const response = await fetch(`${this.apiUrl}/ai/assistant/${assistantId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create assistant message: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  async getAssistantThread(threadId: string): Promise<any> {
+    const response = await fetch(`${this.apiUrl}/ai/threads/${threadId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to get assistant thread: ${response.statusText}`);
+    }
+
+    return response.json();
   }
 }

@@ -11,7 +11,7 @@ WORKDIR /app/apps/frontend
 RUN npm install -g pnpm@8.6.0
 
 # Copy package.json and pnpm-lock.yaml for frontend
-COPY apps/frontend/package.json apps/frontend/pnpm-lock.yaml ./
+COPY apps/frontend/package.json pnpm-lock.yaml ./
 
 # Install dependencies for frontend
 RUN pnpm install --frozen-lockfile

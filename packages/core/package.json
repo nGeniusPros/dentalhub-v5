@@ -3,8 +3,19 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./ai/*": {
+      "import": "./dist/ai/*.js",
+      "types": "./dist/ai/*.d.ts"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
