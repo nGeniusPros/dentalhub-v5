@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import {
   SikkaConfig,
+  RequestOptions,
   PaginationParams,
   DateRangeParams,
   PracticeParams,
@@ -9,21 +10,20 @@ import {
   TreatmentPlanParams,
   InsuranceCompanyParams
 } from './types';
-import { handleSikkaError, isRetryableError } from './error';
-import { sikkaConfig, RETRY_OPTIONS, TIMEOUT_OPTIONS } from './config';
+import { handleSikkaError } from './error';
+import { sikkaConfig, CACHE_TTL, TIMEOUT_OPTIONS, PAGINATION_DEFAULTS } from './config';
+import { 
+  prepareRequestParams, 
+  getCacheTTL, 
+  getRequestTimeout,
+  generateCacheKey,
+  validateRequestParams 
+} from './utils';
 import CacheManager from '../../utils/cache';
-
-// Sikka API Cache Configuration
-
-const sikkaApiCache = new CacheManager({});
 import SikkaTokenService from './token-service';
 
-// Cache TTL configurations (in seconds)
-const CACHE_TTL = {
-  SHORT: 5 * 60, // 5 minutes
-  MEDIUM: 30 * 60, // 30 minutes
-  LONG: 24 * 60 * 60, // 24 hours
-} as const;
+// Sikka API Cache Configuration
+const sikkaApiCache = new CacheManager({});
 
 const tokenManager = new SikkaTokenService({
   baseUrl: sikkaConfig.baseUrl,
@@ -68,14 +68,14 @@ sikkaApi.interceptors.response.use(
     }
 
     // Handle other retryable errors
-    if (RETRY_OPTIONS.retryCondition(error)) {
+    if (error.response?.status >= 500) {
       const originalRequest = error.config;
       if (!originalRequest._retry) {
         originalRequest._retry = 0;
       }
-      if (originalRequest._retry < RETRY_OPTIONS.retries) {
+      if (originalRequest._retry < 3) {
         originalRequest._retry++;
-        const delay = RETRY_OPTIONS.retryDelay * Math.pow(2, originalRequest._retry - 1);
+        const delay = 500 * Math.pow(2, originalRequest._retry - 1);
         await new Promise(resolve => setTimeout(resolve, delay));
         return sikkaApi(originalRequest);
       }
@@ -84,6 +84,37 @@ sikkaApi.interceptors.response.use(
     throw error;
   }
 );
+
+/**
+ * Base function for making Sikka API requests
+ */
+async function makeRequest<T>(
+  endpoint: string,
+  params: Record<string, any> = {},
+  options: RequestOptions = {},
+  requiredFields: string[] = []
+): Promise<T> {
+  // Validate parameters
+  validateRequestParams(params, requiredFields);
+  
+  // Prepare request parameters
+  const requestParams = prepareRequestParams(params, options);
+  
+  // Generate cache key
+  const cacheKey = generateCacheKey(endpoint, requestParams);
+  
+  return sikkaApiCache.get(cacheKey, async () => {
+    try {
+      const response = await sikkaApi.get(endpoint, {
+        params: requestParams,
+        timeout: getRequestTimeout(options)
+      });
+      return response.data;
+    } catch (error) {
+      throw handleSikkaError(error);
+    }
+  }, getCacheTTL(options));
+}
 
 /**
  * Verify insurance information
@@ -216,159 +247,115 @@ export async function processClaim(data: {
   }
 }
 
-// Practice Management
 /**
  * Get dental practice information
  */
-export async function getPracticeInfo(params: PracticeParams = {}) {
-  try {
-    const response = await sikkaApi.get('/practices', { params });
-    return response.data;
-  } catch (error) {
-    throw handleSikkaError(error);
-  }
+export async function getPracticeInfo(
+  params: PracticeParams = {}, 
+  options: RequestOptions = {}
+) {
+  return makeRequest('/practices', params, options, ['practice_id']);
 }
 
-// Appointment Management
 /**
  * Get dental appointments
  */
-export async function getAppointments(params: AppointmentParams = {}) {
-  const cacheKey = `appointments-${JSON.stringify(params)}`;
-  return sikkaApiCache.get(cacheKey, async () => {
-    try {
-      const response = await sikkaApi.get('/appointments', { params });
-      const data = response.data;
-      sikkaApiCache.set(cacheKey, data, CACHE_TTL.SHORT);
-      return data;
-    } catch (error) {
-      throw handleSikkaError(error);
-    }
+export async function getAppointments(
+  params: AppointmentParams = {}, 
+  options: RequestOptions = {}
+) {
+  return makeRequest('/appointments', params, {
+    ...options,
+    limit: options.limit || PAGINATION_DEFAULTS.defaultLimit
   });
 }
 
 /**
  * Get available appointment slots
  */
-export async function getAvailableSlots(params: AppointmentParams = {}) {
-  try {
-    const response = await sikkaApi.get('/appointments_available_slots', { params });
-    return response.data;
-  } catch (error) {
-    throw handleSikkaError(error);
-  }
+export async function getAvailableSlots(
+  params: AppointmentParams = {}, 
+  options: RequestOptions = {}
+) {
+  return makeRequest('/appointments_available_slots', params, options);
 }
 
-// Patient Management
 /**
- * Get patient information
+ * Get patient information with enhanced search capabilities
  */
-export async function getPatients(params: PatientParams = {}) {
-  const cacheKey = `patients-${JSON.stringify(params)}`;
-  return sikkaApiCache.get(cacheKey, async () => {
-    try {
-      const response = await sikkaApi.get('/patients', { params });
-      const data = response.data;
-      sikkaApiCache.set(cacheKey, data, CACHE_TTL.MEDIUM);
-      return data;
-    } catch (error) {
-      throw handleSikkaError(error);
-    }
+export async function getPatients(
+  params: PatientParams = {}, 
+  options: RequestOptions = {}
+) {
+  return makeRequest('/patients', params, {
+    ...options,
+    limit: options.limit || PAGINATION_DEFAULTS.defaultLimit
   });
 }
 
 /**
  * Get dental-specific patient information
  */
-export async function getDentalPatients(params: PatientParams = {}) {
-  const cacheKey = `dental-patients-${JSON.stringify(params)}`;
-  return sikkaApiCache.get(cacheKey, async () => {
-    try {
-      const response = await sikkaApi.get('/patients/dental_patients', { params });
-      const data = response.data;
-      sikkaApiCache.set(cacheKey, data, CACHE_TTL.MEDIUM);
-      return data;
-    } catch (error) {
-      throw handleSikkaError(error);
-    }
+export async function getDentalPatients(
+  params: PatientParams = {}, 
+  options: RequestOptions = {}
+) {
+  return makeRequest('/patients/dental_patients', params, {
+    ...options,
+    limit: options.limit || PAGINATION_DEFAULTS.defaultLimit
   });
 }
 
 /**
  * Get patient treatment history
  */
-export async function getPatientTreatmentHistory(patientId: string, params: DateRangeParams = {}) {
-  const cacheKey = `treatment-history-${patientId}-${JSON.stringify(params)}`;
-  return sikkaApiCache.get(cacheKey, async () => {
-    try {
-      const response = await sikkaApi.get('/patient_treatment_history', {
-        params: { patient_id: patientId, ...params }
-      });
-      const data = response.data;
-      sikkaApiCache.set(cacheKey, data, CACHE_TTL.MEDIUM);
-      return data;
-    } catch (error) {
-      throw handleSikkaError(error);
-    }
-  });
+export async function getPatientTreatmentHistory(
+  patientId: string,
+  params: DateRangeParams = {},
+  options: RequestOptions = {}
+) {
+  return makeRequest('/patient_treatment_history', 
+    { ...params, patient_id: patientId },
+    options,
+    ['patient_id']
+  );
 }
 
-// Treatment Plans
 /**
  * Get dental treatment plans
  */
-export async function getTreatmentPlans(params: TreatmentPlanParams = {}) {
-  const cacheKey = `treatment-plans-${JSON.stringify(params)}`;
-  return sikkaApiCache.get(cacheKey, async () => {
-    try {
-      const response = await sikkaApi.get('/treatment_plans', { params });
-      const data = response.data;
-      sikkaApiCache.set(cacheKey, data, CACHE_TTL.SHORT);
-      return data;
-    } catch (error) {
-      throw handleSikkaError(error);
-    }
+export async function getTreatmentPlans(
+  params: TreatmentPlanParams = {},
+  options: RequestOptions = {}
+) {
+  return makeRequest('/treatment_plans', params, {
+    ...options,
+    limit: options.limit || PAGINATION_DEFAULTS.defaultLimit
   });
 }
 
-// Insurance Companies
 /**
  * Get dental insurance companies
  */
-export async function getInsuranceCompanies(params: InsuranceCompanyParams = {}) {
-  const cacheKey = `insurance-companies-${JSON.stringify(params)}`;
-  return sikkaApiCache.get(cacheKey, async () => {
-    try {
-      const response = await sikkaApi.get('/insurance_companies', { params });
-      const data = response.data;
-      sikkaApiCache.set(cacheKey, data, CACHE_TTL.LONG);
-      return data;
-    } catch (error) {
-      throw handleSikkaError(error);
-    }
-  });
+export async function getInsuranceCompanies(
+  params: InsuranceCompanyParams = {}, 
+  options: RequestOptions = {}
+) {
+  return makeRequest('/insurance_companies', params, options);
 }
 
 /**
  * Get dental insurance coverage details
  */
-export async function getInsurancePlanCoverage(insuranceCompanyId: string, practiceId?: string) {
-  const cacheKey = `insurance-coverage-${insuranceCompanyId}-${practiceId}`;
-  return sikkaApiCache.get(cacheKey, async () => {
-    try {
-      const response = await sikkaApi.get('/insurance_plan_coverage', {
-        params: {
-          insurance_company_id: insuranceCompanyId,
-          practice_id: practiceId
-        }
-      });
-      const data = response.data;
-      sikkaApiCache.set(cacheKey, data, CACHE_TTL.LONG);
-      return data;
-    } catch (error) {
-      throw handleSikkaError(error);
-    }
-  });
+export async function getInsurancePlanCoverage(
+  insuranceCompanyId: string, 
+  practiceId?: string, 
+  options: RequestOptions = {}
+) {
+  return makeRequest('/insurance_plan_coverage', {
+    insurance_company_id: insuranceCompanyId,
+    practice_id: practiceId
+  }, options);
 }
 
 /**
