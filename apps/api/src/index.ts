@@ -4,8 +4,9 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import patientsRouter from './routes/patients';
 import providersRouter from './routes/providers';
-import dashboardRouter from './routes/dashboard';
+import { dashboardRoutes as dashboardRouter } from './routes/dashboard';
 import sikkaRouter from './routes/sikka';
+import { authRoutes } from './routes/auth';
 import * as dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -13,12 +14,13 @@ import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 import { createClient } from '@supabase/supabase-js';
 import logger from './lib/logger';
+import cookieParser from 'cookie-parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load environment variables from API's .env file
-dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 // Verify required environment variables
 const requiredEnvVars = [
@@ -46,7 +48,8 @@ app.use(helmet());
 app.use(cors({
   origin: process.env.CORS_ORIGIN || '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Set-Cookie'],
+  credentials: true
 }));
 
 // Rate limiting
@@ -59,20 +62,29 @@ app.use(limiter);
 // Request parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Logging
 app.use(requestLogger);
 
 // Supabase client initialization
-app.use((req, res, next) => {
+app.use((req: any, res, next) => {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: false
+      }
+    }
   );
   req.supabase = supabase;
   next();
 });
+
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/patients', patientsRouter);
 app.use('/api/providers', providersRouter);
 app.use('/api/dashboard', dashboardRouter);

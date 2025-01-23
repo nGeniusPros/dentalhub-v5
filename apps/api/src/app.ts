@@ -4,8 +4,23 @@ import helmet from 'helmet';
 import compression from 'compression';
 import { rateLimit } from '@dental/core/middleware';
 import assistantRoutes from './routes/ai/assistant-routes';
+import { createClient } from '@supabase/supabase-js';
+import { AuthenticatedRequest } from './middleware/auth';
+import { dashboardRoutes } from './routes/dashboard'; // Import dashboard routes
+
 
 const app = express();
+
+// Initialize Supabase client
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Supabase URL or Anon Key missing from environment variables.');
+  process.exit(1); // Exit if env variables are not set
+}
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Middleware
 app.use(helmet());
@@ -16,6 +31,12 @@ app.use(cors({
 app.use(compression());
 app.use(express.json());
 
+// Attach Supabase client to request
+app.use((req: AuthenticatedRequest, res: express.Response, next: express.NextFunction) => {
+  req.supabase = supabase;
+  next();
+});
+
 // Rate limiting
 app.use(rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -24,6 +45,8 @@ app.use(rateLimit({
 
 // Routes
 app.use('/api/ai', assistantRoutes);
+app.use('/api/dashboard', dashboardRoutes); // Use dashboard routes
+
 
 // Error handling
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {

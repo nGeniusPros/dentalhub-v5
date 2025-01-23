@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { SupabaseClient, Session } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 import { z } from 'zod';
@@ -6,6 +6,8 @@ import { AuthService } from '../services/authService';
 import { createClient } from '@supabase/supabase-js';
 import { MonitoringService } from '../services/monitoring';
 import { config } from 'dotenv';
+import { logger } from '../lib/logger';
+import { ErrorCode } from '../types/errors';
 
 // Load environment variables
 config();
@@ -93,6 +95,44 @@ router.post('/refresh', async (req: Request & { supabase: SupabaseClient<Databas
   } catch (error: any) {
     console.error('Refresh token error:', error);
     return res.status(500).json({ error: error.message || 'Internal server error' });
+  }
+});
+
+router.get('/me', async (req: Request & { supabase: SupabaseClient<Database> }, res: Response, next: NextFunction) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const accessToken = authHeader?.startsWith('Bearer ') 
+      ? authHeader.substring(7) 
+      : req.cookies?.access_token;
+
+    if (!accessToken) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        code: ErrorCode.UNAUTHORIZED
+      });
+    }
+
+    const authService = new AuthService(req.supabase);
+    const { user, error } = await authService.getCurrentUser(accessToken);
+
+    if (error) {
+      logger.error('Error getting current user:', error);
+      return res.status(401).json({
+        error: 'Authentication failed',
+        code: ErrorCode.UNAUTHORIZED
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found',
+        code: ErrorCode.NOT_FOUND
+      });
+    }
+
+    res.json({ user });
+  } catch (error) {
+    next(error);
   }
 });
 

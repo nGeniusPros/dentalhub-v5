@@ -37,10 +37,26 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const checkServerStatus = async () => {
+    try {
+      const response = await fetch('http://localhost:5173/');
+      return response.ok;
+    } catch (err) {
+      console.error('Server is not running:', err);
+      return false;
+    }
+  };
+
   useEffect(() => {
     const fetchStats = async () => {
       setLoading(true);
       setError(null);
+      const serverRunning = await checkServerStatus();
+      if (!serverRunning) {
+        setError('Server is not reachable. Please check the server status.');
+        setLoading(false);
+        return;
+      }
       try {
         const data = await dashboardService.getStats();
         setStats(data);

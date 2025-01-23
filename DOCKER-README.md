@@ -124,6 +124,58 @@ NODE_ENV=production
 # Add other necessary environment variables
 ```
 
+## Workspace Configuration
+
+The project follows a monorepo structure using pnpm workspaces. Each workspace has its own configuration:
+
+### Frontend Workspace (`apps/frontend`)
+```json
+{
+  "name": "@dentalhub/frontend",
+  "private": true,
+  "dependencies": {
+    "@dentalhub/types": "workspace:*",
+    "@dentalhub/ui": "workspace:*"
+  }
+}
+```
+
+### API Gateway Workspace (`apps/api`)
+```json
+{
+  "name": "@dentalhub/api",
+  "private": true,
+  "dependencies": {
+    "@dentalhub/core": "workspace:*",
+    "@dentalhub/types": "workspace:*"
+  }
+}
+```
+
+### Shared Packages
+- `packages/types`: Common TypeScript types and interfaces
+- `packages/ui`: Shared UI components
+- `packages/core`: Core business logic and utilities
+- `packages/database`: Database models and migrations
+
+Each workspace maintains its own:
+- TypeScript configuration (`tsconfig.json`)
+- Build settings
+- Environment variables
+- Unit tests
+
+For development, use the workspace-specific commands:
+```bash
+# Frontend development
+pnpm --filter @dentalhub/frontend dev
+
+# API development
+pnpm --filter @dentalhub/api dev
+
+# Build all workspaces
+pnpm build
+```
+
 ## Troubleshooting
 
 1. If containers fail to start:

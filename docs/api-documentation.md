@@ -250,3 +250,55 @@
       "status": "string"
     }
   ]
+  ```
+
+## Type Definitions
+
+All API endpoints are fully typed using TypeScript. The type definitions can be found in the `@dentalhub/types` package.
+
+### Common Types
+
+```typescript
+interface ApiResponse<T> {
+  data: T;
+  status: number;
+  message?: string;
+}
+
+interface PaginatedResponse<T> extends ApiResponse<T> {
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  }
+}
+
+interface ErrorResponse {
+  error: {
+    code: string;
+    message: string;
+    details?: Record<string, unknown>;
+  }
+}
+```
+
+### Request/Response Types
+
+```typescript
+// Patient Types
+interface Patient {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone?: string;
+  date_of_birth: string;
+  created_at: string;
+  updated_at: string;
+}
+
+type CreatePatientRequest = Omit<Patient, 'id' | 'created_at' | 'updated_at'>;
+type UpdatePatientRequest = Partial<CreatePatientRequest>;
+type PatientResponse = ApiResponse<Patient>;
+type PatientsListResponse = PaginatedResponse<Patient[]>;

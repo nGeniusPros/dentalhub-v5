@@ -1,5 +1,7 @@
 import { openAIService } from '../../services/ai/openai.service';
 import type { AssistantType } from '../../services/ai/openai.types';
+import { DataRetrievalAgent } from './data-retrieval-agent';
+import { PracticeMetrics } from './types/frontend-types';
 
 export type AgentType = 
   | 'revenue' 
@@ -16,6 +18,15 @@ interface AgentMetadata {
   rateLimit?: {
     tokens: number;
     windowMs: number;
+  };
+}
+
+export interface AIResponse {
+  content: string;
+  metadata?: Record<string, unknown>;
+  error?: {
+    code: string;
+    message: string;
   };
 }
 
@@ -66,45 +77,55 @@ export class AgentFactory {
         'data_validation'
       ]
     });
+    this.agentMetadata.set('data-analysis', {
+      version: '1.1.0',
+      capabilities: ['data_analysis', 'insight_generation']
+    });
+    this.agentMetadata.set('data-retrieval', {
+      version: '1.0.0',
+      capabilities: ['data_retrieval', 'data_validation']
+    });
   }
 
   public static getInstance(): AgentFactory {
     if (!AgentFactory.instance) {
       AgentFactory.instance = new AgentFactory();
-      AgentFactory.instance.initializeRateLimiters();
     }
     return AgentFactory.instance;
   }
 
-  private initializeRateLimiters() {
-    for (const [agentType, metadata] of this.agentMetadata) {
-      if (metadata.rateLimit) {
-        this.rateLimiters.set(agentType, new TokenBucket({
-          bucketSize: metadata.rateLimit.tokens,
-          tokensPerInterval: metadata.rateLimit.tokens,
-          interval: metadata.rateLimit.windowMs
-        }));
-      }
-    }
-  }
-
-  public updateMetrics(metrics: PracticeMetrics): void {
+  public setMetrics(metrics: PracticeMetrics) {
     this.metrics = metrics;
   }
 
-  public createAgent(type: AgentType): AIAgent {
-    // Check rate limits if configured for this agent type
-    const limiter = this.rateLimiters.get(type);
-    if (limiter && !limiter.tryRemoveTokens(1)) {
-      throw new Error(`Rate limit exceeded for agent ${type}`);
+  public initializeAgents(): Map<AgentType, AIAgent> {
+    const agents = new Map<AgentType, AIAgent>();
+
+    // Initialize data retrieval agent
+    const dataRetrievalAgent = new DataRetrievalAgent(this.metrics);
+    agents.set('data-retrieval', {
+      processQuery: async (content: string) => {
+        const response = await dataRetrievalAgent.processQuery(content);
+        return {
+          content: JSON.stringify(response.data),
+          error: response.error ? { code: 'DATA_RETRIEVAL_ERROR', message: response.error } : undefined
+        };
+      }
+    });
+
+    // Initialize other agents
+    for (const type of this.agentMetadata.keys()) {
+      if (type !== 'data-retrieval') {
+        agents.set(type, {
+          processQuery: async (content: string) => {
+            const assistantType = this.getAssistantType(type);
+            return this.openAIService.generateResponse(content, { assistantType });
+          }
+        });
+      }
     }
 
-    return {
-      processQuery: async (content: string) => {
-        const assistantType = this.getAssistantType(type);
-        return this.openAIService.generateResponse(content, { assistantType });
-      }
-    };
+    return agents;
   }
 
   private getAssistantType(type: AgentType): AssistantType {
@@ -126,77 +147,25 @@ export class AgentFactory {
     }
   }
 
-  public getAgentMetadata(type: AgentType): AgentMetadata {
-    return this.agentMetadata.get(type) || {
-      version: 'unknown',
-      capabilities: []
-    };
-  }
-
-  private findAgentsByCapability(capability: string): AgentType[] {
-    return Array.from(this.agentMetadata.entries())
-      .filter(([_, metadata]) => metadata.capabilities.includes(capability))
-      .map(([type]) => type);
-  }
-
-  public getAvailableAgents(): Agent[] {
-    return [
-      {
-        id: 'revenue',
-        name: 'Revenue Agent',
-        description: 'Analyzes financial metrics and revenue optimization',
-        category: 'Revenue',
-        icon: '💰',
-        contextRequirements: ['monthlyRevenue', 'patientCount']
-      },
-      {
-        id: 'patient-care',
-        name: 'Patient Care Agent',
-        description: 'Manages patient relationships and care quality',
-        category: 'Patient Care',
-        icon: '🏥',
-        contextRequirements: ['patientCount', 'appointmentRate']
-      },
-      {
-        id: 'operations',
-        name: 'Operations Agent',
-        description: 'Optimizes practice operations and scheduling',
-        category: 'Operations',
-        icon: '⚙️',
-        contextRequirements: ['appointmentRate', 'staffProductivity']
-      },
-      {
-        id: 'staff',
-        name: 'Staff Agent',
-        description: 'Handles staff management and training',
-        category: 'Staff & Training',
-        icon: '👥',
-        contextRequirements: ['staffProductivity']
-      },
-      {
-        id: 'data-analysis',
-        name: 'Data Analysis Agent',
-        description: 'Performs in-depth data analysis',
-        category: 'Analytics',
-        icon: '📊',
-        contextRequirements: ['monthlyRevenue', 'patientCount', 'appointmentRate']
-      },
-      {
-        id: 'data-retrieval',
-        name: 'Data Retrieval Agent',
-        description: 'Retrieves and validates practice data',
-        category: 'Core',
-        icon: '🔍',
-        contextRequirements: ['monthlyRevenue', 'patientCount']
-      }
-    ];
+  private getRateLimiter(agentType: AgentType): TokenBucket {
+    let limiter = this.rateLimiters.get(agentType);
+    if (!limiter) {
+      const metadata = this.agentMetadata.get(agentType);
+      limiter = new TokenBucket({
+        bucketSize: metadata?.rateLimit?.tokens || 10,
+        tokensPerInterval: metadata?.rateLimit?.tokens || 10,
+        interval: metadata?.rateLimit?.windowMs || 60000
+      });
+      this.rateLimiters.set(agentType, limiter);
+    }
+    return limiter;
   }
 }
 
 class TokenBucket {
   private tokens: number;
   private lastFilled: number;
-  
+
   constructor(private config: {
     bucketSize: number,
     tokensPerInterval: number,
@@ -217,14 +186,12 @@ class TokenBucket {
 
   private refill() {
     const now = Date.now();
-    const elapsed = now - this.lastFilled;
-    const refillAmount = Math.floor(elapsed / this.config.interval) * this.config.tokensPerInterval;
+    const timePassed = now - this.lastFilled;
+    const tokensToAdd = Math.floor(timePassed / this.config.interval * this.config.tokensPerInterval);
     
-    this.tokens = Math.min(
-      this.config.bucketSize,
-      this.tokens + refillAmount
-    );
-    
-    this.lastFilled += Math.floor(elapsed / this.config.interval) * this.config.interval;
+    if (tokensToAdd > 0) {
+      this.tokens = Math.min(this.config.bucketSize, this.tokens + tokensToAdd);
+      this.lastFilled = now;
+    }
   }
 }

@@ -6,9 +6,29 @@ import supabase from '../../../lib/supabase/client';
 
 export const RecentActivitySection = () => {
   const [activities, setActivities] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const checkServerStatus = async () => {
+    try {
+      const response = await fetch('http://localhost:5173/');
+      return response.ok;
+    } catch (err) {
+      console.error('Server is not running:', err);
+      return false;
+    }
+  };
 
   useEffect(() => {
     const fetchActivities = async () => {
+      setLoading(true);
+      setError(null);
+      const serverRunning = await checkServerStatus();
+      if (!serverRunning) {
+        setError('Server is not reachable. Please check the server status.');
+        setLoading(false);
+        return;
+      }
       try {
         const { data: appointments, error: appointmentsError } = await supabase
           .from('appointments')
@@ -20,7 +40,7 @@ export const RecentActivitySection = () => {
           .limit(3);
 
         if (appointmentsError) {
-          console.error('Error fetching appointments:', appointmentsError);
+          throw appointmentsError;
         }
 
         const { data: treatmentPlans, error: treatmentError } = await supabase
@@ -33,7 +53,7 @@ export const RecentActivitySection = () => {
           .limit(3);
 
         if (treatmentError) {
-          console.error('Error fetching treatment plans:', treatmentError);
+          throw treatmentError;
         }
 
         const { data: messages, error: messageError } = await supabase
@@ -46,7 +66,7 @@ export const RecentActivitySection = () => {
           .limit(3);
 
         if (messageError) {
-          console.error('Error fetching messages:', messageError);
+          throw messageError;
         }
 
         const combinedActivities = [
@@ -74,13 +94,21 @@ export const RecentActivitySection = () => {
         ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 3);
 
         setActivities(combinedActivities);
-      } catch (error) {
-        console.error('Error fetching recent activity:', error);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchActivities();
   }, [supabase]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <motion.div

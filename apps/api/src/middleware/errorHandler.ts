@@ -1,48 +1,44 @@
 import { Request, Response, NextFunction } from 'express';
-import { MonitoringService } from '../services/monitoring';
+import logger from '../lib/logger';
 import { ErrorCode } from '../types/errors';
-import { ErrorResponse } from '../types/common';
 
-export const errorHandler = (err: ErrorResponse, req: Request, res: Response, next: NextFunction) => {
-  // Log the error
-  MonitoringService.logError(err, err.code || ErrorCode.INTERNAL_ERROR, {
+export const errorHandler = (
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // Log the error with request details
+  logger.error('API Error:', {
+    error: err.message,
+    stack: err.stack,
+    path: req.path,
     method: req.method,
-    route: req.originalUrl,
+    query: req.query,
     body: req.body,
-    error: err.message
+    user: (req as any).user?.id
   });
 
-  // Handle authentication errors
-  if (err.code === ErrorCode.UNAUTHORIZED || err.statusCode === 401) {
+  // Handle specific error types
+  if (err.name === 'UnauthorizedError') {
     return res.status(401).json({
-      error: 'Unauthorized: Please log in to access this resource'
+      error: 'Authentication required',
+      code: ErrorCode.UNAUTHORIZED
     });
   }
 
-  if (err.code === ErrorCode.FORBIDDEN || err.statusCode === 403) {
-    return res.status(403).json({
-      error: 'Forbidden: You do not have permission to access this resource'
-    });
-  }
-
-  // Handle rate limiting errors
-  if (err.code === ErrorCode.RATE_LIMIT_EXCEEDED || err.statusCode === 429) {
-    return res.status(429).json({
-      error: 'Too many requests, please try again later'
-    });
-  }
-
-  // Handle validation errors
-  if (err.code === ErrorCode.VALIDATION_ERROR || err.statusCode === 400) {
+  if (err.name === 'ValidationError') {
     return res.status(400).json({
-      error: err.message || 'Invalid request parameters'
+      error: err.message,
+      code: ErrorCode.VALIDATION_ERROR
     });
   }
 
   // Default error response
-  res.status(err.statusCode || 500).json({
-    error: process.env.NODE_ENV === 'production'
-      ? 'Internal Server Error'
-      : err.message
+  res.status(500).json({
+    error: process.env.NODE_ENV === 'production' 
+      ? 'Internal server error' 
+      : err.message,
+    code: ErrorCode.INTERNAL_ERROR
   });
 };

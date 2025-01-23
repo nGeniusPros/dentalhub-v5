@@ -46,6 +46,31 @@
     -   The database package has been built successfully, but the API package still fails to build.
     -   The core package has been built successfully.
 
+## Code Style and Linting
+
+### ESLint Configuration
+- Strict TypeScript rules enabled
+- Airbnb style guide extended
+- Import/export rules enforcing ES modules
+- No unused variables or parameters allowed
+- Consistent type definitions required
+
+### Prettier Configuration
+- Tab Width: 2 spaces
+- Single quotes for strings
+- Semicolons required
+- Trailing commas in multi-line
+- Max line length: 100 characters
+- Arrow function parentheses when needed
+- No bracket spacing in object literals
+
+### Type Definition Guidelines
+- Use explicit return types for functions
+- Prefer interfaces over type aliases for objects
+- Use proper TypeScript utility types
+- Document complex types with JSDoc comments
+- Maintain shared types in `@dentalhub/types` package
+
 ## Next Steps
 
 -   Investigate the module resolution issue in the API gateway.

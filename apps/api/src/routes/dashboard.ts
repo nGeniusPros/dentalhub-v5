@@ -1,12 +1,14 @@
 import { Router, Response } from 'express';
-import { SupabaseRequest } from '../types/common';
-import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types';
+import { AuthenticatedRequest, requireAuth } from '../middleware/auth';
 import { asyncHandler } from '../utils/asyncHandler';
 import { z } from 'zod';
-import { errorHandler } from '../middleware/errorHandler';
+import { DashboardService } from '../services/dashboardService';
+import { ErrorCode } from '../types/errors';
 
 const router: Router = Router();
+
+// Apply authentication middleware to all dashboard routes
+router.use(requireAuth);
 
 const dashboardStatsSchema = z.object({
   start_date: z.string().optional(),
@@ -14,142 +16,75 @@ const dashboardStatsSchema = z.object({
 });
 
 // Get all dashboard stats in a single request
-router.get('/stats', asyncHandler(async (req: SupabaseRequest, res: Response) => {
+router.get('/stats', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   try {
-    res.json({
-      monthlyRevenue: {
-        value: 145678,
-        change: 8
-      },
-      patientGrowth: {
-        value: 3456,
-        change: 12
-      },
-      treatmentAcceptance: {
-        value: 78,
-        change: 5
-      },
-      appointmentFillRate: {
-        value: 92,
-        change: 3
-      },
-      insuranceClaims: {
-        value: 245,
-        change: 7
-      },
-      averageWaitTime: {
-        value: 12,
-        change: -4
-      },
-      patientSatisfaction: {
-        value: 4.8,
-        change: 2
-      },
-      staffProductivity: {
-        value: 94,
-        change: 6
-      }
+    const { start_date, end_date } = dashboardStatsSchema.parse(req.query);
+    const dashboardService = new DashboardService(req.supabase);
+    
+    const stats = await dashboardService.getStats(req.user.id, start_date, end_date);
+    res.json(stats);
+  } catch (error) {
+    console.error('Error fetching dashboard stats:', error);
+    res.status(500).json({
+      error: 'Failed to fetch dashboard statistics',
+      code: ErrorCode.INTERNAL_ERROR,
+      details: error instanceof Error ? error.message : undefined
     });
-  } catch (error) {
-    console.error('Error in dashboard stats:', error);
-    res.status(500).json({ error: 'Internal server error' });
   }
 }));
 
-router.get('/revenue-analytics', asyncHandler(async (req: SupabaseRequest, res: Response) => {
+router.get('/revenue-analytics', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   try {
-    res.json({
-      monthlyRevenue: {
-        months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        revenue: [120000, 125000, 128000, 130000, 127000, 132000],
-        expenses: [85000, 88000, 90000, 92000, 89000, 91000],
-        profit: [35000, 37000, 38000, 38000, 38000, 41000]
-      },
-      revenueByService: [
-        { service: 'General Dentistry', value: 45, color: '#40E0D0' },
-        { service: 'Orthodontics', value: 25, color: '#8B5CF6' },
-        { service: 'Cosmetic', value: 20, color: '#DEB887' },
-        { service: 'Implants', value: 10, color: '#1E40AF' }
-      ]
+    const { start_date, end_date } = dashboardStatsSchema.parse(req.query);
+    const dashboardService = new DashboardService(req.supabase);
+    
+    const revenue = await dashboardService.getRevenueAnalytics(req.user.id, start_date, end_date);
+    res.json(revenue);
+  } catch (error) {
+    console.error('Error fetching revenue analytics:', error);
+    res.status(500).json({
+      error: 'Failed to fetch revenue analytics',
+      code: ErrorCode.INTERNAL_ERROR,
+      details: error instanceof Error ? error.message : undefined
     });
-  } catch (error) {
-    console.error('Error in revenue analytics:', error);
-    res.status(500).json({ error: 'Internal server error' });
   }
 }));
 
-router.get('/staff-metrics', asyncHandler(async (req: SupabaseRequest, res: Response) => {
+router.get('/staff-metrics', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   try {
-    // Return mock data matching the StaffMetrics type
-    res.json([
-      {
-        id: '1',
-        name: 'Dr. Sarah Wilson',
-        role: 'Dentist',
-        metrics: {
-          appointmentsCompleted: 145,
-          patientSatisfaction: 98,
-          revenue: 52000
-        }
-      },
-      {
-        id: '2',
-        name: 'Dr. James Chen',
-        role: 'Dentist',
-        metrics: {
-          appointmentsCompleted: 138,
-          patientSatisfaction: 96,
-          revenue: 48000
-        }
-      },
-      {
-        id: '3',
-        name: 'Emma Thompson',
-        role: 'Hygienist',
-        metrics: {
-          appointmentsCompleted: 156,
-          patientSatisfaction: 95,
-          revenue: 31000
-        }
-      },
-      {
-        id: '4',
-        name: 'Michael Brown',
-        role: 'Dental Assistant',
-        metrics: {
-          appointmentsCompleted: 142,
-          patientSatisfaction: 94,
-          revenue: 28000
-        }
-      }
-    ]);
+    const { start_date, end_date } = dashboardStatsSchema.parse(req.query);
+    const dashboardService = new DashboardService(req.supabase);
+    
+    const metrics = await dashboardService.getStaffMetrics(req.user.id, start_date, end_date);
+    res.json(metrics);
   } catch (error) {
-    console.error('Error in staff metrics:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-}));
-
-router.get('/patient-metrics', asyncHandler(async (req: SupabaseRequest, res: Response) => {
-  try {
-    res.json({
-      patientGrowth: {
-        months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        values: [45, 52, 49, 55, 59, 65]
-      },
-      demographics: [
-        { ageGroup: '18-30', percentage: 25 },
-        { ageGroup: '31-50', percentage: 45 },
-        { ageGroup: '51-70', percentage: 20 },
-        { ageGroup: '70+', percentage: 10 }
-      ]
+    console.error('Error fetching staff metrics:', error);
+    res.status(500).json({
+      error: 'Failed to fetch staff metrics',
+      code: ErrorCode.INTERNAL_ERROR,
+      details: error instanceof Error ? error.message : undefined
     });
-  } catch (error) {
-    console.error('Error in patient metrics:', error);
-    res.status(500).json({ error: 'Internal server error' });
   }
 }));
 
-router.get('/marketing-metrics', asyncHandler(async (req: SupabaseRequest, res: Response) => {
+router.get('/patient-metrics', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { start_date, end_date } = dashboardStatsSchema.parse(req.query);
+    const dashboardService = new DashboardService(req.supabase);
+    
+    const metrics = await dashboardService.getPatientMetrics(req.user.id, start_date, end_date);
+    res.json(metrics);
+  } catch (error) {
+    console.error('Error fetching patient metrics:', error);
+    res.status(500).json({
+      error: 'Failed to fetch patient metrics',
+      code: ErrorCode.INTERNAL_ERROR,
+      details: error instanceof Error ? error.message : undefined
+    });
+  }
+}));
+
+router.get('/marketing-metrics', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   try {
     res.json({
       channelPerformance: {
@@ -171,7 +106,7 @@ router.get('/marketing-metrics', asyncHandler(async (req: SupabaseRequest, res: 
   }
 }));
 
-router.get('/treatment-analytics', asyncHandler(async (req: SupabaseRequest, res: Response) => {
+router.get('/treatment-analytics', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   try {
     res.json({
       treatmentSuccess: {
@@ -192,7 +127,7 @@ router.get('/treatment-analytics', asyncHandler(async (req: SupabaseRequest, res
   }
 }));
 
-router.get('/appointment-overview', asyncHandler(async (req: SupabaseRequest, res: Response) => {
+router.get('/appointment-overview', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   try {
     res.json({
       appointmentStats: {
@@ -213,7 +148,7 @@ router.get('/appointment-overview', asyncHandler(async (req: SupabaseRequest, re
   }
 }));
 
-router.get('/hygiene-analytics', asyncHandler(async (req: SupabaseRequest, res: Response) => {
+router.get('/hygiene-analytics', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   try {
     res.json({
       hygieneStats: {
@@ -234,4 +169,4 @@ router.get('/hygiene-analytics', asyncHandler(async (req: SupabaseRequest, res: 
   }
 }));
 
-export default router;
+export { router as dashboardRoutes };
