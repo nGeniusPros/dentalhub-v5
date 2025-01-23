@@ -8,6 +8,7 @@ export interface RetellConfig {
     baseUrl: string;
     wsUrl: string;
     webhookUrl: string;
+    webhookSecret: string;
     agents: AgentConfig[];
 }
 export interface VoiceCallRequest {

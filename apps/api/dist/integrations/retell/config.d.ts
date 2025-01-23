@@ -1,6 +1,6 @@
 import { RetellConfig, AgentConfig } from './types';
 export declare const retellConfig: RetellConfig;
-export declare const RETELL_API_KEY: string, RETELL_BASE_URL: string, RETELL_WS_URL: string, RETELL_WEBHOOK_URL: string, RETELL_AGENTS: AgentConfig[];
+export declare const RETELL_API_KEY: string, RETELL_BASE_URL: string, RETELL_WS_URL: string, RETELL_WEBHOOK_URL: string, RETELL_WEBHOOK_SECRET: string, RETELL_AGENTS: AgentConfig[];
 export declare const CALL_CONFIG: {
     maxDuration: number;
     maxRetries: number;

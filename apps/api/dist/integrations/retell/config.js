@@ -35,7 +35,7 @@ export const retellConfig = {
     ...loadConfig(),
 };
 // Export individual config values for convenience
-export const { apiKey: RETELL_API_KEY, baseUrl: RETELL_BASE_URL, wsUrl: RETELL_WS_URL, webhookUrl: RETELL_WEBHOOK_URL, agents: RETELL_AGENTS } = retellConfig;
+export const { apiKey: RETELL_API_KEY, baseUrl: RETELL_BASE_URL, wsUrl: RETELL_WS_URL, webhookUrl: RETELL_WEBHOOK_URL, webhookSecret: RETELL_WEBHOOK_SECRET, agents: RETELL_AGENTS } = retellConfig;
 // Call configuration
 export const CALL_CONFIG = {
     maxDuration: 30 * 60, // 30 minutes in seconds

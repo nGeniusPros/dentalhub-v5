@@ -26,5 +26,10 @@ export const sikkaConfig = {
     baseUrl: process.env.SIKKA_API_URL || 'https://api.sikkasoft.com/v4',
     appId: process.env.SIKKA_APP_ID,
     appKey: process.env.SIKKA_APP_KEY,
-    practiceId: process.env.SIKKA_PRACTICE_ID
+    practiceId: process.env.SIKKA_PRACTICE_ID,
+    masterCustomerId: process.env.SIKKA_MASTER_CUSTOMER_ID || '',
+    practiceKey: process.env.SIKKA_PRACTICE_KEY || '',
+    tokenRefreshThreshold: 5, // 5 minutes before expiration
+    maxRetryAttempts: 3,
+    rateLimitDelay: 1000 // 1 second
 };

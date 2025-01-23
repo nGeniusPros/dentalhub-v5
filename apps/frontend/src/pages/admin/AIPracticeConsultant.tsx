@@ -3,6 +3,10 @@ import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { AIConsultantChat } from '../../components/ai/AIConsultantChat';
+import { SplineScene } from "@/components/ui/splite";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Spotlight } from "@/components/ui/spotlight";
+import { cn } from "@/lib/utils";
 
 const quickQuestions = [
   {
@@ -52,6 +56,24 @@ const quickQuestions = [
   }
 ];
 
+const practiceSpecialists = [
+  { id: 'revenue', name: 'Revenue Agent', icon: 'DollarSign', description: 'Financial performance tracking' },
+  { id: 'hygiene', name: 'Hygiene Coach', icon: 'Shield', description: 'Preventive care optimization' },
+  { id: 'compliance', name: 'Safety Monitor', icon: 'ClipboardCheck', description: 'OSHA compliance checks' },
+  { id: 'demographics', name: 'Patient Analyst', icon: 'Users', description: 'Demographic trends analysis' },
+  { id: 'marketing', name: 'Marketing Expert', icon: 'Megaphone', description: 'Campaign ROI tracking' },
+  { id: 'supplies', name: 'Inventory Manager', icon: 'Package', description: 'Supply chain optimization' },
+  { id: 'procedures', name: 'Coding Specialist', icon: 'Code', description: 'Procedure validation' },
+  { id: 'staffing', name: 'Training Advisor', icon: 'GraduationCap', description: 'Staff development' },
+  { id: 'scheduling', name: 'Calendar Optimizer', icon: 'Calendar', description: 'Appointment management' },
+  { id: 'retention', name: 'Recall Manager', icon: 'HeartHandshake', description: 'Patient retention' },
+  { id: 'insurance', name: 'Claims Processor', icon: 'FileText', description: 'Insurance handling' },
+  { id: 'lab', name: 'Lab Coordinator', icon: 'Microscope', description: 'Case management' },
+  { id: 'emergency', name: 'Urgent Care', icon: 'AlertCircle', description: 'Emergency protocols' },
+  { id: 'telehealth', name: 'Virtual Consult', icon: 'Video', description: 'Telehealth services' },
+  { id: 'feedback', name: 'Experience Analyst', icon: 'MessageSquare', description: 'Patient feedback' }
+] as const satisfies Array<{ id: string; icon: keyof typeof Icons }>;
+
 const AIPracticeConsultant = () => {
   const [selectedQuestion, setSelectedQuestion] = React.useState('');
   const [selectedMetric, setSelectedMetric] = React.useState('revenue');
@@ -64,10 +86,13 @@ const AIPracticeConsultant = () => {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-2xl font-bold bg-gradient-primary text-transparent bg-clip-text">
+          <h1 className="text-2xl font-bold flex items-center gap-2 bg-gradient-primary text-transparent bg-clip-text">
+            <Icons.Brain className="w-6 h-6 text-primary" />
             AI Practice Consultant
           </h1>
-          <p className="text-gray-500 mt-1">Get expert insights and recommendations</p>
+          <p className="text-muted-foreground mt-1">
+            Multi-agent dental practice optimization system
+          </p>
         </div>
         <Button 
           className="bg-gradient-primary text-white hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-200 font-medium"
@@ -79,7 +104,31 @@ const AIPracticeConsultant = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <AIConsultantChat selectedQuestion={selectedQuestion} />
+          {/* New Head Practice Consultant Card */}
+          <Card className="w-full bg-gradient-ocean relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy-light to-transparent opacity-90" />
+            <div className="flex h-[600px] relative">
+              {/* Right content - Moved before left content to be rendered first */}
+              <div className="absolute right-0 top-0 w-1/2 h-full z-20 hidden lg:block">
+                <SplineScene 
+                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                  className="w-full h-full"
+                />
+              </div>
+
+              {/* Left content */}
+              <div className="w-full lg:w-1/2 h-full relative z-10">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="h-full"
+                >
+                  <AIConsultantChat selectedQuestion={selectedQuestion} />
+                </motion.div>
+              </div>
+            </div>
+          </Card>
 
           {/* Practice Metrics */}
           <motion.div
@@ -108,6 +157,36 @@ const AIPracticeConsultant = () => {
                   </div>
                   <p className="text-2xl font-bold text-gray-900">{metric.value}</p>
                   <p className="text-sm text-gray-500">{metric.label}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* AI Practice Specialists Grid */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-white rounded-xl shadow-lg border border-gray-200 p-6"
+          >
+            <h2 className="text-lg font-semibold mb-4">Practice Specialists</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {practiceSpecialists.map((agent) => (
+                <div
+                  key={agent.id}
+                  className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                  onClick={() => console.log('Selected:', agent.name)}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      {React.createElement(Icons[agent.icon], {
+                        className: "w-5 h-5 text-primary"
+                      })}
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{agent.name}</h3>
+                      <p className="text-sm text-gray-600">{agent.description}</p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

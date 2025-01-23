@@ -4,34 +4,22 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
+# Set working directory to frontend app
+WORKDIR /app/apps/frontend
+
 # Install pnpm
 RUN npm install -g pnpm@8.6.0
 
-# Copy workspace config files
-COPY package.json pnpm-workspace.yaml ./
+# Copy package.json and pnpm-lock.yaml for frontend
+COPY apps/frontend/package.json apps/frontend/pnpm-lock.yaml ./
 
-# Copy all workspace packages
-COPY packages/core/package.json ./packages/core/
-COPY packages/database/package.json ./packages/database/
-COPY packages/tsconfig/package.json ./packages/tsconfig/
-COPY apps/frontend/package.json ./apps/frontend/
+# Install dependencies for frontend
+RUN pnpm install --frozen-lockfile
 
-# Install dependencies
-RUN pnpm install
-
-# Copy source files
-COPY packages/core ./packages/core
-COPY packages/database ./packages/database
-COPY packages/tsconfig ./packages/tsconfig
-COPY apps/frontend ./apps/frontend
-
-# Build workspace packages first (tsconfig must come first)
-RUN pnpm --filter "@dentalhub/tsconfig" build
-RUN pnpm --filter "@dentalhub/core" build
-RUN pnpm --filter "@dentalhub/database" build
+# Copy frontend source files
+COPY apps/frontend ./
 
 # Build the frontend application
-WORKDIR /app/apps/frontend
 RUN pnpm build
 
 # Use nginx to serve the application

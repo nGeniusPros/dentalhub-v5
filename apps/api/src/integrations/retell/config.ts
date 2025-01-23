@@ -53,6 +53,7 @@ export const {
   baseUrl: RETELL_BASE_URL,
   wsUrl: RETELL_WS_URL,
   webhookUrl: RETELL_WEBHOOK_URL,
+  webhookSecret: RETELL_WEBHOOK_SECRET,
   agents: RETELL_AGENTS
 } = retellConfig;
 

@@ -16,7 +16,7 @@ export async function syncProcedureCategoryMappings(sikkaMappings, practiceId) {
 async function syncProcedureCategoryMapping(sikkaMapping, practiceId) {
     try {
         // First ensure the category exists
-        const category = await db.procedure_categories.upsert({
+        const category = await db.procedureCategory.upsert({
             where: {
                 sikka_practice_id_category: {
                     sikka_practice_id: practiceId,
@@ -31,9 +31,9 @@ async function syncProcedureCategoryMapping(sikkaMapping, practiceId) {
             }
         });
         // Then upsert the mapping
-        await db.procedure_category_mappings.upsert({
+        await db.procedureCategoryMapping.upsert({
             where: {
-                sikka_practice_id_procedure_code: {
+                unique_practice_procedure_mapping: {
                     sikka_practice_id: practiceId,
                     procedure_code: sikkaMapping.procedure_code
                 }
@@ -49,7 +49,7 @@ async function syncProcedureCategoryMapping(sikkaMapping, practiceId) {
                 procedure_code: sikkaMapping.procedure_code,
                 category_id: category.id,
                 pms_category: sikkaMapping.pms_procedure_category,
-                pms_description: sikkaMapping.pms_procedure_description
+                pms_description: sikkaMapping.pms_procedure_description ?? null
             }
         });
     }
@@ -62,7 +62,7 @@ async function syncProcedureCategoryMapping(sikkaMapping, practiceId) {
  * Gets all procedure mappings for a specific category
  */
 export async function getProceduresInCategory(practiceId, categoryId) {
-    return db.procedure_category_mappings.findMany({
+    return db.procedureCategoryMapping.findMany({
         where: {
             sikka_practice_id: practiceId,
             category_id: categoryId
