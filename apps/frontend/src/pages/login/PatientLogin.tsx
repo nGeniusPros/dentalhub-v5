@@ -1,15 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 const PatientLogin = () => {
-  const navigate = useNavigate();
+		const navigate = useNavigate();
+  const { signIn, signUp, loading, error } = useAuthContext();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showRegister, setShowRegister] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+		const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, handle authentication here
-    navigate('/patient-dashboard');
+    if (loading) return;
+    try {
+      await signIn(email, password);
+      navigate('/patient-dashboard');
+    } catch (err: any) {
+      console.error('Login failed', err);
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
+    try {
+      await signUp(email, password);
+      // After signup, user needs to verify their email
+      // Show success message or redirect to verification page
+    } catch (err: any) {
+      console.error('Registration failed', err);
+    }
   };
 
   return (

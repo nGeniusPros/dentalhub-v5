@@ -4,74 +4,12 @@ import * as Icons from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '../lib/utils';
 
-interface Module {
-  title: string;
-  duration: string;
-  completed: boolean;
-}
-
-interface Task {
-  title: string;
-  points: number;
-}
-
-interface Attachment {
-  name: string;
-  size: string;
-}
-
-interface CourseData {
-  title: string;
-  description: string;
-  duration: string;
-  points: number;
-  level: string;
-  category: string;
-  progress: number;
-  modules?: Module[];
-}
-
-interface ChallengeData {
-  title: string;
-  description: string;
-  points: number;
-  endDate: string;
-  participants: number;
-  requirements?: string[];
-  tasks?: Task[];
-}
-
-interface CertificationData {
-  title: string;
-  description: string;
-  issuer: string;
-  status: 'active' | 'expiring' | 'expired';
-  earnedDate: string;
-  expirationDate: string;
-  skills?: string[];
-  validationUrl?: string;
-}
-
-interface AssignmentData {
-  title: string;
-  description: string;
-  dueDate: string;
-  points: number;
-  timeEstimate: string;
-  status: 'completed' | 'in_progress' | 'pending' | 'graded';
-  attachments?: Attachment[];
-  grade?: number;
-  feedback?: string;
-}
-
-type ModalData = CourseData | ChallengeData | CertificationData | AssignmentData;
-
 interface ViewDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  data: ModalData;
+  data: any;
   type: 'course' | 'challenge' | 'certification' | 'assignment';
-  onAction?: (action: 'start-course' | 'join-challenge' | 'start-certification' | 'start-assignment') => void;
+  onAction?: (action: string) => void;
 }
 
 export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
@@ -84,113 +22,105 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
   if (!isOpen || !data) return null;
 
   const renderMetrics = () => {
-    if (type === 'course' && 'duration' in data) {
-      const courseData = data as CourseData;
-      return (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <label className="text-sm text-gray-500">Duration</label>
-            <p className="font-medium">{courseData.duration}</p>
+    switch (type) {
+      case 'course':
+        return (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <label className="text-sm text-gray-500">Duration</label>
+              <p className="font-medium">{data.duration}</p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-500">Points</label>
+              <p className="font-medium">{data.points}</p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-500">Level</label>
+              <p className="font-medium capitalize">{data.level}</p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-500">Category</label>
+              <p className="font-medium">{data.category}</p>
+            </div>
           </div>
-          <div>
-            <label className="text-sm text-gray-500">Points</label>
-            <p className="font-medium">{courseData.points}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-500">Level</label>
-            <p className="font-medium capitalize">{courseData.level}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-500">Category</label>
-            <p className="font-medium">{courseData.category}</p>
-          </div>
-        </div>
-      );
-    }
+        );
 
-    if (type === 'challenge' && 'endDate' in data) {
-      const challengeData = data as ChallengeData;
-      return (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div>
-            <label className="text-sm text-gray-500">Points</label>
-            <p className="font-medium">{challengeData.points}</p>
+      case 'challenge':
+        return (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div>
+              <label className="text-sm text-gray-500">Points</label>
+              <p className="font-medium">{data.points}</p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-500">End Date</label>
+              <p className="font-medium">{new Date(data.endDate).toLocaleDateString()}</p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-500">Participants</label>
+              <p className="font-medium">{data.participants}</p>
+            </div>
           </div>
-          <div>
-            <label className="text-sm text-gray-500">End Date</label>
-            <p className="font-medium">{new Date(challengeData.endDate).toLocaleDateString()}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-500">Participants</label>
-            <p className="font-medium">{challengeData.participants}</p>
-          </div>
-        </div>
-      );
-    }
+        );
 
-    if (type === 'certification' && 'issuer' in data) {
-      const certificationData = data as CertificationData;
-      return (
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="text-sm text-gray-500">Issuer</label>
-            <p className="font-medium">{certificationData.issuer}</p>
+      case 'certification':
+        return (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-gray-500">Issuer</label>
+              <p className="font-medium">{data.issuer}</p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-500">Status</label>
+              <span className={cn(
+                "px-2 py-1 text-xs font-medium rounded-full",
+                data.status === 'active' && "bg-green-100 text-green-800",
+                data.status === 'expiring' && "bg-yellow-100 text-yellow-800",
+                data.status === 'expired' && "bg-red-100 text-red-800"
+              )}>
+                {data.status}
+              </span>
+            </div>
+            <div>
+              <label className="text-sm text-gray-500">Earned Date</label>
+              <p className="font-medium">{new Date(data.earnedDate).toLocaleDateString()}</p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-500">Expiration Date</label>
+              <p className="font-medium">{new Date(data.expirationDate).toLocaleDateString()}</p>
+            </div>
           </div>
-          <div>
-            <label className="text-sm text-gray-500">Status</label>
-            <span className={cn(
-              "px-2 py-1 text-xs font-medium rounded-full",
-              certificationData.status === 'active' && "bg-green-100 text-green-800",
-              certificationData.status === 'expiring' && "bg-yellow-100 text-yellow-800",
-              certificationData.status === 'expired' && "bg-red-100 text-red-800"
-            )}>
-              {certificationData.status}
-            </span>
-          </div>
-          <div>
-            <label className="text-sm text-gray-500">Earned Date</label>
-            <p className="font-medium">{new Date(certificationData.earnedDate).toLocaleDateString()}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-500">Expiration Date</label>
-            <p className="font-medium">{new Date(certificationData.expirationDate).toLocaleDateString()}</p>
-          </div>
-        </div>
-      );
-    }
+        );
 
-    if (type === 'assignment' && 'dueDate' in data) {
-      const assignmentData = data as AssignmentData;
-      return (
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="text-sm text-gray-500">Due Date</label>
-            <p className="font-medium">{new Date(assignmentData.dueDate).toLocaleDateString()}</p>
+      case 'assignment':
+        return (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-gray-500">Due Date</label>
+              <p className="font-medium">{new Date(data.dueDate).toLocaleDateString()}</p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-500">Points</label>
+              <p className="font-medium">{data.points}</p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-500">Time Estimate</label>
+              <p className="font-medium">{data.timeEstimate}</p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-500">Status</label>
+              <span className={cn(
+                "px-2 py-1 text-xs font-medium rounded-full",
+                data.status === 'completed' && "bg-green-100 text-green-800",
+                data.status === 'in_progress' && "bg-blue-100 text-blue-800",
+                data.status === 'pending' && "bg-yellow-100 text-yellow-800"
+              )}>
+                {data.status.replace('_', ' ')}
+              </span>
+            </div>
           </div>
-          <div>
-            <label className="text-sm text-gray-500">Points</label>
-            <p className="font-medium">{assignmentData.points}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-500">Time Estimate</label>
-            <p className="font-medium">{assignmentData.timeEstimate}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-500">Status</label>
-            <span className={cn(
-              "px-2 py-1 text-xs font-medium rounded-full",
-              assignmentData.status === 'completed' && "bg-green-100 text-green-800",
-              assignmentData.status === 'in_progress' && "bg-blue-100 text-blue-800",
-              assignmentData.status === 'pending' && "bg-yellow-100 text-yellow-800"
-            )}>
-              {assignmentData.status.replace('_', ' ')}
-            </span>
-          </div>
-        </div>
-      );
+        );
     }
-
-    return null;
   };
 
   const renderContent = () => {
@@ -392,14 +322,14 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
             <Button variant="outline" onClick={onClose}>
               Close
             </Button>
-            {type === 'course' && 'progress' in data && (
+            {type === 'course' && (
               <Button onClick={() => onAction?.('start-course')}>
-                {(data as CourseData).progress === 0 ? (
+                {data.progress === 0 ? (
                   <>
                     <Icons.Play className="w-4 h-4 mr-2" />
                     Start Course
                   </>
-                ) : (data as CourseData).progress === 100 ? (
+                ) : data.progress === 100 ? (
                   <>
                     <Icons.RotateCcw className="w-4 h-4 mr-2" />
                     Retake Course

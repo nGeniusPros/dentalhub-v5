@@ -1,20 +1,34 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
+import { ErrorCode, ErrorResponse } from '../errors';
+import { logger } from '../lib/logger';
+import { DashboardStats } from '../types/dashboard';
+import { validateUUID } from '../utils/validators.ts';
 
 export class DashboardService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
   async getStats(userId: string, startDate?: string, endDate?: string) {
     try {
-      // Validate user exists
-      const { data: user, error: userError } = await this.supabase
-        .auth.admin.getUserById(userId);
-
-      if (userError || !user) {
-        throw new Error('User not found');
+      // Validate user input
+      if (!validateUUID(userId)) {
+        throw new ErrorResponse({
+          code: ErrorCode.VALIDATION_ERROR,
+          message: 'Invalid user ID format'
+        });
       }
 
-      // For now, return mock data
+      // Verify user existence
+      const { data: { user }, error } = await this.supabase.auth.admin.getUserById(userId);
+      
+      if (error || !user) {
+        throw new ErrorResponse({
+          code: ErrorCode.NOT_FOUND,
+          message: 'User not found in database'
+        });
+      }
+
+      // Return mock data with proper typing
       return {
         monthlyRevenue: {
           value: 145678,
@@ -48,10 +62,20 @@ export class DashboardService {
           value: 94,
           change: 6
         }
-      };
+      } satisfies DashboardStats;
+      
     } catch (error) {
-      console.error('Error in getStats:', error);
-      throw new Error('Failed to fetch dashboard stats');
+      logger.error('Dashboard service failure:', error);
+      
+      if (error instanceof ErrorResponse) {
+        throw error; // Preserve business logic errors
+      }
+      
+      throw new ErrorResponse({
+        code: ErrorCode.INTERNAL_ERROR,
+        message: 'Failed to load dashboard data',
+        originalError: error
+      });
     }
   }
 

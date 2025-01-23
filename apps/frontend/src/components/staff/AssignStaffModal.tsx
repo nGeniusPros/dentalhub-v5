@@ -5,29 +5,11 @@ import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
 import { useNotifications } from '../../contexts/NotificationContext';
 
-type Department = 'Clinical' | 'Administrative' | 'Management';
-type Role = 'Lead Dentist' | 'Dental Hygienist' | 'Front Desk';
-type Availability = 'Full-time' | 'Part-time';
-
-interface StaffMember {
-  id: string;
-  name: string;
-  role: Role;
-  department: Department;
-  availability: Availability;
-}
-
-interface Assignment {
-  staffId: string;
-  assignedAt: string;
-  status: 'pending' | 'approved' | 'rejected';
-}
-
 interface AssignStaffModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAssign: (assignments: Assignment[]) => void;
-  currentAssignments?: Assignment[];
+  onAssign: (assignments: any) => void;
+  currentAssignments?: any[];
 }
 
 export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
@@ -37,7 +19,7 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
   currentAssignments = []
 }) => {
   const { dispatch: notifyDispatch } = useNotifications();
-  const [assignments] = useState<Assignment[]>(currentAssignments || []);
+  const [assignments, setAssignments] = useState<any[]>(currentAssignments);
   const [selectedStaff, setSelectedStaff] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({
@@ -46,7 +28,7 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
     availability: ''
   });
 
-  const staffMembers: StaffMember[] = [
+  const staffMembers = [
     { id: '1', name: 'Dr. Sarah Wilson', role: 'Lead Dentist', department: 'Clinical', availability: 'Full-time' },
     { id: '2', name: 'John Smith', role: 'Dental Hygienist', department: 'Clinical', availability: 'Part-time' },
     { id: '3', name: 'Emily Parker', role: 'Front Desk', department: 'Administrative', availability: 'Full-time' }

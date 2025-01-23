@@ -1,65 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { dashboardService } from '../../../services/dashboard';
+import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadialBarChart, RadialBar } from 'recharts';
 import { Button } from '../../../components/ui/button';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
-
-interface PatientData {
-  patientGrowth: {
-    months: string[];
-    values: number[];
-  };
-  demographics: {
-    ageGroup: string;
-    percentage: number;
-  }[];
-}
 
 export const PatientMetrics = () => {
-  const [data, setData] = useState<PatientData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const patientGrowth = [
+    { month: 'Jan', newPatients: 45, activePatients: 1200, retentionRate: 95 },
+    { month: 'Feb', newPatients: 52, activePatients: 1250, retentionRate: 94 },
+    { month: 'Mar', newPatients: 48, activePatients: 1290, retentionRate: 96 },
+    { month: 'Apr', newPatients: 61, activePatients: 1340, retentionRate: 95 },
+    { month: 'May', newPatients: 55, activePatients: 1380, retentionRate: 93 },
+    { month: 'Jun', newPatients: 67, activePatients: 1430, retentionRate: 97 },
+  ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await dashboardService.getPatientMetrics();
-        setData(response);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch patient data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!data) return null;
-
-  const growthData = data.patientGrowth.months.map((month, index) => ({
-    month,
-    patients: data.patientGrowth.values[index],
-  }));
+  const satisfactionMetrics = [
+    { name: 'Overall', value: 94, fill: '#4BC5BD' },
+    { name: 'Staff', value: 96, fill: '#6B4C9A' },
+    { name: 'Cleanliness', value: 98, fill: '#C5A572' },
+    { name: 'Wait Time', value: 88, fill: '#1B2B5B' },
+  ];
 
   return (
     <motion.div
@@ -78,56 +38,96 @@ export const PatientMetrics = () => {
         </Button>
       </div>
 
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Patient Growth */}
         <div className="h-[300px]">
-          <h3 className="text-sm font-medium mb-4">Patient Growth</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-4">Patient Growth</h3>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={growthData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis 
-                dataKey="month" 
-                stroke="#6B7280"
-                fontSize={12}
-                tickLine={false}
-              />
-              <YAxis 
-                stroke="#6B7280"
-                fontSize={12}
-                tickLine={false}
-              />
+            <AreaChart data={patientGrowth}>
+              <defs>
+                <linearGradient id="colorNewPatients" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#4BC5BD" stopOpacity={0.1}/>
+                  <stop offset="95%" stopColor="#4BC5BD" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+              <XAxis dataKey="month" />
+              <YAxis />
               <Tooltip />
-              <Line
+              <Legend />
+              <Area
                 type="monotone"
-                dataKey="patients"
-                stroke="#40E0D0"
-                strokeWidth={2}
-                dot={false}
+                dataKey="newPatients"
+                stroke="#4BC5BD"
+                fillOpacity={1}
+                fill="url(#colorNewPatients)"
                 name="New Patients"
               />
-            </LineChart>
+              <Line
+                type="monotone"
+                dataKey="retentionRate"
+                stroke="#6B4C9A"
+                name="Retention Rate %"
+              />
+            </AreaChart>
           </ResponsiveContainer>
         </div>
 
-        <div>
-          <h3 className="text-sm font-medium mb-4">Patient Demographics</h3>
-          <div className="space-y-2">
-            {data.demographics.map((group, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">{group.ageGroup}</span>
-                <div className="flex items-center gap-2 flex-1 mx-4">
-                  <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-cyan-500 rounded-full"
-                      style={{ width: `${group.percentage}%` }}
-                    />
-                  </div>
-                  <span className="text-sm text-gray-600 w-12">
-                    {group.percentage}%
-                  </span>
-                </div>
+        {/* Patient Satisfaction */}
+        <div className="h-[300px]">
+          <h3 className="text-sm font-medium text-gray-700 mb-4">Satisfaction Metrics (%)</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <RadialBarChart
+              cx="50%"
+              cy="50%"
+              innerRadius="30%"
+              outerRadius="100%"
+              data={satisfactionMetrics}
+              startAngle={180}
+              endAngle={0}
+            >
+              <RadialBar
+                minAngle={15}
+                background
+                clockWise={true}
+                dataKey="value"
+                cornerRadius={10}
+              />
+              <Legend
+                iconSize={10}
+                layout="vertical"
+                verticalAlign="middle"
+                align="right"
+              />
+              <Tooltip />
+            </RadialBarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Demographics */}
+      <div className="mt-6">
+        <h3 className="text-sm font-medium text-gray-700 mb-4">Patient Demographics</h3>
+        <div className="space-y-4">
+          {[
+            { label: '18-30', percentage: 25 },
+            { label: '31-50', percentage: 45 },
+            { label: '51-70', percentage: 20 },
+            { label: '70+', percentage: 10 }
+          ].map((age, index) => (
+            <div key={index}>
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-gray-600">{age.label}</span>
+                <span className="text-gray-900">{age.percentage}%</span>
               </div>
-            ))}
-          </div>
+              <div className="h-2 bg-gray-100 rounded-full">
+                <div
+                  className="h-full bg-primary rounded-full"
+                  style={{ width: `${age.percentage}%` }}
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </motion.div>

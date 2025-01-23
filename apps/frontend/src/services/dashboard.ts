@@ -1,140 +1,179 @@
-import { apiClient } from '../config/api';
+interface DashboardStats {
+  appointments: {
+    total: number;
+    upcoming: number;
+    completed: number;
+    cancelled: number;
+  };
+  patients: {
+    total: number;
+    active: number;
+    new: number;
+  };
+  revenue: {
+    total: number;
+    pending: number;
+    collected: number;
+  };
+  performance: {
+    appointmentCompletionRate: number;
+    patientSatisfactionRate: number;
+    collectionRate: number;
+  };
+}
 
-export const dashboardService = {
-  async getStats() {
+class DashboardService {
+  private static instance: DashboardService;
+  private cache: Map<string, { data: any; timestamp: number }> = new Map();
+  private cacheDuration: number = 5 * 60 * 1000; // 5 minutes
+
+  private constructor() {
+  }
+
+  public static getInstance(): DashboardService {
+    if (!DashboardService.instance) {
+      DashboardService.instance = new DashboardService();
+    }
+    return DashboardService.instance;
+  }
+
+  private getCacheKey(endpoint: string, params?: any): string {
+    return `${endpoint}:${JSON.stringify(params)}`;
+  }
+
+  private getFromCache<T>(key: string): T | null {
+    const cached = this.cache.get(key);
+    if (!cached) return null;
+
+    const now = Date.now();
+    if (now - cached.timestamp > this.cacheDuration) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return cached.data as T;
+  }
+
+  private setCache(key: string, data: any): void {
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now(),
+    });
+  }
+
+  async getStats(forceRefresh: boolean = false): Promise<DashboardStats> {
+    const cacheKey = this.getCacheKey('dashboard-stats');
+    
+    if (!forceRefresh) {
+      const cached = this.getFromCache<DashboardStats>(cacheKey);
+      if (cached) return cached;
+    }
+
     try {
-      const response = await apiClient.get('/dashboard/stats');
-      return {
-        monthlyRevenue: {
-          value: 145678,
-          change: 8
-        },
-        patientGrowth: {
-          value: 3456,
-          change: 12
-        },
-        treatmentAcceptance: {
-          value: 78,
-          change: 5
-        },
-        appointmentFillRate: {
-          value: 92,
-          change: 3
-        },
-        insuranceClaims: {
-          value: 245,
-          change: 7
-        },
-        averageWaitTime: {
-          value: 12,
-          change: -4
-        },
-        patientSatisfaction: {
-          value: 4.8,
-          change: 2
-        },
-        staffProductivity: {
-          value: 94,
-          change: 6
-        }
-      };
-    } catch (error) {
+      const response = await fetch('/api/dashboard/stats');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch dashboard stats');
+      }
+
+      const data = await response.json();
+      this.setCache(cacheKey, data);
+      return data;
+    } catch (error: any) {
       console.error('Error fetching dashboard stats:', error);
       throw error;
     }
-  },
+  }
 
-  async getRevenueAnalytics() {
+  async getPerformanceMetrics(
+    startDate: string,
+    endDate: string
+  ): Promise<{
+    appointments: Array<{
+      date: string;
+      total: number;
+      completed: number;
+    }>;
+    revenue: Array<{
+      date: string;
+      amount: number;
+    }>;
+  } | null> {
+    const cacheKey = this.getCacheKey('performance-metrics', { startDate, endDate });
+    const cached = this.getFromCache<{
+      appointments: Array<{
+        date: string;
+        total: number;
+        completed: number;
+      }>;
+      revenue: Array<{
+        date: string;
+        amount: number;
+      }>;
+    }>(cacheKey);
+    if (cached) return cached;
+
     try {
-      const response = await apiClient.get('/dashboard/revenue-analytics');
-      return {
-        monthlyRevenue: {
-          months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-          revenue: [120000, 125000, 128000, 130000, 127000, 132000],
-          expenses: [85000, 88000, 90000, 92000, 89000, 91000],
-          profit: [35000, 37000, 38000, 38000, 38000, 41000]
+      const response = await fetch('/api/dashboard/performance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        revenueByService: [
-          { service: 'General Dentistry', value: 45, color: '#40E0D0' },
-          { service: 'Orthodontics', value: 25, color: '#8B5CF6' },
-          { service: 'Cosmetic', value: 20, color: '#DEB887' },
-          { service: 'Implants', value: 10, color: '#1E40AF' }
-        ]
-      };
-    } catch (error) {
-      console.error('Error fetching revenue analytics:', error);
-      throw error;
-    }
-  },
+        body: JSON.stringify({ startDate, endDate }),
+      });
 
-  async getPatientMetrics() {
-    try {
-      const response = await apiClient.get('/dashboard/patient-metrics');
-      return {
-        patientGrowth: {
-          months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-          values: [45, 52, 49, 55, 59, 65]
-        },
-        demographics: [
-          { ageGroup: '18-30', percentage: 25 },
-          { ageGroup: '31-50', percentage: 45 },
-          { ageGroup: '51-70', percentage: 20 },
-          { ageGroup: '70+', percentage: 10 }
-        ]
-      };
-    } catch (error) {
-      console.error('Error fetching patient metrics:', error);
-      throw error;
-    }
-  },
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch performance metrics');
+      }
 
-  async getStaffMetrics() {
-    try {
-      const response = await apiClient.get('/dashboard/staff-metrics');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching staff metrics:', error);
-      throw error;
-    }
-  },
-
-  async getMarketingMetrics() {
-    try {
-      const response = await apiClient.get('/dashboard/marketing-metrics');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching marketing metrics:', error);
-      throw error;
-    }
-  },
-
-  async getTreatmentAnalytics() {
-    try {
-      const response = await apiClient.get('/dashboard/treatment-analytics');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching treatment analytics:', error);
-      throw error;
-    }
-  },
-
-  async getAppointmentOverview() {
-    try {
-      const response = await apiClient.get('/dashboard/appointment-overview');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching appointment overview:', error);
-      throw error;
-    }
-  },
-
-  async getHygieneAnalytics() {
-    try {
-      const response = await apiClient.get('/dashboard/hygiene-analytics');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching hygiene analytics:', error);
+      const data = await response.json();
+      this.setCache(cacheKey, data);
+      return data;
+    } catch (error: any) {
+      console.error('Error fetching performance metrics:', error);
       throw error;
     }
   }
-};
+
+  async getStaffMetrics(): Promise<Array<{
+    staffId: string;
+    name: string;
+    role: string;
+    metrics: {
+      appointmentsCompleted: number;
+      patientSatisfaction: number;
+      revenue: number;
+    };
+  }> | null> {
+    const cacheKey = this.getCacheKey('staff-metrics');
+    const cached = this.getFromCache<Array<{
+      staffId: string;
+      name: string;
+      role: string;
+      metrics: {
+        appointmentsCompleted: number;
+        patientSatisfaction: number;
+        revenue: number;
+      };
+    }>>(cacheKey);
+    if (cached) return cached;
+
+    try {
+      const response = await fetch('/api/dashboard/staff-metrics');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch staff metrics');
+      }
+
+      const data = await response.json();
+      this.setCache(cacheKey, data);
+      return data;
+    } catch (error: any) {
+      console.error('Error fetching staff metrics:', error);
+      throw error;
+    }
+  }
+}
+
+export const dashboardService = DashboardService.getInstance();

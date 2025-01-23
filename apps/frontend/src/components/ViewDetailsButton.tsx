@@ -3,69 +3,13 @@ import { Button } from './ui/button';
 import * as Icons from 'lucide-react';
 import { ViewDetailsModal } from './ViewDetailsModal';
 
-interface CourseData {
-  title: string;
-  description: string;
-  duration: string;
-  points: number;
-  level: string;
-  category: string;
-  progress: number;
-  modules?: Array<{
-    title: string;
-    duration: string;
-    completed: boolean;
-  }>;
-}
-
-interface ChallengeData {
-  title: string;
-  description: string;
-  points: number;
-  endDate: string;
-  participants: number;
-  requirements?: string[];
-  tasks?: Array<{
-    title: string;
-    points: number;
-  }>;
-}
-
-interface CertificationData {
-  title: string;
-  description: string;
-  issuer: string;
-  status: 'active' | 'expiring' | 'expired';
-  earnedDate: string;
-  expirationDate: string;
-  skills?: string[];
-  validationUrl?: string;
-}
-
-interface AssignmentData {
-  title: string;
-  description: string;
-  dueDate: string;
-  points: number;
-  timeEstimate: string;
-  status: 'completed' | 'in_progress' | 'pending' | 'graded';
-  attachments?: Array<{
-    name: string;
-    size: string;
-  }>;
-  grade?: number;
-  feedback?: string;
-}
-
-type ModalData = CourseData | ChallengeData | CertificationData | AssignmentData;
-
 interface ViewDetailsButtonProps {
-  data: ModalData;
+  data: any;
   type: 'course' | 'challenge' | 'certification' | 'assignment';
   variant?: 'default' | 'outline' | 'ghost';
   size?: 'default' | 'sm' | 'lg';
   className?: string;
-  onAction?: (action: 'start-course' | 'join-challenge' | 'start-certification' | 'start-assignment') => void;
+  onAction?: (action: string) => void;
 }
 
 export const ViewDetailsButton: React.FC<ViewDetailsButtonProps> = ({

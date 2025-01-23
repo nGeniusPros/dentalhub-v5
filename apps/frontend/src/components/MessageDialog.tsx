@@ -2,18 +2,12 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from './ui/button';
-
-interface Message {
-  subject: string;
-  content: string;
-  priority: 'low' | 'normal' | 'high' | 'urgent';
-  sendCopy: boolean;
-}
+import supabase from '../lib/supabase/client';
+import { syncManager } from '../lib/utils/sync';
 
 interface MessageDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSend: (message: Message) => void;
   recipient: {
     name: string;
     email: string;
@@ -23,10 +17,9 @@ interface MessageDialogProps {
 export const MessageDialog: React.FC<MessageDialogProps> = ({
   isOpen,
   onClose,
-  onSend,
   recipient
 }) => {
-  const [message, setMessage] = useState<Message>({
+  const [message, setMessage] = useState({
     subject: '',
     content: '',
     priority: 'normal',
@@ -35,9 +28,28 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSend(message);
+    try {
+      await syncManager.addOperation({
+        table: 'messages_notifications',
+        type: 'INSERT',
+        data: {
+          message: message.content,
+          recipient: recipient.name,
+          type: 'message',
+          status: 'sent',
+          created_at: new Date().toISOString(),
+          priority: message.priority,
+          send_copy: message.sendCopy,
+          subject: message.subject,
+        },
+        timestamp: Date.now(),
+      });
+      console.log('Message queued for sending');
+    } catch (error) {
+      console.error('Error queueing message:', error);
+    }
     onClose();
   };
 
@@ -93,10 +105,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
             </label>
             <select
               value={message.priority}
-              onChange={(e) => setMessage(prev => ({
-                ...prev,
-                priority: e.target.value as 'low' | 'normal' | 'high' | 'urgent'
-              }))}
+              onChange={(e) => setMessage(prev => ({ ...prev, priority: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
             >
               <option value="low">Low</option>

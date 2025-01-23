@@ -4,18 +4,9 @@ import * as Icons from 'lucide-react';
 import { AssignStaffModal } from './AssignStaffModal';
 import { useNotifications } from '../../contexts/NotificationContext';
 
-interface StaffAssignment {
-  id: string;
-  name: string;
-  role: string;
-  hours: number;
-  startDate: string;
-  endDate?: string;
-}
-
 interface AssignStaffButtonProps {
-  onAssign?: (assignments: StaffAssignment[]) => void;
-  currentAssignments?: StaffAssignment[];
+  onAssign?: (assignments: any) => void;
+  currentAssignments?: any[];
   variant?: 'default' | 'outline' | 'ghost';
   size?: 'default' | 'sm' | 'lg';
   className?: string;
@@ -31,7 +22,7 @@ export const AssignStaffButton: React.FC<AssignStaffButtonProps> = ({
   const [showModal, setShowModal] = useState(false);
   const { dispatch: notifyDispatch } = useNotifications();
 
-  const handleAssign = (assignments: StaffAssignment[]) => {
+  const handleAssign = (assignments: any) => {
     if (onAssign) {
       onAssign(assignments);
     }

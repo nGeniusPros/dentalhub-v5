@@ -5,20 +5,7 @@ import { Button } from '../../../../components/ui/button';
 import { formatCurrency } from '../../../../lib/utils/currency';
 import { formatDate } from '../../../../lib/utils/date';
 
-interface Claim {
-  id: string;
-  patientName: string;
-  insuranceProvider: string;
-  date: string;
-  amount: number;
-  status: 'Paid' | 'Pending' | 'Denied';
-}
-
-interface InsuranceClaimsTableProps {
-  claims: Claim[];
-}
-
-export const InsuranceClaimsTable = ({ claims }: InsuranceClaimsTableProps) => {
+export const InsuranceClaimsTable = ({ claims }: any) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -57,7 +44,7 @@ export const InsuranceClaimsTable = ({ claims }: InsuranceClaimsTableProps) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {claims.map((claim: Claim) => (
+            {claims.map((claim: any) => (
               <tr key={claim.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 text-sm text-gray-900">{claim.id}</td>
                 <td className="px-6 py-4">

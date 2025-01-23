@@ -1,22 +1,8 @@
 import React from 'react';
-import { 
-  Brush,
-  CalendarCheck,
-  TrendingUp,
-  XCircle,
-  Download,
-  Filter
-} from 'lucide-react';
 import { motion } from 'framer-motion';
+import * as Icons from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from '../../../components/ui/button';
-
-interface Stat {
-  label: string;
-  value: string;
-  trend: string;
-  icon: React.ReactNode;
-}
 
 export const HygieneAnalytics = () => {
   const hygieneData = [
@@ -41,33 +27,6 @@ export const HygieneAnalytics = () => {
     { name: 'Dr. Emily', cleanings: 62, production: 13200, efficiency: 97 },
   ];
 
-  const stats: Stat[] = [
-    { 
-      label: 'Monthly Cleanings', 
-      value: '172', 
-      trend: '+8%', 
-      icon: <Brush className="w-5 h-5 text-primary" />
-    },
-    { 
-      label: 'Recare Rate', 
-      value: '85%', 
-      trend: '+5%', 
-      icon: <CalendarCheck className="w-5 h-5 text-primary" />
-    },
-    { 
-      label: 'Production/Hour', 
-      value: '$225', 
-      trend: '+12%', 
-      icon: <TrendingUp className="w-5 h-5 text-primary" />
-    },
-    { 
-      label: 'Cancellation Rate', 
-      value: '12%', 
-      trend: '-3%', 
-      icon: <XCircle className="w-5 h-5 text-primary" />
-    },
-  ];
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -81,21 +40,29 @@ export const HygieneAnalytics = () => {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
-            <Download className="w-4 h-4 mr-2" />
+            <Icons.Download className="w-4 h-4 mr-2" />
             Export
           </Button>
           <Button variant="outline" size="sm">
-            <Filter className="w-4 h-4 mr-2" />
+            <Icons.Filter className="w-4 h-4 mr-2" />
             Filter
           </Button>
         </div>
       </div>
 
+      {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        {stats.map((stat) => (
-          <div key={stat.label} className="bg-gray-50 p-4 rounded-lg">
+        {[
+          { label: 'Monthly Cleanings', value: '172', trend: '+8%', icon: 'Brush' },
+          { label: 'Recare Rate', value: '85%', trend: '+5%', icon: 'CalendarCheck' },
+          { label: 'Production/Hour', value: '$225', trend: '+12%', icon: 'TrendingUp' },
+          { label: 'Cancellation Rate', value: '12%', trend: '-3%', icon: 'XCircle' },
+        ].map((stat, index) => (
+          <div key={index} className="bg-gray-50 p-4 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              {stat.icon}
+              {React.createElement(Icons[stat.icon as keyof typeof Icons], {
+                className: "w-5 h-5 text-primary"
+              })}
               <span className={`text-sm font-medium ${
                 stat.trend.startsWith('+') ? 'text-green-600' : 'text-red-600'
               }`}>
@@ -109,6 +76,7 @@ export const HygieneAnalytics = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Hygiene Trends */}
         <div className="h-[300px]">
           <h3 className="text-sm font-medium text-gray-700 mb-4">Hygiene Trends</h3>
           <ResponsiveContainer width="100%" height="100%">
@@ -143,6 +111,7 @@ export const HygieneAnalytics = () => {
           </ResponsiveContainer>
         </div>
 
+        {/* Recare Effectiveness */}
         <div className="h-[300px]">
           <h3 className="text-sm font-medium text-gray-700 mb-4">Recare Status Distribution</h3>
           <ResponsiveContainer width="100%" height="100%">
@@ -167,6 +136,7 @@ export const HygieneAnalytics = () => {
         </div>
       </div>
 
+      {/* Hygienist Performance */}
       <div className="mt-6">
         <h3 className="text-sm font-medium text-gray-700 mb-4">Hygienist Performance</h3>
         <div className="h-[200px]">
@@ -185,6 +155,7 @@ export const HygieneAnalytics = () => {
         </div>
       </div>
 
+      {/* Additional Metrics */}
       <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-gray-50 p-4 rounded-lg">
           <h4 className="text-sm font-medium text-gray-700 mb-2">Perio Maintenance</h4>

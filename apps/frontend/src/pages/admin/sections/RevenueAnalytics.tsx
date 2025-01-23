@@ -1,80 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { dashboardService } from '../../../services/dashboard';
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from '../../../components/ui/button';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from 'recharts';
-
-interface RevenueData {
-  monthlyRevenue: {
-    revenue: number[];
-    expenses: number[];
-    profit: number[];
-    months: string[];
-  };
-  revenueByService: {
-    service: string;
-    value: number;
-    color: string;
-  }[];
-}
-
-const COLORS = {
-  'General Dentistry': '#40E0D0',
-  'Orthodontics': '#8B5CF6',
-  'Cosmetic': '#DEB887',
-  'Implants': '#1E40AF',
-};
 
 export const RevenueAnalytics = () => {
-  const [data, setData] = useState<RevenueData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const revenueData = [
+    { month: 'Jan', revenue: 125000, expenses: 85000, profit: 40000 },
+    { month: 'Feb', revenue: 132000, expenses: 88000, profit: 44000 },
+    { month: 'Mar', revenue: 141000, expenses: 92000, profit: 49000 },
+    { month: 'Apr', revenue: 145000, expenses: 94000, profit: 51000 },
+    { month: 'May', revenue: 138000, expenses: 90000, profit: 48000 },
+    { month: 'Jun', revenue: 152000, expenses: 95000, profit: 57000 },
+  ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await dashboardService.getRevenueAnalytics();
-        setData(response);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch revenue data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!data) return null;
-
-  const lineChartData = data.monthlyRevenue.months.map((month, index) => ({
-    month,
-    revenue: data.monthlyRevenue.revenue[index],
-    expenses: data.monthlyRevenue.expenses[index],
-    profit: data.monthlyRevenue.profit[index],
-  }));
+  const revenueByService = [
+    { name: 'General Dentistry', value: 45, color: '#4BC5BD' },
+    { name: 'Orthodontics', value: 25, color: '#6B4C9A' },
+    { name: 'Cosmetic', value: 20, color: '#C5A572' },
+    { name: 'Implants', value: 10, color: '#1B2B5B' },
+  ];
 
   return (
     <motion.div
@@ -99,85 +44,84 @@ export const RevenueAnalytics = () => {
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Revenue Trend */}
         <div className="h-[300px]">
-          <h3 className="text-sm font-medium mb-4">Revenue Trend</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-4">Revenue Trend</h3>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={lineChartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis 
-                dataKey="month" 
-                stroke="#6B7280"
-                fontSize={12}
-                tickLine={false}
-              />
-              <YAxis 
-                stroke="#6B7280"
-                fontSize={12}
-                tickLine={false}
-                tickFormatter={(value) => `$${value/1000}k`}
-              />
+            <LineChart data={revenueData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+              <XAxis dataKey="month" />
+              <YAxis />
               <Tooltip />
+              <Legend />
               <Line
                 type="monotone"
                 dataKey="revenue"
-                stroke="#40E0D0"
+                stroke="#4BC5BD"
                 strokeWidth={2}
-                dot={false}
-                name="Revenue"
+                dot={{ fill: '#4BC5BD', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 8, strokeWidth: 2 }}
               />
               <Line
                 type="monotone"
                 dataKey="expenses"
-                stroke="#DEB887"
+                stroke="#C5A572"
                 strokeWidth={2}
-                dot={false}
-                name="Expenses"
+                dot={{ fill: '#C5A572', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 8, strokeWidth: 2 }}
               />
               <Line
                 type="monotone"
                 dataKey="profit"
-                stroke="#8B5CF6"
+                stroke="#6B4C9A"
                 strokeWidth={2}
-                dot={false}
-                name="Profit"
+                dot={{ fill: '#6B4C9A', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 8, strokeWidth: 2 }}
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
-        <div>
-          <h3 className="text-sm font-medium mb-4">Revenue by Service</h3>
-          <div className="flex items-center justify-center h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={data.revenueByService}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={2}
-                  dataKey="value"
-                >
-                  {data.revenueByService.map((entry, index) => (
-                    <Cell key={index} fill={entry.color} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            {data.revenueByService.map((item, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <div 
-                  className="w-3 h-3 rounded-full" 
-                  style={{ backgroundColor: item.color }}
-                />
-                <span className="text-sm text-gray-600">{item.service}</span>
-              </div>
-            ))}
-          </div>
+        {/* Revenue by Service */}
+        <div className="h-[300px]">
+          <h3 className="text-sm font-medium text-gray-700 mb-4">Revenue by Service</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={revenueByService}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={80}
+                paddingAngle={5}
+                dataKey="value"
+              >
+                {revenueByService.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <h3 className="text-sm font-medium text-gray-700 mb-4">Monthly Comparison</h3>
+        <div className="h-[200px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={revenueData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="revenue" fill="#4BC5BD" name="Revenue" />
+              <Bar dataKey="expenses" fill="#C5A572" name="Expenses" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </motion.div>

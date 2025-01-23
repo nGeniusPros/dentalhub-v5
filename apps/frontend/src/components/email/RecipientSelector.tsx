@@ -1,21 +1,10 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../ui/button';
 
-interface Criteria {
-  field: string;
-  operator: string;
-  value: string;
-}
-
-interface Selection {
-  type: 'all' | 'segment' | 'list';
-  criteria?: Criteria[];
-  file?: File;
-}
-
 interface RecipientSelectorProps {
-  onSelect: (selection: Selection) => void;
+  onSelect: (criteria: any) => void;
 }
 
 export const RecipientSelector: React.FC<RecipientSelectorProps> = ({

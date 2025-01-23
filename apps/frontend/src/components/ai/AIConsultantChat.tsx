@@ -2,36 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../ui/button';
-import { useAIAgent } from '../../hooks/use-ai-agent';
-import { AgentGrid } from './AgentGrid';
-import { AIErrorBoundary } from './AIErrorBoundary';
-import { cn } from '@/lib/utils';
-import { PracticeMetrics } from '../../lib/ai-agents/types/frontend-types';
+import { useAIConsultant } from '../../hooks/use-ai-consultant';
+import type { AIConsultantPrompt } from '../../lib/types/ai';
 
 interface AIConsultantChatProps {
   selectedQuestion?: string;
-  metrics?: PracticeMetrics;
-  agentPresence?: Array<{
-    id: string;
-    name: string;
-    status: 'active'|'idle'|'processing';
-  }>;
 }
 
-export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({
-  selectedQuestion,
-  agentPresence = [],
-  metrics = {
-    monthlyRevenue: 150000,
-    patientCount: 1200,
-    appointmentRate: 75,
-    treatmentAcceptance: 65
-  }
-}) => {
+export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({ selectedQuestion }) => {
   const [question, setQuestion] = useState('');
-  const [activeAgent, setActiveAgent] = useState<string>('head-brain');
-  const [isGridVisible, setIsGridVisible] = useState(false);
-  const { messages, isLoading, error, sendMessage } = useAIAgent(metrics);
+  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([]);
+  const { generateInsight, loading, error } = useAIConsultant();
 
   useEffect(() => {
     if (selectedQuestion) {
@@ -41,99 +22,95 @@ export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!question.trim() || isLoading) return;
+    
+    if (!question.trim()) return;
 
-    await sendMessage(question);
+    // Add user message
+    setMessages(prev => [...prev, { role: 'user', content: question }]);
+
+    const prompt: AIConsultantPrompt = {
+      metrics: {
+        monthlyRevenue: 150000,
+        patientCount: 1200,
+        appointmentFillRate: 75,
+        treatmentAcceptance: 65
+      },
+      focusArea: 'operations',
+      question: question
+    };
+
+    const insight = await generateInsight(prompt);
+    if (insight) {
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: insight.description 
+      }]);
+    }
+
     setQuestion('');
   };
 
   return (
-    <AIErrorBoundary
-      onReset={() => {
-        setQuestion('');
-        setIsGridVisible(false);
-      }}
-    >
-      <div className="flex flex-col h-full">
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          <AnimatePresence>
-            {messages.map((message, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className={cn(
-                  "p-4 rounded-lg",
-                  message.role === 'user' 
-                    ? "bg-primary/10 ml-12" 
-                    : "bg-muted mr-12"
-                )}
-              >
-                <div className="flex items-start gap-3">
-                  {message.role === 'user' ? (
-                    <Icons.User className="h-6 w-6" />
-                  ) : (
-                    <Icons.Bot className="h-6 w-6" />
-                  )}
-                  <div className="flex-1">
-                    <p className="text-sm">{message.content}</p>
-                    {message.metadata?.sources && (
-                      <div className="mt-2 text-xs text-muted-foreground">
-                        Sources: {message.metadata.sources.join(', ')}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+    <div className="bg-white rounded-xl shadow-lg border border-gray-200 h-[600px] flex flex-col">
+      <div className="p-4 border-b border-gray-200 bg-gradient-primary text-white rounded-t-xl">
+        <div className="flex items-center gap-3">
+          <Icons.Brain className="w-6 h-6" />
+          <div>
+            <h3 className="font-semibold">AI Practice Consultant</h3>
+            <p className="text-sm opacity-80">Ask me anything about your practice</p>
+          </div>
         </div>
+      </div>
 
-        <div className="border-t p-4">
-          <form onSubmit={handleSubmit} className="flex gap-2">
-            <input
-              type="text"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              placeholder="Ask your dental practice consultant..."
-              className="flex-1 bg-background rounded-md border px-3 py-2"
-              disabled={isLoading}
-            />
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <Icons.Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Icons.Send className="h-4 w-4" />
-              )}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsGridVisible(!isGridVisible)}
-            >
-              <Icons.Grid className="h-4 w-4" />
-            </Button>
-          </form>
-        </div>
-
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <AnimatePresence>
-          {isGridVisible && (
+          {messages.map((message, index) => (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="border-t"
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <AgentGrid
-                agents={agentPresence}
-                activeAgent={activeAgent}
-                onAgentSelect={setActiveAgent}
-              />
+              <div className={`max-w-[80%] p-3 rounded-lg ${
+                message.role === 'user' 
+                  ? 'bg-primary text-white ml-4' 
+                  : 'bg-gray-100 text-gray-900 mr-4'
+              }`}>
+                {message.content}
+              </div>
             </motion.div>
-          )}
+          ))}
         </AnimatePresence>
       </div>
-    </AIErrorBoundary>
+
+      <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200">
+        <div className="relative">
+          <input
+            type="text"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="Ask about your practice performance..."
+            className="w-full px-4 py-2 pr-12 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            disabled={loading}
+          />
+          <Button
+            type="submit"
+            disabled={loading}
+            className="absolute right-2 top-1/2 -translate-y-1/2 !p-1 hover:bg-gray-100"
+          >
+            {loading ? (
+              <Icons.Loader2 className="w-5 h-5 animate-spin text-primary" />
+            ) : (
+              <Icons.Send className="w-5 h-5 text-primary" />
+            )}
+          </Button>
+        </div>
+        
+        {error && (
+          <p className="text-red-500 text-sm mt-2">{error}</p>
+        )}
+      </form>
+    </div>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LandingPage from '../pages/LandingPage';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import StaffDashboard from '../pages/staff/StaffDashboard';
@@ -26,6 +26,7 @@ import VoiceCampaigns from '../pages/admin/communications/VoiceCampaigns';
 import SocialMediaDashboard from '../pages/admin/social/SocialMediaDashboard';
 import LearningDashboard from '../pages/admin/learning/LearningDashboard';
 import ResourcesDashboard from '../pages/admin/resources/ResourcesDashboard';
+import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 
 export const AppRoutes = () => {
   return (
@@ -41,7 +42,7 @@ export const AppRoutes = () => {
       </Route>
 
       {/* Admin routes */}
-      <Route path="/admin-dashboard" element={<DashboardLayout role="admin" />}>
+      <Route path="/admin-dashboard" element={<ProtectedRoute role="admin"><DashboardLayout role="admin" /></ProtectedRoute>}>
         <Route index element={<AdminDashboard />} />
         <Route path="ai-consultant" element={<AIPracticeConsultant />} />
         <Route path="hr" element={<HRDashboard />} />
@@ -63,13 +64,13 @@ export const AppRoutes = () => {
       </Route>
 
       {/* Staff routes */}
-      <Route path="/staff-dashboard" element={<DashboardLayout role="staff" />}>
+      <Route path="/staff-dashboard" element={<ProtectedRoute role="staff"><DashboardLayout role="staff" /></ProtectedRoute>}>
         <Route index element={<StaffDashboard />} />
         {/* Add staff routes */}
       </Route>
 
       {/* Patient routes */}
-      <Route path="/patient-dashboard" element={<DashboardLayout role="patient" />}>
+      <Route path="/patient-dashboard" element={<ProtectedRoute role="patient"><DashboardLayout role="patient" /></ProtectedRoute>}>
         <Route index element={<PatientDashboard />} />
         <Route path="membership" element={<Membership />} />
         {/* Add patient routes */}

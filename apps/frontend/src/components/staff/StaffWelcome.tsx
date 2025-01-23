@@ -1,10 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { useAuthContext } from '../../contexts/AuthContext';
+import supabase from '../../lib/supabase/client';
 
 export const StaffWelcome = () => {
   const { user } = useAuthContext();
+  const [staffProfile, setStaffProfile] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchStaffProfile = async () => {
+      if (user?.id) {
+        try {
+          const { data, error } = await supabase
+            .from('staff_profiles')
+            .select(`
+              *,
+              user:auth.users!user_id(
+                id,
+                email,
+                raw_user_meta_data
+              )
+            `)
+            .eq('user_id', user.id)
+            .single();
+
+          if (error) {
+            console.error('Error fetching staff profile:', error);
+          } else {
+            setStaffProfile(data);
+          }
+        } catch (error) {
+          console.error('Error fetching staff profile:', error);
+        }
+      }
+    };
+
+    fetchStaffProfile();
+  }, [user, supabase]);
 
   return (
     <motion.div 
@@ -17,9 +50,9 @@ export const StaffWelcome = () => {
           Staff Dashboard
         </h1>
         <p className="text-gray-500 mt-1">
-          Welcome back, {user?.name} - {user?.title}
+          Welcome back, {staffProfile?.user?.raw_user_meta_data?.full_name} - {staffProfile?.role}
         </p>
-        <p className="text-sm text-gray-400">{user?.department}</p>
+        <p className="text-sm text-gray-400">{staffProfile?.specialization}</p>
       </div>
       <div className="flex gap-3">
         <button className="px-4 py-2 text-sm font-medium text-white bg-[#1B2B85] rounded-lg hover:bg-[#2B3A9F] transition-colors">

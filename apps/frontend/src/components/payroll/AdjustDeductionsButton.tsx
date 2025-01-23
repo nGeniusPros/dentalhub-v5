@@ -22,18 +22,7 @@ export const AdjustDeductionsButton: React.FC<AdjustDeductionsButtonProps> = ({
   const [showModal, setShowModal] = useState(false);
   const { dispatch: notifyDispatch } = useNotifications();
 
-interface Deduction {
-  type: string;
-  amount: number;
-  description?: string;
-  isPreTax: boolean;
-}
-
-  const handleSave = (deductions: Deduction[]) => {
-    console.log('Saving deductions:', deductions);
-    // Calculate total deductions
-    const totalDeductions = deductions.reduce((sum, deduction) => sum + deduction.amount, 0);
-    console.log('Total deductions:', totalDeductions);
+  const handleSave = (deductions: any) => {
     notifyDispatch({
       type: 'ADD_NOTIFICATION',
       payload: {

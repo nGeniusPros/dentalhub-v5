@@ -1,28 +1,22 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../ui/button';
 
-type BonusType = 'production' | 'collection' | 'performance' | 'hybrid' | 'custom';
-type BonusFrequency = 'monthly' | 'quarterly' | 'biannual' | 'annual' | 'custom';
-
-interface BonusTarget {
-  metric: string;
-  target: number;
-  bonus: number;
-}
-
-interface BonusStructure {
-  enrolled: boolean;
-  type: BonusType;
-  frequency: BonusFrequency;
-  targets: BonusTarget[];
-  customPayoutDates?: string[];
-  notes?: string;
-}
-
 interface BonusStructureProps {
-  value: BonusStructure;
-  onChange: (value: BonusStructure) => void;
+  value: {
+    enrolled: boolean;
+    type: string;
+    frequency: string;
+    targets: Array<{
+      metric: string;
+      target: number;
+      bonus: number;
+    }>;
+    customPayoutDates?: string[];
+    notes?: string;
+  };
+  onChange: (value: any) => void;
 }
 
 export const BonusStructureSection: React.FC<BonusStructureProps> = ({

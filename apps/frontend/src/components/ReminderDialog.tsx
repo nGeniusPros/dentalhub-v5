@@ -3,17 +3,10 @@ import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from './ui/button';
 
-interface Reminder {
-  method: 'sms' | 'email' | 'both';
-  message: string;
-  sendNow: boolean;
-  scheduledTime: string;
-}
-
 interface ReminderDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSend: (reminder: Reminder) => void;
+  onSend: (reminder: any) => void;
   recipient: {
     name: string;
     appointment?: {
@@ -30,7 +23,7 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({
   onSend,
   recipient
 }) => {
-  const [reminder, setReminder] = useState<Reminder>({
+  const [reminder, setReminder] = useState({
     method: 'sms',
     message: '',
     sendNow: true,
@@ -71,10 +64,7 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({
             </label>
             <select
               value={reminder.method}
-              onChange={(e) => setReminder(prev => ({
-                ...prev,
-                method: e.target.value as 'sms' | 'email' | 'both'
-              }))}
+              onChange={(e) => setReminder(prev => ({ ...prev, method: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
             >
               <option value="sms">SMS</option>

@@ -1,37 +1,78 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../../../../components/ui/button';
 import { cn } from '../../../../../lib/utils';
 import { ScheduleDialog } from './ScheduleDialog';
 import { EditCampaignDialog } from './EditCampaignDialog';
-import { useCampaigns, Campaign } from '../../../../../hooks/use-campaigns';
-import { useCampaignActions } from '../../../../../hooks/use-campaign-actions';
-import { useVoice } from '../../../../../contexts/VoiceContext';
+
+export interface Campaign {
+  id: string;
+  name: string;
+  type: 'recall' | 'reactivation' | 'treatment' | 'appointment' | 'event' | 'custom';
+  status: 'active' | 'scheduled' | 'completed' | 'paused';
+  targetCount: number;
+  completedCalls: number;
+  successRate: number;
+  scheduledDate?: string;
+  lastRun?: string;
+  schedule?: {
+    startDate: string;
+    startTime: string;
+    maxAttempts: number;
+    timeBetweenAttempts: number;
+  };
+}
+
+export const mockCampaigns: Campaign[] = [
+  {
+    id: '1',
+    name: 'Recall Campaign - March',
+    type: 'recall',
+    status: 'active',
+    targetCount: 150,
+    completedCalls: 89,
+    successRate: 45,
+    lastRun: '2024-03-10'
+  },
+  {
+    id: '2',
+    name: 'Treatment Follow-up',
+    type: 'treatment',
+    status: 'scheduled',
+    targetCount: 75,
+    completedCalls: 0,
+    successRate: 0,
+    scheduledDate: '2024-03-20'
+  }
+];
 
 export const VoiceCampaignList = () => {
-  const { campaigns, loading, error, updateCampaignStatus, deleteCampaign } = useCampaigns();
-  const { editingCampaign, showScheduleDialog, selectedCampaign, handleEditCampaign, handleScheduleCampaign, handleCloseScheduleDialog, handleCloseEditDialog, setEditingCampaign } = useCampaignActions();
-  const { state: voiceState, assignCampaignAgent } = useVoice();
+  const [campaigns, setCampaigns] = useState<Campaign[]>(mockCampaigns);
+  const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
+  const [showScheduleDialog, setShowScheduleDialog] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
 
-  const handleStatusChange = async (campaignId: string, status: Campaign['status']) => {
-    await updateCampaignStatus(campaignId, status);
+  const handleStatusChange = (campaignId: string, status: Campaign['status']) => {
+    setCampaigns(prev => prev.map(campaign => 
+      campaign.id === campaignId ? { ...campaign, status } : campaign
+    ));
   };
 
-  const handleDeleteCampaign = async (campaignId: string) => {
+  const handleEditCampaign = (campaign: Campaign) => {
+    setEditingCampaign(campaign);
+  };
+
+  const handleScheduleCampaign = (campaign: Campaign) => {
+    setSelectedCampaign(campaign);
+    setShowScheduleDialog(true);
+  };
+
+  const handleDeleteCampaign = (campaignId: string) => {
     if (window.confirm('Are you sure you want to delete this campaign?')) {
-      await deleteCampaign(campaignId);
+      setCampaigns(prev => prev.filter(campaign => campaign.id !== campaignId));
     }
   };
-
-  if (loading) {
-    return <div>Loading campaigns...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200">
       <div className="p-6 border-b border-gray-200">
@@ -59,7 +100,6 @@ export const VoiceCampaignList = () => {
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Campaign</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Agent</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Progress</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Success Rate</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Schedule</th>
@@ -67,151 +107,119 @@ export const VoiceCampaignList = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {campaigns.map((campaign) => {
-              const agent = campaign.agentId ? voiceState.agents.find(a => a.id === campaign.agentId) : null;
-              const agentStats = agent ? voiceState.agentStats[agent.id] : null;
-
-              return (
-                <tr key={campaign.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <Icons.Phone className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-900">{campaign.name}</div>
-                        <div className="text-sm text-gray-500 capitalize">{campaign.type} Campaign</div>
-                      </div>
+            {mockCampaigns.map((campaign) => (
+              <tr key={campaign.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <Icons.Phone className="w-5 h-5 text-primary" />
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={cn(
-                      "px-3 py-1 text-xs font-medium rounded-full",
-                      campaign.status === 'active' && "bg-green-100 text-green-800",
-                      campaign.status === 'scheduled' && "bg-blue-100 text-blue-800",
-                      campaign.status === 'completed' && "bg-gray-100 text-gray-800",
-                      campaign.status === 'paused' && "bg-yellow-100 text-yellow-800"
-                    )}>
-                      {campaign.status}
+                    <div>
+                      <div className="font-medium text-gray-900">{campaign.name}</div>
+                      <div className="text-sm text-gray-500 capitalize">{campaign.type} Campaign</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <span className={cn(
+                    "px-3 py-1 text-xs font-medium rounded-full",
+                    campaign.status === 'active' && "bg-green-100 text-green-800",
+                    campaign.status === 'scheduled' && "bg-blue-100 text-blue-800",
+                    campaign.status === 'completed' && "bg-gray-100 text-gray-800",
+                    campaign.status === 'paused' && "bg-yellow-100 text-yellow-800"
+                  )}>
+                    {campaign.status}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-primary rounded-full"
+                        style={{ width: `${(campaign.completedCalls / campaign.targetCount) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      {campaign.completedCalls}/{campaign.targetCount}
                     </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    {agent ? (
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-900">{agent.name}</div>
-                          <div className="text-sm text-gray-500">{agent.phoneNumber}</div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            const newAgent = prompt('Select new agent ID:');
-                            if (newAgent) {
-                              assignCampaignAgent(campaign.id, newAgent);
-                            }
-                          }}
-                          title="Reassign Agent"
-                        >
-                          <Icons.UserPlus className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="text-sm text-gray-500">
-                        Auto-assigned
-                      </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">{campaign.successRate}%</span>
+                    {campaign.successRate > 0 && (
+                      <Icons.TrendingUp className="w-4 h-4 text-green-500" />
                     )}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-primary rounded-full"
-                          style={{ width: `${(campaign.completedCalls / campaign.targetCount) * 100}%` }}
-                        />
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        {campaign.completedCalls}/{campaign.targetCount}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{campaign.successRate}%</span>
-                      {campaign.successRate > 0 && (
-                        <Icons.TrendingUp className="w-4 h-4 text-green-500" />
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm">
-                      {campaign.scheduledDate ? (
-                        <>
-                          <Icons.Calendar className="w-4 h-4 inline-block mr-1 text-gray-400" />
-                          {campaign.scheduledDate}
-                        </>
-                      ) : (
-                        <>
-                          <Icons.Clock className="w-4 h-4 inline-block mr-1 text-gray-400" />
-                          Last run: {campaign.lastRun}
-                        </>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      {campaign.status === 'active' ? (
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => handleStatusChange(campaign.id, 'paused')}
-                          title="Pause Campaign"
-                        >
-                          <Icons.PauseCircle className="w-4 h-4" />
-                        </Button>
-                      ) : campaign.status === 'paused' ? (
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => handleStatusChange(campaign.id, 'active')}
-                          title="Resume Campaign"
-                        >
-                          <Icons.PlayCircle className="w-4 h-4" />
-                        </Button>
-                      ) : null}
-                      
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="text-sm">
+                    {campaign.scheduledDate ? (
+                      <>
+                        <Icons.Calendar className="w-4 h-4 inline-block mr-1 text-gray-400" />
+                        {campaign.scheduledDate}
+                      </>
+                    ) : (
+                      <>
+                        <Icons.Clock className="w-4 h-4 inline-block mr-1 text-gray-400" />
+                        Last run: {campaign.lastRun}
+                      </>
+                    )}
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <div className="flex justify-end gap-2">
+                    {campaign.status === 'active' ? (
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => handleEditCampaign(campaign)}
-                        title="Edit Campaign"
+                        onClick={() => handleStatusChange(campaign.id, 'paused')}
+                        title="Pause Campaign"
                       >
-                        <Icons.Edit2 className="w-4 h-4" />
+                        <Icons.PauseCircle className="w-4 h-4" />
                       </Button>
-                      
+                    ) : campaign.status === 'paused' ? (
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => handleScheduleCampaign(campaign)}
-                        title="Schedule Campaign"
+                        onClick={() => handleStatusChange(campaign.id, 'active')}
+                        title="Resume Campaign"
                       >
-                        <Icons.Calendar className="w-4 h-4" />
+                        <Icons.PlayCircle className="w-4 h-4" />
                       </Button>
-                      
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleDeleteCampaign(campaign.id)}
-                        title="Delete Campaign"
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Icons.Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+                    ) : null}
+                    
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleEditCampaign(campaign)}
+                      title="Edit Campaign"
+                    >
+                      <Icons.Edit2 className="w-4 h-4" />
+                    </Button>
+                    
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleScheduleCampaign(campaign)}
+                      title="Schedule Campaign"
+                    >
+                      <Icons.Calendar className="w-4 h-4" />
+                    </Button>
+                    
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleDeleteCampaign(campaign.id)}
+                      title="Delete Campaign"
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Icons.Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -220,12 +228,20 @@ export const VoiceCampaignList = () => {
       <ScheduleDialog
         open={showScheduleDialog}
         campaign={selectedCampaign}
-        onClose={handleCloseScheduleDialog}
+        onClose={() => {
+          setShowScheduleDialog(false);
+          setSelectedCampaign(null);
+        }}
         onSchedule={(schedule) => {
           if (selectedCampaign) {
-            
+            setCampaigns(prev => prev.map(campaign =>
+              campaign.id === selectedCampaign.id
+                ? { ...campaign, schedule, status: 'scheduled' }
+                : campaign
+            ));
           }
-          handleCloseScheduleDialog();
+          setShowScheduleDialog(false);
+          setSelectedCampaign(null);
         }}
       />
       
@@ -233,8 +249,11 @@ export const VoiceCampaignList = () => {
       <EditCampaignDialog
         open={!!editingCampaign}
         campaign={editingCampaign}
-        onClose={handleCloseEditDialog}
+        onClose={() => setEditingCampaign(null)}
         onSave={(updatedCampaign) => {
+          setCampaigns(prev => prev.map(campaign =>
+            campaign.id === updatedCampaign.id ? updatedCampaign : campaign
+          ));
           setEditingCampaign(null);
         }}
       />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../../../components/ui/button';
@@ -6,6 +6,7 @@ import { ShiftCalendar } from './calendar/ShiftCalendar';
 import { AddShiftModal } from './calendar/AddShiftModal';
 import { ViewShiftModal } from './calendar/ViewShiftModal';
 import { cn } from '../../../../lib/utils';
+import supabase from '../../../../lib/supabase/client';
 
 interface Shift {
   id: string;
@@ -19,47 +20,63 @@ interface Shift {
 
 export const StaffSchedule = () => {
   const [showCalendar, setShowCalendar] = useState(false);
-  const [shifts, setShifts] = useState<Shift[]>([
-    {
-      id: '1',
-      employeeName: 'Dr. Sarah Wilson',
-      role: 'Dentist',
-      startTime: '08:00',
-      endTime: '14:00',
-      date: '2024-03-15',
-      status: 'checked-in'
-    },
-    {
-      id: '2',
-      employeeName: 'John Smith',
-      role: 'Hygienist',
-      startTime: '09:00',
-      endTime: '15:00',
-      date: '2024-03-15',
-      status: 'scheduled'
-    }
-  ]);
+  const [shifts, setShifts] = useState<any[]>([]);
+  const [schedule, setSchedule] = useState<any[]>([]);
 
-  const schedule = [
-    {
-      shift: 'Morning',
-      time: '8:00 AM - 2:00 PM',
-      staff: [
-        { name: 'Dr. Sarah Wilson', role: 'Dentist', status: 'checked-in' },
-        { name: 'John Smith', role: 'Hygienist', status: 'checked-in' },
-        { name: 'Emily Parker', role: 'Front Desk', status: 'pending' }
-      ]
-    },
-    {
-      shift: 'Afternoon',
-      time: '2:00 PM - 8:00 PM',
-      staff: [
-        { name: 'Dr. Michael Chen', role: 'Dentist', status: 'scheduled' },
-        { name: 'Lisa Johnson', role: 'Hygienist', status: 'scheduled' },
-        { name: 'Mark Davis', role: 'Front Desk', status: 'scheduled' }
-      ]
-    }
-  ];
+  useEffect(() => {
+    const fetchStaffSchedules = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('staff_schedules')
+          .select(`
+            *,
+            staff:staff_profiles!inner(
+              id,
+              user:auth.users!user_id(
+                id,
+                email,
+                raw_user_meta_data
+              ),
+              role
+            )
+          `)
+          .order('start_time', { ascending: true });
+
+        if (error) {
+          console.error('Error fetching staff schedules:', error);
+        } else {
+          setShifts(data);
+          const groupedSchedules = data.reduce((acc: any, shift: any) => {
+            const shiftTime = new Date(shift.start_time).getHours() < 12 ? 'Morning' : 'Afternoon';
+            const existingShift = acc.find((s: any) => s.shift === shiftTime);
+            if (existingShift) {
+              existingShift.staff.push({
+                name: shift.staff.user.raw_user_meta_data.full_name,
+                role: shift.staff.role,
+                status: shift.status,
+              });
+            } else {
+              acc.push({
+                shift: shiftTime,
+                time: `${new Date(shift.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(shift.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+                staff: [{
+                  name: shift.staff.user.raw_user_meta_data.full_name,
+                  role: shift.staff.role,
+                  status: shift.status,
+                }]
+              });
+            }
+            return acc;
+          }, []);
+          setSchedule(groupedSchedules);
+        }
+      } catch (error) {
+        console.error('Error fetching staff schedules:', error);
+      }
+    };
+
+    fetchStaffSchedules();
+  }, [supabase]);
 
   return (
     <motion.div
@@ -80,7 +97,9 @@ export const StaffSchedule = () => {
             size="sm"
             onClick={() => setShowCalendar(!showCalendar)}
           >
-            <Icons.Calendar className="w-4 h-4 mr-2" />
+            {React.createElement((Icons as any).Calendar, {
+              className: "w-4 h-4 mr-2"
+            })}
             {showCalendar ? 'Hide Calendar' : 'View Calendar'}
           </Button>
         </div>
@@ -107,7 +126,7 @@ export const StaffSchedule = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {shift.staff.map((member, idx) => (
+              {shift.staff.map((member: any, idx: number) => (
                 <div key={idx} className="p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <div>
@@ -125,12 +144,16 @@ export const StaffSchedule = () => {
 
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" className="flex-1">
-                      <Icons.MessageSquare className="w-4 h-4 mr-2" />
+                      {React.createElement((Icons as any).MessageSquare, {
+                        className: "w-4 h-4 mr-2"
+                      })}
                       Message
                     </Button>
                     {member.status === 'pending' && (
                       <Button size="sm" variant="outline" className="flex-1">
-                        <Icons.Clock className="w-4 h-4 mr-2" />
+                        {React.createElement((Icons as any).Clock, {
+                          className: "w-4 h-4 mr-2"
+                        })}
                         Remind
                       </Button>
                     )}

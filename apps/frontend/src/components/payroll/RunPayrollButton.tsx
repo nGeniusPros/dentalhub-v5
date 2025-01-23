@@ -4,8 +4,6 @@ import * as Icons from 'lucide-react';
 import { PayrollModal } from './PayrollModal';
 import { useNotifications } from '../../contexts/NotificationContext';
 
-import { PayrollData } from './types';
-
 interface RunPayrollButtonProps {
   variant?: 'default' | 'outline' | 'ghost';
   size?: 'default' | 'sm' | 'lg';
@@ -20,9 +18,7 @@ export const RunPayrollButton: React.FC<RunPayrollButtonProps> = ({
   const [showModal, setShowModal] = useState(false);
   const { dispatch: notifyDispatch } = useNotifications();
 
-  const handleRunPayroll = (payrollData: PayrollData): void => {
-    // Process payroll data
-    console.log('Processing payroll for period:', payrollData.payPeriod.startDate, 'to', payrollData.payPeriod.endDate);
+  const handleRunPayroll = (payrollData: any) => {
     notifyDispatch({
       type: 'ADD_NOTIFICATION',
       payload: {

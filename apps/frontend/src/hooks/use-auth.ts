@@ -1,35 +1,37 @@
 import { useState, useCallback, useEffect } from 'react';
+import { supabaseService } from '../services/supabase';
 import type { User } from '../types';
-import { apiClient } from '../config/api';
+import { convertSupabaseUser } from '../lib/utils';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUser = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { data: userData } = await apiClient.get<User>('/auth/me');
-      setUser(userData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    supabaseService.auth.getSession().then((session) => {
+      if (session) {
+        supabaseService.auth.getUser().then((response) => {
+          if (response.data?.user) {
+            setUser(convertSupabaseUser(response.data.user));
+          }
+        });
+      }
+    });
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
     setLoading(true);
     setError(null);
     try {
-      const { data: userData } = await apiClient.post<User>('/auth/login', {
-        email,
-        password,
-      });
-      setUser(userData);
-      return userData;
+      const { data, error } = await supabaseService.auth.signInWithPassword(email, password);
+      if (error) {
+        throw new Error(error.message);
+      }
+      if (data.user) {
+        setUser(convertSupabaseUser(data.user as any));
+      }
+      return data.user as User;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       throw err;
@@ -39,26 +41,9 @@ export const useAuth = () => {
   }, []);
 
   const logout = useCallback(async () => {
+    await supabaseService.auth.signOut();
     setUser(null);
-    // Remove tokens from cookies or local storage
   }, []);
-
-  const refreshSession = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { data } = await apiClient.post('/auth/refresh');
-      await fetchUser();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchUser]);
-
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
 
   return {
     user,
@@ -66,6 +51,5 @@ export const useAuth = () => {
     error,
     login,
     logout,
-    refreshSession
   };
 };

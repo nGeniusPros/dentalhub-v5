@@ -4,20 +4,10 @@ import { Button } from '../ui/button';
 import * as Icons from 'lucide-react';
 import { useNotifications } from '../../contexts/NotificationContext';
 
-interface TrainingModule {
-  id: string;
-  title: string;
-  description: string;
-  duration: number;
-  required: boolean;
-  completed: boolean;
-  dueDate?: string;
-}
-
 interface TrainingAssignmentButtonProps {
   staffId: string;
   staffName: string;
-  onAssign?: (modules: TrainingModule[]) => void;
+  onAssign?: (modules: any[]) => void;
 }
 
 export const TrainingAssignmentButton: React.FC<TrainingAssignmentButtonProps> = ({

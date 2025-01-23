@@ -4,48 +4,10 @@ import * as Icons from 'lucide-react';
 import { Button } from '../ui/button';
 import { saveAs } from 'file-saver';
 
-type ReportFormat = 'pdf' | 'excel' | 'csv';
-type DateRange = 'week' | 'month' | 'quarter' | 'year' | 'custom';
-
-interface ReportSections {
-  overview: boolean;
-  financial: boolean;
-  patients: boolean;
-  treatments: boolean;
-  staff: boolean;
-  appointments: boolean;
-  marketing: boolean;
-}
-
-interface ReportData {
-  revenueData: Array<{
-    date: string;
-    totalRevenue: number;
-    newPatients: number;
-    returningPatients: number;
-    treatments: number;
-    averageRevenuePerPatient: number;
-  }>;
-  patientData: Array<{
-    id: string;
-    name: string;
-    lastVisit: string;
-    totalSpent: number;
-    treatments: string[];
-  }>;
-  staffData: Array<{
-    id: string;
-    name: string;
-    role: string;
-    patientsSeen: number;
-    revenueGenerated: number;
-  }>;
-}
-
 interface GenerateReportDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  data: ReportData;
+  data: any;
 }
 
 export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
@@ -53,17 +15,7 @@ export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
   onClose,
   data
 }) => {
-  const [reportConfig, setReportConfig] = useState<{
-    format: ReportFormat;
-    sections: ReportSections;
-    dateRange: DateRange;
-    customDateRange: {
-      start: string;
-      end: string;
-    };
-    includeCharts: boolean;
-    includeComparisons: boolean;
-  }>({
+  const [reportConfig, setReportConfig] = useState({
     format: 'pdf',
     sections: {
       overview: true,
@@ -124,12 +76,7 @@ export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
             </label>
             <select
               value={reportConfig.format}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                setReportConfig(prev => ({
-                  ...prev,
-                  format: e.target.value as ReportFormat
-                }))
-              }
+              onChange={(e) => setReportConfig(prev => ({ ...prev, format: e.target.value }))}
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             >
               <option value="pdf">PDF Report</option>
@@ -171,13 +118,7 @@ export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
             </label>
             <select
               value={reportConfig.dateRange}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                const value = e.target.value as DateRange;
-                setReportConfig(prev => ({
-                  ...prev,
-                  dateRange: value
-                }));
-              }}
+              onChange={(e) => setReportConfig(prev => ({ ...prev, dateRange: e.target.value }))}
               className="w-full px-4 py-2 border border-gray-200 rounded-lg mb-2"
             >
               <option value="week">This Week</option>

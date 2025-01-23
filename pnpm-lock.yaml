@@ -156,6 +156,9 @@ importers:
       qs:
         specifier: ^6.11.2
         version: 6.11.2
+      retell-sdk:
+        specifier: ^4.13.0
+        version: 4.13.0
       supabase:
         specifier: ^1.12.1
         version: 1.226.4
@@ -3922,6 +3925,9 @@ packages:
   ret@0.4.3:
     resolution: {integrity: sha512-0f4Memo5QP7WQyUEAYUO3esD/XjOc3Zjjg5CPsAq1p8sIu0XPeMbHJemKA0BO7tV0X7+A0FoEpbmHXWxPyD3wQ==}
     engines: {node: '>=10'}
+
+  retell-sdk@4.13.0:
+    resolution: {integrity: sha512-mYmaJHCDTQ86ov5MdCvsPhsYIiWemZYGA0650Dcr1PJFSWrjjEAYIvsLY0mnsGUa0N61KCKQNp9yiLOuzT5dtw==}
 
   reusify@1.0.4:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
@@ -8016,6 +8022,18 @@ snapshots:
   restructure@2.0.1: {}
 
   ret@0.4.3: {}
+
+  retell-sdk@4.13.0:
+    dependencies:
+      '@types/node': 18.19.69
+      '@types/node-fetch': 2.6.12
+      abort-controller: 3.0.0
+      agentkeepalive: 4.6.0
+      form-data-encoder: 1.7.2
+      formdata-node: 4.4.1
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
 
   reusify@1.0.4: {}
 

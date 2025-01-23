@@ -3,26 +3,10 @@ import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../../../../components/ui/button';
 
-interface CampaignIncentive {
-  type: 'points' | 'discount' | 'gift' | 'service';
-  value: number;
-}
-
-interface Campaign {
-  name: string;
-  type: 'upgrade' | 'renewal' | 'reactivation' | 'referral';
-  targetAudience: 'all' | 'basic' | 'premium' | 'expired' | 'custom';
-  startDate: string;
-  endDate: string;
-  incentive: CampaignIncentive;
-  message: string;
-  channels: string[];
-}
-
 interface CreateCampaignModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (campaign: Campaign) => void;
+  onSave: (campaign: any) => void;
 }
 
 export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
@@ -31,18 +15,18 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
   onSave
 }) => {
   const [step, setStep] = useState(1);
-  const [campaign, setCampaign] = useState<Campaign>({
+  const [campaign, setCampaign] = useState({
     name: '',
-    type: 'upgrade' as const,
-    targetAudience: 'all' as const,
+    type: 'upgrade',
+    targetAudience: 'all',
     startDate: '',
     endDate: '',
     incentive: {
-      type: 'points' as const,
+      type: 'points',
       value: 0
     },
     message: '',
-    channels: []
+    channels: [] as string[]
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -106,7 +90,7 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
                 <input
                   type="text"
                   value={campaign.name}
-                  onChange={(e) => setCampaign(prev => ({ ...prev, name: e.target.value } as const))}
+                  onChange={(e) => setCampaign(prev => ({ ...prev, name: e.target.value }))}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -165,10 +149,7 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
                 </label>
                 <select
                   value={campaign.targetAudience}
-                  onChange={(e) => setCampaign(prev => ({
-                    ...prev,
-                    targetAudience: e.target.value as Campaign['targetAudience']
-                  }))}
+                  onChange={(e) => setCampaign(prev => ({ ...prev, targetAudience: e.target.value }))}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value="all">All Members</option>
@@ -224,10 +205,7 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
                   value={campaign.incentive.type}
                   onChange={(e) => setCampaign(prev => ({
                     ...prev,
-                    incentive: {
-                      ...prev.incentive,
-                      type: e.target.value as CampaignIncentive['type']
-                    } as const
+                    incentive: { ...prev.incentive, type: e.target.value }
                   }))}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 >

@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "lint": "eslint src/**/*.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest"
   },
   "dependencies": {
     "@dentalhub/core": "workspace:*",
@@ -48,6 +49,7 @@
     "pdfmake-wrapper": "^1.0.1",
     "prom-client": "^14.2.0",
     "qs": "^6.11.2",
+    "retell-sdk": "^4.13.0",
     "supabase": "^1.12.1",
     "twilio": "^4.20.0",
     "uuid": "^9.0.1",

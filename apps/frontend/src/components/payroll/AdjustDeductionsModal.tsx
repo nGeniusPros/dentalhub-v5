@@ -4,24 +4,12 @@ import * as Icons from 'lucide-react';
 import { Button } from '../ui/button';
 import { formatCurrency } from '../../lib/utils/currency';
 
-interface DeductionValues extends Record<string, number | string> {
-  federalTax: number;
-  stateTax: number;
-  medicare: number;
-  socialSecurity: number;
-  retirement401k: number;
-  healthInsurance: number;
-  dentalInsurance: number;
-  visionInsurance: number;
-  otherDeductions: number;
-}
-
 interface AdjustDeductionsModalProps {
   isOpen: boolean;
   onClose: () => void;
   employeeId: string;
   employeeName: string;
-  onSave: (deductions: DeductionValues) => void;
+  onSave: (deductions: any) => void;
 }
 
 export const AdjustDeductionsModal: React.FC<AdjustDeductionsModalProps> = ({
@@ -47,10 +35,7 @@ export const AdjustDeductionsModal: React.FC<AdjustDeductionsModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({
-      ...deductions,
-      employeeId
-    });
+    onSave(deductions);
     onClose();
   };
 

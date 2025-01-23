@@ -2,19 +2,13 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { BaseChart } from './BaseChart';
 
-interface LineData {
-  [key: string]: string | number;
-}
-
-interface LineConfig {
-  key: string;
-  color: string;
-  name?: string;
-}
-
 interface LineChartProps {
-  data: LineData[];
-  lines: LineConfig[];
+  data: any[];
+  lines: Array<{
+    key: string;
+    color: string;
+    name?: string;
+  }>;
   xAxisKey: string;
   title?: string;
   height?: number;
