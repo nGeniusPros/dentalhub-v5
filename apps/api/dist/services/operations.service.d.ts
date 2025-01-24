@@ -7,6 +7,6 @@ export declare class OperationsAgent extends BaseAgent {
     private scheduler;
     type: "operations";
     constructor(metricsRepo: MetricsRepository, kpiEngine: KPICalculationEngine, scheduler: ScheduleOptimizer);
-    analyzeEfficiency(): Promise<{}>;
-    optimizeSchedule(): Promise<{}>;
+    analyzeEfficiency(): Promise<any>;
+    optimizeSchedule(): Promise<any>;
 }

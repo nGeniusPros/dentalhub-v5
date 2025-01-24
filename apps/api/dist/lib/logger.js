@@ -1,11 +1,8 @@
-import winston from 'winston';
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
-    transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: 'combined.log' }),
-        new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    ],
+import pino from 'pino';
+export const logger = pino({
+    level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+    formatters: {
+        level: (label) => ({ level: label })
+    },
+    timestamp: () => `,"time":"${new Date().toISOString()}"`
 });
-export default logger;

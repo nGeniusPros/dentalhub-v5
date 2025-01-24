@@ -1,4 +1,4 @@
-import { DateRangeParams, PracticeParams, AppointmentParams, PatientParams, TreatmentPlanParams, InsuranceCompanyParams } from './types';
+import { RequestOptions, DateRangeParams, PracticeParams, AppointmentParams, PatientParams, TreatmentPlanParams, InsuranceCompanyParams } from './types';
 /**
  * Verify insurance information
  */
@@ -9,11 +9,7 @@ export declare function verifyInsurance(data: {
         memberId: string;
         groupNumber?: string;
     };
-}): Promise<{
-    verified: any;
-    details: any;
-    timestamp: any;
-}>;
+}): Promise<any>;
 /**
  * Check patient eligibility
  */
@@ -21,12 +17,7 @@ export declare function checkEligibility(data: {
     patientId: string;
     serviceDate: string;
     serviceTypes: string[];
-}): Promise<{
-    eligible: any;
-    coverageDetails: any;
-    limitations: any;
-    timestamp: any;
-}>;
+}): Promise<any>;
 /**
  * Verify benefits coverage
  */
@@ -34,13 +25,7 @@ export declare function verifyBenefits(data: {
     patientId: string;
     procedureCodes: string[];
     serviceDate: string;
-}): Promise<{
-    covered: any;
-    benefitsDetails: any;
-    limitations: any;
-    deductibles: any;
-    timestamp: any;
-}>;
+}): Promise<any>;
 /**
  * Process insurance claim
  */
@@ -65,39 +50,39 @@ export declare function processClaim(data: {
 /**
  * Get dental practice information
  */
-export declare function getPracticeInfo(params?: PracticeParams): Promise<any>;
+export declare function getPracticeInfo(params?: PracticeParams, options?: RequestOptions): Promise<unknown>;
 /**
  * Get dental appointments
  */
-export declare function getAppointments(params?: AppointmentParams): Promise<any>;
+export declare function getAppointments(params?: AppointmentParams, options?: RequestOptions): Promise<unknown>;
 /**
  * Get available appointment slots
  */
-export declare function getAvailableSlots(params?: AppointmentParams): Promise<any>;
+export declare function getAvailableSlots(params?: AppointmentParams, options?: RequestOptions): Promise<unknown>;
 /**
- * Get patient information
+ * Get patient information with enhanced search capabilities
  */
-export declare function getPatients(params?: PatientParams): Promise<any>;
+export declare function getPatients(params?: PatientParams, options?: RequestOptions): Promise<unknown>;
 /**
  * Get dental-specific patient information
  */
-export declare function getDentalPatients(params?: PatientParams): Promise<any>;
+export declare function getDentalPatients(params?: PatientParams, options?: RequestOptions): Promise<unknown>;
 /**
  * Get patient treatment history
  */
-export declare function getPatientTreatmentHistory(patientId: string, params?: DateRangeParams): Promise<any>;
+export declare function getPatientTreatmentHistory(patientId: string, params?: DateRangeParams, options?: RequestOptions): Promise<unknown>;
 /**
  * Get dental treatment plans
  */
-export declare function getTreatmentPlans(params?: TreatmentPlanParams): Promise<any>;
+export declare function getTreatmentPlans(params?: TreatmentPlanParams, options?: RequestOptions): Promise<unknown>;
 /**
  * Get dental insurance companies
  */
-export declare function getInsuranceCompanies(params?: InsuranceCompanyParams): Promise<any>;
+export declare function getInsuranceCompanies(params?: InsuranceCompanyParams, options?: RequestOptions): Promise<unknown>;
 /**
  * Get dental insurance coverage details
  */
-export declare function getInsurancePlanCoverage(insuranceCompanyId: string, practiceId?: string): Promise<any>;
+export declare function getInsurancePlanCoverage(insuranceCompanyId: string, practiceId?: string, options?: RequestOptions): Promise<unknown>;
 /**
  * Update claim status
  */

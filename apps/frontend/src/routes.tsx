@@ -12,13 +12,23 @@ import { PatientLogin } from './pages/auth/PatientLogin';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminPatients } from './pages/admin/patients/AdminPatients';
 import { AdminStaff } from './pages/admin/staff/AdminStaff';
-import { PracticeAnalytics } from './pages/admin/analytics/components/PracticeAnalytics';
-import { MembershipPlans } from './pages/admin/membership/MembershipPlans';
-import { EmailCampaigns } from './pages/admin/communications/EmailCampaigns';
-import { SMSCampaigns } from './pages/admin/communications/SMSCampaigns';
-import { VoiceCampaigns } from './pages/admin/communications/VoiceCampaigns';
-import { AIPracticeConsultant } from './pages/admin/ai-consultant/AIPracticeConsultant';
-import { PracticeSettings } from './pages/admin/settings/PracticeSettings';
+import { AdminRevenue } from './pages/admin/revenue/AdminRevenue';
+import { AdminSatisfaction } from './pages/admin/satisfaction/AdminSatisfaction';
+import { AdminTreatments } from './pages/admin/treatments/AdminTreatments';
+import { AdminDemographics } from './pages/admin/demographics/AdminDemographics';
+import { AdminReports } from './pages/admin/reports/AdminReports';
+import { AdminAI } from './pages/admin/ai/AdminAI';
+import { AdminAppointments } from './pages/admin/appointments/AdminAppointments';
+import { AdminAnalytics } from './pages/admin/analytics/AdminAnalytics';
+import { AdminHR } from './pages/admin/hr/AdminHR';
+import { AdminPlans } from './pages/admin/plans/AdminPlans';
+import { AdminSMS } from './pages/admin/communications/AdminSMS';
+import { AdminEmail } from './pages/admin/communications/AdminEmail';
+import { AdminVoice } from './pages/admin/communications/AdminVoice';
+import { AdminContacts } from './pages/admin/contacts/AdminContacts';
+import { AdminMarketplace } from './pages/admin/marketplace/AdminMarketplace';
+import { AdminSettings } from './pages/admin/settings/AdminSettings';
+import { AdminResources } from './pages/admin/resources/AdminResources';
 
 // Staff Portal
 import { StaffDashboard } from './pages/staff/StaffDashboard';
@@ -46,18 +56,36 @@ export const AppRoutes = () => {
 
       {/* Admin Portal */}
       <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']} />}>
+        {/* Quick Access */}
         <Route index element={<AdminDashboard />} />
-        <Route path="patients/*" element={<AdminPatients />} />
-        <Route path="staff/*" element={<AdminStaff />} />
-        <Route path="analytics" element={<PracticeAnalytics />} />
-        <Route path="membership" element={<MembershipPlans />} />
-        <Route path="communications">
-          <Route path="email" element={<EmailCampaigns />} />
-          <Route path="sms" element={<SMSCampaigns />} />
-          <Route path="voice" element={<VoiceCampaigns />} />
-        </Route>
-        <Route path="ai-consultant" element={<AIPracticeConsultant />} />
-        <Route path="settings" element={<PracticeSettings />} />
+        <Route path="revenue" element={<AdminRevenue />} />
+        <Route path="patients" element={<AdminPatients />} />
+        <Route path="satisfaction" element={<AdminSatisfaction />} />
+        <Route path="treatments" element={<AdminTreatments />} />
+        <Route path="demographics" element={<AdminDemographics />} />
+        <Route path="reports" element={<AdminReports />} />
+        <Route path="ai" element={<AdminAI />} />
+
+        {/* Core */}
+        <Route path="patients-list" element={<AdminPatients />} />
+        <Route path="appointments" element={<AdminAppointments />} />
+        <Route path="analytics" element={<AdminAnalytics />} />
+        <Route path="staff" element={<AdminStaff />} />
+        <Route path="hr" element={<AdminHR />} />
+        <Route path="plans" element={<AdminPlans />} />
+
+        {/* Communications */}
+        <Route path="sms" element={<AdminSMS />} />
+        <Route path="email" element={<AdminEmail />} />
+        <Route path="voice" element={<AdminVoice />} />
+
+        {/* System */}
+        <Route path="contacts" element={<AdminContacts />} />
+        <Route path="marketplace" element={<AdminMarketplace />} />
+        <Route path="settings" element={<AdminSettings />} />
+
+        {/* Resources */}
+        <Route path="resources" element={<AdminResources />} />
       </Route>
 
       {/* Staff Portal */}

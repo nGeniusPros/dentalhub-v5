@@ -1,10 +1,29 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import StatsCard from '../../../components/dashboard/StatsCard';
+import StatsCard from '@/components/dashboard/StatsCard';
 
-export const KPIOverview = () => {
+interface KPIOverviewProps {
+  timeRange: string;
+}
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+export const KPIOverview: React.FC<KPIOverviewProps> = ({ timeRange }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+    >
       <StatsCard
         title="Monthly Revenue"
         value="$145,678"
@@ -13,21 +32,21 @@ export const KPIOverview = () => {
         variant="primary"
       />
       <StatsCard
-        title="Patient Growth"
+        title="Active Patients"
         value="3,456"
         change={12}
         icon="Users"
         variant="secondary"
       />
       <StatsCard
-        title="Treatment Acceptance"
+        title="Treatment Success"
         value="78%"
         change={5}
         icon="CheckCircle"
         variant="accent1"
       />
       <StatsCard
-        title="Appointment Fill Rate"
+        title="Appointment Rate"
         value="92%"
         change={3}
         icon="Calendar"
@@ -55,12 +74,12 @@ export const KPIOverview = () => {
         variant="accent1"
       />
       <StatsCard
-        title="Staff Productivity"
+        title="Staff Performance"
         value="94%"
         change={6}
         icon="TrendingUp"
         variant="accent2"
       />
-    </div>
+    </motion.div>
   );
 };

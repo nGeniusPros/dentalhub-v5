@@ -1,40 +1,40 @@
-import { MonitoringService } from '../services/monitoring';
-import { ErrorCode } from '../types/errors';
+import { logger } from '../lib/logger';
+import { ErrorResponse } from '../errors';
+import { AxiosError } from 'axios';
 export const errorHandler = (err, req, res, next) => {
-    // Log the error
-    MonitoringService.logError(err, err.code || ErrorCode.INTERNAL_ERROR, {
+    // Handle structured ErrorResponse
+    if (err instanceof ErrorResponse) {
+        logger.error('Business logic error:', err.serializeErrorResponse());
+        return res.status(err.statusCode).json(err.serializeErrorResponse());
+    }
+    // Handle Axios errors from external services
+    if (err instanceof AxiosError) {
+        logger.error('External API error:', {
+            url: err.config?.url,
+            status: err.response?.status,
+            data: err.response?.data
+        });
+        return res.status(502).json({
+            type: 'https://tools.ietf.org/html/rfc9457#section-5.2',
+            title: 'Bad Gateway',
+            status: 502,
+            detail: 'Error communicating with external service'
+        });
+    }
+    // Generic error fallback
+    logger.error('Unhandled error:', err);
+    logger.error('Error Context:', {
+        path: req.path,
         method: req.method,
-        route: req.originalUrl,
-        body: req.body,
-        error: err.message
+        userId: req.user?.id,
+        params: req.params,
+        query: req.query,
+        // Ensure err is Error to access stack, otherwise default to undefined
+        errorStack: err instanceof Error ? err.stack : undefined
     });
-    // Handle authentication errors
-    if (err.code === ErrorCode.UNAUTHORIZED || err.statusCode === 401) {
-        return res.status(401).json({
-            error: 'Unauthorized: Please log in to access this resource'
-        });
-    }
-    if (err.code === ErrorCode.FORBIDDEN || err.statusCode === 403) {
-        return res.status(403).json({
-            error: 'Forbidden: You do not have permission to access this resource'
-        });
-    }
-    // Handle rate limiting errors
-    if (err.code === ErrorCode.RATE_LIMIT_EXCEEDED || err.statusCode === 429) {
-        return res.status(429).json({
-            error: 'Too many requests, please try again later'
-        });
-    }
-    // Handle validation errors
-    if (err.code === ErrorCode.VALIDATION_ERROR || err.statusCode === 400) {
-        return res.status(400).json({
-            error: err.message || 'Invalid request parameters'
-        });
-    }
-    // Default error response
-    res.status(err.statusCode || 500).json({
-        error: process.env.NODE_ENV === 'production'
-            ? 'Internal Server Error'
-            : err.message
+    res.status(500).json({
+        type: 'https://tools.ietf.org/html/rfc9457#section-5.1',
+        title: 'Internal Server Error',
+        status: 500
     });
 };

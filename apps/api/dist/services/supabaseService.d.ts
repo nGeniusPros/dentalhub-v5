@@ -37,9 +37,7 @@ export declare class SupabaseService {
         };
     };
     from(table: string): {
-        select: (select: string) => Promise<import("@supabase/supabase-js").PostgrestSingleResponse<({
-            error: true;
-        } & "Received a generic string")[]>>;
+        select: (select: string) => Promise<import("@supabase/supabase-js").PostgrestSingleResponse<any[]>>;
         insert: (data: any) => Promise<import("@supabase/supabase-js").PostgrestSingleResponse<null>>;
         update: (data: any) => Promise<import("@supabase/supabase-js").PostgrestSingleResponse<null>>;
         delete: () => Promise<import("@supabase/supabase-js").PostgrestSingleResponse<null>>;

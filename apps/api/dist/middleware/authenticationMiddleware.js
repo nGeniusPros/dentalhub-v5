@@ -1,5 +1,7 @@
 import { AuthService } from '../services/authService';
+import { createClient } from '@dentalhub/database';
 export const authenticationMiddleware = async (req, res, next) => {
+    req.supabase = createClient();
     const authService = new AuthService(req.supabase);
     const accessToken = req.cookies.access_token;
     const refreshToken = req.cookies.refresh_token;

@@ -19,6 +19,7 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ROUTES } from '@/lib/constants/routes';
 
 interface SidebarItem {
   label: string;
@@ -31,47 +32,47 @@ const sidebarItems: { section: string; items: SidebarItem[] }[] = [
   {
     section: 'QUICK ACCESS',
     items: [
-      { label: 'Revenue', icon: DollarSign, href: '/admin/revenue' },
-      { label: 'Active Patients', icon: Users, href: '/admin/patients' },
-      { label: 'Patient Satisfaction', icon: ThumbsUp, href: '/admin/satisfaction' },
-      { label: 'Treatment Success', icon: Activity, href: '/admin/treatments' },
-      { label: 'Demographics', icon: UserCircle, href: '/admin/demographics' },
-      { label: 'Monthly Reports', icon: BarChart2, href: '/admin/reports' },
-      { label: 'Dashboard', icon: LayoutDashboard, href: '/admin' },
-      { label: 'AI Consultant', icon: HelpCircle, href: '/admin/ai' },
+      { label: 'Revenue', icon: DollarSign, href: ROUTES.ADMIN.REVENUE },
+      { label: 'Active Patients', icon: Users, href: ROUTES.ADMIN.PATIENTS },
+      { label: 'Patient Satisfaction', icon: ThumbsUp, href: ROUTES.ADMIN.SATISFACTION },
+      { label: 'Treatment Success', icon: Activity, href: ROUTES.ADMIN.TREATMENTS },
+      { label: 'Demographics', icon: UserCircle, href: ROUTES.ADMIN.DEMOGRAPHICS },
+      { label: 'Monthly Reports', icon: BarChart2, href: ROUTES.ADMIN.REPORTS },
+      { label: 'Dashboard', icon: LayoutDashboard, href: ROUTES.ADMIN.DASHBOARD },
+      { label: 'AI Consultant', icon: HelpCircle, href: ROUTES.ADMIN.AI },
     ],
   },
   {
     section: 'CORE',
     items: [
-      { label: 'Patients', icon: Users, href: '/admin/patients-list' },
-      { label: 'Appointments', icon: Calendar, href: '/admin/appointments' },
-      { label: 'Analytics', icon: BarChart2, href: '/admin/analytics' },
-      { label: 'Staff', icon: Users, href: '/admin/staff' },
-      { label: 'HR', icon: UserCog, href: '/admin/hr' },
-      { label: 'Membership Plans', icon: FileText, href: '/admin/plans' },
+      { label: 'Patients', icon: Users, href: ROUTES.ADMIN.PATIENTS_LIST },
+      { label: 'Appointments', icon: Calendar, href: ROUTES.ADMIN.APPOINTMENTS },
+      { label: 'Analytics', icon: BarChart2, href: ROUTES.ADMIN.ANALYTICS },
+      { label: 'Staff', icon: Users, href: ROUTES.ADMIN.STAFF },
+      { label: 'HR', icon: UserCog, href: ROUTES.ADMIN.HR },
+      { label: 'Membership Plans', icon: FileText, href: ROUTES.ADMIN.PLANS },
     ],
   },
   {
     section: 'COMMUNICATIONS',
     items: [
-      { label: 'SMS Campaigns', icon: MessagesSquare, href: '/admin/sms' },
-      { label: 'Email Campaigns', icon: Mail, href: '/admin/email' },
-      { label: 'Voice Campaigns', icon: Phone, href: '/admin/voice' },
+      { label: 'SMS Campaigns', icon: MessagesSquare, href: ROUTES.ADMIN.SMS },
+      { label: 'Email Campaigns', icon: Mail, href: ROUTES.ADMIN.EMAIL },
+      { label: 'Voice Campaigns', icon: Phone, href: ROUTES.ADMIN.VOICE },
     ],
   },
   {
     section: 'SYSTEM',
     items: [
-      { label: 'Contact Manager', icon: UserCircle, href: '/admin/contacts' },
-      { label: 'Marketplace', icon: Store, href: '/admin/marketplace' },
-      { label: 'Settings', icon: Settings, href: '/admin/settings' },
+      { label: 'Contact Manager', icon: UserCircle, href: ROUTES.ADMIN.CONTACTS },
+      { label: 'Marketplace', icon: Store, href: ROUTES.ADMIN.MARKETPLACE },
+      { label: 'Settings', icon: Settings, href: ROUTES.ADMIN.SETTINGS },
     ],
   },
   {
     section: 'RESOURCES',
     items: [
-      { label: 'Resources', icon: HelpCircle, href: '/admin/resources' },
+      { label: 'Resources', icon: HelpCircle, href: ROUTES.ADMIN.RESOURCES },
     ],
   },
 ];
@@ -83,7 +84,7 @@ export const AdminSidebar: React.FC = () => {
     <div className="h-screen w-64 bg-white border-r border-gray-200 flex flex-col">
       {/* Logo */}
       <div className="p-6 border-b border-gray-200">
-        <Link to="/admin" className="flex items-center space-x-2">
+        <Link to={ROUTES.ADMIN.ROOT} className="flex items-center space-x-2">
           <span className="text-xl font-bold text-[#1B2B85]">NGenius Dental</span>
         </Link>
         <div className="text-xs text-gray-500 mt-1">Powered by NGenius Pros</div>

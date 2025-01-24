@@ -12,15 +12,38 @@ if (!process.env.SIKKA_APP_KEY) {
 if (!process.env.SIKKA_PRACTICE_ID) {
     throw new Error('SIKKA_PRACTICE_ID environment variable is required');
 }
+// Cache TTL configurations (in seconds)
+export const CACHE_TTL = {
+    NONE: 0,
+    SHORT: 5 * 60, // 5 minutes
+    MEDIUM: 30 * 60, // 30 minutes
+    LONG: 24 * 60 * 60, // 24 hours
+    WEEK: 7 * 24 * 60 * 60, // 1 week
+};
+// Default timeout options
+export const TIMEOUT_OPTIONS = {
+    timeout: 30000, // 30 seconds
+    longTimeout: 60000, // 1 minute for long-running operations
+};
+// Retry configurations
 export const RETRY_OPTIONS = {
     retries: 3,
-    retryDelay: 1000,
+    retryDelay: 1000, // Base delay in ms
+    maxRetryDelay: 10000, // Maximum delay between retries
     retryCondition: (error) => {
         return error.response?.status === 429 || error.response?.status >= 500;
     }
 };
-export const TIMEOUT_OPTIONS = {
-    timeout: 30000 // 30 seconds
+// Pagination defaults
+export const PAGINATION_DEFAULTS = {
+    defaultLimit: 50,
+    maxLimit: 200,
+    defaultPage: 1,
+};
+// Sort order options
+export const SORT_ORDER = {
+    ASC: 'asc',
+    DESC: 'desc',
 };
 export const sikkaConfig = {
     baseUrl: process.env.SIKKA_API_URL || 'https://api.sikkasoft.com/v4',

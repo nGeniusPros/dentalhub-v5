@@ -1,11 +1,13 @@
-import { Request } from 'express';
-export interface AuthenticatedRequest extends Request {
-    user?: {
-        id: string;
-        email: string;
-        role: string;
-    };
+export interface AuthenticatedUser {
+    id: string;
+    email: string;
+    role: 'admin' | 'dentist' | 'hygienist' | 'staff';
+    practice_id: string;
+    phone?: string;
 }
-export interface AuthResponse {
-    token: string;
+export interface SupabaseUserMetadata {
+    role?: string;
+    practice_id?: string;
+    phone?: string;
 }
+export declare const validateUserMetadata: (metadata: unknown) => metadata is SupabaseUserMetadata;

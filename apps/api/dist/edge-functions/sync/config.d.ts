@@ -1,6 +1,6 @@
 import { SyncConfig } from './types';
 export declare const syncConfig: SyncConfig;
-export declare const CALENDAR_PROVIDER: "google" | "microsoft" | "ical", CONTACTS_PROVIDER: "google" | "microsoft" | "vcard", CALENDAR_API_KEY: string | undefined, CONTACTS_API_KEY: string | undefined, CALENDAR_ID: string | undefined, CONTACTS_LIST_ID: string | undefined;
+export declare const CALENDAR_PROVIDER: SyncConfig, CONTACTS_PROVIDER: SyncConfig, CALENDAR_API_KEY: SyncConfig, CONTACTS_API_KEY: SyncConfig, CALENDAR_ID: SyncConfig, CONTACTS_LIST_ID: SyncConfig;
 export declare const RETRY_OPTIONS: {
     maxRetries: number;
     initialDelayMs: number;

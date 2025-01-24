@@ -3,61 +3,78 @@ export class AuthService {
         this.supabase = supabase;
     }
     async login(email, password) {
-        const { data, error } = await this.supabase.auth.signInWithPassword({
-            email,
-            password,
-        });
-        if (error) {
-            throw error;
+        try {
+            const { data, error } = await this.supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+            if (error) {
+                return { user: null, error };
+            }
+            return {
+                user: data.user,
+                accessToken: data.session?.access_token,
+                refreshToken: data.session?.refresh_token
+            };
         }
-        const { data: user, error: userError } = await this.supabase
-            .from('users')
-            .select('*')
-            .eq('id', data.user?.id)
-            .single();
-        if (userError) {
-            throw userError;
+        catch (error) {
+            return { user: null, error: error };
         }
-        return { user, accessToken: data.session?.access_token, refreshToken: data.session?.refresh_token };
     }
     async getCurrentUser(accessToken) {
-        const { data: user, error } = await this.supabase.auth.getUser(accessToken);
-        if (error) {
-            throw error;
+        try {
+            const { data: { user }, error } = await this.supabase.auth.getUser(accessToken);
+            if (error || !user) {
+                return { user: null, error: error || new Error('User not found') };
+            }
+            // Return basic user info even if profile fetch fails
+            const userProfile = {
+                id: user.id,
+                email: user.email || '',
+                user_metadata: user.user_metadata || {},
+                created_at: user.created_at,
+                updated_at: user.updated_at || user.created_at
+            };
+            return { user: userProfile };
         }
-        const { data: profile, error: profileError } = await this.supabase
-            .from('users')
-            .select('*')
-            .eq('id', user?.user?.id)
-            .single();
-        if (profileError) {
-            throw profileError;
+        catch (error) {
+            console.error('Error in getCurrentUser:', error);
+            return { user: null, error: error };
         }
-        return profile;
     }
     async updateCurrentUser(user_metadata) {
-        const { data: user, error } = await this.supabase.auth.getUser();
-        if (error) {
-            throw error;
+        try {
+            const { data: user, error } = await this.supabase.auth.getUser();
+            if (error) {
+                return { user: null, error };
+            }
+            const { data: profile, error: profileError } = await this.supabase
+                .from('users')
+                .update({ user_metadata })
+                .eq('id', user.user?.id)
+                .select()
+                .single();
+            if (profileError) {
+                return { user: null, error: profileError };
+            }
+            return { user: profile };
         }
-        const { data: profile, error: profileError } = await this.supabase
-            .from('users')
-            .update({ user_metadata })
-            .eq('id', user?.user?.id)
-            .select()
-            .single();
-        if (profileError) {
-            throw profileError;
+        catch (error) {
+            return { user: null, error: error };
         }
-        return profile;
     }
     async refreshSession(refreshToken) {
-        const { data, error } = await this.supabase.auth.refreshSession({
-            refresh_token: refreshToken,
-        });
-        if (error) {
-            throw error;
+        try {
+            const { data, error } = await this.supabase.auth.refreshSession({
+                refresh_token: refreshToken,
+            });
+            if (error) {
+                return { session: null, error };
+            }
+            return { session: data.session };
         }
-        return { session: data.session, error };
+        catch (error) {
+            return { session: null, error: error };
+        }
     }
 }
