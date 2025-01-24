@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import type { Database } from '../types/database.types';
+import { supabaseService } from '../services/supabase';
+import type { Patient } from '../types';
 import type { PostgrestError } from '@supabase/supabase-js';
 
 type Appointment = {
@@ -9,7 +9,17 @@ type Appointment = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-type PatientWithAppointments = Database['public']['Tables']['patients']['Row'] & {
+type PatientWithAppointments = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  status: string;
+  balance: number;
+  date_of_birth: string;
+  address: string;
+  medical_history: string;
   appointments: Appointment[];
 };
 
@@ -26,14 +36,14 @@ export interface Patient {
 
 export const usePatients = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
-  const [loading, setLoading] = useState(false);
-		const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<PostgrestError | null>(null);
 
   const fetchPatients = async () => {
     setLoading(true);
     setError(null);
     try {
-      const { data, error: supabaseError } = await supabase
+      const { data, error: supabaseError } = await supabaseService
         .from('patients')
         .select<PatientWithAppointments, PatientWithAppointments>(`
           id,
@@ -72,8 +82,7 @@ export const usePatients = () => {
 
       setPatients(formattedPatients);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch patients');
-      console.error('Error fetching patients:', err);
+      setError(err as PostgrestError);
     } finally {
       setLoading(false);
     }
@@ -87,7 +96,7 @@ export const usePatients = () => {
     setLoading(true);
     setError(null);
     try {
-      const { data, error: supabaseError } = await supabase
+      const { data, error: supabaseError } = await supabaseService
         .from('patients')
         .insert([{
           first_name: patientData.name.split(' ')[0],
@@ -98,7 +107,7 @@ export const usePatients = () => {
           balance: patientData.balance
         }])
         .select()
-								.single() as { data: Database['public']['Tables']['patients']['Row'], error: any };
+								.single() as { data: PatientWithAppointments, error: any };
 
       if (supabaseError) {
         throw supabaseError;
@@ -107,7 +116,7 @@ export const usePatients = () => {
       await fetchPatients();
       return data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add patient');
+      setError(err as PostgrestError);
       console.error('Error adding patient:', err);
       throw err;
     } finally {
@@ -119,7 +128,7 @@ export const usePatients = () => {
     setLoading(true);
     setError(null);
     try {
-      const { data, error: supabaseError } = await supabase
+      const { data, error: supabaseError } = await supabaseService
         .from('patients')
         .update({
           first_name: patientData.name?.split(' ')[0],
@@ -131,7 +140,7 @@ export const usePatients = () => {
         })
         .eq('id', id)
         .select()
-								.single() as { data: Database['public']['Tables']['patients']['Row'], error: any };
+								.single() as { data: PatientWithAppointments, error: any };
 
       if (supabaseError) {
         throw supabaseError;
@@ -140,7 +149,7 @@ export const usePatients = () => {
       await fetchPatients();
       return data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update patient');
+      setError(err as PostgrestError);
       console.error('Error updating patient:', err);
       throw err;
     } finally {
@@ -152,7 +161,7 @@ export const usePatients = () => {
     setLoading(true);
     setError(null);
     try {
-      const { error: supabaseError } = await supabase
+      const { error: supabaseError } = await supabaseService
         .from('patients')
         .delete()
 								.eq('id', id);
@@ -163,7 +172,7 @@ export const usePatients = () => {
 
       await fetchPatients();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete patient');
+      setError(err as PostgrestError);
       console.error('Error deleting patient:', err);
       throw err;
     } finally {

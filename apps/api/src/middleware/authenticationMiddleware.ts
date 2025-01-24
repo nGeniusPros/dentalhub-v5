@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { SupabaseClient, Session } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 import { AuthService } from '../services/authService';
+import { createClient } from '@dentalhub/database';
 
 interface AuthenticatedRequest extends Request {
   supabase: SupabaseClient<Database>;
@@ -21,6 +22,7 @@ export const authenticationMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
+  req.supabase = createClient() as SupabaseClient<Database>;
   const authService = new AuthService(req.supabase);
   const accessToken = req.cookies.access_token;
   const refreshToken = req.cookies.refresh_token;

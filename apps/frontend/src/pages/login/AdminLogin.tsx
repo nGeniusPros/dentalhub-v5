@@ -2,22 +2,45 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { useAuthContext } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabaseService } from '../../services/supabase';
 
 const AdminLogin = () => {
-		const navigate = useNavigate();
-  const { signIn, loading, error } = useAuthContext();
+  const navigate = useNavigate();
+  const { login, register, loading, error } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-				e.preventDefault();
+    e.preventDefault();
     if (loading) return;
+    
     try {
-      await signIn(email, password);
+      setLocalError(null);
+      if (isRegistering) {
+        await register({ email, password });
+        // Set user role as admin after registration
+        const { data: { user } } = await supabaseService.auth.getUser();
+        if (user) {
+          await supabaseService.auth.updateUser({
+            data: { role: 'admin' }
+          });
+        }
+      } else {
+        await login({ email, password });
+        // Check if the user has the admin role
+        const { data: { user } } = await supabaseService.auth.getUser();
+        if (user?.user_metadata?.role !== 'admin') {
+          setLocalError('Access denied. Admin access only.');
+          return;
+        }
+      }
       navigate('/admin-dashboard');
-    } catch (err: any) {
-      console.error('Login failed', err);
+    } catch (err) {
+      console.error('Authentication failed:', err);
+      setLocalError(error || 'Authentication failed. Please check your credentials.');
     }
   };
 
@@ -40,72 +63,83 @@ const AdminLogin = () => {
             }}
             className="w-16 h-16"
           >
-            <Icons.Atom className="w-full h-full text-[#1B2B85]" />
-										</motion.div>
+            <Icons.Shield className="w-full h-full text-[#1B2B85]" />
+          </motion.div>
         </div>
         
         <h1 className="text-2xl font-bold text-center mb-2 bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] text-transparent bg-clip-text">
-          Admin Login
+          {isRegistering ? 'Admin Registration' : 'Admin Login'}
         </h1>
         <p className="text-gray-500 text-center mb-8">
-          Access your administrative dashboard
+          {isRegistering ? 'Create your admin account' : 'Welcome back! Please enter your credentials.'}
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {(localError || error) && (
+          <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600">
+            {localError || error}
+          </div>
+        )}
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email
             </label>
-            <div className="relative">
-														<Icons.Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="email"
-                id="email"
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B2B85]/20 focus:border-[#1B2B85]"
-                placeholder="admin@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#1B2B85] focus:border-transparent transition-colors"
+              placeholder="Enter your email"
+              required
+            />
           </div>
-
+          
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
-												</label>
-            <div className="relative">
-              <Icons.Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="password"
-                id="password"
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B2B85]/20 focus:border-[#1B2B85]"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-														/>
-            </div>
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#1B2B85] focus:border-transparent transition-colors"
+              placeholder="Enter your password"
+              required
+            />
+            {isRegistering && (
+              <p className="mt-1 text-xs text-gray-500">
+                Password must be at least 6 characters long
+              </p>
+            )}
           </div>
-
-          <motion.button
+          
+          <button
             type="submit"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full py-2 px-4 bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all"
-												disabled={loading}
-										>
-												{loading ? 'Signing In...' : 'Sign In'}
-										</motion.button>
-										{error && <p className="text-red-500 text-center">{error}</p>}
-								</form>
+            disabled={loading}
+            className={`w-full py-3 rounded-lg bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] text-white font-medium 
+              ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90 transition-opacity'}`}
+          >
+            {loading ? (isRegistering ? 'Creating Account...' : 'Signing in...') : 
+                      (isRegistering ? 'Create Account' : 'Sign In')}
+          </button>
 
-								<div className="mt-6 text-center">
-										<a href="#" className="text-sm text-[#1B2B85] hover:underline">
-												Forgot your password?
-										</a>
-								</div>
-						</motion.div>
-				</div>
-		);
+          <button
+            type="button"
+            onClick={() => {
+              setIsRegistering(!isRegistering);
+              setLocalError(null);
+            }}
+            className="w-full text-sm text-[#1B2B85] hover:underline mt-4"
+          >
+            {isRegistering ? 'Already have an account? Sign in' : 'Need an account? Register'}
+          </button>
+        </form>
+      </motion.div>
+    </div>
+  );
 };
 
 export default AdminLogin;

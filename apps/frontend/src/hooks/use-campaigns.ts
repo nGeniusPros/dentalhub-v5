@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import type { Database } from '../types/database.types';
+import { supabaseService } from '../services/supabase';
+import type { Campaign } from '../types';
+import type { PostgrestError } from '@supabase/supabase-js';
 
 export interface Campaign {
   id: string;
@@ -20,24 +21,24 @@ export interface Campaign {
   };
 }
 
-export const useCampaigns = () => {
+export function useCampaigns() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<PostgrestError | null>(null);
 
-  const fetchCampaigns = async () => {
-    setLoading(true);
-    setError(null);
+  useEffect(() => {
+    fetchCampaigns();
+  }, []);
+
+  async function fetchCampaigns() {
     try {
-      const { data, error: supabaseError } = await supabase
+      setLoading(true);
+      const { data, error } = await supabaseService
         .from('campaigns')
         .select('*')
-        .order('created_at', { ascending: false }) as { data: Database['public']['Tables']['campaigns']['Row'][], error: any };
+        .order('created_at', { ascending: false });
 
-      if (supabaseError) {
-        throw supabaseError;
-      }
-
+      if (error) throw error;
       const formattedCampaigns: Campaign[] = data.map((campaign) => ({
         id: campaign.id,
         name: campaign.name || '',
@@ -49,75 +50,59 @@ export const useCampaigns = () => {
         scheduledDate: campaign.schedule?.scheduled_time,
         lastRun: campaign.last_run || undefined
       }));
-
       setCampaigns(formattedCampaigns);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch campaigns');
-      console.error('Error fetching campaigns:', err);
+      setError(err as PostgrestError);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  useEffect(() => {
-    fetchCampaigns();
-  }, []);
-
-    const updateCampaignStatus = async (id: string, status: Campaign['status']) => {
-    setLoading(true);
-    setError(null);
+  async function updateCampaignStatus(id: string, status: Campaign['status']) {
     try {
-      const { data, error: supabaseError } = await supabase
+      setLoading(true);
+      const { data, error } = await supabaseService
         .from('campaigns')
         .update({ status })
         .eq('id', id)
         .select()
-        .single() as { data: Database['public']['Tables']['campaigns']['Row'], error: any };
+        .single();
 
-      if (supabaseError) {
-        throw supabaseError;
-      }
-
+      if (error) throw error;
       await fetchCampaigns();
       return data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update campaign status');
-      console.error('Error updating campaign status:', err);
+      setError(err as PostgrestError);
       throw err;
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const deleteCampaign = async (id: string) => {
-    setLoading(true);
-    setError(null);
+  async function deleteCampaign(id: string) {
     try {
-      const { error: supabaseError } = await supabase
+      setLoading(true);
+      const { error } = await supabaseService
         .from('campaigns')
         .delete()
         .eq('id', id);
 
-      if (supabaseError) {
-        throw supabaseError;
-      }
-
+      if (error) throw error;
       await fetchCampaigns();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete campaign');
-      console.error('Error deleting campaign:', err);
+      setError(err as PostgrestError);
       throw err;
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return {
     campaigns,
     loading,
     error,
-    fetchCampaigns,
+    refetch: fetchCampaigns,
     updateCampaignStatus,
     deleteCampaign
   };
-};
+}

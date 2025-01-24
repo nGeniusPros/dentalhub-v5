@@ -1,26 +1,30 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuthContext } from '../../contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  role?: string;
+  role?: 'admin' | 'staff' | 'patient';
 }
 
-export const ProtectedRoute = ({ children, role }: ProtectedRouteProps) => {
-  const { user, loading, session } = useAuthContext();
-  const location = useLocation();
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, role }) => {
+  const { user, loading, session } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#1B2B85]"></div>
+      </div>
+    );
   }
 
-  if (!session) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!session || !user) {
+    return <Navigate to="/login" replace />;
   }
 
-  if (role && user?.role !== role) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+  // Add role-based access control if needed
+  if (role && user.user_metadata?.role !== role) {
+    return <Navigate to={`/login/${role}`} replace />;
   }
 
   return <>{children}</>;

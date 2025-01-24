@@ -1,40 +1,50 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { ThemeToggle } from '../ThemeToggle';
-import { NotificationBell } from './NotificationBell';
+import { useAuth } from '../../contexts/AuthContext';
 import { UserProfile } from './UserProfile';
-import { useAuthContext } from '../../contexts/AuthContext';
-import { useNotifications } from '../../contexts/NotificationContext';
 
-const Header = () => {
-  const { user } = useAuthContext();
-  const { state: notificationState } = useNotifications();
-  const unreadCount = notificationState.notifications.filter(n => !n.read).length;
+export const Header = () => {
+  const { user } = useAuth();
 
   return (
-    <motion.header
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 z-40 h-24"
-    >
-      <div className="h-full flex items-center justify-between px-8">
-        <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-navy via-purple to-turquoise text-transparent bg-clip-text">
-            NGenius Dental Hub
-          </h1>
-          <p className="text-sm text-gray-500">Powered by: Ngenius Pros</p>
-        </div>
-        
-        <div className="flex items-center gap-6">
-          <ThemeToggle />
-          <NotificationBell count={unreadCount} />
-          <UserProfile />
+    <header className="bg-white border-b border-gray-200">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <Link to="/" className="flex items-center space-x-2">
+            <motion.div
+              animate={{
+                rotate: [0, 360],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              className="w-8 h-8"
+            >
+              <Icons.Tooth className="w-full h-full text-[#1B2B85]" />
+            </motion.div>
+            <span className="text-xl font-bold bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] text-transparent bg-clip-text">
+              DentalHub
+            </span>
+          </Link>
+
+          <div className="flex items-center space-x-4">
+            {user ? (
+              <UserProfile />
+            ) : (
+              <Link
+                to="/login"
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] text-white font-medium hover:opacity-90 transition-opacity"
+              >
+                Sign In
+              </Link>
+            )}
+          </div>
         </div>
       </div>
-    </motion.header>
+    </header>
   );
 };
-
-export default Header;

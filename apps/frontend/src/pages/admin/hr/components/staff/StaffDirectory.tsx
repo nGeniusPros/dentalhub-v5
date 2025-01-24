@@ -5,7 +5,7 @@ import { Button } from '../../../../../components/ui/button';
 import { EmployeeRecordsAccess } from './EmployeeRecordsAccess';
 import { cn } from '../../../../../lib/utils';
 import { useNotifications } from '../../../../../contexts/NotificationContext';
-import { useAuthContext } from '../../../../../contexts/AuthContext';
+import { useAuth } from '../../../../../contexts/AuthContext';
 
 interface AddStaffModalProps {
   isOpen: boolean;
@@ -18,6 +18,7 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
   onClose,
   onAdd
 }) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     role: '',

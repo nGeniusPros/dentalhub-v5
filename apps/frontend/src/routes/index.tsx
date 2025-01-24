@@ -3,7 +3,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LandingPage from '../pages/LandingPage';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import StaffDashboard from '../pages/staff/StaffDashboard';
-import DashboardLayout from '../components/layout/DashboardLayout';
+import { DashboardLayout } from '../components/layout/DashboardLayout';
 import InsuranceARDashboard from '../pages/admin/insurance/InsuranceARDashboard';
 import HRDashboard from '../pages/admin/hr/HRDashboard';
 import AdminLogin from '../pages/login/AdminLogin';
@@ -35,48 +35,47 @@ export const AppRoutes = () => {
       <Route path="/" element={<LandingPage />} />
       
       {/* Login routes */}
-      <Route path="/login">
-        <Route path="patient" element={<PatientLogin />} />
-        <Route path="staff" element={<StaffLogin />} />
-        <Route path="admin" element={<AdminLogin />} />
-      </Route>
+      <Route path="/login" element={<Navigate to="/login/admin" replace />} />
+      <Route path="/login/patient" element={<PatientLogin />} />
+      <Route path="/login/staff" element={<StaffLogin />} />
+      <Route path="/login/admin" element={<AdminLogin />} />
 
       {/* Admin routes */}
       <Route path="/admin-dashboard" element={<ProtectedRoute role="admin"><DashboardLayout role="admin" /></ProtectedRoute>}>
         <Route index element={<AdminDashboard />} />
         <Route path="ai-consultant" element={<AIPracticeConsultant />} />
-        <Route path="hr" element={<HRDashboard />} />
-        <Route path="insurance" element={<InsuranceARDashboard />} />
+        <Route path="analytics" element={<Analytics />} />
         <Route path="patients" element={<Patients />} />
+        <Route path="insurance" element={<InsuranceARDashboard />} />
+        <Route path="hr" element={<HRDashboard />} />
         <Route path="staff" element={<StaffManagement />} />
         <Route path="membership-plans" element={<MembershipPlans />} />
         <Route path="sms-campaigns" element={<SMSCampaigns />} />
-        <Route path="resources" element={<ResourcesDashboard />} />
-        <Route path="email-campaigns" element={<EmailDashboard />} />
+        <Route path="email-dashboard" element={<EmailDashboard />} />
         <Route path="voice-campaigns" element={<VoiceCampaigns />} />
         <Route path="social-media" element={<SocialMediaDashboard />} />
         <Route path="learning" element={<LearningDashboard />} />
-        <Route path="settings" element={<GeneralSettings />} />
-        <Route path="settings/passwords" element={<PasswordManager />} />
-        <Route path="contact-manager" element={<VendorManagement />} />
+        <Route path="resources" element={<ResourcesDashboard />} />
         <Route path="marketplace" element={<Marketplace />} />
-        {/* Add other admin routes */}
+        <Route path="settings">
+          <Route path="password" element={<PasswordManager />} />
+          <Route path="vendors" element={<VendorManagement />} />
+          <Route path="general" element={<GeneralSettings />} />
+        </Route>
       </Route>
 
       {/* Staff routes */}
       <Route path="/staff-dashboard" element={<ProtectedRoute role="staff"><DashboardLayout role="staff" /></ProtectedRoute>}>
         <Route index element={<StaffDashboard />} />
-        {/* Add staff routes */}
       </Route>
 
       {/* Patient routes */}
       <Route path="/patient-dashboard" element={<ProtectedRoute role="patient"><DashboardLayout role="patient" /></ProtectedRoute>}>
         <Route index element={<PatientDashboard />} />
         <Route path="membership" element={<Membership />} />
-        {/* Add patient routes */}
       </Route>
 
-      {/* Fallback route */}
+      {/* Catch-all route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

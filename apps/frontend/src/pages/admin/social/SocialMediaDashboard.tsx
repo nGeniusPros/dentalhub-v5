@@ -11,7 +11,7 @@ import { PlatformBreakdown } from './components/analytics/PlatformBreakdown';
 import { TopPosts } from './components/analytics/TopPosts';
 import { HashtagPerformance } from './components/analytics/HashtagPerformance';
 import { CompetitorAnalysis } from './components/analytics/CompetitorAnalysis';
-import { socialMediaService } from '../services/socialMedia';
+import { socialMediaService } from "../../../services/socialMedia";
 
 const SocialMediaDashboard = () => {
   const [data, setData] = useState<any>(null);

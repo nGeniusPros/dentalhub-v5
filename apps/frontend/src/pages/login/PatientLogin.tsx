@@ -2,103 +2,136 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { useAuthContext } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabaseService } from '../../services/supabase';
 
 const PatientLogin = () => {
-		const navigate = useNavigate();
-  const { signIn, signUp, loading, error } = useAuthContext();
+  const navigate = useNavigate();
+  const { login, register, loading, error } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showRegister, setShowRegister] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
 
-		const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
+    
     try {
-      await signIn(email, password);
+      setLocalError(null);
+      if (isRegistering) {
+        await register({ email, password });
+        // Set user role as patient after registration
+        const { data: { user } } = await supabaseService.auth.getUser();
+        if (user) {
+          await supabaseService.auth.updateUser({
+            data: { role: 'patient' }
+          });
+        }
+      } else {
+        await login({ email, password });
+        // Check if the user has the patient role
+        const { data: { user } } = await supabaseService.auth.getUser();
+        if (user?.user_metadata?.role !== 'patient') {
+          setLocalError('Access denied. Patient access only.');
+          return;
+        }
+      }
       navigate('/patient-dashboard');
-    } catch (err: any) {
-      console.error('Login failed', err);
-    }
-  };
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (loading) return;
-    try {
-      await signUp(email, password);
-      // After signup, user needs to verify their email
-      // Show success message or redirect to verification page
-    } catch (err: any) {
-      console.error('Registration failed', err);
+    } catch (err) {
+      console.error('Authentication failed:', err);
+      setLocalError(error || 'Authentication failed. Please check your credentials.');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-ngenius-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-[#1B2B85]/5 to-white flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white p-8 rounded-xl shadow-lg border border-ngenius-gray-200 w-full max-w-md"
+        className="bg-white/80 backdrop-blur-xl p-8 rounded-xl shadow-lg border border-[#1B2B85]/10 w-full max-w-md"
       >
         <div className="flex justify-center mb-8">
-          <img src="/ngenius-logo.svg" alt="Ngenius" className="h-16" />
+          <motion.div
+            animate={{
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            className="w-16 h-16"
+          >
+            <Icons.User className="w-full h-full text-[#1B2B85]" />
+          </motion.div>
         </div>
         
-        <h1 className="text-2xl font-bold text-center mb-2 bg-gradient-navy text-transparent bg-clip-text">
-          Patient Login
+        <h1 className="text-2xl font-bold text-center mb-2 bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] text-transparent bg-clip-text">
+          {isRegistering ? 'Patient Registration' : 'Patient Login'}
         </h1>
-        <p className="text-ngenius-gray-500 text-center mb-8">
-          Access your patient portal
+        <p className="text-gray-500 text-center mb-8">
+          {isRegistering ? 'Create your patient account' : 'Welcome back! Please enter your credentials.'}
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {(localError || error) && (
+          <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600">
+            {localError || error}
+          </div>
+        )}
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-ngenius-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email
             </label>
-            <div className="relative">
-              <Icons.Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ngenius-gray-400" />
-              <input
-                type="email"
-                id="email"
-                className="w-full pl-10 pr-4 py-2 border border-ngenius-gray-200 rounded-lg focus:ring-2 focus:ring-ngenius-primary/20 focus:border-ngenius-primary"
-                placeholder="patient@example.com"
-              />
-            </div>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#1B2B85] focus:border-transparent transition-colors"
+              placeholder="Enter your email"
+              required
+            />
           </div>
-
+          
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-ngenius-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
-            <div className="relative">
-              <Icons.Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ngenius-gray-400" />
-              <input
-                type="password"
-                id="password"
-                className="w-full pl-10 pr-4 py-2 border border-ngenius-gray-200 rounded-lg focus:ring-2 focus:ring-ngenius-primary/20 focus:border-ngenius-primary"
-                placeholder="••••••••"
-              />
-            </div>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#1B2B85] focus:border-transparent transition-colors"
+              placeholder="Enter your password"
+              required
+            />
           </div>
-
+          
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-gradient-navy text-white rounded-lg hover:opacity-90 transition-opacity"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] text-white font-medium 
+              ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90 transition-opacity'}`}
           >
-            Sign In
+            {loading ? (isRegistering ? 'Creating Account...' : 'Signing in...') : 
+                      (isRegistering ? 'Create Account' : 'Sign In')}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setIsRegistering(!isRegistering);
+              setLocalError(null);
+            }}
+            className="w-full text-sm text-[#1B2B85] hover:underline mt-4"
+          >
+            {isRegistering ? 'Already have an account? Sign in' : 'Need an account? Register'}
           </button>
         </form>
-
-        <div className="mt-6 text-center space-y-2">
-          <a href="#" className="block text-sm text-ngenius-primary hover:underline">
-            Forgot your password?
-          </a>
-          <a href="#" className="block text-sm text-ngenius-primary hover:underline">
-            New patient? Register here
-          </a>
-        </div>
       </motion.div>
     </div>
   );

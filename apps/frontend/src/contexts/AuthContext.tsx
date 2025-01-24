@@ -1,15 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabaseService } from '../services/supabase';
-import { User } from '../types';
-import { convertSupabaseUser } from '../lib/utils';
+import type { User } from '@supabase/supabase-js';
+import type { AuthError, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: User | null;
-  setUser: (user: User | null) => void;
+  session: Session | null;
   loading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
+  login: (credentials: { email: string; password: string }) => Promise<void>;
+  register: (credentials: { email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
@@ -19,124 +19,130 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchSession = async () => {
-      setLoading(true);
-      try {
-        const { data: { session: initialSession }, error: initialError } = await supabaseService.auth.getSession();
-        if (initialError) {
-          setError(initialError.message);
-        }
-        if (initialSession?.user) {
-          supabaseService.auth.getUser().then((response) => {
-            if (response.data?.user) {
-              setUser(convertSupabaseUser(response.data.user));
-            }
-          });
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
+    // Initial session check
+    supabaseService.auth.getSession().then(({ data: { session: initialSession }, error }) => {
+      if (error) {
+        console.error('Error fetching session:', error.message);
+        setError(error.message);
       }
-    };
-    fetchSession();
+      setSession(initialSession);
+      setUser(initialSession?.user ?? null);
+      setLoading(false);
+    });
 
-    const { data: { subscription } } = supabaseService.auth.onAuthStateChange(
-      async (event: any, session: any) => {
-        if (event === 'SIGNED_OUT') {
-          setUser(null);
-        }
-        if (session?.user) {
-          try {
-            supabaseService.auth.getUser().then((response) => {
-              if (response.data?.user) {
-                setUser(convertSupabaseUser(response.data.user));
-              }
-            });
-          } catch (err) {
-            setError(err instanceof Error ? err.message : 'An error occurred');
-          }
-        }
-      }
-    );
+    // Listen for auth changes
+    const { data: { subscription } } = supabaseService.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
     return () => {
-      subscription?.unsubscribe();
+      subscription.unsubscribe();
     };
   }, []);
 
-  const login = async (email: string, password: string) => {
-    setLoading(true);
-    setError(null);
+  const login = async (credentials: { email: string; password: string }) => {
     try {
-      const { data, error } = await supabaseService.auth.signInWithPassword(email, password);
-      if (error) {
-        throw new Error(error.message);
-      }
-      if (data?.user) {
-        setUser(convertSupabaseUser(data.user as any));
-      }
+      setLoading(true);
+      setError(null);
+
+      const { error } = await supabaseService.auth.signInWithPassword(credentials);
+
+      if (error) throw error;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      const error = err as AuthError;
+      setError(error.message);
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  const register = async (email: string, password: string) => {
-    setLoading(true);
-    setError(null);
+  const register = async (credentials: { email: string; password: string }) => {
     try {
-      const { data, error } = await supabaseService.auth.signUp(email, password);
-      if (error) {
-        throw new Error(error.message);
-      }
-      if (data?.user) {
-        setUser(convertSupabaseUser(data.user as any));
-      }
+      setLoading(true);
+      setError(null);
+
+      const { error } = await supabaseService.auth.signUp({
+        email: credentials.email,
+        password: credentials.password,
+        options: {
+          emailRedirectTo: window.location.origin,
+          data: {
+            role: 'patient' // Default role, can be overridden after registration
+          }
+        }
+      });
+
+      if (error) throw error;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      const error = err as AuthError;
+      setError(error.message);
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
   const logout = async () => {
-    setLoading(true);
-    setError(null);
     try {
-      await supabaseService.auth.signOut();
+      setLoading(true);
+      setError(null);
+
+      const { error } = await supabaseService.auth.signOut();
+
+      if (error) throw error;
+
       setUser(null);
+      setSession(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      const error = err as AuthError;
+      setError(error.message);
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
   const resetPassword = async (email: string) => {
-    setLoading(true);
-    setError(null);
     try {
-      await supabaseService.auth.resetPasswordForEmail(email);
+      setLoading(true);
+      setError(null);
+
+      const { error } = await supabaseService.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/update-password`,
+      });
+
+      if (error) throw error;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      const error = err as AuthError;
+      setError(error.message);
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
   const updatePassword = async (password: string) => {
-    setLoading(true);
-    setError(null);
     try {
-      await supabaseService.auth.updateUser(password);
+      setLoading(true);
+      setError(null);
+
+      const { error } = await supabaseService.auth.updateUser({
+        password,
+      });
+
+      if (error) throw error;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      const error = err as AuthError;
+      setError(error.message);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -146,25 +152,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        setUser,
+        session,
         loading,
         error,
         login,
         register,
         logout,
         resetPassword,
-        updatePassword
+        updatePassword,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuthContext = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuthContext must be used within an AuthProvider');
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}

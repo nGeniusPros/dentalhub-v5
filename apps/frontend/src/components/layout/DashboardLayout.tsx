@@ -1,99 +1,103 @@
 import React from 'react';
-import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sidebar } from './Sidebar';
-import Header from './Header';
-import { useAuthContext } from '../../contexts/AuthContext';
+import * as Icons from 'lucide-react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { Header } from './Header';
 
-interface DashboardLayoutProps {
-		role?: "admin" | "staff" | "patient";
+interface NavItem {
+  label: string;
+  icon: keyof typeof Icons;
+  path: string;
+  roles?: string[];
 }
 
-const DashboardLayout = ({ role }: DashboardLayoutProps) => {
-  const { user } = useAuthContext();
+export const DashboardLayout = () => {
+  const { user } = useAuth();
   const location = useLocation();
 
-  // Determine if the user is authorized to access the route
-  const isAuthorized = () => {
-    if (!user) {
-      return false;
-    }
-    if (!role) {
-      return true; // If no role is specified, allow access
-    }
-    return user.role === role;
-		};
+  const navItems: NavItem[] = [
+    {
+      label: 'Dashboard',
+      icon: 'Home',
+      path: '/dashboard',
+      roles: ['admin', 'staff', 'patient'],
+    },
+    {
+      label: 'Appointments',
+      icon: 'Calendar',
+      path: '/appointments',
+      roles: ['admin', 'staff', 'patient'],
+    },
+    {
+      label: 'Patients',
+      icon: 'Users',
+      path: '/patients',
+      roles: ['admin', 'staff'],
+    },
+    {
+      label: 'Staff',
+      icon: 'UserPlus',
+      path: '/staff',
+      roles: ['admin'],
+    },
+    {
+      label: 'Analytics',
+      icon: 'BarChart2',
+      path: '/analytics',
+      roles: ['admin'],
+    },
+    {
+      label: 'Settings',
+      icon: 'Settings',
+      path: '/settings',
+      roles: ['admin', 'staff', 'patient'],
+    },
+  ];
 
-  if (!isAuthorized()) {
-    // Redirect to the appropriate login page based on the requested role
-    if (role === 'admin') {
-        return <Navigate to="/login/admin" state={{ from: location }} replace />;
-    } else if (role === 'staff') {
-        return <Navigate to="/login/staff" state={{ from: location }} replace />;
-    } else if (role === 'patient') {
-        return <Navigate to="/login/patient" state={{ from: location }} replace />;
-    } else {
-        return <Navigate to="/" state={{ from: location }} replace />;
-    }
-  }
+  const filteredNavItems = navItems.filter(
+    item => !item.roles || item.roles.includes(user?.user_metadata?.role || '')
+  );
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar role={user?.role || 'patient'} />
+    <div className="min-h-screen bg-gray-50">
+      <Header />
       
-      <div className="flex-1 flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 overflow-auto p-8 bg-white">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}>
-            <Outlet />
-          </motion.div>
+      <div className="flex">
+        {/* Sidebar */}
+        <motion.aside
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-4rem)] p-4"
+        >
+          <nav className="space-y-2">
+            {filteredNavItems.map((item) => {
+              const Icon = Icons[item.icon];
+              const isActive = location.pathname === item.path;
+
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-[#1B2B85] text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="font-medium">{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </motion.aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-8">
+          <Outlet />
         </main>
-
-        {/* Background Elements */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-          
-          {/* Animated gradient orbs */}
-          <motion.div
-            className="absolute w-[1000px] h-[1000px] blur-3xl"
-            style={{
-              background: 'radial-gradient(circle, rgba(27,43,133,0.1) 0%, transparent 70%)',
-              top: '0%',
-              right: '0%',
-            }}
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-												transition={{
-														duration: 8,
-														repeat: Infinity,
-														ease: "easeInOut"
-												}}
-										/>
-										
-										<motion.div
-												className="absolute w-[800px] h-[800px] blur-3xl"
-												style={{
-														background: 'radial-gradient(circle, rgba(64,224,208,0.1) 0%, transparent 70%)',
-														bottom: '0%',
-														left: '0%',
-												}}
-												animate={{
-														scale: [1.2, 1, 1.2],
-														opacity: [0.2, 0.4, 0.2],
-												}}
-												transition={{
-														duration: 10,
-														repeat: Infinity,
-														ease: "easeInOut"
-												}}
-										/>
-								</div>
-						</div>
-				</div>
-		);
+      </div>
+    </div>
+  );
 };
-
-export default DashboardLayout;
