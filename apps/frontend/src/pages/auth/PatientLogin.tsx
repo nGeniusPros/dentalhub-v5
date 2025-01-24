@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
-import { supabaseService } from '../../services/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import { api } from '@/services/supabase';
 
-const PatientLogin = () => {
+export const PatientLogin: React.FC = () => {
   const navigate = useNavigate();
-  const { login, register, loading, error } = useAuth();
+  const { signIn, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,28 +18,20 @@ const PatientLogin = () => {
     
     try {
       setLocalError(null);
-      if (isRegistering) {
-        await register({ email, password });
-        // Set user role as patient after registration
-        const { data: { user } } = await supabaseService.auth.getUser();
-        if (user) {
-          await supabaseService.auth.updateUser({
-            data: { role: 'patient' }
-          });
-        }
-      } else {
-        await login({ email, password });
-        // Check if the user has the patient role
-        const { data: { user } } = await supabaseService.auth.getUser();
-        if (user?.user_metadata?.role !== 'patient') {
-          setLocalError('Access denied. Patient access only.');
-          return;
-        }
+      await signIn(email, password);
+      
+      // Check if the user has the patient role
+      const { user } = await api.auth.getUser().then(({ data }) => data);
+      if (user?.user_metadata?.role !== 'patient') {
+        setLocalError('Access denied. Patient access only.');
+        await api.auth.signOut();
+        return;
       }
-      navigate('/patient-dashboard');
+
+      navigate('/patient');
     } catch (err) {
       console.error('Authentication failed:', err);
-      setLocalError(error || 'Authentication failed. Please check your credentials.');
+      setLocalError('Authentication failed. Please check your credentials.');
     }
   };
 
@@ -63,20 +54,20 @@ const PatientLogin = () => {
             }}
             className="w-16 h-16"
           >
-            <Icons.User className="w-full h-full text-[#1B2B85]" />
+            <Icons.Heart className="w-full h-full text-[#1B2B85]" />
           </motion.div>
         </div>
         
         <h1 className="text-2xl font-bold text-center mb-2 bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] text-transparent bg-clip-text">
-          {isRegistering ? 'Patient Registration' : 'Patient Login'}
+          Patient Login
         </h1>
         <p className="text-gray-500 text-center mb-8">
-          {isRegistering ? 'Create your patient account' : 'Welcome back! Please enter your credentials.'}
+          Welcome back! Please enter your credentials.
         </p>
 
-        {(localError || error) && (
+        {localError && (
           <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600">
-            {localError || error}
+            {localError}
           </div>
         )}
         
@@ -110,31 +101,18 @@ const PatientLogin = () => {
               required
             />
           </div>
-          
+
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] text-white font-medium 
-              ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90 transition-opacity'}`}
+            className={`w-full py-2 px-4 rounded-lg bg-[#1B2B85] text-white font-medium hover:bg-[#1B2B85]/90 focus:outline-none focus:ring-2 focus:ring-[#1B2B85] focus:ring-offset-2 transition-colors ${
+              loading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            {loading ? (isRegistering ? 'Creating Account...' : 'Signing in...') : 
-                      (isRegistering ? 'Create Account' : 'Sign In')}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setIsRegistering(!isRegistering);
-              setLocalError(null);
-            }}
-            className="w-full text-sm text-[#1B2B85] hover:underline mt-4"
-          >
-            {isRegistering ? 'Already have an account? Sign in' : 'Need an account? Register'}
+            {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
       </motion.div>
     </div>
   );
 };
-
-export default PatientLogin;

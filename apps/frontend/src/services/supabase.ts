@@ -1,71 +1,59 @@
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types';
-import type { SupabaseClient, User } from '@supabase/supabase-js';
+import { AuthError, SupabaseClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase/client';
+import type { Database } from '@/types/supabase';
 
-let instance: SupabaseClient<Database> | null = null;
-
-function createSupabaseClient(): SupabaseClient<Database> {
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Missing Supabase environment variables');
-  }
-
-  return createClient<Database>(supabaseUrl, supabaseKey, {
-    auth: {
-      autoRefreshToken: true,
-      persistSession: true,
-      storage: window.localStorage
-    }
-  });
+interface AuthCredentials {
+  email: string;
+  password: string;
 }
 
-function getSupabaseClient(): SupabaseClient<Database> {
-  if (!instance) {
-    instance = createSupabaseClient();
-  }
-  return instance;
+interface AuthResponse {
+  data: {
+    user: Database['auth']['Tables']['users']['Row'] | null;
+    session: any;
+  } | null;
+  error: AuthError | null;
 }
 
-// Auth methods
-export async function signIn(email: string, password: string) {
-  const { data, error } = await getSupabaseClient().auth.signInWithPassword({
-    email,
-    password,
+// Auth functions
+export async function signIn(credentials: AuthCredentials): Promise<AuthResponse> {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: credentials.email,
+    password: credentials.password,
   });
+
   return { data, error };
 }
 
 export async function signOut() {
-  const { error } = await getSupabaseClient().auth.signOut();
+  const { error } = await supabase.auth.signOut();
   return { error };
 }
 
 export async function getSession() {
-  const { data: { session }, error } = await getSupabaseClient().auth.getSession();
+  const { data: { session }, error } = await supabase.auth.getSession();
   return { session, error };
 }
 
-export async function getUser(): Promise<{ user: User | null; error: Error | null }> {
-  const { data: { user }, error } = await getSupabaseClient().auth.getUser();
-  return { user, error: error as Error | null };
+export async function getUser() {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  return { user, error };
 }
 
-// Database methods
-export const supabaseService = {
-  from: <T extends keyof Database['public']['Tables']>(table: T) => getSupabaseClient().from(table),
+// Database and Storage API
+export const api = {
+  from: <T extends keyof Database['public']['Tables']>(table: T) => supabase.from(table),
   storage: {
-    from: (bucket: string) => getSupabaseClient().storage.from(bucket),
+    from: (bucket: string) => supabase.storage.from(bucket),
   },
   auth: {
-    onAuthStateChange: (callback: (event: string, session: any) => void) => 
-      getSupabaseClient().auth.onAuthStateChange(callback),
-    getSession: () => getSupabaseClient().auth.getSession(),
-    getUser: () => getSupabaseClient().auth.getUser(),
-    signOut: () => getSupabaseClient().auth.signOut(),
-    signInWithPassword: (credentials: { email: string; password: string }) => 
-      getSupabaseClient().auth.signInWithPassword(credentials),
+    onAuthStateChange: (callback: Parameters<SupabaseClient['auth']['onAuthStateChange']>[0]) =>
+      supabase.auth.onAuthStateChange(callback),
+    getSession: () => supabase.auth.getSession(),
+    getUser: () => supabase.auth.getUser(),
+    signOut: () => supabase.auth.signOut(),
+    signIn: (credentials: AuthCredentials) =>
+      supabase.auth.signInWithPassword(credentials),
   },
-  rpc: (fn: string, args?: Record<string, unknown>) => getSupabaseClient().rpc(fn, args),
+  rpc: (fn: string, args?: Record<string, unknown>) => supabase.rpc(fn, args),
 };

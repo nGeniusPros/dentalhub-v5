@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
-import supabase from '../../../lib/supabase/client';
+import { Button } from '@/components/ui/button';
+import { supabase } from '@/lib/supabase/client';
 
-export const AdminPatients = () => {
+export const AdminPatients: React.FC = () => {
   const [patients, setPatients] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 

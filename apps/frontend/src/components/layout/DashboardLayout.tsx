@@ -2,9 +2,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Header } from './Header';
-import { ROUTES } from '../../lib/constants/routes';
+import { AdminSidebar } from './AdminSidebar';
+import { ROUTES } from '@/lib/constants/routes';
 
 interface NavItem {
   label: string;
@@ -83,47 +84,23 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex">
       <Header />
-      <div className="flex min-h-[calc(100vh-4rem)]">
-        {/* Sidebar */}
-        <motion.aside
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          className="w-64 bg-white border-r border-gray-200 min-h-full"
-        >
-          <nav className="p-4 space-y-2">
-            {filteredNavItems.map((item) => {
-              const Icon = Icons[item.icon];
-              const isActive = location.pathname === item.path;
+      {/* Sidebar */}
+      <AdminSidebar 
+        navItems={filteredNavItems} 
+        location={location} 
+        Icons={Icons} 
+      />
 
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                    isActive
-                      ? 'bg-[#1B2B85] text-white'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="font-medium">{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </motion.aside>
-
-        {/* Main Content */}
-        <motion.main 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex-1 p-8 bg-gray-50 overflow-auto"
-        >
-          {children}
-        </motion.main>
-      </div>
+      {/* Main Content */}
+      <motion.main 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex-1 overflow-auto"
+      >
+        {children}
+      </motion.main>
     </div>
   );
 };

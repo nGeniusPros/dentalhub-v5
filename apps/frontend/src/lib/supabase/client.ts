@@ -1,18 +1,30 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
+if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// Create a singleton instance
+let supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    storageKey: 'dentalhub-auth',
+    storage: window.localStorage,
+  },
+});
+
+// Export both named and default exports
+export const supabase = supabaseInstance;
+export default supabaseInstance;
 
 // Error handling
 supabase.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_OUT') {
-    console.log('User signed out');
+    // Clear any sensitive data from localStorage
+    localStorage.removeItem('dentalhub-auth');
   } else if (event === 'SIGNED_IN') {
     console.log('User signed in:', session?.user?.email);
   } else if (event === 'TOKEN_REFRESHED') {
@@ -94,6 +106,3 @@ export const setupSubscriptions = () => {
 
 // Initialize subscriptions
 setupSubscriptions();
-
-// Export the supabase client as default
-export default supabase;

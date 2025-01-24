@@ -1,142 +1,136 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
-import StatsCard from '../../../components/dashboard/StatsCard';
+import { Button } from '@/components/ui/button';
+import StatsCard from '@/components/dashboard/StatsCard';
 import { StaffDirectory } from './components/StaffDirectory'; 
 import { PerformanceTab } from './components/staff/PerformanceTab';
 import { ScheduleTab } from './components/staff/ScheduleTab';
 import { PayrollTab } from './components/staff/PayrollTab';
-import { TrainingTab } from './components/staff/TrainingTab';
-import { DocumentsTab } from './components/staff/DocumentsTab';
-import { ReportsTab } from './components/staff/ReportsTab';
-import { useNotifications } from '../../../contexts/NotificationContext';
 
-const StaffManagement = () => {
-  const [activeTab, setActiveTab] = useState('overview');
-  const { dispatch: notifyDispatch } = useNotifications();
+export const AdminStaff: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('directory');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const handleAIMessage = (message: string) => {
-    notifyDispatch({
-      type: 'ADD_NOTIFICATION',
-      payload: {
-        id: Date.now().toString(),
-        type: 'message',
-        title: 'AI Assistant',
-        message: 'Your AI HR assistant is ready to help!',
-        timestamp: new Date().toISOString(),
-        read: false,
-        priority: 'medium'
-      }
-    });
+  const stats = [
+    {
+      title: 'Total Staff',
+      value: '24',
+      trend: '+2',
+      trendDirection: 'up',
+      icon: Icons.Users
+    },
+    {
+      title: 'Active Today',
+      value: '18',
+      trend: '75%',
+      trendDirection: 'up',
+      icon: Icons.UserCheck
+    },
+    {
+      title: 'Avg Performance',
+      value: '92%',
+      trend: '+5%',
+      trendDirection: 'up',
+      icon: Icons.TrendingUp
+    },
+    {
+      title: 'Training Hours',
+      value: '120',
+      trend: '+12',
+      trendDirection: 'up',
+      icon: Icons.GraduationCap
+    }
+  ];
+
+  const renderTab = () => {
+    switch (activeTab) {
+      case 'directory':
+        return <StaffDirectory searchQuery={searchQuery} />;
+      case 'performance':
+        return <PerformanceTab />;
+      case 'schedule':
+        return <ScheduleTab />;
+      case 'payroll':
+        return <PayrollTab />;
+      default:
+        return <StaffDirectory searchQuery={searchQuery} />;
+    }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-6 space-y-6"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-navy via-purple to-turquoise text-transparent bg-clip-text">
-            Staff Management
-          </h1>
-          <p className="text-gray-600">Comprehensive staff management and analytics</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Staff Management</h1>
+          <p className="text-gray-500 dark:text-gray-400">Manage your dental practice staff</p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline">
-            <Icons.Download className="w-4 h-4 mr-2" />
-            Export Reports
-          </Button>
-          <Button>
-            <Icons.UserPlus className="w-4 h-4 mr-2" />
-            Add Employee
-          </Button>
-        </div>
+        <Button>
+          <Icons.Plus className="h-4 w-4 mr-2" />
+          Add Staff Member
+        </Button>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="flex gap-2 border-b border-gray-200">
-        {[
-          { id: 'overview', label: 'Overview', icon: 'LayoutDashboard' },
-          { id: 'directory', label: 'Directory', icon: 'Users' },
-          { id: 'performance', label: 'Performance', icon: 'BarChart2' },
-          { id: 'schedule', label: 'Schedule', icon: 'Calendar' },
-          { id: 'payroll', label: 'Payroll', icon: 'DollarSign' },
-          { id: 'training', label: 'Training', icon: 'GraduationCap' },
-          { id: 'documents', label: 'Documents', icon: 'FileText' },
-          { id: 'reports', label: 'Reports', icon: 'FileBarChart' }
-        ].map((tab) => (
-          <Button
-            key={tab.id}
-            variant={activeTab === tab.id ? 'default' : 'ghost'}
-            onClick={() => setActiveTab(tab.id)}
-            className="relative py-2 -mb-px"
-          >
-            {React.createElement(Icons[tab.icon as keyof typeof Icons], {
-              className: "w-4 h-4 mr-2"
-            })}
-            {tab.label}
-          </Button>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((stat, index) => (
+          <StatsCard key={index} {...stat} />
         ))}
       </div>
 
-      {/* Overview Tab */}
-      {activeTab === 'overview' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatsCard
-              title="Total Staff"
-              value="24"
-              change={8}
-              icon="Users"
-              variant="primary"
-            />
-            <StatsCard
-              title="Active Staff" 
-              value="22"
-              change={5}
-              icon="UserCheck"
-              variant="secondary"
-            />
-            <StatsCard
-              title="Satisfaction"
-              value="92%"
-              change={3}
-              icon="Heart"
-              variant="accent1"
-            />
-            <StatsCard
-              title="Retention Rate"
-              value="95%"
-              change={2}
-              icon="UserPlus"
-              variant="accent2"
-            />
-          </div>
+      {/* Tabs and Search */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+        <div className="flex space-x-4">
+          <Button
+            variant={activeTab === 'directory' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('directory')}
+          >
+            <Icons.Users className="h-4 w-4 mr-2" />
+            Directory
+          </Button>
+          <Button
+            variant={activeTab === 'performance' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('performance')}
+          >
+            <Icons.TrendingUp className="h-4 w-4 mr-2" />
+            Performance
+          </Button>
+          <Button
+            variant={activeTab === 'schedule' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('schedule')}
+          >
+            <Icons.Calendar className="h-4 w-4 mr-2" />
+            Schedule
+          </Button>
+          <Button
+            variant={activeTab === 'payroll' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('payroll')}
+          >
+            <Icons.DollarSign className="h-4 w-4 mr-2" />
+            Payroll
+          </Button>
         </div>
-      )}
+        <div className="relative w-full sm:w-64">
+          <Icons.Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search staff..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+          />
+        </div>
+      </div>
 
-      {/* Directory Tab */}
-      {activeTab === 'directory' && <StaffDirectory />}
-
-      {/* Performance Tab */}
-      {activeTab === 'performance' && <PerformanceTab />}
-
-      {/* Schedule Tab */}
-      {activeTab === 'schedule' && <ScheduleTab />}
-
-      {/* Payroll Tab */}
-      {activeTab === 'payroll' && <PayrollTab />}
-
-      {/* Training Tab */}
-      {activeTab === 'training' && <TrainingTab />}
-
-      {/* Documents Tab */}
-      {activeTab === 'documents' && <DocumentsTab />}
-
-      {/* Reports Tab */}
-      {activeTab === 'reports' && <ReportsTab />}
-
-    </div>
+      {/* Tab Content */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+        {renderTab()}
+      </div>
+    </motion.div>
   );
 };
-
-export default StaffManagement;

@@ -7,25 +7,43 @@ export default defineConfig({
   base: '/',
   plugins: [react()],
   server: {
-    port: 5173,
+    port: 3000,
+    strictPort: false,
     host: true,
     open: true,
     proxy: {
       '/api': {
         target: 'http://localhost:3001',
         changeOrigin: true,
+        secure: false
       },
     },
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@dentalhub/core': path.resolve(__dirname, '../../packages/core/dist'),
-      '@dentalhub/components': path.resolve(__dirname, '../../packages/components/dist'),
-      '@dentalhub/utils': path.resolve(__dirname, '../../packages/utils/dist'),
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'lucide-react', '@dentalhub/core']
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      '@radix-ui/react-tooltip',
+      'lucide-react',
+      'jotai',
+      'framer-motion'
+    ]
+  },
+  build: {
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['@radix-ui/react-tooltip', 'lucide-react', 'framer-motion']
+        }
+      }
+    }
   }
 });

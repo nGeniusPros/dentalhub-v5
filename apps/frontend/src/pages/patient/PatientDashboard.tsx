@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { Link } from '../../../components/ui/link';
-import { cn } from '../../../lib/utils';
-import { supabase } from '../../../lib/supabase/client';
-import { syncManager } from '../../../lib/utils/sync';
+import { Link } from '@/components/ui/link';
+import { cn } from '@/lib/utils';
+import { supabase } from '@/lib/supabase/client';
+import { syncManager } from '@/lib/utils/sync';
+import { Button } from '@/components/ui/button';
 
 interface PatientInfo {
   id: string;
@@ -19,66 +20,81 @@ interface PatientInfo {
   }[];
 }
 
-interface FamilyMember {
-  id: string;
-  name: string;
-  relation: string;
-  nextAppointment?: string;
-}
-
 interface QuickAction {
   label: string;
   icon: keyof typeof Icons;
   path: string;
 }
 
-export const PatientDashboard = () => {
+export const PatientDashboard: React.FC = () => {
   const [patientInfo, setPatientInfo] = useState<PatientInfo | null>(null);
-  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const quickActions: QuickAction[] = [
-    { label: "Book Appointment", icon: "Calendar", path: "/patient/appointments" },
-    { label: "Message Office", icon: "MessageSquare", path: "/patient/chat" },
-    { label: "View Documents", icon: "FileText", path: "/patient/documents" },
-    { label: "Make Payment", icon: "CreditCard", path: "/patient/billing" }
+    {
+      label: 'Book Appointment',
+      icon: 'Calendar',
+      path: '/patient/appointments/book'
+    },
+    {
+      label: 'View Records',
+      icon: 'FileText',
+      path: '/patient/records'
+    },
+    {
+      label: 'Billing',
+      icon: 'CreditCard',
+      path: '/patient/billing'
+    },
+    {
+      label: 'Messages',
+      icon: 'MessageSquare',
+      path: '/patient/messages'
+    }
   ];
 
   useEffect(() => {
-    const fetchPatientData = async () => {
+    const fetchPatientInfo = async () => {
       try {
-        const { data: patient, error } = await supabase
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('No user found');
+
+        const { data, error } = await supabase
           .from('patients')
-          .select('*, appointments(*)')
+          .select(`
+            id,
+            first_name,
+            last_name,
+            date_of_birth,
+            appointments (
+              id,
+              appointment_date,
+              type,
+              status
+            )
+          `)
+          .eq('user_id', user.id)
           .single();
 
-        if (error) {
-          console.error('Error fetching patient data:', error);
-        } else {
-          setPatientInfo(patient);
-        }
-
-        const { data: family, error: familyError } = await supabase
-          .from('family_members')
-          .select('*, related_patient:patients(*)')
-          .eq('patient_id', patient.id);
-
-        if (familyError) {
-          console.error('Error fetching family members:', familyError);
-        } else {
-          setFamilyMembers(family.map((item: any) => ({
-            id: item.related_patient.id,
-            name: `${item.related_patient.first_name} ${item.related_patient.last_name}`,
-            relation: item.relationship_type,
-            nextAppointment: item.related_patient.appointments[0]?.appointment_date || 'None Scheduled'
-          })));
-        }
+        if (error) throw error;
+        setPatientInfo(data);
       } catch (error) {
-        console.error('Error in fetchPatientData:', error);
+        console.error('Error fetching patient info:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchPatientData();
+    fetchPatientInfo();
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Icons.Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -87,63 +103,60 @@ export const PatientDashboard = () => {
       className="space-y-6 p-6"
     >
       {/* Welcome Section */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Welcome back, {patientInfo?.first_name}!
         </h1>
-        {patientInfo?.appointments[0] && (
-          <p className="text-gray-600 dark:text-gray-300">
-            Your next appointment is on{' '}
-            {new Date(patientInfo.appointments[0].appointment_date).toLocaleDateString()}
-          </p>
-        )}
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
+          Here's an overview of your dental health and upcoming appointments.
+        </p>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {quickActions.map((action) => {
           const Icon = Icons[action.icon];
           return (
             <Link
               key={action.label}
-              to={action.path}
-              className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow"
+              href={action.path}
+              className={cn(
+                'flex items-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg',
+                'hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+              )}
             >
-              <div className="flex flex-col items-center text-center">
-                <Icon className="h-6 w-6 mb-2 text-primary" />
-                <span className="text-sm font-medium text-gray-900 dark:text-white">
-                  {action.label}
-                </span>
-              </div>
+              <Icon className="h-6 w-6 text-primary mr-3" />
+              <span className="font-medium">{action.label}</span>
             </Link>
           );
         })}
       </div>
 
-      {/* Family Members */}
-      {familyMembers.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Family Members
-          </h2>
-          <div className="space-y-4">
-            {familyMembers.map((member) => (
-              <div
-                key={member.id}
-                className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
-              >
+      {/* Upcoming Appointments */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <h2 className="text-xl font-semibold mb-4">Upcoming Appointments</h2>
+        <div className="space-y-4">
+          {patientInfo?.appointments.map((appointment) => (
+            <div
+              key={appointment.id}
+              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+            >
+              <div className="flex items-center space-x-4">
+                <Icons.Calendar className="h-5 w-5 text-primary" />
                 <div>
-                  <h3 className="font-medium text-gray-900 dark:text-white">{member.name}</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{member.relation}</p>
-                </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Next Appointment: {member.nextAppointment}
+                  <p className="font-medium">{appointment.type}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    {new Date(appointment.appointment_date).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
+              <Button variant="outline" size="sm">
+                View Details
+              </Button>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
     </motion.div>
   );
 };

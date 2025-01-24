@@ -1,166 +1,195 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { Button } from "../../../components/ui/button";
-import { cn } from "../../../lib/utils";
-import { ScheduleDialog } from './ScheduleDialog';
-import { EditCampaignDialog } from './EditCampaignDialog';
-import { useCampaigns, Campaign } from '../../../hooks/use-campaigns';
-import { useCampaignActions } from '../../../hooks/use-campaign-actions';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-const VoiceCampaignList = () => {
-  const { campaigns, loading, error, updateCampaignStatus, deleteCampaign } = useCampaigns();
-  const { editingCampaign, showScheduleDialog, selectedCampaign, handleEditCampaign, handleScheduleCampaign, handleCloseScheduleDialog, handleCloseEditDialog, setEditingCampaign } = useCampaignActions();
+interface VoiceCampaign {
+  id: string;
+  name: string;
+  script: string;
+  status: 'draft' | 'scheduled' | 'completed';
+  recipients: number;
+  answerRate?: number;
+  duration?: string;
+  scheduledDate?: string;
+  completedDate?: string;
+}
 
-  const handleStatusChange = async (campaignId: string, status: Campaign['status']) => {
-    await updateCampaignStatus(campaignId, status);
-  };
+export const VoiceCampaigns: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const handleDeleteCampaign = async (campaignId: string) => {
-    if (window.confirm('Are you sure you want to delete this campaign?')) {
-      await deleteCampaign(campaignId);
+  const campaigns: VoiceCampaign[] = [
+    {
+      id: '1',
+      name: 'Appointment Confirmations',
+      script: 'Hello, this is NGenius Dental reminding you of your appointment tomorrow. Press 1 to confirm, 2 to reschedule.',
+      status: 'completed',
+      recipients: 75,
+      answerRate: 82.5,
+      duration: '2m 15s',
+      completedDate: '2025-01-22'
+    },
+    {
+      id: '2',
+      name: 'Patient Satisfaction Survey',
+      script: 'We value your feedback. Please rate your recent visit from 1-5, with 5 being excellent.',
+      status: 'scheduled',
+      recipients: 120,
+      scheduledDate: '2025-01-24'
+    },
+    {
+      id: '3',
+      name: 'Service Announcement',
+      script: 'Introducing our new extended hours and weekend appointments. Press 1 to learn more.',
+      status: 'draft',
+      recipients: 0
     }
-  };
+  ];
 
-  if (loading) {
-    return <div>Loading campaigns...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  const filteredCampaigns = campaigns.filter(campaign => 
+    (activeTab === 'all' || campaign.status === activeTab) &&
+    (campaign.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     campaign.script.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-200">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search campaigns..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              />
-            </div>
-          </div>
-          <Button variant="outline">
-            <Icons.Filter className="w-4 h-4 mr-2" />
-            Filter
-          </Button>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-6 space-y-6"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Voice Campaigns</h1>
+          <p className="text-gray-500 dark:text-gray-400">Create and manage voice campaigns</p>
+        </div>
+        <Button>
+          <Icons.Plus className="h-4 w-4 mr-2" />
+          New Campaign
+        </Button>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Calls</CardTitle>
+            <Icons.Phone className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">1,234</div>
+            <p className="text-xs text-muted-foreground">+0.8% from last month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Answer Rate</CardTitle>
+            <Icons.PhoneCall className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">82.3%</div>
+            <p className="text-xs text-muted-foreground">+1.2% from last month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg. Duration</CardTitle>
+            <Icons.Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">1m 45s</div>
+            <p className="text-xs text-muted-foreground">-0.3m from last month</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+          <TabsList>
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="draft">Drafts</TabsTrigger>
+            <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
+            <TabsTrigger value="completed">Completed</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <div className="relative w-full sm:w-64">
+          <Icons.Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Search campaigns..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Campaign</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Progress</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Success Rate</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Schedule</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {campaigns.map((campaign) => (
-              <tr key={campaign.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <Icons.Phone className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900">{campaign.name}</div>
-                      <div className="text-sm text-gray-500 capitalize">{campaign.type} Campaign</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={cn(
-                    "px-3 py-1 text-xs font-medium rounded-full",
-                    campaign.status === 'active' && "bg-green-100 text-green-800",
-                    campaign.status === 'scheduled' && "bg-blue-100 text-blue-800",
-                    campaign.status === 'completed' && "bg-gray-100 text-gray-800",
-                    campaign.status === 'paused' && "bg-yellow-100 text-yellow-800"
-                  )}>
-                    {campaign.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-primary rounded-full"
-                        style={{ width: `${(campaign.completedCalls / campaign.targetCount) * 100}%` }}
-                      />
-                    </div>
-                    <span className="text-sm text-gray-500">
-                      {campaign.completedCalls}/{campaign.targetCount}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{campaign.successRate}%</span>
-                    {campaign.successRate > 0 && (
-                      <Icons.TrendingUp className="w-4 h-4 text-green-500" />
-                    )}
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm">
-                    {campaign.scheduledDate ? (
-                      <>
-                        <Icons.Calendar className="w-4 h-4 inline-block mr-1 text-gray-400" />
-                        {campaign.scheduledDate}
-                      </>
-                    ) : (
-                      <>
-                        <Icons.Clock className="w-4 h-4 inline-block mr-1 text-gray-400" />
-                        Last run: {campaign.lastRun}
-                      </>
-                    )}
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <div className="flex justify-end gap-2">
-                    {campaign.status === 'active' ? (
-                      <Button variant="ghost">
-                        <Icons.PauseCircle className="w-5 h-5" />
-                      </Button>
-                    ) : campaign.status === 'paused' ? (
-                      <Button variant="ghost">
-                        <Icons.PlayCircle className="w-5 h-5" />
-                      </Button>
-                    ) : null}
-                    <Button variant="ghost" onClick={() => handleEditCampaign(campaign)}>
-                      <Icons.Edit className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" onClick={() => handleDeleteCampaign(campaign.id)}>
-                      <Icons.Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Campaigns List */}
+      <div className="space-y-4">
+        {filteredCampaigns.map((campaign) => (
+          <motion.div
+            key={campaign.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium text-gray-900 dark:text-white">{campaign.name}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{campaign.script}</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className={`px-2 py-1 text-xs rounded-full ${
+                  campaign.status === 'completed' ? 'bg-green-100 text-green-800' :
+                  campaign.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
+                  'bg-gray-100 text-gray-800'
+                }`}>
+                  {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                </span>
+                <Button variant="ghost" size="sm">
+                  <Icons.MoreVertical className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center space-x-6 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-center">
+                <Icons.Users className="h-4 w-4 mr-1" />
+                {campaign.recipients} recipients
+              </div>
+              {campaign.answerRate && (
+                <div className="flex items-center">
+                  <Icons.PhoneCall className="h-4 w-4 mr-1" />
+                  {campaign.answerRate}% answered
+                </div>
+              )}
+              {campaign.duration && (
+                <div className="flex items-center">
+                  <Icons.Clock className="h-4 w-4 mr-1" />
+                  {campaign.duration} avg. duration
+                </div>
+              )}
+              {campaign.scheduledDate && (
+                <div className="flex items-center">
+                  <Icons.Calendar className="h-4 w-4 mr-1" />
+                  Scheduled for {campaign.scheduledDate}
+                </div>
+              )}
+              {campaign.completedDate && (
+                <div className="flex items-center">
+                  <Icons.Check className="h-4 w-4 mr-1" />
+                  Completed on {campaign.completedDate}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        ))}
       </div>
-      <ScheduleDialog open={showScheduleDialog} onClose={handleCloseScheduleDialog} campaign={selectedCampaign} />
-      <EditCampaignDialog open={editingCampaign} onClose={handleCloseEditDialog} campaign={selectedCampaign} setOpen={setEditingCampaign} />
-    </div>
+    </motion.div>
   );
 };
-
-const VoiceCampaigns = () => {
-  return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Voice Campaigns</h1>
-      <VoiceCampaignList />
-    </div>
-  );
-};
-
-export default VoiceCampaigns;

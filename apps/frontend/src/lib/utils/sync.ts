@@ -1,5 +1,5 @@
 import { RealtimeChannel } from '@supabase/supabase-js';
-import supabase from '../supabase/client';
+import { supabase } from '../supabase/client';
 
 interface SyncOperation {
   table: string;
@@ -19,70 +19,44 @@ class SyncManager {
     window.addEventListener('offline', this.handleOffline);
 
     // Load pending operations from localStorage
-    this.loadSyncQueue();
+    this.loadPendingOperations();
   }
 
-  private handleOnline = async () => {
+  private handleOnline = () => {
     this.isOnline = true;
-    console.log('Connection restored. Processing sync queue...');
-    await this.processSyncQueue();
+    this.processPendingOperations();
   };
 
   private handleOffline = () => {
     this.isOnline = false;
-    console.log('Connection lost. Operations will be queued.');
   };
 
-  private loadSyncQueue() {
-    const savedQueue = localStorage.getItem('syncQueue');
-    if (savedQueue) {
-      this.syncQueue = JSON.parse(savedQueue);
+  private loadPendingOperations() {
+    const pendingOps = localStorage.getItem('syncQueue');
+    if (pendingOps) {
+      this.syncQueue = JSON.parse(pendingOps);
     }
   }
 
-  private saveSyncQueue() {
+  private savePendingOperations() {
     localStorage.setItem('syncQueue', JSON.stringify(this.syncQueue));
   }
 
-  async addOperation(operation: SyncOperation) {
-    if (this.isOnline) {
-      // If online, try to perform the operation immediately
+  private async processPendingOperations() {
+    while (this.isOnline && this.syncQueue.length > 0) {
+      const operation = this.syncQueue[0];
       try {
-        await this.performOperation(operation);
+        await this.executeOperation(operation);
+        this.syncQueue.shift();
+        this.savePendingOperations();
       } catch (error) {
-        console.error('Error performing operation:', error);
-        this.queueOperation(operation);
-      }
-    } else {
-      // If offline, queue the operation
-      this.queueOperation(operation);
-    }
-  }
-
-  private queueOperation(operation: SyncOperation) {
-    this.syncQueue.push(operation);
-    this.saveSyncQueue();
-  }
-
-  private async processSyncQueue() {
-    if (!this.isOnline || this.syncQueue.length === 0) return;
-
-    const operations = [...this.syncQueue];
-    this.syncQueue = [];
-    this.saveSyncQueue();
-
-    for (const operation of operations) {
-      try {
-        await this.performOperation(operation);
-      } catch (error) {
-        console.error('Error processing operation:', error);
-        // Re-queue failed operations
-        this.queueOperation(operation);
+        console.error('Failed to process operation:', error);
+        break;
       }
     }
   }
 
-  private async performOperation(operation: SyncOperation) {
+  private async executeOperation(operation: SyncOperation) {
     const { table, type, data } = operation;
 
     switch (type) {
@@ -90,52 +64,51 @@ class SyncManager {
         await supabase.from(table).insert(data);
         break;
       case 'UPDATE':
-        await supabase
-          .from(table)
-          .update(data)
-          .match({ id: data.id });
+        await supabase.from(table).update(data).eq('id', data.id);
         break;
       case 'DELETE':
-        await supabase
-          .from(table)
-          .delete()
-          .match({ id: data.id });
+        await supabase.from(table).delete().eq('id', data.id);
         break;
     }
   }
 
-  subscribeToTable(table: string, callback: (payload: any) => void) {
-    if (this.channels.has(table)) {
+  public subscribeToTable(tableName: string, callback: (payload: any) => void) {
+    if (this.channels.has(tableName)) {
       return;
     }
 
-    const channel = supabase.channel(`sync_${table}`);
-    
-    channel.on('postgres_changes',
-      { event: '*', schema: 'public', table },
-      (payload) => {
-        // Handle optimistic updates
-        callback(payload);
-      }
-    ).subscribe();
+    const channel = supabase
+      .channel(`public:${tableName}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: tableName },
+        callback
+      )
+      .subscribe();
 
-    this.channels.set(table, channel);
+    this.channels.set(tableName, channel);
   }
 
-  unsubscribeFromTable(table: string) {
-    const channel = this.channels.get(table);
+  public unsubscribeFromTable(tableName: string) {
+    const channel = this.channels.get(tableName);
     if (channel) {
       channel.unsubscribe();
-      this.channels.delete(table);
+      this.channels.delete(tableName);
     }
   }
 
-  // Clean up method
-  destroy() {
+  public async queueOperation(operation: SyncOperation) {
+    this.syncQueue.push(operation);
+    this.savePendingOperations();
+
+    if (this.isOnline) {
+      await this.processPendingOperations();
+    }
+  }
+
+  public cleanup() {
     window.removeEventListener('online', this.handleOnline);
     window.removeEventListener('offline', this.handleOffline);
-    
-    // Unsubscribe from all channels
     this.channels.forEach(channel => channel.unsubscribe());
     this.channels.clear();
   }

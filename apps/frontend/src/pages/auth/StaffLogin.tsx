@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { api } from '@/services/supabase';
 
-const StaffLogin = () => {
+export const StaffLogin: React.FC = () => {
   const navigate = useNavigate();
-  const { login, loading, error } = useAuth();
+  const { signIn, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [localError, setLocalError] = useState<string | null>(null);
@@ -17,19 +18,20 @@ const StaffLogin = () => {
     
     try {
       setLocalError(null);
-      await login({ email, password });
+      await signIn(email, password);
       
       // Check if the user has the staff role
-      const user = await supabaseService.auth.getUser();
-      if (user.data.user?.user_metadata?.role !== 'staff') {
+      const { user } = await api.auth.getUser().then(({ data }) => data);
+      if (user?.user_metadata?.role !== 'staff') {
         setLocalError('Access denied. Staff access only.');
+        await api.auth.signOut();
         return;
       }
-      
-      navigate('/staff-dashboard');
+
+      navigate('/staff');
     } catch (err) {
-      console.error('Login failed:', err);
-      setLocalError(error || 'Login failed. Please check your credentials.');
+      console.error('Authentication failed:', err);
+      setLocalError('Authentication failed. Please check your credentials.');
     }
   };
 
@@ -52,7 +54,7 @@ const StaffLogin = () => {
             }}
             className="w-16 h-16"
           >
-            <Icons.UserCircle2 className="w-full h-full text-[#1B2B85]" />
+            <Icons.UserCircle className="w-full h-full text-[#1B2B85]" />
           </motion.div>
         </div>
         
@@ -63,9 +65,9 @@ const StaffLogin = () => {
           Welcome back! Please enter your credentials.
         </p>
 
-        {(localError || error) && (
+        {localError && (
           <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600">
-            {localError || error}
+            {localError}
           </div>
         )}
         
@@ -99,12 +101,13 @@ const StaffLogin = () => {
               required
             />
           </div>
-          
+
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] text-white font-medium 
-              ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90 transition-opacity'}`}
+            className={`w-full py-2 px-4 rounded-lg bg-[#1B2B85] text-white font-medium hover:bg-[#1B2B85]/90 focus:outline-none focus:ring-2 focus:ring-[#1B2B85] focus:ring-offset-2 transition-colors ${
+              loading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
@@ -113,5 +116,3 @@ const StaffLogin = () => {
     </div>
   );
 };
-
-export default StaffLogin;
