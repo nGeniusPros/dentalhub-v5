@@ -9,3 +9,4 @@ export const db = new PrismaClient({
 export const createClient = () => new PrismaClient({
     log: isDevelopment ? ['query', 'error', 'warn'] : ['error'],
 });
+export { Prisma } from '@prisma/client';

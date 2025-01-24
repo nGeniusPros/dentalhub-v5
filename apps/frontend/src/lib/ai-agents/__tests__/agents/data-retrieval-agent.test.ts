@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DataRetrievalAgent } from '../../agents/data-retrieval-agent';
+import { RequestManager } from '../../infrastructure/request-manager';
+import { ResponseCache } from '../../infrastructure/response-cache';
 import { RateLimitError, ValidationError } from '../../types/errors';
 
 describe('DataRetrievalAgent', () => {
@@ -8,7 +10,9 @@ describe('DataRetrievalAgent', () => {
   beforeEach(() => {
     agent = new DataRetrievalAgent({
       id: 'test-id',
-      apiKey: 'test-key'
+      apiToken: 'test-key',
+      rateLimit: { rpm: 5, tpm: 1000 },
+      cacheTTL: 3600
     });
   });
 

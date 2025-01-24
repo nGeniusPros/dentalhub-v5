@@ -1,5 +1,6 @@
 export * from './ai/types';
 export * from './ai/errors';
+export { AuditService } from './services/audit.service';
 
 // This will be the main entry point for all shared code
 // Future exports will include:

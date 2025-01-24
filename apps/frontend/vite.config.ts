@@ -22,6 +22,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+      '@core': path.resolve(__dirname, '../../packages/core/src'),
     },
   },
   optimizeDeps: {
@@ -29,10 +31,13 @@ export default defineConfig({
       'react',
       'react-dom',
       'react-router-dom',
-      '@radix-ui/react-tooltip',
       'lucide-react',
+      '@radix-ui/react-tooltip',
       'jotai',
       'framer-motion'
+    ],
+    exclude: [
+      '@dentalhub/core'
     ]
   },
   build: {

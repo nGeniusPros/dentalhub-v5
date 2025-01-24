@@ -5,3 +5,5 @@ export declare const db: PrismaClient<{
 export declare const createClient: () => PrismaClient<{
     log: ("query" | "warn" | "error")[];
 }, never, import("@prisma/client/runtime/library").DefaultArgs>;
+export type { Patient } from '@prisma/client';
+export { Prisma } from '@prisma/client';

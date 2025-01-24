@@ -9,3 +9,7 @@ CREATE TABLE user_profiles (
 
 -- Enable RLS
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+
+-- Add optimized indexes
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_user_profiles_practice ON user_profiles (practice_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_user_profiles_role ON user_profiles (role);

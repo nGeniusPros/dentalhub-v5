@@ -42,6 +42,11 @@ import { PatientAppointments } from './pages/patient/appointments/PatientAppoint
 import { MedicalRecords } from './pages/patient/records/MedicalRecords';
 import { BillingHistory } from './pages/patient/billing/BillingHistory';
 
+const RedirectAuthedUsers = () => {
+  const { user } = useAuth();
+  return user ? <Navigate to="/" replace /> : <Outlet />;
+};
+
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -56,6 +61,7 @@ export const AppRoutes = () => {
 
       {/* Admin Portal */}
       <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']} />}>
+        {/* Child routes */}
         {/* Quick Access */}
         <Route index element={<AdminDashboard />} />
         <Route path="revenue" element={<AdminRevenue />} />

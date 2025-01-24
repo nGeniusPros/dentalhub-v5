@@ -1,8 +1,4 @@
 
-> @dentalhub/patient@1.0.0 build C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\services\patient
-> npm run tsc
-
-
-> @dentalhub/patient@1.0.0 tsc
+> @dentalhub/patient@0.1.0 build C:\Users\micha\OneDrive\Desktop\Projects\Dental Hub\dentalhub-v5\services\patient
 > tsc
 

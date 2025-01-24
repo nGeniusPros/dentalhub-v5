@@ -1,10 +1,15 @@
 {
   "name": "dentalhub-v5",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/vite-tsconfig-paths"
+    ]
+  },
   "scripts": {
     "build": "turbo run build",
     "clean": "turbo run clean",
@@ -15,11 +20,16 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^20.10.5",
     "globals": "^15.9.0",
+    "jsdom": "^26.0.0",
     "prettier": "^3.1.1",
     "turbo": "^1.11.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
   },
   "dependencies": {
     "@dentalhub/core": "workspace:*",
@@ -29,7 +39,8 @@
     "@prisma/client": "^5.7.1",
     "@supabase/supabase-js": "^2.39.3",
     "@types/pino": "^7.0.5",
-    "pino": "^9.6.0"
+    "pino": "^9.6.0",
+    "zod": "^3.22.4"
   },
   "packageManager": "pnpm@8.6.0"
 }

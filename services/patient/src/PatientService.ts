@@ -1,91 +1,54 @@
-import { Patient, PatientFilters, PatientCreateInput, PatientUpdateInput } from './types';
-import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '@dentalhub/database';
+import { type Patient } from '@dentalhub/database';
+import { z } from 'zod';
+import { AuditService } from '@dentalhub/core';
+import { PatientError } from './errors';
+import type { PatientRepository } from './repositories';
 
+
+const PatientCreateSchema = z.object({
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  dateOfBirth: z.date(),
+  insuranceId: z.string().uuid().optional(),
+  practiceId: z.string().uuid().optional() // Or make it required based on your needs
+});
 export class PatientService {
-  private supabase: SupabaseClient<Database>;
+  constructor(
+    private readonly repository: PatientRepository,
+    private readonly audit: AuditService
+  ) {}
 
-  constructor(supabase: SupabaseClient<Database>) {
-    this.supabase = supabase;
-  }
-
-  async createPatient(input: PatientCreateInput): Promise<Patient> {
-    const { data, error } = await this.supabase
-      .from('patients')
-      .insert(input)
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
+  async createPatient(params: unknown): Promise<Patient> {
+    const parsed = PatientCreateSchema.safeParse(params);
+    
+    if (!parsed.success) {
+      throw new PatientError(
+        'Invalid patient data', 
+        'VALIDATION_ERROR',
+        parsed.error.errors
+      );
     }
 
-    return data;
-  }
+    try {
+      // Ensure practiceId is available, you might need to adjust how practiceId is obtained
+      const practiceId = 'default-practice-id'; // Replace with actual practice ID logic
 
-  async getPatient(id: string): Promise<Patient | null> {
-    const { data, error } = await this.supabase
-      .from('patients')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    return data;
-  }
-
-  async listPatients(filters?: PatientFilters): Promise<Patient[]> {
-    let query = this.supabase
-      .from('patients')
-      .select('*')
-
-    if (filters) {
-      for (const key in filters) {
-        if (filters[key]) {
-          query = query.ilike(key, `%${filters[key]}%`);
-        }
-      }
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      throw error;
-    }
-
-    return data;
-  }
-
-  async updatePatient(id: string, input: PatientUpdateInput): Promise<Patient | null> {
-    const { data, error } = await this.supabase
-      .from('patients')
-      .update(input)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    return data;
-  }
-
-  async deletePatient(id: string): Promise<void> {
-    const { error } = await this.supabase
-      .from('patients')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      throw error;
+      const patientData = {
+        ...parsed.data,
+        practiceId, // Add practiceId
+      };
+      
+      const patient = await this.repository.create(patientData);
+      await this.audit.log('PATIENT_CREATED', patient.id);
+      return patient;
+    } catch (error) {
+      throw new PatientError(
+        'Failed to create patient',
+        'DATABASE_ERROR',
+        error
+      );
     }
   }
+
+  // Additional methods following same pattern
 }
-
-export const createPatientService = (supabase: SupabaseClient<Database>): PatientService => {
-  return new PatientService(supabase);
-};

@@ -14,6 +14,14 @@ Resolving in CJS mode with conditions 'import', 'types'.
 Loading module as file / folder, candidate module location 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/ai/errors', target file types: TypeScript, JavaScript, Declaration, JSON.
 File 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/ai/errors.ts' exists - use it as a name resolution result.
 ======== Module name './ai/errors' was successfully resolved to 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/ai/errors.ts'. ========
+======== Resolving module './services/audit.service' from 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/index.ts'. ========
+Explicitly specified module resolution kind: 'Bundler'.
+Resolving in CJS mode with conditions 'import', 'types'.
+Loading module as file / folder, candidate module location 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/audit.service', target file types: TypeScript, JavaScript, Declaration, JSON.
+File name 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/audit.service' has a '.service' extension - stripping it.
+File 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/audit.d.service.ts' does not exist.
+File 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/audit.service.ts' exists - use it as a name resolution result.
+======== Module name './services/audit.service' was successfully resolved to 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/audit.service.ts'. ========
 ======== Resolving module 'zod' from 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/ai/types.ts'. ========
 Explicitly specified module resolution kind: 'Bundler'.
 Resolving in CJS mode with conditions 'import', 'types'.
@@ -263,6 +271,20 @@ Resolving in CJS mode with conditions 'import', 'types'.
 Loading module as file / folder, candidate module location 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/ai/types', target file types: TypeScript, JavaScript, Declaration, JSON.
 File 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/ai/types.ts' exists - use it as a name resolution result.
 ======== Module name './types' was successfully resolved to 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/ai/types.ts'. ========
+======== Resolving module './audit.service.js' from 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/index.ts'. ========
+Explicitly specified module resolution kind: 'Bundler'.
+Resolving in CJS mode with conditions 'import', 'types'.
+Loading module as file / folder, candidate module location 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/audit.service.js', target file types: TypeScript, JavaScript, Declaration, JSON.
+File name 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/audit.service.js' has a '.js' extension - stripping it.
+File 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/audit.service.ts' exists - use it as a name resolution result.
+======== Module name './audit.service.js' was successfully resolved to 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/audit.service.ts'. ========
+======== Resolving module './monitoring.service.js' from 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/index.ts'. ========
+Explicitly specified module resolution kind: 'Bundler'.
+Resolving in CJS mode with conditions 'import', 'types'.
+Loading module as file / folder, candidate module location 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/monitoring.service.js', target file types: TypeScript, JavaScript, Declaration, JSON.
+File name 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/monitoring.service.js' has a '.js' extension - stripping it.
+File 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/monitoring.service.ts' exists - use it as a name resolution result.
+======== Module name './monitoring.service.js' was successfully resolved to 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/monitoring.service.ts'. ========
 ======== Resolving module 'ws' from 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/packages/core/src/services/retell/RetellService.ts'. ========
 Explicitly specified module resolution kind: 'Bundler'.
 Resolving in CJS mode with conditions 'import', 'types'.
@@ -6291,17 +6313,17 @@ Directory 'C:/node_modules' does not exist, skipping all lookups in it.
 ======== Module name '@typescript/lib-dom' was not resolved. ========
 File 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/node_modules/.pnpm/typescript@5.7.2/node_modules/typescript/lib/package.json' does not exist according to earlier cached lookups.
 File 'C:/Users/micha/OneDrive/Desktop/Projects/Dental Hub/dentalhub-v5/node_modules/.pnpm/typescript@5.7.2/node_modules/typescript/package.json' exists according to earlier cached lookups.
-Files:             169
-Lines:           92275
-Identifiers:     87000
-Symbols:         60580
-Types:              89
-Instantiations:      0
-Memory used:    99936K
-I/O read:        0.34s
-I/O write:       0.00s
-Parse time:      3.09s
-Bind time:       0.28s
-Check time:      0.00s
-Emit time:       0.00s
-Total time:      3.36s
+Files:              172
+Lines:            92288
+Identifiers:      87010
+Symbols:          60597
+Types:               89
+Instantiations:       0
+Memory used:    100149K
+I/O read:         0.12s
+I/O write:        0.00s
+Parse time:       1.33s
+Bind time:        0.28s
+Check time:       0.00s
+Emit time:        0.00s
+Total time:       1.61s
