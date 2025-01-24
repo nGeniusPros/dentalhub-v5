@@ -1,85 +1,64 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import * as Icons from 'lucide-react';
+import { Link } from '@/components/ui/link';
 import { QuickActionsSection } from './components/QuickActionsSection';
 import { RecentActivitySection } from './components/RecentActivitySection';
 import { StatsSection } from './components/StatsSection';
 import { TasksSection } from './components/TasksSection';
-import { ScheduleSection } from './schedule/components/ScheduleSection';
+import { ScheduleSection } from './components/schedule/ScheduleSection';
 import { StaffWelcome } from './components/staff/StaffWelcome';
-import { MessageDialog } from './components/MessageDialog';
-import { ReminderDialog } from './components/ReminderDialog';
-import { CommentDialog } from './components/CommentDialog';
+import { MessageDialog } from './components/dialogs/MessageDialog';
+import { ReminderDialog } from './components/dialogs/ReminderDialog';
+import { CommentDialog } from './components/dialogs/CommentDialog';
+import { cn } from '@/lib/utils';
 
-const StaffDashboard = () => {
+interface Patient {
+  id: string;
+  name: string;
+  appointmentTime?: string;
+  status?: string;
+  notes?: string;
+}
+
+export const StaffDashboard: React.FC = () => {
   const [showMessage, setShowMessage] = React.useState(false);
   const [showReminder, setShowReminder] = React.useState(false);
   const [showComment, setShowComment] = React.useState(false);
-  const [selectedPatient, setSelectedPatient] = React.useState<any>(null);
+  const [selectedPatient, setSelectedPatient] = React.useState<Patient | null>(null);
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6 p-6"
+    >
       <StaffWelcome />
-      <StatsSection />
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <ScheduleSection />
-        </div>
-        <TasksSection />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatsSection />
         <QuickActionsSection />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TasksSection />
         <RecentActivitySection />
       </div>
+      <ScheduleSection />
 
-      {/* Message Dialog */}
-      {showMessage && selectedPatient && (
-        <MessageDialog
-          isOpen={showMessage}
-          onClose={() => {
-            setShowMessage(false);
-            setSelectedPatient(null);
-          }}
-          onSend={(message) => {
-            console.log('Sending message:', message);
-            setShowMessage(false);
-            setSelectedPatient(null);
-          }}
-          recipient={selectedPatient}
-        />
-      )}
-
-      {/* Reminder Dialog */}
-      {showReminder && selectedPatient && (
-        <ReminderDialog
-          isOpen={showReminder}
-          onClose={() => {
-            setShowReminder(false);
-            setSelectedPatient(null);
-          }}
-          onSend={(reminder) => {
-            console.log('Sending reminder:', reminder);
-            setShowReminder(false);
-            setSelectedPatient(null);
-          }}
-          recipient={selectedPatient}
-        />
-      )}
-
-      {/* Comment Dialog */}
-      {showComment && (
-        <CommentDialog
-          isOpen={showComment}
-          onClose={() => setShowComment(false)}
-          onSubmit={(comment) => {
-            console.log('Adding comment:', comment);
-            setShowComment(false);
-          }}
-        />
-      )}
-    </div>
+      <MessageDialog
+        isOpen={showMessage}
+        onClose={() => setShowMessage(false)}
+        patient={selectedPatient}
+      />
+      <ReminderDialog
+        isOpen={showReminder}
+        onClose={() => setShowReminder(false)}
+        patient={selectedPatient}
+      />
+      <CommentDialog
+        isOpen={showComment}
+        onClose={() => setShowComment(false)}
+        patient={selectedPatient}
+      />
+    </motion.div>
   );
 };
-
-export default StaffDashboard;

@@ -1,8 +1,22 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Button } from '../../../components/ui/button';
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
+import { Button } from '../../../../components/ui/button';
+import { motion } from 'framer-motion';
 
 export const HygieneAnalytics = () => {
   const hygieneData = [

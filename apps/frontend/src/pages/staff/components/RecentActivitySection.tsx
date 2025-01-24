@@ -1,140 +1,97 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { formatTime } from '../../../lib/utils/date';
-import supabase from '../../../lib/supabase/client';
+import { cn } from '../../../../lib/utils';
+import { supabase } from '../../../../lib/supabase/client';
+
+interface Activity {
+  id: string;
+  type: 'appointment' | 'message' | 'treatment' | 'payment';
+  title: string;
+  description: string;
+  timestamp: string;
+  status?: 'completed' | 'pending' | 'cancelled';
+  icon: keyof typeof Icons;
+  color: string;
+}
+
+const ActivityItem: React.FC<Activity> = ({ type, title, description, timestamp, status, icon, color }) => {
+  const Icon = Icons[icon];
+  
+  return (
+    <div className="flex space-x-4 py-4">
+      <div className={cn('p-2 rounded-full', color)}>
+        <Icon className="h-5 w-5 text-white" />
+      </div>
+      <div className="flex-1 space-y-1">
+        <div className="flex items-center justify-between">
+          <h4 className="text-sm font-medium text-gray-900 dark:text-white">{title}</h4>
+          <span className="text-xs text-gray-500 dark:text-gray-400">{timestamp}</span>
+        </div>
+        <p className="text-sm text-gray-600 dark:text-gray-300">{description}</p>
+        {status && (
+          <span className={cn(
+            'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+            status === 'completed' ? 'bg-green-100 text-green-800' :
+            status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+            'bg-red-100 text-red-800'
+          )}>
+            {status}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export const RecentActivitySection = () => {
-  const [activities, setActivities] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const checkServerStatus = async () => {
-    try {
-      const response = await fetch('http://localhost:5173/');
-      return response.ok;
-    } catch (err) {
-      console.error('Server is not running:', err);
-      return false;
+  const [activities, setActivities] = React.useState<Activity[]>([
+    {
+      id: '1',
+      type: 'appointment',
+      title: 'New Appointment',
+      description: 'Dr. Smith scheduled a checkup with John Doe',
+      timestamp: '2 hours ago',
+      status: 'pending',
+      icon: 'Calendar',
+      color: 'bg-blue-500'
+    },
+    {
+      id: '2',
+      type: 'message',
+      title: 'Message Sent',
+      description: 'Reminder sent to Sarah Johnson about her upcoming appointment',
+      timestamp: '3 hours ago',
+      icon: 'MessageSquare',
+      color: 'bg-green-500'
+    },
+    {
+      id: '3',
+      type: 'treatment',
+      title: 'Treatment Completed',
+      description: 'Root canal procedure completed for Mike Wilson',
+      timestamp: '5 hours ago',
+      status: 'completed',
+      icon: 'CheckCircle',
+      color: 'bg-purple-500'
     }
-  };
-
-  useEffect(() => {
-    const fetchActivities = async () => {
-      setLoading(true);
-      setError(null);
-      const serverRunning = await checkServerStatus();
-      if (!serverRunning) {
-        setError('Server is not reachable. Please check the server status.');
-        setLoading(false);
-        return;
-      }
-      try {
-        const { data: appointments, error: appointmentsError } = await supabase
-          .from('appointments')
-          .select(`
-            *,
-            patient:patients!inner(id, first_name, last_name)
-          `)
-          .order('created_at', { ascending: false })
-          .limit(3);
-
-        if (appointmentsError) {
-          throw appointmentsError;
-        }
-
-        const { data: treatmentPlans, error: treatmentError } = await supabase
-          .from('treatment_plans')
-          .select(`
-            *,
-            patient:patients!inner(id, first_name, last_name)
-          `)
-          .order('created_at', { ascending: false })
-          .limit(3);
-
-        if (treatmentError) {
-          throw treatmentError;
-        }
-
-        const { data: messages, error: messageError } = await supabase
-          .from('messages_notifications')
-          .select(`
-            *,
-            recipient:patients!inner(id, first_name, last_name)
-          `)
-          .order('created_at', { ascending: false })
-          .limit(3);
-
-        if (messageError) {
-          throw messageError;
-        }
-
-        const combinedActivities = [
-          ...(appointments || []).map((apt: any) => ({
-            type: 'appointment',
-            message: 'New appointment scheduled',
-            patient: `${apt.patient?.first_name} ${apt.patient?.last_name}`,
-            time: apt.start_time,
-            icon: 'Calendar'
-          })),
-          ...(treatmentPlans || []).map((plan: any) => ({
-            type: 'treatment',
-            message: 'Treatment plan updated',
-            patient: `${plan.patient?.first_name} ${plan.patient?.last_name}`,
-            time: plan.created_at,
-            icon: 'FileText'
-          })),
-          ...(messages || []).map((msg: any) => ({
-            type: 'message',
-            message: 'Message sent to patient',
-            patient: `${msg.recipient?.first_name} ${msg.recipient?.last_name}`,
-            time: msg.created_at,
-            icon: 'MessageSquare'
-          }))
-        ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 3);
-
-        setActivities(combinedActivities);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchActivities();
-  }, [supabase]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  ]);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white p-6 rounded-xl shadow-lg border border-gray-200"
+      className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
     >
-      <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
-      <div className="space-y-4">
-        {activities.map((activity, index) => (
-          <div key={index} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
-            <div className={`p-2 rounded-lg ${
-              activity.type === 'appointment' ? 'bg-blue-100 text-blue-600' :
-              activity.type === 'treatment' ? 'bg-purple-100 text-purple-600' :
-              'bg-green-100 text-green-600'
-            }`}>
-              {React.createElement((Icons as any)[activity.icon], {
-                className: 'w-5 h-5'
-              })}
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-gray-900">{activity.message}</p>
-              <p className="text-sm text-gray-500">Patient: {activity.patient}</p>
-              <p className="text-sm text-gray-500">{formatTime(activity.time)}</p>
-            </div>
-          </div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Recent Activity</h2>
+        <button className="text-primary hover:text-primary/80">
+          View all
+        </button>
+      </div>
+      <div className="divide-y divide-gray-200 dark:divide-gray-700">
+        {activities.map((activity) => (
+          <ActivityItem key={activity.id} {...activity} />
         ))}
       </div>
     </motion.div>

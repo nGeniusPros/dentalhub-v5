@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { Button } from '../../components/ui/button';
-import supabase from '../../lib/supabase/client';
+import { Button } from '../../../components/ui/button';
+import supabase from '../../../lib/supabase/client';
 
-const Patients = () => {
+export const AdminPatients = () => {
   const [patients, setPatients] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -182,5 +182,3 @@ const Patients = () => {
     </div>
   );
 };
-
-export default Patients;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
+import { Button } from '../../../../components/ui/button';
 
 export const MarketingMetrics = () => {
   const channels = [

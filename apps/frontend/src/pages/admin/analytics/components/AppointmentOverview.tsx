@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
-import { AppointmentsChart } from '../../../components/dashboard/charts/AppointmentsChart';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { AppointmentsChart } from "../../../../components/dashboard/charts/AppointmentsChart";
 
 export const AppointmentOverview = () => {
   const data = [

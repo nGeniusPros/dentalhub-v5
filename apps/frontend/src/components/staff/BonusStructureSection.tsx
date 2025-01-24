@@ -3,22 +3,26 @@ import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Button } from '../ui/button';
 
-interface BonusStructureProps {
-  value: {
-    enrolled: boolean;
-    type: string;
-    frequency: string;
-    targets: Array<{
-      metric: string;
-      target: number;
-      bonus: number;
-    }>;
-    customPayoutDates?: string[];
-    notes?: string;
-  };
-  onChange: (value: any) => void;
+
+interface BonusTarget {
+  metric: string;
+  target: number;
+  bonus: number;
 }
 
+interface BonusStructureValue {
+  enrolled: boolean;
+  type: 'production' | 'collection' | 'performance' | 'hybrid' | 'custom';
+  frequency: 'monthly' | 'quarterly' | 'biannual' | 'annual' | 'custom';
+  targets: BonusTarget[];
+  customPayoutDates?: string[];
+  notes?: string;
+}
+
+interface BonusStructureProps {
+  value: BonusStructureValue;
+  onChange: (value: BonusStructureValue) => void;
+}
 export const BonusStructureSection: React.FC<BonusStructureProps> = ({
   value,
   onChange
@@ -64,7 +68,7 @@ export const BonusStructureSection: React.FC<BonusStructureProps> = ({
                 </label>
                 <select
                   value={value.type}
-                  onChange={(e) => onChange({ ...value, type: e.target.value })}
+                  onChange={(e) => onChange({ ...value, type: e.target.value as BonusStructureValue['type'] })}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value="production">Production Based</option>
@@ -81,7 +85,7 @@ export const BonusStructureSection: React.FC<BonusStructureProps> = ({
                 </label>
                 <select
                   value={value.frequency}
-                  onChange={(e) => onChange({ ...value, frequency: e.target.value })}
+                  onChange={(e) => onChange({ ...value, frequency: e.target.value as BonusStructureValue['frequency'] })}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value="monthly">Monthly</option>

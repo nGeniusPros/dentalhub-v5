@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { cn } from '../../utils/cn';
+import { cn } from '../../../lib/utils';
 
-const Billing = () => {
+export const BillingHistory = () => {
   const transactions = [
     { 
       date: 'Mar 1, 2024',
@@ -93,5 +93,3 @@ const Billing = () => {
     </div>
   );
 };
-
-export default Billing;

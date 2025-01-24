@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { Button } from '../../components/ui/button';
-import { AIConsultantChat } from '../../components/ai/AIConsultantChat';
+import { Button } from '../../../components/ui/button';
+import { AIConsultantChat } from '../../../components/ai/AIConsultantChat';
 
 const quickQuestions = [
   {
@@ -52,7 +52,7 @@ const quickQuestions = [
   }
 ];
 
-const AIPracticeConsultant = () => {
+export const AIPracticeConsultant = () => {
   const [selectedQuestion, setSelectedQuestion] = React.useState('');
   const [selectedMetric, setSelectedMetric] = React.useState('revenue');
 
@@ -170,5 +170,3 @@ const AIPracticeConsultant = () => {
     </div>
   );
 };
-
-export default AIPracticeConsultant;

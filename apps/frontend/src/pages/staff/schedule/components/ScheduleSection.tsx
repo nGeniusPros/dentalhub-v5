@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
-import { cn } from '../../../lib/utils';
-import { formatTime } from '../../../lib/utils/date';
-import { AppointmentActions } from '../../../components/appointments/AppointmentActions';
-import supabase from '../../../lib/supabase/client';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { formatTime } from '@/lib/utils/date';
+import { AppointmentActions } from '@/components/appointments/AppointmentActions';
+import { supabase } from '@/lib/supabase/client';
 
 export const ScheduleSection = () => {
   const [appointments, setAppointments] = useState<any[]>([]);

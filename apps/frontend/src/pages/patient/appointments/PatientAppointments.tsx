@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { cn } from '../../utils/cn';
-import supabase from '../../lib/supabase/client';
-import { formatTime } from '../../lib/utils/date';
+import { cn } from '../../../lib/utils';
+import supabase from '../../../lib/supabase/client';
+import { formatTime } from '../../../lib/utils/date';
 
-const Appointments = () => {
+export const PatientAppointments = () => {
   const [appointments, setAppointments] = useState<any[]>([]);
 
   useEffect(() => {
@@ -94,5 +94,3 @@ const Appointments = () => {
     </div>
   );
 };
-
-export default Appointments;

@@ -12,7 +12,7 @@ import { PatientLogin } from './pages/auth/PatientLogin';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminPatients } from './pages/admin/patients/AdminPatients';
 import { AdminStaff } from './pages/admin/staff/AdminStaff';
-import { PracticeAnalytics } from './pages/admin/analytics/PracticeAnalytics';
+import { PracticeAnalytics } from './pages/admin/analytics/components/PracticeAnalytics';
 import { MembershipPlans } from './pages/admin/membership/MembershipPlans';
 import { EmailCampaigns } from './pages/admin/communications/EmailCampaigns';
 import { SMSCampaigns } from './pages/admin/communications/SMSCampaigns';

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
-import { supabaseService } from '../../services/supabase';
-import type { Database } from '../../types/database.types';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabaseService } from '@/services/supabase';
+import type { Database } from '@/types/database.types';
 
 type StaffProfile = Database['public']['Tables']['staff_profiles']['Row'] & {
   user: {
     id: string;
     email: string;
-    raw_user_meta_data: Record<string, any>;
+    raw_user_meta_data: { name?: string };
   };
 };
 

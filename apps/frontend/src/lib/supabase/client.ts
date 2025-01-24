@@ -1,53 +1,34 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-let supabase: SupabaseClient | null = null;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const getSupabaseClient = () => {
-  if (supabase) return supabase;
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Missing Supabase environment variables');
+}
 
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
-  if (!supabaseUrl) {
-    throw new Error('VITE_SUPABASE_URL environment variable is required');
+// Error handling
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT') {
+    console.log('User signed out');
+  } else if (event === 'SIGNED_IN') {
+    console.log('User signed in:', session?.user?.email);
+  } else if (event === 'TOKEN_REFRESHED') {
+    console.log('Token refreshed');
   }
+});
 
-  if (!supabaseKey) {
-    throw new Error('VITE_SUPABASE_ANON_KEY environment variable is required');
-  }
-
-  supabase = createClient(supabaseUrl, supabaseKey, {
-    auth: {
-      autoRefreshToken: true,
-      persistSession: true,
-    },
-  });
-
-  // Error handling
-  supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_OUT') {
-      console.log('User signed out');
-    } else if (event === 'SIGNED_IN') {
-      console.log('User signed in:', session?.user?.email);
-    } else if (event === 'TOKEN_REFRESHED') {
-      console.log('Token refreshed');
-    }
-  });
-
-  // Log initial session
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    console.log('Initial session', session);
-  });
-
-  return supabase;
-};
+// Log initial session
+supabase.auth.getSession().then(({ data: { session } }) => {
+  console.log('Initial session', session);
+});
 
 // Real-time Subscriptions Setup
 export const setupSubscriptions = () => {
-  const client = getSupabaseClient();
-
   // Appointments Channel
-  client.channel('appointments')
+  supabase.channel('appointments')
     .on('postgres_changes',
       { event: '*', schema: 'public', table: 'appointments' },
       (payload) => {
@@ -68,7 +49,7 @@ export const setupSubscriptions = () => {
     .subscribe();
 
   // Messages/Notifications Channel
-  client.channel('messages')
+  supabase.channel('messages')
     .on('postgres_changes',
       { event: '*', schema: 'public', table: 'messages_notifications' },
       (payload) => {
@@ -90,7 +71,7 @@ export const setupSubscriptions = () => {
     .subscribe();
 
   // Comments Channel
-  client.channel('comments')
+  supabase.channel('comments')
     .on('postgres_changes',
       { event: '*', schema: 'public', table: 'comments' },
       (payload) => {
@@ -114,5 +95,5 @@ export const setupSubscriptions = () => {
 // Initialize subscriptions
 setupSubscriptions();
 
-// Export the getter function as default
-export default getSupabaseClient;
+// Export the supabase client as default
+export default supabase;

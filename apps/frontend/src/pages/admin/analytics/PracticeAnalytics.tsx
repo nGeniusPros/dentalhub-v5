@@ -2,17 +2,17 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Button } from '../../components/ui/button';
+import { Button } from '../../../components/ui/button';
 
-const Analytics = () => {
+export const PracticeAnalytics = () => {
   // Mock data - would come from PMS API
   const data = [
     { month: 'Jan', revenue: 52000, patients: 145, treatments: 289 },
     { month: 'Feb', revenue: 48000, patients: 132, treatments: 254 },
     { month: 'Mar', revenue: 61000, patients: 156, treatments: 321 },
-    { month: 'Apr', revenue: 55000, patients: 142, treatments: 298 },
-    { month: 'May', revenue: 59000, patients: 151, treatments: 312 },
-    { month: 'Jun', revenue: 63000, patients: 160, treatments: 334 },
+    { month: 'Apr', revenue: 57000, patients: 142, treatments: 298 },
+    { month: 'May', revenue: 63000, patients: 158, treatments: 332 },
+    { month: 'Jun', revenue: 55000, patients: 137, treatments: 276 },
   ];
 
   return (
@@ -121,5 +121,3 @@ const Analytics = () => {
     </div>
   );
 };
-
-export default Analytics;

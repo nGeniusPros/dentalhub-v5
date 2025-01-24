@@ -21,6 +21,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@dentalhub/core': path.resolve(__dirname, '../../packages/core/dist'),
+      '@dentalhub/components': path.resolve(__dirname, '../../packages/components/dist'),
+      '@dentalhub/utils': path.resolve(__dirname, '../../packages/utils/dist'),
     },
   },
   optimizeDeps: {

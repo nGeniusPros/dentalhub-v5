@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { cn } from '../../lib/utils';
-import { useNotifications } from '../../contexts/NotificationContext';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useNotifications } from '@/contexts/NotificationContext';
+interface StaffAssignment {
+  staffId: string;
+  assignedAt: string;
+  status: 'pending' | 'active' | 'completed';
+}
+
+interface FilterState {
+  department: string;
+  role: string;
+  availability: string;
+}
 
 interface AssignStaffModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAssign: (assignments: any) => void;
-  currentAssignments?: any[];
+  onAssign: (assignments: StaffAssignment[]) => void;
+  currentAssignments?: StaffAssignment[];
 }
 
 export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
@@ -19,10 +30,10 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
   currentAssignments = []
 }) => {
   const { dispatch: notifyDispatch } = useNotifications();
-  const [assignments, setAssignments] = useState<any[]>(currentAssignments);
+  const [assignments, setAssignments] = useState<StaffAssignment[]>(currentAssignments);
   const [selectedStaff, setSelectedStaff] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<FilterState>({
     department: '',
     role: '',
     availability: ''
@@ -40,7 +51,7 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
     const newAssignments = selectedStaff.map(staffId => ({
       staffId,
       assignedAt: new Date().toISOString(),
-      status: 'pending'
+      status: 'pending' as const
     }));
 
     onAssign(newAssignments);
@@ -106,7 +117,7 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
             <div className="grid grid-cols-3 gap-4">
               <select
                 value={filters.department}
-                onChange={(e) => setFilters({ ...filters, department: e.target.value })}
+                onChange={(e) => setFilters({ ...filters, department: e.target.value as FilterState['department'] })}
                 className="px-4 py-2 border border-gray-200 rounded-lg"
               >
                 <option value="">All Departments</option>
