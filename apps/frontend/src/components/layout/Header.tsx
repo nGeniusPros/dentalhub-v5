@@ -24,7 +24,7 @@ export const Header = () => {
               }}
               className="w-8 h-8"
             >
-              <Icons.Tooth className="w-full h-full text-[#1B2B85]" />
+              <Icons.Heart className="w-full h-full text-[#1B2B85]" />
             </motion.div>
             <span className="text-xl font-bold bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] text-transparent bg-clip-text">
               DentalHub

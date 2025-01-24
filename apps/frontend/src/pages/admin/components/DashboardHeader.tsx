@@ -1,23 +1,26 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
+import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const DashboardHeader = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const name = user?.user_metadata?.name || 'Admin';
 
   return (
     <motion.div 
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex items-center justify-between"
+      className="flex items-center justify-between bg-white p-6 rounded-xl border border-gray-200 shadow-sm"
     >
       <div>
-        <h1 className="text-2xl font-bold bg-gradient-primary text-transparent bg-clip-text">
+        <h1 className="text-2xl font-bold text-[#1B2B85]">
           Practice Overview
         </h1>
-        <p className="text-gray-500 mt-1">Welcome back, Dr. Sarah Wilson</p>
+        <p className="text-gray-500 mt-1">Welcome back, {name}</p>
       </div>
       <div className="flex gap-3">
         <Button 
@@ -37,7 +40,7 @@ export const DashboardHeader = () => {
           AI Insights
         </Button>
         <Button 
-          className="bg-primary hover:bg-primary/90 text-white"
+          className="bg-[#1B2B85] hover:bg-[#1B2B85]/90 text-white"
           onClick={() => navigate('/admin-dashboard/staff')}
         >
           <Icons.UserPlus className="w-4 h-4 mr-2" />

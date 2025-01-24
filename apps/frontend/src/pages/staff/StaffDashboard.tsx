@@ -1,13 +1,14 @@
 import React from 'react';
-import { StaffWelcome } from '../../components/staff/StaffWelcome';
-import { StatsSection } from './sections/StatsSection';
-import { ScheduleSection } from './sections/ScheduleSection';
-import { TasksSection } from './sections/TasksSection';
-import { QuickActionsSection } from './sections/QuickActionsSection';
-import { RecentActivitySection } from './sections/RecentActivitySection';
-import { MessageDialog } from '../../components/MessageDialog';
-import { ReminderDialog } from '../../components/ReminderDialog';
-import { CommentDialog } from '../../components/CommentDialog';
+import { motion } from 'framer-motion';
+import { QuickActionsSection } from './components/QuickActionsSection';
+import { RecentActivitySection } from './components/RecentActivitySection';
+import { StatsSection } from './components/StatsSection';
+import { TasksSection } from './components/TasksSection';
+import { ScheduleSection } from './schedule/components/ScheduleSection';
+import { StaffWelcome } from './components/staff/StaffWelcome';
+import { MessageDialog } from './components/MessageDialog';
+import { ReminderDialog } from './components/ReminderDialog';
+import { CommentDialog } from './components/CommentDialog';
 
 const StaffDashboard = () => {
   const [showMessage, setShowMessage] = React.useState(false);

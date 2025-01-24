@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Header } from './Header';
+import { ROUTES } from '../../lib/constants/routes';
 
 interface NavItem {
   label: string;
@@ -12,65 +13,86 @@ interface NavItem {
   roles?: string[];
 }
 
-export const DashboardLayout = () => {
+interface DashboardLayoutProps {
+  children: React.ReactNode;
+}
+
+export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user } = useAuth();
   const location = useLocation();
+  const userRole = user?.user_metadata?.role || 'patient';
+
+  const getDashboardPath = () => {
+    switch (userRole) {
+      case 'admin':
+        return ROUTES.DASHBOARD.ADMIN;
+      case 'staff':
+        return ROUTES.DASHBOARD.STAFF;
+      default:
+        return ROUTES.DASHBOARD.PATIENT;
+    }
+  };
 
   const navItems: NavItem[] = [
     {
       label: 'Dashboard',
       icon: 'Home',
-      path: '/dashboard',
+      path: getDashboardPath(),
       roles: ['admin', 'staff', 'patient'],
     },
     {
       label: 'Appointments',
       icon: 'Calendar',
-      path: '/appointments',
+      path: `${getDashboardPath()}/appointments`,
       roles: ['admin', 'staff', 'patient'],
     },
     {
       label: 'Patients',
       icon: 'Users',
-      path: '/patients',
+      path: `${getDashboardPath()}/patients`,
       roles: ['admin', 'staff'],
     },
     {
       label: 'Staff',
       icon: 'UserPlus',
-      path: '/staff',
+      path: `${getDashboardPath()}/staff`,
       roles: ['admin'],
     },
     {
       label: 'Analytics',
       icon: 'BarChart2',
-      path: '/analytics',
+      path: `${getDashboardPath()}/analytics`,
       roles: ['admin'],
     },
     {
       label: 'Settings',
       icon: 'Settings',
-      path: '/settings',
+      path: `${getDashboardPath()}/settings`,
       roles: ['admin', 'staff', 'patient'],
+    },
+    {
+      label: 'Resources',
+      icon: 'BookOpen',
+      path: ROUTES.DASHBOARD.RESOURCES,
+      roles: ['admin'],
     },
   ];
 
   const filteredNavItems = navItems.filter(
-    item => !item.roles || item.roles.includes(user?.user_metadata?.role || '')
+    item => !item.roles || item.roles.includes(userRole)
   );
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
-      <div className="flex">
+      <div className="flex min-h-[calc(100vh-4rem)]">
         {/* Sidebar */}
         <motion.aside
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-4rem)] p-4"
+          className="w-64 bg-white border-r border-gray-200 min-h-full"
         >
-          <nav className="space-y-2">
+          <nav className="p-4 space-y-2">
             {filteredNavItems.map((item) => {
               const Icon = Icons[item.icon];
               const isActive = location.pathname === item.path;
@@ -94,9 +116,13 @@ export const DashboardLayout = () => {
         </motion.aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8">
-          <Outlet />
-        </main>
+        <motion.main 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex-1 p-8 bg-gray-50 overflow-auto"
+        >
+          {children}
+        </motion.main>
       </div>
     </div>
   );
