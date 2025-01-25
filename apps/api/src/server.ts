@@ -1,5 +1,6 @@
-import app from './app';
-import { createRedisClient } from '@dental/core/redis';
+import app from './app.js';
+import { createRedisClient } from '@dental/core/redis.js';
+import { InfrastructureError } from './errors.js';
 
 const PORT = process.env.PORT || 3000;
 

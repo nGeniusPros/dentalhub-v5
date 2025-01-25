@@ -120,13 +120,17 @@ model ProcedureFeeSchedule {
 }
 
 model Patient {
-  id           String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  firstName    String
-  lastName     String
-  dateOfBirth  DateTime  @db.Date
-  insuranceId  String?   @db.Uuid
-  created_at   DateTime  @default(now()) @db.Timestamptz
-  updated_at   DateTime  @default(now()) @db.Timestamptz @updatedAt
+  id             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  practice_id    String    @db.VarChar(20)
+  firstName      String
+  lastName       String
+  dateOfBirth    DateTime  @db.Date
+  insuranceId    String?   @db.Uuid
+  medical_history Json?    @db.JsonB
+  created_at     DateTime  @default(now()) @db.Timestamptz
+  updated_at     DateTime  @default(now()) @db.Timestamptz @updatedAt
 
+  @@unique([practice_id], name: "patients_practice_id_unique")
+  @@index([practice_id], name: "patients_practice_id_idx")
   @@map("patients")
 }

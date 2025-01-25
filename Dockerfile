@@ -1,5 +1,5 @@
 # Stage 1: Base
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Security: Add security updates and create non-root user
 RUN apk update && apk upgrade && \
@@ -32,25 +32,25 @@ COPY --chown=nodejs:nodejs packages/tsconfig/package.json ./packages/tsconfig/
 # Install dependencies with security flags
 RUN pnpm install --frozen-lockfile
 
+
+RUN cd packages/database && pnpm exec prisma generate
+
 # Stage 3: Builder
 FROM deps AS builder
-
 # Copy source with correct ownership
 COPY --chown=nodejs:nodejs . .
-
-# Added lines to copy tsconfig and core directories specifically
-COPY packages/tsconfig ./packages/tsconfig
-COPY packages/core ./packages/core
 
 # Debugging: List files in /app/packages
 RUN ls -la /app/packages
 
-# Build all workspaces
-WORKDIR /app/apps/api
-RUN pnpm run build
+# Install turbo globally
+RUN pnpm add turbo --global
+
+# Build core packages first
+RUN pnpm turbo build --filter=@dentalhub/core... --filter=!@dentalhub/frontend
 
 # Stage 4: Production
-FROM node:18-alpine AS production
+FROM node:20-alpine AS production
 
 # Install security updates and dumb-init
 RUN apk update && apk upgrade && \

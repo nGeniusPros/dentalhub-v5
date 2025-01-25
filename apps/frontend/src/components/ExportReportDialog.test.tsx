@@ -1,22 +1,24 @@
 import React from 'react';
+import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ExportReportDialog from './ExportReportDialog';
 import { useNotifications } from '../contexts/NotificationContext';
 import { act } from 'react-dom/test-utils';
 
+import { vi } from 'vitest';
 // Mock the useNotifications hook
-jest.mock('../contexts/NotificationContext', () => ({
+vi.mock('../contexts/NotificationContext', () => ({
   useNotifications: () => ({
     dispatch: jest.fn(),
   }),
 }));
 
-const mockOnExport = jest.fn();
-const mockOnClose = jest.fn();
+const mockOnExport = vi.fn();
+const mockOnClose = vi.fn();
 
 describe('ExportReportDialog', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should render the dialog when isOpen is true', () => {

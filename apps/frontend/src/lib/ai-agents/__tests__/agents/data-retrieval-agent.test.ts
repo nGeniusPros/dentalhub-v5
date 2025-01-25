@@ -10,7 +10,7 @@ describe('DataRetrievalAgent', () => {
   beforeEach(() => {
     agent = new DataRetrievalAgent({
       id: 'test-id',
-      apiToken: 'test-key',
+      apiKey: 'test-key',
       rateLimit: { rpm: 5, tpm: 1000 },
       cacheTTL: 3600
     });
@@ -39,7 +39,7 @@ describe('DataRetrievalAgent', () => {
 
   it('should handle rate limiting', async () => {
     // Mock rate limit exceeded
-    vi.spyOn(agent as any, 'executeWithRetry').mockImplementationOnce(() => {
+    vi.spyOn(agent, 'executeWithRetry').mockImplementationOnce(() => {
       throw new RateLimitError('DATA_RETRIEVAL');
     });
 

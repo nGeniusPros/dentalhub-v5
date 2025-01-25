@@ -1,19 +1,23 @@
+/// <reference types="vitest" />
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
+import { expect } from 'vitest';
 import { ExportReportButton } from './ExportReportButton';
 import { useNotifications } from '../contexts/NotificationContext';
 import { act } from 'react-dom/test-utils';
+import { vi } from 'vitest';
 
 // Mock the useNotifications hook
-jest.mock('../contexts/NotificationContext', () => ({
+vi.mock('../contexts/NotificationContext', () => ({
   useNotifications: () => ({
-    dispatch: jest.fn(),
+    dispatch: vi.fn(),
   }),
 }));
 
 describe('ExportReportButton', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should render the button with default props', () => {

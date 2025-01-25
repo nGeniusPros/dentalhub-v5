@@ -5,38 +5,51 @@ export enum ErrorCode {
   CONFIGURATION_ERROR = 'CONFIGURATION_ERROR',
   EXTERNAL_SERVICE_ERROR = 'EXTERNAL_SERVICE_ERROR',
   UNAUTHORIZED = 'UNAUTHORIZED',
+  INFRASTRUCTURE_ERROR = 'INFRASTRUCTURE_ERROR',
 }
 
-export class ErrorResponse extends Error {
-  public readonly statusCode: number;
-  public readonly code: ErrorCode;
-  public readonly originalError?: unknown;
+export abstract class DentalError extends Error {
+  abstract code: ErrorCode;
+  abstract statusCode: number;
+  abstract details?: Record<string, unknown>;
 
-  constructor({
-    message,
-    code,
-    statusCode = 500,
-    originalError,
-  }: {
-    message: string;
-    code: ErrorCode;
-    statusCode?: number;
-    originalError?: unknown;
-  }) {
+  constructor(message: string) {
     super(message);
-    this.code = code;
-    this.statusCode = statusCode;
-    this.originalError = originalError;
-    this.name = 'ErrorResponse'; // or specific error name
+    this.name = this.constructor.name;
   }
 
-  serializeErrorResponse() {
+  toJSON() {
     return {
-      type: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500', // Generic error type
-      title: 'Application error',
+      type: `https://docs.dentalhub.com/errors/${this.code}`,
+      title: this.message,
       status: this.statusCode,
-      detail: this.message,
-      errorCode: this.code,
+      code: this.code,
+      details: this.details,
+      timestamp: new Date().toISOString()
     };
+  }
+}
+
+export class InfrastructureError extends DentalError {
+  code = ErrorCode.INFRASTRUCTURE_ERROR;
+  statusCode = 500;
+  details?: Record<string, unknown>;
+
+  constructor(
+    public operation: string,
+    public originalError: unknown,
+    details?: Record<string, unknown>
+  ) {
+    super(`Infrastructure failure during ${operation}`);
+    this.details = {
+      ...details,
+      originalError: this.safeSerializeError(originalError)
+    };
+  }
+
+  private safeSerializeError(err: unknown) {
+    return err instanceof Error
+      ? { name: err.name, message: err.message, stack: err.stack }
+      : err;
   }
 }

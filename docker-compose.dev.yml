@@ -33,6 +33,9 @@ services:
       - "80:80"
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_SUPABASE_URL=https://diainolbnbrwkepnmrbq.supabase.co
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpYWlub2xibmJyd2tlcG5tcmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU4NzA3MDIsImV4cCI6MjA1MTQ0NjcwMn0.nJNaKrESub8emHud0WF0Sw4eOIMs5TRSjneZiTSjMiA
+      - VITE_API_URL=http://backend:3001/api
     volumes:
       - ./apps/frontend:/app
       - /app/node_modules

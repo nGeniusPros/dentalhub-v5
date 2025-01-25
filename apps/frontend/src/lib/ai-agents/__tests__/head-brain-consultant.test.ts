@@ -1,8 +1,14 @@
+import { describe, it, expect, vi, type Mock } from 'vitest';
 import { HeadBrainConsultant } from '../agents/head-brain-consultant';
 import { RequestManager } from '../infrastructure/request-manager';
 import { ResponseCache } from '../infrastructure/response-cache';
-import { AgentConfig } from '../types/agent-types';
+import type { AgentConfig } from '../types/agent-types';
 import { AgentError } from '../types/errors';
+
+interface MockRequestManager extends RequestManager {
+  executeWithRateLimit: vi.Mock;
+  createAssistantMessage: vi.Mock;
+}
 
 // Mock the environment variables
 vi.mock('../../../config/env', () => ({
@@ -18,7 +24,17 @@ vi.mock('../../../config/env', () => ({
 
 describe('HeadBrainConsultant', () => {
   let consultant: HeadBrainConsultant;
-  let mockRequestManager: jest.Mocked<RequestManager>;
+  interface MockRequestManager extends RequestManager {
+    executeWithRateLimit: vi.Mock;
+    createAssistantMessage: vi.Mock;
+  }
+
+  const mockRequestManager: MockRequestManager = {
+    executeWithRetry: vi.fn(),
+    getCachedResponse: vi.fn(),
+    executeWithRateLimit: vi.fn(),
+    createAssistantMessage: vi.fn()
+  } as unknown as MockRequestManager;
   let mockResponseCache: jest.Mocked<ResponseCache>;
 
   const mockConfig: AgentConfig = {

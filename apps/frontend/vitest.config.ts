@@ -8,12 +8,8 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/tests/setup.ts',
-    env: {
-      VITE_OPENAI_API_KEY: 'test_key',
-      VITE_API_BASE_URL: 'http://localhost:3000'
-    },
     coverage: {
-      provider: 'v8',
+      provider: 'istanbul',
       reporter: ['text', 'json', 'html'],
       include: ['src/**/*.{ts,tsx}'],
       exclude: [

@@ -1,11 +1,12 @@
 import { Router, Request, Response } from 'express';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types';
-import { asyncHandler } from '../utils/asyncHandler';
+import { Database } from '../types/database.types.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
 import { Router as ExpressRouter } from 'express';
 import { z } from 'zod';
-import { AppointmentService } from '../services/appointmentService';
-import subRoutes from './appointments/index';
+import { AppointmentService } from '../services/appointmentService.js';
+import { ValidationError, InfrastructureError } from '../errors.js';
+import subRoutes from './appointments/index.js';
 
 interface AuthenticatedRequest extends Request {
   supabase: SupabaseClient<Database>;
@@ -56,11 +57,11 @@ const updateAppointmentSchema = z.object({
 });
 
 const getAppointmentsSchema = z.object({
-		start_date: z.string().optional(),
-	end_date: z.string().optional(),
-		status: z.string().optional(),
-		provider_id: z.string().optional(),
-  patient_id: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  status: z.string().optional(),
+  providerId: z.string().optional(),
+  patientId: z.string().optional(),
 });
 
 const appointmentIdSchema = z.object({
@@ -80,10 +81,32 @@ router.use('/', subRoutes);
 
 // Get all appointments
 router.get('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-	const validationResult = getAppointmentsSchema.safeParse(req.query);
+  const validationResult = getAppointmentsSchema.safeParse(req.query);
   if (!validationResult.success) {
-				return res.status(400).json({ error: 'Invalid query parameters' });
-	}
+    throw new ValidationError('Invalid query parameters', validationResult.error);
+  }
+
+  const {
+    startDate,
+    endDate,
+    status,
+    providerId,
+    patientId
+  } = validationResult.data;
+  
+  const appointmentService = new AppointmentService(req.supabase);
+  const { data: appointments, error } = await appointmentService.getAllAppointments({
+    startDate,
+    endDate,
+    status,
+    providerId,
+    patientId
+  });
+
+  if (error) {
+    throw new InfrastructureError('get_appointments', error);
+  }
+  }
 
 		const { start_date, end_date, status, provider_id, patient_id } = validationResult.data;
   const appointmentService = new AppointmentService(req.supabase);

@@ -1,71 +1,24 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[];
-
+// Generated types placeholder - Update after Supabase config is resolved
 export interface Database {
   public: {
     Tables: {
-      campaigns: {
+      appointments: {
         Row: {
           id: string;
-          name: string;
-          type: string;
-          status: string;
-          audience: Json;
-          content: Json;
-          created_at: string;
-          updated_at: string;
+          patient_id: string;
+          provider_id: string;
+          start_time: string;
+          end_time: string;
+          status: 'scheduled' | 'completed' | 'canceled';
+          // ... other fields
         };
         Insert: {
-          id?: string;
-          name: string;
-          type: string;
-          status?: string;
-          audience?: Json;
-          content: Json;
-          created_at?: string;
-          updated_at?: string;
+          // ... insert fields
         };
         Update: {
-          id?: string;
-          name?: string;
-          type?: string;
-          status?: string;
-          audience?: Json;
-          content?: Json;
-          created_at?: string;
-          updated_at?: string;
+          // ... update fields
         };
       };
     };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      [_ in never]: never;
-    };
-    Enums: {
-      [_ in never]: never;
-    };
   };
-}
-
-export type Tables<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Row'];
-export type Enums<T extends keyof Database['public']['Enums']> =
-  Database['public']['Enums'][T];
-
-// Add type augmentation for the Request object
-declare global {
-  namespace Express {
-    interface Request {
-      supabase: SupabaseClient<Database>;
-    }
-  }
 }

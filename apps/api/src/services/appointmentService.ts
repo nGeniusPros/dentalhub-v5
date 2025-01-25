@@ -1,10 +1,16 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types';
+import { Database } from '../types/database.types.js';
 
 export class AppointmentService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
-  async getAllAppointments(start_date?: string, end_date?: string, status?: string, provider_id?: string, patient_id?: string) {
+  async getAllAppointments(options: {
+    startDate?: string;
+    endDate?: string;
+    status?: string;
+    providerId?: string;
+    patientId?: string;
+  }) {
     let query = this.supabase
       .from('appointments')
       .select(`
