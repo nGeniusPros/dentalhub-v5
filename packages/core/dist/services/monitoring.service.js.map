@@ -1,0 +1,1 @@
+{"version":3,"file":"monitoring.service.js","sourceRoot":"","sources":["../../src/services/monitoring.service.ts"],"names":[],"mappings":"AAAA,MAAM,OAAO,iBAAiB;IAC5B,KAAK,CAAC,KAAa,EAAE,QAAkC;QACrD,2BAA2B;IAC7B,CAAC;CACF","sourcesContent":["export class MonitoringService {\n  track(event: string, metadata?: Record<string, unknown>) {\n    // Implementation goes here\n  }\n}\n"]}

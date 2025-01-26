@@ -18,43 +18,33 @@ export class RetellService {
     phoneNumber: string,
     config?: CallConfig,
   ): Promise<CallResponse> {
-    try {
-      const response = await fetch(`${this.config.baseUrl}/calls`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${this.config.apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          agent_id: this.config.agentId,
-          llm_id: this.config.llmId,
-          customer_number: phoneNumber,
-          recording_config: config?.recordingConfig,
-          llm_config: config?.llmConfig,
-          webhook_config: config?.webhookConfig || {
-            url: process.env.RETELL_WEBHOOK_URL,
-            events: ["call.started", "call.ended", "call.transcription"],
-          },
-        }),
-      });
+    const response = await fetch(`${this.config.baseUrl}/call`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.config.apiKey}`,
+      },
+      body: JSON.stringify({
+        agent_id: this.config.agentId,
+        customer_number: phoneNumber,
+        llm_id: this.config.llmId,
+        ...config,
+      }),
+    });
 
-      if (!response.ok) {
-        throw new Error(`Failed to initiate call: ${response.statusText}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error initiating call:", error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to initiate call: ${response.statusText}`);
     }
+
+    return response.json();
   }
 
   connectWebSocket(
     callId: string,
     handlers: {
-      onTranscription?: (data: any) => void;
-      onCallEnded?: (data: any) => void;
-      onError?: (error: any) => void;
+      onTranscription?: (data: CallEventPayload & { eventType: "call.transcription" }) => void;
+      onCallEnded?: (data: CallEventPayload & { eventType: "call.ended" }) => void;
+      onError?: (error: Error) => void;
     },
   ): void {
     try {
@@ -65,23 +55,24 @@ export class RetellService {
       });
 
       this.ws.on("message", (data: string) => {
-        const event: CallEventPayload = JSON.parse(data);
+        try {
+          const event = JSON.parse(data) as CallEventPayload;
 
-        switch (event.eventType) {
-          case "call.transcription":
-            handlers.onTranscription?.(event.data);
-            break;
-          case "call.ended":
-            handlers.onCallEnded?.(event.data);
-            this.ws?.close();
-            break;
-          default:
-            console.log(`Unhandled event type: ${event.eventType}`);
+          switch (event.eventType) {
+            case "call.transcription":
+              handlers.onTranscription?.(event as CallEventPayload & { eventType: "call.transcription" });
+              break;
+            case "call.ended":
+              handlers.onCallEnded?.(event as CallEventPayload & { eventType: "call.ended" });
+              this.disconnect();
+              break;
+          }
+        } catch (error) {
+          handlers.onError?.(error instanceof Error ? error : new Error(String(error)));
         }
       });
 
       this.ws.on("error", (error) => {
-        console.error("WebSocket error:", error);
         handlers.onError?.(error);
       });
 
@@ -89,53 +80,39 @@ export class RetellService {
         console.log("WebSocket connection closed for call:", callId);
       });
     } catch (error) {
-      console.error("Error connecting to WebSocket:", error);
-      throw error;
+      handlers.onError?.(error instanceof Error ? error : new Error(String(error)));
     }
   }
 
   async getCallRecording(callId: string): Promise<Blob> {
-    try {
-      const response = await fetch(
-        `${this.config.baseUrl}/calls/${callId}/recording`,
-        {
-          headers: {
-            Authorization: `Bearer ${this.config.apiKey}`,
-          },
+    const response = await fetch(
+      `${this.config.baseUrl}/call/${callId}/recording`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.config.apiKey}`,
         },
-      );
+      },
+    );
 
-      if (!response.ok) {
-        throw new Error(`Failed to get call recording: ${response.statusText}`);
-      }
-
-      return await response.blob();
-    } catch (error) {
-      console.error("Error getting call recording:", error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to get call recording: ${response.statusText}`);
     }
+
+    return response.blob();
   }
 
   async updateCallConfig(callId: string, config: CallConfig): Promise<void> {
-    try {
-      const response = await fetch(
-        `${this.config.baseUrl}/calls/${callId}/config`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${this.config.apiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(config),
-        },
-      );
+    const response = await fetch(`${this.config.baseUrl}/call/${callId}/config`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.config.apiKey}`,
+      },
+      body: JSON.stringify(config),
+    });
 
-      if (!response.ok) {
-        throw new Error(`Failed to update call config: ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error("Error updating call config:", error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to update call config: ${response.statusText}`);
     }
   }
 
@@ -147,6 +124,6 @@ export class RetellService {
   }
 }
 
-export const createRetellService = (config: RetellConfig): RetellService => {
+export function createRetellService(config: RetellConfig): RetellService {
   return new RetellService(config);
-};
+}

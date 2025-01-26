@@ -1,5 +1,5 @@
-import { createClient } from 'redis';
-import { InfrastructureError } from './errors/index.js';
+import { createClient } from "redis";
+import { InfrastructureError } from "./errors/index.js";
 export class RedisClient {
     constructor(url) {
         this.url = url;
@@ -12,17 +12,17 @@ export class RedisClient {
         this.setupEventHandlers();
     }
     setupEventHandlers() {
-        this.client.on('error', (err) => {
-            throw new InfrastructureError('redis_connection', err, {
+        this.client.on("error", (err) => {
+            throw new InfrastructureError("redis_connection", err, {
                 connectionUrl: this.url,
-                attempt: this.connectionAttempts
+                attempt: this.connectionAttempts,
             });
         });
-        this.client.on('reconnecting', () => {
+        this.client.on("reconnecting", () => {
             this.connectionAttempts++;
             if (this.connectionAttempts > this.MAX_RETRIES) {
-                throw new InfrastructureError('redis_retry_limit', null, {
-                    maxRetries: this.MAX_RETRIES
+                throw new InfrastructureError("redis_retry_limit", null, {
+                    maxRetries: this.MAX_RETRIES,
                 });
             }
         });
@@ -34,13 +34,13 @@ export class RedisClient {
         }
         catch (error) {
             if (error instanceof Error) {
-                throw new InfrastructureError('redis_connect', error, {
-                    connectionUrl: this.url
+                throw new InfrastructureError("redis_connect", error, {
+                    connectionUrl: this.url,
                 });
             }
-            throw new InfrastructureError('redis_connect', null, {
+            throw new InfrastructureError("redis_connect", null, {
                 connectionUrl: this.url,
-                error: String(error)
+                error: String(error),
             });
         }
     }
@@ -50,27 +50,27 @@ export class RedisClient {
         }
         catch (error) {
             if (error instanceof Error) {
-                throw new InfrastructureError('redis_disconnect', error, {
-                    connectionUrl: this.url
+                throw new InfrastructureError("redis_disconnect", error, {
+                    connectionUrl: this.url,
                 });
             }
-            throw new InfrastructureError('redis_disconnect', null, {
+            throw new InfrastructureError("redis_disconnect", null, {
                 connectionUrl: this.url,
-                error: String(error)
+                error: String(error),
             });
         }
     }
     async healthCheck() {
         try {
             const ping = await this.client.ping();
-            return ping === 'PONG';
+            return ping === "PONG";
         }
         catch (error) {
             if (error instanceof Error) {
-                throw new InfrastructureError('redis_healthcheck', error);
+                throw new InfrastructureError("redis_healthcheck", error);
             }
-            throw new InfrastructureError('redis_healthcheck', null, {
-                error: String(error)
+            throw new InfrastructureError("redis_healthcheck", null, {
+                error: String(error),
             });
         }
     }

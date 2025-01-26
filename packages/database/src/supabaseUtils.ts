@@ -1,13 +1,17 @@
 import { PostgrestFilterBuilder } from "@supabase/supabase-js";
 import { supabase } from "./client.js";
+import { Database } from "./types";
+
+type TableNames = keyof Database["public"]["Tables"];
+type TableRow<T extends TableNames> = Database["public"]["Tables"][T]["Row"];
 
 /**
  * Safely perform a select query on a table with proper error handling
  * @param table The table name to query
  * @returns A query builder with error handling
  */
-export const safeSelect = <T>(table: string) =>
-  supabase.from<T>(table).select().throwOnError();
+export const safeSelect = <T extends TableNames>(table: T) =>
+  supabase.from<TableRow<T>>(table).select().throwOnError();
 
 /**
  * Add pagination to a Supabase query
@@ -16,8 +20,8 @@ export const safeSelect = <T>(table: string) =>
  * @param pageSize The number of items per page
  * @returns The paginated query
  */
-export const withPagination = (
-  query: PostgrestFilterBuilder<any>,
+export const withPagination = <T>(
+  query: PostgrestFilterBuilder<T>,
   page: number,
   pageSize: number,
 ) => {
@@ -32,8 +36,8 @@ export const withPagination = (
  * @param table The table name to count
  * @returns The count query with error handling
  */
-export const safeCount = <T>(table: string) =>
-  supabase.from<T>(table).count().throwOnError();
+export const safeCount = <T extends TableNames>(table: T) =>
+  supabase.from<TableRow<T>>(table).count().throwOnError();
 
 /**
  * Type-safe wrapper for insert operations
@@ -41,8 +45,10 @@ export const safeCount = <T>(table: string) =>
  * @param data The data to insert
  * @returns The insert query with error handling
  */
-export const safeInsert = <T>(table: string, data: Partial<T>) =>
-  supabase.from<T>(table).insert(data).throwOnError();
+export const safeInsert = <T extends TableNames>(
+  table: T,
+  data: Partial<Database["public"]["Tables"][T]["Insert"]>
+) => supabase.from<TableRow<T>>(table).insert(data).throwOnError();
 
 /**
  * Type-safe wrapper for update operations
@@ -50,5 +56,7 @@ export const safeInsert = <T>(table: string, data: Partial<T>) =>
  * @param data The data to update
  * @returns The update query with error handling
  */
-export const safeUpdate = <T>(table: string, data: Partial<T>) =>
-  supabase.from<T>(table).update(data).throwOnError();
+export const safeUpdate = <T extends TableNames>(
+  table: T,
+  data: Partial<Database["public"]["Tables"][T]["Update"]>
+) => supabase.from<TableRow<T>>(table).update(data).throwOnError();

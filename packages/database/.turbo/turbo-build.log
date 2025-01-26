@@ -3,9 +3,10 @@
 > tsc
 
 src/client.ts(1,10): error TS2305: Module '"@prisma/client"' has no exported member 'PrismaClient'.
-src/client.ts(4,69): error TS4111: Property 'NODE_ENV' comes from an index signature, so it must be accessed with ['NODE_ENV'].
-src/client.ts(16,15): error TS2305: Module '"@prisma/client"' has no exported member 'Patient'.
-src/client.ts(17,10): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/client.ts(5,49): error TS4111: Property 'NODE_ENV' comes from an index signature, so it must be accessed with ['NODE_ENV'].
+src/client.ts(18,15): error TS2305: Module '"@prisma/client"' has no exported member 'Patient'.
+src/client.ts(19,10): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
 src/index.ts(3,15): error TS2305: Module '"@prisma/client"' has no exported member 'Patient'.
-src/types.ts(1,46): error TS2307: Cannot find module '@supabase/supabase-js' or its corresponding type declarations.
+src/supabaseUtils.ts(1,10): error TS2305: Module '"@supabase/supabase-js"' has no exported member 'PostgrestFilterBuilder'.
+src/supabaseUtils.ts(2,10): error TS2305: Module '"./client.js"' has no exported member 'supabase'.
  ELIFECYCLE  Command failed with exit code 2.

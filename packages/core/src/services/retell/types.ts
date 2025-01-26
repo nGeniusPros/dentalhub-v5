@@ -7,6 +7,21 @@ export interface RetellConfig {
   phoneNumber: string;
 }
 
+interface TranscriptionData {
+  text: string;
+  isFinal: boolean;
+}
+
+interface CallEndedData {
+  duration: number;
+  endReason: string;
+}
+
+interface RecordingData {
+  url: string;
+  duration: number;
+}
+
 export interface CallEventPayload {
   eventType:
     | "call.started"
@@ -15,7 +30,7 @@ export interface CallEventPayload {
     | "call.recording";
   callId: string;
   timestamp: string;
-  data: any;
+  data: TranscriptionData | CallEndedData | RecordingData | Record<string, unknown>;
 }
 
 export interface CallResponse {
