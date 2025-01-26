@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { MenuItem } from './MenuItem';
-import type { MenuItem as MenuItemType } from '../../../types';
+import React from "react";
+import { motion } from "framer-motion";
+import { MenuItem } from "./MenuItem";
+import type { MenuItem as MenuItemType } from "../../../types";
 
 interface MenuGroupProps {
   title: string;
@@ -9,7 +9,11 @@ interface MenuGroupProps {
   isCollapsed: boolean;
 }
 
-export const MenuGroup: React.FC<MenuGroupProps> = ({ title, items, isCollapsed }) => {
+export const MenuGroup: React.FC<MenuGroupProps> = ({
+  title,
+  items,
+  isCollapsed,
+}) => {
   return (
     <div>
       {!isCollapsed && (
@@ -17,10 +21,7 @@ export const MenuGroup: React.FC<MenuGroupProps> = ({ title, items, isCollapsed 
           {title}
         </h2>
       )}
-      <motion.ul
-        initial={false}
-        className="space-y-1"
-      >
+      <motion.ul initial={false} className="space-y-1">
         {items.map((item) => (
           <MenuItem key={item.id} item={item} isCollapsed={isCollapsed} />
         ))}

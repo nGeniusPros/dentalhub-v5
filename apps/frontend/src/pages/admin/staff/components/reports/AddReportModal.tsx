@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
-import { useNotifications } from '../../../../../contexts/NotificationContext';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
+import { useNotifications } from "../../../../../contexts/NotificationContext";
 
 interface AddReportModalProps {
   isOpen: boolean;
@@ -14,51 +14,51 @@ interface AddReportModalProps {
 export const AddReportModal: React.FC<AddReportModalProps> = ({
   isOpen,
   onClose,
-  onAdd
+  onAdd,
 }) => {
   const { dispatch: notifyDispatch } = useNotifications();
   const [report, setReport] = useState({
-    name: '',
-    description: '',
-    type: 'performance',
-    frequency: 'monthly',
+    name: "",
+    description: "",
+    type: "performance",
+    frequency: "monthly",
     metrics: [] as string[],
     filters: [] as string[],
     recipients: [] as string[],
-    format: 'pdf',
+    format: "pdf",
     schedule: {
-      startDate: '',
-      time: '',
-      repeat: true
-    }
+      startDate: "",
+      time: "",
+      repeat: true,
+    },
   });
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const newReport = {
       ...report,
       id: Date.now().toString(),
       lastGenerated: null,
       nextGeneration: report.schedule.startDate,
-      status: 'scheduled'
+      status: "scheduled",
     };
 
     onAdd(newReport);
 
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'message',
-        title: 'Report Created',
+        type: "message",
+        title: "Report Created",
         message: `${report.name} has been scheduled successfully`,
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium'
-      }
+        priority: "medium",
+      },
     });
 
     onClose();
@@ -102,7 +102,9 @@ export const AddReportModal: React.FC<AddReportModalProps> = ({
               </label>
               <textarea
                 value={report.description}
-                onChange={(e) => setReport({ ...report, description: e.target.value })}
+                onChange={(e) =>
+                  setReport({ ...report, description: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 rows={3}
                 required
@@ -134,7 +136,9 @@ export const AddReportModal: React.FC<AddReportModalProps> = ({
               </label>
               <select
                 value={report.frequency}
-                onChange={(e) => setReport({ ...report, frequency: e.target.value })}
+                onChange={(e) =>
+                  setReport({ ...report, frequency: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -155,12 +159,12 @@ export const AddReportModal: React.FC<AddReportModalProps> = ({
             </label>
             <div className="space-y-2">
               {[
-                'Performance Scores',
-                'Attendance Rate',
-                'Training Completion',
-                'Patient Satisfaction',
-                'Revenue Generation',
-                'Quality Metrics'
+                "Performance Scores",
+                "Attendance Rate",
+                "Training Completion",
+                "Patient Satisfaction",
+                "Revenue Generation",
+                "Quality Metrics",
               ].map((metric) => (
                 <label key={metric} className="flex items-center gap-2">
                   <input
@@ -170,12 +174,12 @@ export const AddReportModal: React.FC<AddReportModalProps> = ({
                       if (e.target.checked) {
                         setReport({
                           ...report,
-                          metrics: [...report.metrics, metric]
+                          metrics: [...report.metrics, metric],
                         });
                       } else {
                         setReport({
                           ...report,
-                          metrics: report.metrics.filter(m => m !== metric)
+                          metrics: report.metrics.filter((m) => m !== metric),
                         });
                       }
                     }}
@@ -194,11 +198,11 @@ export const AddReportModal: React.FC<AddReportModalProps> = ({
             </label>
             <div className="space-y-2">
               {[
-                'Department',
-                'Role',
-                'Employment Status',
-                'Date Range',
-                'Performance Level'
+                "Department",
+                "Role",
+                "Employment Status",
+                "Date Range",
+                "Performance Level",
               ].map((filter) => (
                 <label key={filter} className="flex items-center gap-2">
                   <input
@@ -208,12 +212,12 @@ export const AddReportModal: React.FC<AddReportModalProps> = ({
                       if (e.target.checked) {
                         setReport({
                           ...report,
-                          filters: [...report.filters, filter]
+                          filters: [...report.filters, filter],
                         });
                       } else {
                         setReport({
                           ...report,
-                          filters: report.filters.filter(f => f !== filter)
+                          filters: report.filters.filter((f) => f !== filter),
                         });
                       }
                     }}
@@ -232,11 +236,11 @@ export const AddReportModal: React.FC<AddReportModalProps> = ({
             </label>
             <div className="space-y-2">
               {[
-                'HR Manager',
-                'Department Heads',
-                'Practice Manager',
-                'Clinical Director',
-                'All Staff'
+                "HR Manager",
+                "Department Heads",
+                "Practice Manager",
+                "Clinical Director",
+                "All Staff",
               ].map((recipient) => (
                 <label key={recipient} className="flex items-center gap-2">
                   <input
@@ -246,12 +250,14 @@ export const AddReportModal: React.FC<AddReportModalProps> = ({
                       if (e.target.checked) {
                         setReport({
                           ...report,
-                          recipients: [...report.recipients, recipient]
+                          recipients: [...report.recipients, recipient],
                         });
                       } else {
                         setReport({
                           ...report,
-                          recipients: report.recipients.filter(r => r !== recipient)
+                          recipients: report.recipients.filter(
+                            (r) => r !== recipient,
+                          ),
                         });
                       }
                     }}
@@ -274,26 +280,31 @@ export const AddReportModal: React.FC<AddReportModalProps> = ({
                 <input
                   type="date"
                   value={report.schedule.startDate}
-                  onChange={(e) => setReport({
-                    ...report,
-                    schedule: { ...report.schedule, startDate: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setReport({
+                      ...report,
+                      schedule: {
+                        ...report.schedule,
+                        startDate: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
-                  min={new Date().toISOString().split('T')[0]}
+                  min={new Date().toISOString().split("T")[0]}
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-500 mb-1">
-                  Time
-                </label>
+                <label className="block text-sm text-gray-500 mb-1">Time</label>
                 <input
                   type="time"
                   value={report.schedule.time}
-                  onChange={(e) => setReport({
-                    ...report,
-                    schedule: { ...report.schedule, time: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setReport({
+                      ...report,
+                      schedule: { ...report.schedule, time: e.target.value },
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -322,9 +333,13 @@ export const AddReportModal: React.FC<AddReportModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button 
+            <Button
               type="submit"
-              disabled={!report.name || !report.description || report.metrics.length === 0}
+              disabled={
+                !report.name ||
+                !report.description ||
+                report.metrics.length === 0
+              }
             >
               Create Report
             </Button>

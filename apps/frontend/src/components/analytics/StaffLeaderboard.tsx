@@ -1,13 +1,13 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
 
 export const StaffLeaderboard = () => {
   const leaderboardData = [
-    { name: 'Dr. Sarah Wilson', points: 1250, badges: 8, rank: 1 },
-    { name: 'Dr. Michael Chen', points: 1150, badges: 7, rank: 2 },
-    { name: 'Dr. Emily Parker', points: 1050, badges: 6, rank: 3 }
+    { name: "Dr. Sarah Wilson", points: 1250, badges: 8, rank: 1 },
+    { name: "Dr. Michael Chen", points: 1150, badges: 7, rank: 2 },
+    { name: "Dr. Emily Parker", points: 1050, badges: 6, rank: 3 },
   ];
 
   return (
@@ -31,11 +31,15 @@ export const StaffLeaderboard = () => {
             className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
           >
             <div className="flex items-center gap-4">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                index === 0 ? 'bg-yellow-100 text-yellow-600' :
-                index === 1 ? 'bg-gray-100 text-gray-600' :
-                'bg-orange-100 text-orange-600'
-              }`}>
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  index === 0
+                    ? "bg-yellow-100 text-yellow-600"
+                    : index === 1
+                      ? "bg-gray-100 text-gray-600"
+                      : "bg-orange-100 text-orange-600"
+                }`}
+              >
                 {staff.rank}
               </div>
               <div>

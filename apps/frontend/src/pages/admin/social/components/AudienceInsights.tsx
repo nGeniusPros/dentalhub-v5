@@ -1,15 +1,22 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Button } from '../../../../components/ui/button';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { Button } from "../../../../components/ui/button";
+import * as Icons from "lucide-react";
 
 export const AudienceInsights = () => {
   const ageData = [
-    { name: '18-24', value: 15, color: '#4BC5BD' },
-    { name: '25-34', value: 35, color: '#6B4C9A' },
-    { name: '35-44', value: 25, color: '#C5A572' },
-    { name: '45+', value: 25, color: '#1B2B5B' },
+    { name: "18-24", value: 15, color: "#4BC5BD" },
+    { name: "25-34", value: 35, color: "#6B4C9A" },
+    { name: "35-44", value: 25, color: "#C5A572" },
+    { name: "45+", value: 25, color: "#1B2B5B" },
   ];
 
   return (
@@ -53,7 +60,9 @@ export const AudienceInsights = () => {
 
       <div className="mt-6 grid grid-cols-2 gap-4">
         <div className="p-4 bg-gray-50 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Top Locations</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">
+            Top Locations
+          </h3>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm">New York</span>
@@ -66,7 +75,9 @@ export const AudienceInsights = () => {
           </div>
         </div>
         <div className="p-4 bg-gray-50 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Gender Split</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">
+            Gender Split
+          </h3>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm">Female</span>

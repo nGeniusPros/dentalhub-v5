@@ -55,32 +55,32 @@ export interface OpenAICompletionResponse {
 // Error Types
 export class ExternalServiceError extends Error {
   constructor(
-    public service: 'sikka' | 'retell' | 'openai',
+    public service: "sikka" | "retell" | "openai",
     public statusCode: number,
     message: string,
-    public details?: Record<string, any>
+    public details?: Record<string, any>,
   ) {
     super(message);
-    this.name = 'ExternalServiceError';
+    this.name = "ExternalServiceError";
   }
 }
 
 export class RateLimitError extends ExternalServiceError {
   constructor(
-    service: 'sikka' | 'retell' | 'openai',
-    public retryAfter?: number
+    service: "sikka" | "retell" | "openai",
+    public retryAfter?: number,
   ) {
-    super(service, 429, 'Rate limit exceeded');
-    this.name = 'RateLimitError';
+    super(service, 429, "Rate limit exceeded");
+    this.name = "RateLimitError";
   }
 }
 
 export class AuthenticationError extends ExternalServiceError {
   constructor(
-    service: 'sikka' | 'retell' | 'openai',
-    details?: Record<string, any>
+    service: "sikka" | "retell" | "openai",
+    details?: Record<string, any>,
   ) {
-    super(service, 401, 'Authentication failed', details);
-    this.name = 'AuthenticationError';
+    super(service, 401, "Authentication failed", details);
+    this.name = "AuthenticationError";
   }
 }

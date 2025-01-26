@@ -1,64 +1,66 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../components/ui/button';
-import MembershipOverview from './membership/analytics/MembershipOverview';
-import type { MembershipTier } from '../../types/membership';
-import { CreatePlanModal } from './membership/components/CreatePlanModal';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../components/ui/button";
+import MembershipOverview from "./membership/analytics/MembershipOverview";
+import type { MembershipTier } from "../../types/membership";
+import { CreatePlanModal } from "./membership/components/CreatePlanModal";
+import { useNavigate } from "react-router-dom";
 
 const MembershipPlans = () => {
   const navigate = useNavigate();
   const [plans, setPlans] = React.useState<MembershipTier[]>([
     {
-      id: '1',
-      name: 'Basic Care',
+      id: "1",
+      name: "Basic Care",
       price: { monthly: 29.99, annual: 299.99 },
       benefits: [
-        '2 Cleanings per year',
-        '15% off all treatments',
-        'Free emergency exam',
-        '1x points multiplier'
+        "2 Cleanings per year",
+        "15% off all treatments",
+        "Free emergency exam",
+        "1x points multiplier",
       ],
-      pointsMultiplier: 1
+      pointsMultiplier: 1,
     },
     {
-      id: '2',
-      name: 'Premium Care',
+      id: "2",
+      name: "Premium Care",
       price: { monthly: 49.99, annual: 499.99 },
       benefits: [
-        '2 Cleanings per year',
-        '25% off all treatments',
-        'Free emergency exam',
-        'Free whitening',
-        '2x points multiplier'
+        "2 Cleanings per year",
+        "25% off all treatments",
+        "Free emergency exam",
+        "Free whitening",
+        "2x points multiplier",
       ],
-      pointsMultiplier: 2
+      pointsMultiplier: 2,
     },
     {
-      id: '3',
-      name: 'Elite Care',
+      id: "3",
+      name: "Elite Care",
       price: { monthly: 79.99, annual: 799.99 },
       benefits: [
-        '4 Cleanings per year',
-        '35% off all treatments',
-        'Free emergency exam',
-        'Free whitening',
-        'Free electric toothbrush',
-        '3x points multiplier'
+        "4 Cleanings per year",
+        "35% off all treatments",
+        "Free emergency exam",
+        "Free whitening",
+        "Free electric toothbrush",
+        "3x points multiplier",
       ],
-      pointsMultiplier: 3
-    }
+      pointsMultiplier: 3,
+    },
   ]);
 
-  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState<
+    string | null
+  >(null);
   const [showEditModal, setShowEditModal] = React.useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = React.useState(false);
 
   const handleSavePlan = (newPlan: MembershipTier) => {
     const planWithId = {
       ...newPlan,
-      id: (plans.length + 1).toString()
+      id: (plans.length + 1).toString(),
     };
     setPlans([...plans, planWithId]);
   };
@@ -72,7 +74,7 @@ const MembershipPlans = () => {
   };
 
   const confirmDelete = (planId: string) => {
-    setPlans(plans.filter(plan => plan.id !== planId));
+    setPlans(plans.filter((plan) => plan.id !== planId));
     setShowDeleteConfirm(null);
   };
 
@@ -87,7 +89,7 @@ const MembershipPlans = () => {
           <h2 className="text-2xl font-bold bg-gradient-to-r from-navy via-purple to-turquoise text-transparent bg-clip-text">
             Membership Plans
           </h2>
-          <Button 
+          <Button
             className="bg-gradient-to-r from-navy to-purple text-white"
             onClick={() => setShowCreateModal(true)}
           >
@@ -106,13 +108,21 @@ const MembershipPlans = () => {
             >
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900">{plan.name}</h3>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    {plan.name}
+                  </h3>
                   <p className="text-primary text-2xl font-bold mt-2">
                     ${plan.price.monthly}
-                    <span className="text-sm text-gray-500 font-normal">/month</span>
+                    <span className="text-sm text-gray-500 font-normal">
+                      /month
+                    </span>
                   </p>
                   <p className="text-sm text-gray-500">
-                    or ${plan.price.annual}/year (save {Math.round((1 - plan.price.annual/(plan.price.monthly * 12)) * 100)}%)
+                    or ${plan.price.annual}/year (save{" "}
+                    {Math.round(
+                      (1 - plan.price.annual / (plan.price.monthly * 12)) * 100,
+                    )}
+                    %)
                   </p>
                 </div>
                 <div className="bg-primary/10 p-2 rounded-lg">
@@ -130,15 +140,15 @@ const MembershipPlans = () => {
               </div>
 
               <div className="space-x-2">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full mb-2"
                   onClick={() => handleEditPlan(plan.id)}
                 >
                   Edit Plan
                 </Button>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="w-full text-red-600 hover:text-red-700"
                   onClick={() => handleDeletePlan(plan.id)}
                 >
@@ -160,7 +170,8 @@ const MembershipPlans = () => {
           >
             <h3 className="text-lg font-semibold mb-4">Confirm Delete</h3>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete this membership plan? This action cannot be undone.
+              Are you sure you want to delete this membership plan? This action
+              cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
               <Button
@@ -171,7 +182,9 @@ const MembershipPlans = () => {
               </Button>
               <Button
                 variant="destructive"
-                onClick={() => showDeleteConfirm && confirmDelete(showDeleteConfirm)}
+                onClick={() =>
+                  showDeleteConfirm && confirmDelete(showDeleteConfirm)
+                }
               >
                 Delete Plan
               </Button>
@@ -198,22 +211,15 @@ const MembershipPlans = () => {
                 <Icons.X className="w-5 h-5" />
               </Button>
             </div>
-            
+
             {/* Add form fields here */}
-            <div className="space-y-4">
-              {/* Form implementation */}
-            </div>
+            <div className="space-y-4">{/* Form implementation */}</div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <Button
-                variant="outline"
-                onClick={() => setShowEditModal(null)}
-              >
+              <Button variant="outline" onClick={() => setShowEditModal(null)}>
                 Cancel
               </Button>
-              <Button>
-                Save Changes
-              </Button>
+              <Button>Save Changes</Button>
             </div>
           </motion.div>
         </div>

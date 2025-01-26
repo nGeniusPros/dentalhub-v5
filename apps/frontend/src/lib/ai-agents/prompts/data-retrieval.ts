@@ -26,31 +26,18 @@ export interface DataValidationRules {
   dateTime: string[];
   relationships: Array<{
     fields: string[];
-    rule: 'equals' | 'lessThan' | 'greaterThan';
+    rule: "equals" | "lessThan" | "greaterThan";
   }>;
 }
 
 export const DEFAULT_VALIDATION_RULES: DataValidationRules = {
-  required: [
-    'patientId',
-    'procedureCode',
-    'appointmentTime',
-    'provider'
-  ],
-  numeric: [
-    'procedureFee',
-    'duration',
-    'insuranceEstimate'
-  ],
-  dateTime: [
-    'appointmentTime',
-    'createdAt',
-    'updatedAt'
-  ],
+  required: ["patientId", "procedureCode", "appointmentTime", "provider"],
+  numeric: ["procedureFee", "duration", "insuranceEstimate"],
+  dateTime: ["appointmentTime", "createdAt", "updatedAt"],
   relationships: [
     {
-      fields: ['procedureFee', 'insuranceEstimate'],
-      rule: 'greaterThan'
-    }
-  ]
+      fields: ["procedureFee", "insuranceEstimate"],
+      rule: "greaterThan",
+    },
+  ],
 };

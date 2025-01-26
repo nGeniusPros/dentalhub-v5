@@ -1,5 +1,5 @@
-import { Response } from 'express';
-import { SikkaIntegrationError } from '../integrations/sikka/error';
+import { Response } from "express";
+import { SikkaIntegrationError } from "../integrations/sikka/error";
 
 interface ErrorResponse {
   code: string;
@@ -8,7 +8,7 @@ interface ErrorResponse {
 }
 
 export function handleError(error: unknown, res: Response): void {
-  console.error('API Error:', error);
+  console.error("API Error:", error);
 
   if (error instanceof SikkaIntegrationError) {
     res.status(getStatusCodeForError(error.code)).json({
@@ -24,8 +24,8 @@ export function handleError(error: unknown, res: Response): void {
   if (error instanceof Error) {
     res.status(500).json({
       error: {
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'An unexpected error occurred',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred",
         details: {
           name: error.name,
           message: error.message,
@@ -37,8 +37,8 @@ export function handleError(error: unknown, res: Response): void {
 
   res.status(500).json({
     error: {
-      code: 'UNKNOWN_ERROR',
-      message: 'An unknown error occurred',
+      code: "UNKNOWN_ERROR",
+      message: "An unknown error occurred",
       details: error,
     },
   });
@@ -46,12 +46,12 @@ export function handleError(error: unknown, res: Response): void {
 
 function getStatusCodeForError(code: string): number {
   const statusCodes: Record<string, number> = {
-    'VALIDATION_ERROR': 400,
-    'AUTHENTICATION_ERROR': 401,
-    'AUTHORIZATION_ERROR': 403,
-    'NOT_FOUND': 404,
-    'RATE_LIMIT_ERROR': 429,
-    'SERVICE_UNAVAILABLE': 503,
+    VALIDATION_ERROR: 400,
+    AUTHENTICATION_ERROR: 401,
+    AUTHORIZATION_ERROR: 403,
+    NOT_FOUND: 404,
+    RATE_LIMIT_ERROR: 429,
+    SERVICE_UNAVAILABLE: 503,
   };
 
   return statusCodes[code] || 500;
@@ -60,7 +60,7 @@ function getStatusCodeForError(code: string): number {
 export function createErrorResponse(
   code: string,
   message: string,
-  details?: any
+  details?: any,
 ): ErrorResponse {
   return {
     code,
@@ -73,11 +73,11 @@ export function isOperationalError(error: unknown): boolean {
   if (error instanceof SikkaIntegrationError) {
     // List of error codes that are considered operational
     const operationalCodes = [
-      'VALIDATION_ERROR',
-      'AUTHENTICATION_ERROR',
-      'AUTHORIZATION_ERROR',
-      'NOT_FOUND',
-      'RATE_LIMIT_ERROR',
+      "VALIDATION_ERROR",
+      "AUTHENTICATION_ERROR",
+      "AUTHORIZATION_ERROR",
+      "NOT_FOUND",
+      "RATE_LIMIT_ERROR",
     ];
     return operationalCodes.includes(error.code);
   }

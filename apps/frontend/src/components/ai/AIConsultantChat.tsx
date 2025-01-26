@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { useAIConsultant } from '../../hooks/use-ai-consultant';
-import type { AIConsultantPrompt } from '../../lib/types/ai';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { useAIConsultant } from "../../hooks/use-ai-consultant";
+import type { AIConsultantPrompt } from "../../lib/types/ai";
 
 interface AIConsultantChatProps {
   selectedQuestion?: string;
 }
 
-export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({ selectedQuestion }) => {
-  const [question, setQuestion] = useState('');
-  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([]);
+export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({
+  selectedQuestion,
+}) => {
+  const [question, setQuestion] = useState("");
+  const [messages, setMessages] = useState<
+    Array<{ role: "user" | "assistant"; content: string }>
+  >([]);
   const { generateInsight, loading, error } = useAIConsultant();
 
   useEffect(() => {
@@ -22,32 +26,35 @@ export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({ selectedQues
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!question.trim()) return;
 
     // Add user message
-    setMessages(prev => [...prev, { role: 'user', content: question }]);
+    setMessages((prev) => [...prev, { role: "user", content: question }]);
 
     const prompt: AIConsultantPrompt = {
       metrics: {
         monthlyRevenue: 150000,
         patientCount: 1200,
         appointmentFillRate: 75,
-        treatmentAcceptance: 65
+        treatmentAcceptance: 65,
       },
-      focusArea: 'operations',
-      question: question
+      focusArea: "operations",
+      question: question,
     };
 
     const insight = await generateInsight(prompt);
     if (insight) {
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: insight.description 
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: insight.description,
+        },
+      ]);
     }
 
-    setQuestion('');
+    setQuestion("");
   };
 
   return (
@@ -57,7 +64,9 @@ export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({ selectedQues
           <Icons.Brain className="w-6 h-6" />
           <div>
             <h3 className="font-semibold">AI Practice Consultant</h3>
-            <p className="text-sm opacity-80">Ask me anything about your practice</p>
+            <p className="text-sm opacity-80">
+              Ask me anything about your practice
+            </p>
           </div>
         </div>
       </div>
@@ -70,13 +79,15 @@ export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({ selectedQues
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              <div className={`max-w-[80%] p-3 rounded-lg ${
-                message.role === 'user' 
-                  ? 'bg-primary text-white ml-4' 
-                  : 'bg-gray-100 text-gray-900 mr-4'
-              }`}>
+              <div
+                className={`max-w-[80%] p-3 rounded-lg ${
+                  message.role === "user"
+                    ? "bg-primary text-white ml-4"
+                    : "bg-gray-100 text-gray-900 mr-4"
+                }`}
+              >
                 {message.content}
               </div>
             </motion.div>
@@ -106,10 +117,8 @@ export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({ selectedQues
             )}
           </Button>
         </div>
-        
-        {error && (
-          <p className="text-red-500 text-sm mt-2">{error}</p>
-        )}
+
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
       </form>
     </div>
   );

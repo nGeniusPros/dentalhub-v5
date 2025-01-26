@@ -1,9 +1,9 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { VendorForm } from './VendorForm';
-import type { Vendor } from '../types/vendor';
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { VendorForm } from "./VendorForm";
+import type { Vendor } from "../types/vendor";
 
 interface VendorFormDialogProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ export const VendorFormDialog: React.FC<VendorFormDialogProps> = ({
   isOpen,
   onClose,
   onSubmit,
-  vendor
+  vendor,
 }) => {
   if (!isOpen) return null;
 
@@ -32,11 +32,11 @@ export const VendorFormDialog: React.FC<VendorFormDialogProps> = ({
           <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm p-6 border-b border-gray-200 rounded-t-xl">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold bg-gradient-to-r from-navy via-purple to-turquoise text-transparent bg-clip-text">
-                {vendor ? 'Edit' : 'Add'} Vendor
+                {vendor ? "Edit" : "Add"} Vendor
               </h2>
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={onClose}
                 className="hover:bg-gray-100 rounded-full"
               >

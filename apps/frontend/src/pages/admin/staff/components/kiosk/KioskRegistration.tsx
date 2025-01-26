@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { useNotifications } from '../../../../../contexts/NotificationContext';
-import QRCode from 'qrcode.react';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { useNotifications } from "../../../../../contexts/NotificationContext";
+import QRCode from "qrcode.react";
 
 interface KioskRegistrationProps {
   isOpen: boolean;
@@ -14,15 +14,15 @@ interface KioskRegistrationProps {
 export const KioskRegistration: React.FC<KioskRegistrationProps> = ({
   isOpen,
   onClose,
-  onRegister
+  onRegister,
 }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    location: '',
-    department: '',
-    ipAddress: '',
-    macAddress: '',
-    accessLevel: 'standard'
+    name: "",
+    location: "",
+    department: "",
+    ipAddress: "",
+    macAddress: "",
+    accessLevel: "standard",
   });
 
   const [qrCode, setQrCode] = useState<string | null>(null);
@@ -32,30 +32,30 @@ export const KioskRegistration: React.FC<KioskRegistrationProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Generate unique kiosk ID
     const kioskId = `KIOSK-${Date.now()}`;
-    
+
     // Generate QR code data
     const qrData = JSON.stringify({
       kioskId,
       ...formData,
-      registrationDate: new Date().toISOString()
+      registrationDate: new Date().toISOString(),
     });
-    
+
     setQrCode(qrData);
-    
+
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'message',
-        title: 'Kiosk Registered',
+        type: "message",
+        title: "Kiosk Registered",
         message: `New kiosk "${formData.name}" has been registered successfully`,
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium'
-      }
+        priority: "medium",
+      },
     });
 
     onRegister({ ...formData, kioskId });
@@ -86,7 +86,9 @@ export const KioskRegistration: React.FC<KioskRegistrationProps> = ({
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -99,7 +101,9 @@ export const KioskRegistration: React.FC<KioskRegistrationProps> = ({
               <input
                 type="text"
                 value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, location: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -111,7 +115,9 @@ export const KioskRegistration: React.FC<KioskRegistrationProps> = ({
               </label>
               <select
                 value={formData.department}
-                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, department: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -129,7 +135,9 @@ export const KioskRegistration: React.FC<KioskRegistrationProps> = ({
               </label>
               <select
                 value={formData.accessLevel}
-                onChange={(e) => setFormData({ ...formData, accessLevel: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, accessLevel: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -146,7 +154,9 @@ export const KioskRegistration: React.FC<KioskRegistrationProps> = ({
               <input
                 type="text"
                 value={formData.ipAddress}
-                onChange={(e) => setFormData({ ...formData, ipAddress: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, ipAddress: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 placeholder="192.168.1.100"
               />
@@ -159,7 +169,9 @@ export const KioskRegistration: React.FC<KioskRegistrationProps> = ({
               <input
                 type="text"
                 value={formData.macAddress}
-                onChange={(e) => setFormData({ ...formData, macAddress: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, macAddress: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 placeholder="00:00:00:00:00:00"
               />
@@ -178,10 +190,10 @@ export const KioskRegistration: React.FC<KioskRegistrationProps> = ({
                 className="mt-2"
                 onClick={() => {
                   // In production, implement proper QR code download
-                  const canvas = document.querySelector('canvas');
+                  const canvas = document.querySelector("canvas");
                   if (canvas) {
-                    const url = canvas.toDataURL('image/png');
-                    const a = document.createElement('a');
+                    const url = canvas.toDataURL("image/png");
+                    const a = document.createElement("a");
                     a.href = url;
                     a.download = `kiosk-${formData.name}-qr.png`;
                     document.body.appendChild(a);
@@ -200,9 +212,7 @@ export const KioskRegistration: React.FC<KioskRegistrationProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Register Kiosk
-            </Button>
+            <Button type="submit">Register Kiosk</Button>
           </div>
         </form>
       </motion.div>

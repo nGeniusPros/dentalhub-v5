@@ -1,18 +1,26 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { X as XIcon, Download as DownloadIcon } from 'lucide-react';
-import { Button } from './ui/button';
-import { cn } from '../lib/utils';
-import { saveAs } from 'file-saver';
-import type { Staff } from '../types/models';
-import { z } from 'zod';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { X as XIcon, Download as DownloadIcon } from "lucide-react";
+import { Button } from "./ui/button";
+import { cn } from "../lib/utils";
+import { saveAs } from "file-saver";
+import type { Staff } from "../types/models";
+import { z } from "zod";
 
 // Validation schemas
-const DateRangeSchema = z.enum(['all', 'today', 'week', 'month', 'quarter', 'year', 'custom']);
+const DateRangeSchema = z.enum([
+  "all",
+  "today",
+  "week",
+  "month",
+  "quarter",
+  "year",
+  "custom",
+]);
 
 const CustomDateRangeSchema = z.object({
   start: z.string(),
-  end: z.string()
+  end: z.string(),
 });
 
 const ExportOptionsSchema = z.object({
@@ -23,18 +31,20 @@ const ExportOptionsSchema = z.object({
     overview: z.boolean(),
     details: z.boolean(),
     metrics: z.boolean(),
-    trends: z.boolean()
+    trends: z.boolean(),
   }),
-  customDateRange: CustomDateRangeSchema
+  customDateRange: CustomDateRangeSchema,
 });
 
-const ExportFormatSchema = z.enum(['pdf', 'excel', 'csv']);
+const ExportFormatSchema = z.enum(["pdf", "excel", "csv"]);
 
 /**
  * Properties for the ExportReportDialog component.
  * @template T - The type of data being exported ('staff', 'performance', 'training', or 'financial').
  */
-export interface ExportReportDialogProps<T extends 'staff' | 'performance' | 'training' | 'financial'> {
+export interface ExportReportDialogProps<
+  T extends "staff" | "performance" | "training" | "financial",
+> {
   /**
    * Whether the dialog is open.
    */
@@ -48,11 +58,14 @@ export interface ExportReportDialogProps<T extends 'staff' | 'performance' | 'tr
    * @param {string} format - The format to export the report in.
    * @param {z.infer<typeof ExportOptionsSchema>} options - The export options.
    */
-  onExport: (format: string, options: z.infer<typeof ExportOptionsSchema>) => void;
+  onExport: (
+    format: string,
+    options: z.infer<typeof ExportOptionsSchema>,
+  ) => void;
   /**
    * Optional data to be exported.
    */
-  data?: T extends 'staff' ? Staff[] | undefined : any;
+  data?: T extends "staff" ? Staff[] | undefined : any;
   /**
    * The type of report to export.
    */
@@ -65,28 +78,31 @@ export interface ExportReportDialogProps<T extends 'staff' | 'performance' | 'tr
  * @param {ExportReportDialogProps<T>} props - The component props.
  * @returns {JSX.Element | null} The ExportReportDialog component.
  */
-const ExportReportDialog = <T extends 'staff' | 'performance' | 'training' | 'financial'>({
+const ExportReportDialog = <
+  T extends "staff" | "performance" | "training" | "financial",
+>({
   isOpen,
   onClose,
   onExport,
   data,
-  type = 'staff' as T
+  type = "staff" as T,
 }: ExportReportDialogProps<T>) => {
-  const [format, setFormat] = useState<z.infer<typeof ExportFormatSchema>>('pdf');
+  const [format, setFormat] =
+    useState<z.infer<typeof ExportFormatSchema>>("pdf");
   const [options, setOptions] = useState<z.infer<typeof ExportOptionsSchema>>({
     includeCharts: true,
     includeTables: true,
-    dateRange: 'all',
+    dateRange: "all",
     sections: {
       overview: true,
       details: true,
       metrics: true,
-      trends: true
+      trends: true,
     },
     customDateRange: {
-      start: '',
-      end: ''
-    }
+      start: "",
+      end: "",
+    },
   });
 
   if (!isOpen) return null;
@@ -103,41 +119,41 @@ const ExportReportDialog = <T extends 'staff' | 'performance' | 'training' | 'fi
       const validatedOptions = ExportOptionsSchema.parse(options);
 
       // Generate filename based on type and date
-      const date = new Date().toISOString().split('T')[0];
+      const date = new Date().toISOString().split("T")[0];
       const filename = `${type}-report-${date}`;
 
       // Process data based on selected options
       const exportData = {
         ...data,
         generatedAt: new Date().toISOString(),
-        options: validatedOptions
+        options: validatedOptions,
       };
 
       // Export based on format
       switch (validatedFormat) {
-        case 'pdf':
+        case "pdf":
           // In production, this would generate a PDF
-          console.log('Exporting PDF:', exportData);
+          console.log("Exporting PDF:", exportData);
           break;
 
-        case 'excel':
+        case "excel":
           // In production, this would generate an Excel file
-          console.log('Exporting Excel:', exportData);
+          console.log("Exporting Excel:", exportData);
           break;
 
-        case 'csv':
+        case "csv":
           // Generate CSV content
           if (data && Array.isArray(data) && data.length > 0) {
-            const csvContent = 'data:text/csv;charset=utf-8,' + 
-              Object.keys(data[0]).join(',') + '\n' +
-              data.map((row: any) => 
-                Object.values(row).join(',')
-              ).join('\n');
+            const csvContent =
+              "data:text/csv;charset=utf-8," +
+              Object.keys(data[0]).join(",") +
+              "\n" +
+              data.map((row: any) => Object.values(row).join(",")).join("\n");
 
             const encodedUri = encodeURI(csvContent);
             saveAs(encodedUri, `${filename}.csv`);
           } else {
-            throw new Error('No data available for CSV export');
+            throw new Error("No data available for CSV export");
           }
           break;
       }
@@ -146,10 +162,10 @@ const ExportReportDialog = <T extends 'staff' | 'performance' | 'training' | 'fi
       onClose();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.error('Validation error:', error.errors);
+        console.error("Validation error:", error.errors);
         // In production, you would show these errors to the user
       } else {
-        console.error('Export error:', error);
+        console.error("Export error:", error);
       }
     }
   };
@@ -161,10 +177,10 @@ const ExportReportDialog = <T extends 'staff' | 'performance' | 'training' | 'fi
   const handleDateRangeChange = (value: string) => {
     try {
       const validatedDateRange = DateRangeSchema.parse(value);
-      setOptions(prev => ({ ...prev, dateRange: validatedDateRange }));
+      setOptions((prev) => ({ ...prev, dateRange: validatedDateRange }));
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.error('Invalid date range:', error.errors);
+        console.error("Invalid date range:", error.errors);
       }
     }
   };
@@ -174,15 +190,15 @@ const ExportReportDialog = <T extends 'staff' | 'performance' | 'training' | 'fi
    * @param {'start' | 'end'} field - The field to update ('start' or 'end').
    * @param {string} value - The selected date value.
    */
-  const handleCustomDateChange = (field: 'start' | 'end', value: string) => {
+  const handleCustomDateChange = (field: "start" | "end", value: string) => {
     try {
       const validatedDate = z.string().datetime().optional().parse(value);
-      setOptions(prev => ({
+      setOptions((prev) => ({
         ...prev,
         customDateRange: {
           ...prev.customDateRange,
-          [field]: validatedDate || ''
-        }
+          [field]: validatedDate || "",
+        },
       }));
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -215,7 +231,9 @@ const ExportReportDialog = <T extends 'staff' | 'performance' | 'training' | 'fi
             </label>
             <select
               value={format}
-              onChange={(e) => setFormat(e.target.value as z.infer<typeof ExportFormatSchema>)}
+              onChange={(e) =>
+                setFormat(e.target.value as z.infer<typeof ExportFormatSchema>)
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             >
               <option value="pdf">PDF</option>
@@ -243,23 +261,31 @@ const ExportReportDialog = <T extends 'staff' | 'performance' | 'training' | 'fi
               <option value="custom">Custom Range</option>
             </select>
 
-            {options.dateRange === 'custom' && (
+            {options.dateRange === "custom" && (
               <div className="grid grid-cols-2 gap-4 mt-2">
                 <div>
-                  <label className="block text-sm text-gray-500 mb-1">Start Date</label>
+                  <label className="block text-sm text-gray-500 mb-1">
+                    Start Date
+                  </label>
                   <input
                     type="date"
                     value={options.customDateRange.start}
-                    onChange={(e) => handleCustomDateChange('start', e.target.value)}
+                    onChange={(e) =>
+                      handleCustomDateChange("start", e.target.value)
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-500 mb-1">End Date</label>
+                  <label className="block text-sm text-gray-500 mb-1">
+                    End Date
+                  </label>
                   <input
                     type="date"
                     value={options.customDateRange.end}
-                    onChange={(e) => handleCustomDateChange('end', e.target.value)}
+                    onChange={(e) =>
+                      handleCustomDateChange("end", e.target.value)
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
@@ -277,10 +303,12 @@ const ExportReportDialog = <T extends 'staff' | 'performance' | 'training' | 'fi
                 <input
                   type="checkbox"
                   checked={options.includeCharts}
-                  onChange={(e) => setOptions(prev => ({
-                    ...prev,
-                    includeCharts: e.target.checked
-                  }))}
+                  onChange={(e) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      includeCharts: e.target.checked,
+                    }))
+                  }
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm">Charts and Graphs</span>
@@ -289,10 +317,12 @@ const ExportReportDialog = <T extends 'staff' | 'performance' | 'training' | 'fi
                 <input
                   type="checkbox"
                   checked={options.includeTables}
-                  onChange={(e) => setOptions(prev => ({
-                    ...prev,
-                    includeTables: e.target.checked
-                  }))}
+                  onChange={(e) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      includeTables: e.target.checked,
+                    }))
+                  }
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm">Data Tables</span>
@@ -311,13 +341,15 @@ const ExportReportDialog = <T extends 'staff' | 'performance' | 'training' | 'fi
                   <input
                     type="checkbox"
                     checked={value}
-                    onChange={(e) => setOptions(prev => ({
-                      ...prev,
-                      sections: {
-                        ...prev.sections,
-                        [key]: e.target.checked
-                      }
-                    }))}
+                    onChange={(e) =>
+                      setOptions((prev) => ({
+                        ...prev,
+                        sections: {
+                          ...prev.sections,
+                          [key]: e.target.checked,
+                        },
+                      }))
+                    }
                     className="rounded border-gray-300"
                   />
                   <span className="text-sm capitalize">{key}</span>

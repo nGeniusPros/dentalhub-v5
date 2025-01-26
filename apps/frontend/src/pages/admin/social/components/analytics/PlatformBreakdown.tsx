@@ -1,15 +1,22 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Button } from '../../../../../components/ui/button';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { Button } from "../../../../../components/ui/button";
+import * as Icons from "lucide-react";
 
 export const PlatformBreakdown = () => {
   const data = [
-    { name: 'Instagram', value: 45, color: '#E4405F' },
-    { name: 'Facebook', value: 30, color: '#1877F2' },
-    { name: 'Twitter', value: 15, color: '#1DA1F2' },
-    { name: 'LinkedIn', value: 10, color: '#0A66C2' },
+    { name: "Instagram", value: 45, color: "#E4405F" },
+    { name: "Facebook", value: 30, color: "#1877F2" },
+    { name: "Twitter", value: 15, color: "#1DA1F2" },
+    { name: "LinkedIn", value: 10, color: "#0A66C2" },
   ];
 
   return (

@@ -1,5 +1,5 @@
 // @ts-ignore
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export interface DatabasePatient {
   id: string;
@@ -7,7 +7,7 @@ export interface DatabasePatient {
   last_name: string;
   email: string | null;
   phone: string | null;
-  status: 'active' | 'inactive' | 'pending';
+  status: "active" | "inactive" | "pending";
   balance: number;
   date_of_birth: string | null;
   address: string | null;
@@ -22,8 +22,8 @@ export interface DatabaseAppointment {
   provider_id: string;
   start_time: string;
   end_time: string;
-  status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no-show';
-  type: 'checkup' | 'cleaning' | 'procedure' | 'consultation' | 'emergency';
+  status: "scheduled" | "confirmed" | "completed" | "cancelled" | "no-show";
+  type: "checkup" | "cleaning" | "procedure" | "consultation" | "emergency";
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -35,8 +35,8 @@ export interface DatabaseProvider {
   last_name: string;
   email: string;
   phone: string | null;
-  role: 'dentist' | 'hygienist' | 'assistant' | 'admin';
-  status: 'active' | 'inactive';
+  role: "dentist" | "hygienist" | "assistant" | "admin";
+  status: "active" | "inactive";
   specialties: string[] | null;
   schedule: {
     monday?: { start: string; end: string }[];
@@ -60,7 +60,7 @@ export interface DatabaseProcedure {
   cost: number;
   insurance_code: string | null;
   duration: number;
-  status: 'planned' | 'in-progress' | 'completed' | 'cancelled';
+  status: "planned" | "in-progress" | "completed" | "cancelled";
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -75,7 +75,7 @@ export interface DatabaseInsurance {
   primary: boolean;
   coverage_start: string;
   coverage_end: string | null;
-  verification_status: 'pending' | 'verified' | 'failed';
+  verification_status: "pending" | "verified" | "failed";
   coverage_details: {
     deductible?: number;
     maximum?: number;
@@ -92,10 +92,10 @@ export interface DatabaseBilling {
   appointment_id: string | null;
   procedure_id: string | null;
   amount: number;
-  status: 'pending' | 'paid' | 'partially_paid' | 'overdue' | 'cancelled';
+  status: "pending" | "paid" | "partially_paid" | "overdue" | "cancelled";
   due_date: string;
   insurance_claim_id: string | null;
-  payment_method: 'cash' | 'card' | 'insurance' | 'other' | null;
+  payment_method: "cash" | "card" | "insurance" | "other" | null;
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -106,33 +106,45 @@ export interface Database {
     Tables: {
       patients: {
         Row: DatabasePatient;
-        Insert: Omit<DatabasePatient, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<DatabasePatient, 'id' | 'created_at' | 'updated_at'>>;
+        Insert: Omit<DatabasePatient, "id" | "created_at" | "updated_at">;
+        Update: Partial<
+          Omit<DatabasePatient, "id" | "created_at" | "updated_at">
+        >;
       };
       appointments: {
         Row: DatabaseAppointment;
-        Insert: Omit<DatabaseAppointment, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<DatabaseAppointment, 'id' | 'created_at' | 'updated_at'>>;
+        Insert: Omit<DatabaseAppointment, "id" | "created_at" | "updated_at">;
+        Update: Partial<
+          Omit<DatabaseAppointment, "id" | "created_at" | "updated_at">
+        >;
       };
       providers: {
         Row: DatabaseProvider;
-        Insert: Omit<DatabaseProvider, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<DatabaseProvider, 'id' | 'created_at' | 'updated_at'>>;
+        Insert: Omit<DatabaseProvider, "id" | "created_at" | "updated_at">;
+        Update: Partial<
+          Omit<DatabaseProvider, "id" | "created_at" | "updated_at">
+        >;
       };
       procedures: {
         Row: DatabaseProcedure;
-        Insert: Omit<DatabaseProcedure, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<DatabaseProcedure, 'id' | 'created_at' | 'updated_at'>>;
+        Insert: Omit<DatabaseProcedure, "id" | "created_at" | "updated_at">;
+        Update: Partial<
+          Omit<DatabaseProcedure, "id" | "created_at" | "updated_at">
+        >;
       };
       insurance: {
         Row: DatabaseInsurance;
-        Insert: Omit<DatabaseInsurance, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<DatabaseInsurance, 'id' | 'created_at' | 'updated_at'>>;
+        Insert: Omit<DatabaseInsurance, "id" | "created_at" | "updated_at">;
+        Update: Partial<
+          Omit<DatabaseInsurance, "id" | "created_at" | "updated_at">
+        >;
       };
       billing: {
         Row: DatabaseBilling;
-        Insert: Omit<DatabaseBilling, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<DatabaseBilling, 'id' | 'created_at' | 'updated_at'>>;
+        Insert: Omit<DatabaseBilling, "id" | "created_at" | "updated_at">;
+        Update: Partial<
+          Omit<DatabaseBilling, "id" | "created_at" | "updated_at">
+        >;
       };
     };
     Views: {

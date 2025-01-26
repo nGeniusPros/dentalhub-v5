@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
 
 interface UploadResourceModalProps {
   isOpen: boolean;
@@ -12,7 +12,7 @@ interface UploadResourceModalProps {
 export const UploadResourceModal: React.FC<UploadResourceModalProps> = ({
   isOpen,
   onClose,
-  onUpload
+  onUpload,
 }) => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -62,7 +62,7 @@ export const UploadResourceModal: React.FC<UploadResourceModalProps> = ({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center ${
-              dragging ? 'border-primary bg-primary/5' : 'border-gray-200'
+              dragging ? "border-primary bg-primary/5" : "border-gray-200"
             }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -83,7 +83,7 @@ export const UploadResourceModal: React.FC<UploadResourceModalProps> = ({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => document.getElementById('file-upload')?.click()}
+                onClick={() => document.getElementById("file-upload")?.click()}
               >
                 Browse Files
               </Button>
@@ -92,7 +92,9 @@ export const UploadResourceModal: React.FC<UploadResourceModalProps> = ({
 
           {files && files.length > 0 && (
             <div className="space-y-2">
-              <h3 className="text-sm font-medium text-gray-700">Selected Files:</h3>
+              <h3 className="text-sm font-medium text-gray-700">
+                Selected Files:
+              </h3>
               {Array.from(files).map((file, index) => (
                 <div
                   key={index}
@@ -114,10 +116,7 @@ export const UploadResourceModal: React.FC<UploadResourceModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={!files || files.length === 0}
-            >
+            <Button type="submit" disabled={!files || files.length === 0}>
               Upload Files
             </Button>
           </div>

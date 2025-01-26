@@ -1,9 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { cn } from '../../lib/utils';
-import type { GameElement } from '../../types/learning';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { cn } from "../../lib/utils";
+import type { GameElement } from "../../types/learning";
 
 interface GameElementsProps {
   elements: GameElement[];
@@ -12,7 +12,7 @@ interface GameElementsProps {
 
 export const GameElements: React.FC<GameElementsProps> = ({
   elements,
-  onUnlock
+  onUnlock,
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -23,19 +23,21 @@ export const GameElements: React.FC<GameElementsProps> = ({
           animate={{ opacity: 1, y: 0 }}
           className={cn(
             "bg-white rounded-xl shadow-lg border p-6",
-            element.unlocked ? "border-primary/20" : "border-gray-200"
+            element.unlocked ? "border-primary/20" : "border-gray-200",
           )}
         >
           <div className="flex items-center gap-4 mb-4">
-            <div className={cn(
-              "p-3 rounded-xl",
-              element.unlocked ? "bg-primary/10" : "bg-gray-100"
-            )}>
+            <div
+              className={cn(
+                "p-3 rounded-xl",
+                element.unlocked ? "bg-primary/10" : "bg-gray-100",
+              )}
+            >
               {React.createElement(Icons[element.icon as keyof typeof Icons], {
                 className: cn(
                   "w-6 h-6",
-                  element.unlocked ? "text-primary" : "text-gray-400"
-                )
+                  element.unlocked ? "text-primary" : "text-gray-400",
+                ),
               })}
             </div>
             <div>
@@ -59,10 +61,7 @@ export const GameElements: React.FC<GameElementsProps> = ({
               )}
             </div>
           ) : (
-            <Button
-              className="w-full"
-              onClick={() => onUnlock?.(element.id)}
-            >
+            <Button className="w-full" onClick={() => onUnlock?.(element.id)}>
               <Icons.Lock className="w-4 h-4 mr-2" />
               Unlock
             </Button>

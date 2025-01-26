@@ -5,29 +5,32 @@ import {
   DocumentGenerationResult,
   DocumentTemplate,
   DocumentStorageOptions,
-} from '../types/document.types';
-import { handleDocumentError } from '../edge-functions/documents/error';
-import { v4 as uuidv4 } from 'uuid';
-import pdfMake from 'pdfmake/build/pdfmake';
-import { TDocumentDefinitions } from 'pdfmake/interfaces';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { edgeCache } from '../utils/cache';
+} from "../types/document.types";
+import { handleDocumentError } from "../edge-functions/documents/error";
+import { v4 as uuidv4 } from "uuid";
+import pdfMake from "pdfmake/build/pdfmake";
+import { TDocumentDefinitions } from "pdfmake/interfaces";
+import { promises as fs } from "fs";
+import path from "path";
+import { edgeCache } from "../utils/cache";
 
 async function generatePdf(data: DocumentData, config: any): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     try {
       const docDefinition: TDocumentDefinitions = {
         content: [
-          { text: `Document Type: ${data.type}`, style: 'header' },
-          { text: `Template ID: ${data.templateId}`, style: 'subheader' },
-          { text: `Data: ${JSON.stringify(data.data, null, 2)}`, style: 'body' },
+          { text: `Document Type: ${data.type}`, style: "header" },
+          { text: `Template ID: ${data.templateId}`, style: "subheader" },
+          {
+            text: `Data: ${JSON.stringify(data.data, null, 2)}`,
+            style: "body",
+          },
         ],
         styles: {
           header: { fontSize: 20, bold: true, margin: [0, 0, 0, 10] },
           subheader: { fontSize: 16, bold: true, margin: [0, 0, 0, 5] },
           body: { fontSize: 12, margin: [0, 0, 0, 5] },
-        }
+        },
       };
 
       const pdfDoc = pdfMake.createPdf(docDefinition);
@@ -35,7 +38,7 @@ async function generatePdf(data: DocumentData, config: any): Promise<Buffer> {
         resolve(buffer);
       });
     } catch (error) {
-      reject(handleDocumentError(error, 'PDF_GENERATION_FAILED'));
+      reject(handleDocumentError(error, "PDF_GENERATION_FAILED"));
     }
   });
 }
@@ -51,32 +54,38 @@ async function generateDocx(data: DocumentData, config: any): Promise<Buffer> {
         </w:body>
       </w:document>
     `;
-    return Buffer.from(docxContent, 'utf-8');
+    return Buffer.from(docxContent, "utf-8");
   } catch (error) {
-    throw handleDocumentError(error, 'DOCX_GENERATION_FAILED');
+    throw handleDocumentError(error, "DOCX_GENERATION_FAILED");
   }
 }
 
 async function storeDocument(
   buffer: Buffer,
-  options: DocumentStorageOptions
+  options: DocumentStorageOptions,
 ): Promise<string> {
   try {
     const documentId = uuidv4();
-    const filePath = path.join(options.path, `${documentId}.${options.path.split('.').pop()}`);
+    const filePath = path.join(
+      options.path,
+      `${documentId}.${options.path.split(".").pop()}`,
+    );
     await fs.writeFile(filePath, buffer);
     return `file://${filePath}`;
   } catch (error) {
-    throw handleDocumentError(error, 'DOCUMENT_STORAGE_FAILED');
+    throw handleDocumentError(error, "DOCUMENT_STORAGE_FAILED");
   }
 }
 
-function generateDocumentCacheKey(data: DocumentData, options: DocumentGenerationOptions): string {
+function generateDocumentCacheKey(
+  data: DocumentData,
+  options: DocumentGenerationOptions,
+): string {
   const key = {
     type: data.type,
     templateId: data.templateId,
     data: data.data,
-    format: options.config?.outputFormat || 'pdf',
+    format: options.config?.outputFormat || "pdf",
   };
   return `document-${JSON.stringify(key)}`;
 }
@@ -84,35 +93,35 @@ function generateDocumentCacheKey(data: DocumentData, options: DocumentGeneratio
 export class DocumentService {
   async generateDocument(
     data: DocumentData,
-    options: DocumentGenerationOptions
+    options: DocumentGenerationOptions,
   ): Promise<DocumentGenerationResult> {
     const cacheKey = generateDocumentCacheKey(data, options);
-    
+
     return edgeCache.get(cacheKey, async () => {
       try {
         const documentId = uuidv4();
         const config = options.config || {
-          outputFormat: 'pdf',
-          template: 'default',
+          outputFormat: "pdf",
+          template: "default",
         };
 
         let buffer: Buffer;
-        if (config.outputFormat === 'pdf') {
+        if (config.outputFormat === "pdf") {
           buffer = await generatePdf(data, config);
-        } else if (config.outputFormat === 'docx') {
+        } else if (config.outputFormat === "docx") {
           buffer = await generateDocx(data, config);
         } else {
           throw handleDocumentError(
             new Error(`Unsupported output format: ${config.outputFormat}`),
-            'UNSUPPORTED_FORMAT'
+            "UNSUPPORTED_FORMAT",
           );
         }
 
-        let url: string = '';
+        let url: string = "";
         if (options.storage) {
           url = await storeDocument(buffer, {
             ...options.storage,
-            path: options.storage.path || 'documents',
+            path: options.storage.path || "documents",
           });
         }
 
@@ -133,7 +142,7 @@ export class DocumentService {
       } catch (error) {
         return {
           success: false,
-          error: handleDocumentError(error, 'DOCUMENT_GENERATION_FAILED'),
+          error: handleDocumentError(error, "DOCUMENT_GENERATION_FAILED"),
         };
       }
     });
@@ -145,16 +154,16 @@ export class DocumentService {
       try {
         return {
           id: templateId,
-          name: 'Default Template',
-          type: 'default',
-          version: '1.0',
-          content: '<h1>Default Template</h1>',
-          variables: ['patientName', 'appointmentDate'],
+          name: "Default Template",
+          type: "default",
+          version: "1.0",
+          content: "<h1>Default Template</h1>",
+          variables: ["patientName", "appointmentDate"],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
       } catch (error) {
-        throw handleDocumentError(error, 'TEMPLATE_RETRIEVAL_FAILED');
+        throw handleDocumentError(error, "TEMPLATE_RETRIEVAL_FAILED");
       }
     });
   }

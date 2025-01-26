@@ -1,16 +1,16 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 
 interface Task {
   id: string;
   title: string;
   description: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   dueDate: string;
   completed: boolean;
 }
@@ -18,47 +18,50 @@ interface Task {
 export const TasksSection: React.FC = () => {
   const [tasks, setTasks] = React.useState<Task[]>([
     {
-      id: '1',
-      title: 'Review Patient Records',
-      description: 'Review and update treatment plans for upcoming appointments',
-      priority: 'high',
-      dueDate: 'Today',
-      completed: false
+      id: "1",
+      title: "Review Patient Records",
+      description:
+        "Review and update treatment plans for upcoming appointments",
+      priority: "high",
+      dueDate: "Today",
+      completed: false,
     },
     {
-      id: '2',
-      title: 'Follow-up Calls',
-      description: 'Call patients who had procedures last week',
-      priority: 'medium',
-      dueDate: 'Tomorrow',
-      completed: false
+      id: "2",
+      title: "Follow-up Calls",
+      description: "Call patients who had procedures last week",
+      priority: "medium",
+      dueDate: "Tomorrow",
+      completed: false,
     },
     {
-      id: '3',
-      title: 'Update Inventory',
-      description: 'Check and update dental supplies inventory',
-      priority: 'low',
-      dueDate: 'Next Week',
-      completed: true
-    }
+      id: "3",
+      title: "Update Inventory",
+      description: "Check and update dental supplies inventory",
+      priority: "low",
+      dueDate: "Next Week",
+      completed: true,
+    },
   ]);
 
   const handleTaskToggle = (taskId: string) => {
-    setTasks(tasks.map(task => 
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    ));
+    setTasks(
+      tasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task,
+      ),
+    );
   };
 
-  const getPriorityColor = (priority: Task['priority']) => {
+  const getPriorityColor = (priority: Task["priority"]) => {
     switch (priority) {
-      case 'high':
-        return 'text-red-500';
-      case 'medium':
-        return 'text-yellow-500';
-      case 'low':
-        return 'text-green-500';
+      case "high":
+        return "text-red-500";
+      case "medium":
+        return "text-yellow-500";
+      case "low":
+        return "text-green-500";
       default:
-        return 'text-gray-500';
+        return "text-gray-500";
     }
   };
 
@@ -79,9 +82,9 @@ export const TasksSection: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className={cn(
-                'flex items-start space-x-4 p-3 rounded-lg',
-                'hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors',
-                task.completed && 'opacity-60'
+                "flex items-start space-x-4 p-3 rounded-lg",
+                "hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors",
+                task.completed && "opacity-60",
               )}
             >
               <Checkbox
@@ -90,18 +93,24 @@ export const TasksSection: React.FC = () => {
               />
               <div className="flex-1 space-y-1">
                 <div className="flex items-center justify-between">
-                  <p className={cn(
-                    'text-sm font-medium',
-                    task.completed ? 'line-through text-gray-500' : 'text-gray-900 dark:text-white'
-                  )}>
+                  <p
+                    className={cn(
+                      "text-sm font-medium",
+                      task.completed
+                        ? "line-through text-gray-500"
+                        : "text-gray-900 dark:text-white",
+                    )}
+                  >
                     {task.title}
                   </p>
                   <div className="flex items-center space-x-2">
-                    <span className={cn(
-                      'text-xs font-medium px-2 py-1 rounded-full',
-                      getPriorityColor(task.priority),
-                      'bg-opacity-10'
-                    )}>
+                    <span
+                      className={cn(
+                        "text-xs font-medium px-2 py-1 rounded-full",
+                        getPriorityColor(task.priority),
+                        "bg-opacity-10",
+                      )}
+                    >
                       {task.priority}
                     </span>
                     <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -109,10 +118,14 @@ export const TasksSection: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <p className={cn(
-                  'text-sm',
-                  task.completed ? 'line-through text-gray-500' : 'text-gray-600 dark:text-gray-300'
-                )}>
+                <p
+                  className={cn(
+                    "text-sm",
+                    task.completed
+                      ? "line-through text-gray-500"
+                      : "text-gray-600 dark:text-gray-300",
+                  )}
+                >
                   {task.description}
                 </p>
               </div>

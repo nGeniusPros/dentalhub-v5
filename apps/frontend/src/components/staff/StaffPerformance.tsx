@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface StaffMember {
   id: string;
@@ -15,7 +15,9 @@ interface StaffPerformanceProps {
   data?: StaffMember[];
 }
 
-export const StaffPerformance: React.FC<StaffPerformanceProps> = ({ data = [] }) => {
+export const StaffPerformance: React.FC<StaffPerformanceProps> = ({
+  data = [],
+}) => {
   return (
     <div className="space-y-4">
       {data.map((staff) => (
@@ -36,7 +38,9 @@ export const StaffPerformance: React.FC<StaffPerformanceProps> = ({ data = [] })
             </div>
             <div className="text-right">
               <span className="block text-sm text-gray-500">Satisfaction</span>
-              <span className="font-semibold">{staff.metrics.satisfaction}%</span>
+              <span className="font-semibold">
+                {staff.metrics.satisfaction}%
+              </span>
             </div>
             <div className="text-right">
               <span className="block text-sm text-gray-500">Revenue</span>

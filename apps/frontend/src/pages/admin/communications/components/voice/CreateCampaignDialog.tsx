@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
 
 interface CreateCampaignDialogProps {
   open: boolean;
@@ -10,28 +10,60 @@ interface CreateCampaignDialogProps {
 
 export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
   open,
-  onClose
+  onClose,
 }) => {
   const [step, setStep] = useState(1);
-  const [campaignType, setCampaignType] = useState('');
-  const [patientSelection, setPatientSelection] = useState('group');
+  const [campaignType, setCampaignType] = useState("");
+  const [patientSelection, setPatientSelection] = useState("group");
   const [selectedPatients, setSelectedPatients] = useState<string[]>([]);
   const [schedule, setSchedule] = useState<Date | null>(null);
-  const [customCriteria, setCustomCriteria] = useState<Array<{
-    field: string;
-    operator: string;
-    value: string;
-  }>>([]);
+  const [customCriteria, setCustomCriteria] = useState<
+    Array<{
+      field: string;
+      operator: string;
+      value: string;
+    }>
+  >([]);
 
   if (!open) return null;
 
   const campaignTypes = [
-    { id: 'recall', name: 'Recall', icon: 'RotateCcw', description: 'Contact patients due for regular checkups' },
-    { id: 'reactivation', name: 'Reactivation', icon: 'UserPlus', description: 'Re-engage inactive patients' },
-    { id: 'treatment', name: 'Treatment', icon: 'Stethoscope', description: 'Follow up on pending treatments' },
-    { id: 'appointment', name: 'Appointment', icon: 'Calendar', description: 'Remind about upcoming appointments' },
-    { id: 'event', name: 'Event', icon: 'Calendar', description: 'Promote practice events or specials' },
-    { id: 'custom', name: 'Custom', icon: 'Settings', description: 'Create a custom campaign' }
+    {
+      id: "recall",
+      name: "Recall",
+      icon: "RotateCcw",
+      description: "Contact patients due for regular checkups",
+    },
+    {
+      id: "reactivation",
+      name: "Reactivation",
+      icon: "UserPlus",
+      description: "Re-engage inactive patients",
+    },
+    {
+      id: "treatment",
+      name: "Treatment",
+      icon: "Stethoscope",
+      description: "Follow up on pending treatments",
+    },
+    {
+      id: "appointment",
+      name: "Appointment",
+      icon: "Calendar",
+      description: "Remind about upcoming appointments",
+    },
+    {
+      id: "event",
+      name: "Event",
+      icon: "Calendar",
+      description: "Promote practice events or specials",
+    },
+    {
+      id: "custom",
+      name: "Custom",
+      icon: "Settings",
+      description: "Create a custom campaign",
+    },
   ];
 
   return (
@@ -44,7 +76,9 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
       >
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">Create Voice Campaign</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Create Voice Campaign
+            </h2>
             <Button variant="ghost" size="sm" onClick={onClose}>
               <Icons.X className="w-5 h-5" />
             </Button>
@@ -54,16 +88,22 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
               <div
                 key={s}
                 className={`flex items-center gap-2 ${
-                  s === step ? 'text-primary' : 'text-gray-500'
+                  s === step ? "text-primary" : "text-gray-500"
                 }`}
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  s === step ? 'bg-primary text-white' : 'bg-gray-100'
-                }`}>
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    s === step ? "bg-primary text-white" : "bg-gray-100"
+                  }`}
+                >
                   {s}
                 </div>
                 <span className="text-sm font-medium">
-                  {s === 1 ? 'Campaign Type' : s === 2 ? 'Patient Selection' : 'Schedule'}
+                  {s === 1
+                    ? "Campaign Type"
+                    : s === 2
+                      ? "Patient Selection"
+                      : "Schedule"}
                 </span>
               </div>
             ))}
@@ -79,19 +119,26 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
                   onClick={() => setCampaignType(type.id)}
                   className={`p-4 rounded-lg border ${
                     campaignType === type.id
-                      ? 'border-primary bg-primary/5'
-                      : 'border-gray-200 hover:border-primary/50'
+                      ? "border-primary bg-primary/5"
+                      : "border-gray-200 hover:border-primary/50"
                   } text-left transition-colors`}
                 >
                   <div className="flex items-center gap-3">
-                    {React.createElement(Icons[type.icon as keyof typeof Icons], {
-                      className: `w-5 h-5 ${
-                        campaignType === type.id ? 'text-primary' : 'text-gray-400'
-                      }`
-                    })}
+                    {React.createElement(
+                      Icons[type.icon as keyof typeof Icons],
+                      {
+                        className: `w-5 h-5 ${
+                          campaignType === type.id
+                            ? "text-primary"
+                            : "text-gray-400"
+                        }`,
+                      },
+                    )}
                     <div>
                       <h3 className="font-medium text-gray-900">{type.name}</h3>
-                      <p className="text-sm text-gray-500">{type.description}</p>
+                      <p className="text-sm text-gray-500">
+                        {type.description}
+                      </p>
                     </div>
                   </div>
                 </button>
@@ -103,41 +150,49 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
             <div className="space-y-6">
               <div className="flex gap-4">
                 <button
-                  onClick={() => setPatientSelection('group')}
+                  onClick={() => setPatientSelection("group")}
                   className={`flex-1 p-4 rounded-lg border ${
-                    patientSelection === 'group'
-                      ? 'border-primary bg-primary/5'
-                      : 'border-gray-200 hover:border-primary/50'
+                    patientSelection === "group"
+                      ? "border-primary bg-primary/5"
+                      : "border-gray-200 hover:border-primary/50"
                   }`}
                 >
                   <h3 className="font-medium text-gray-900">Patient Group</h3>
-                  <p className="text-sm text-gray-500">Select patients based on criteria</p>
+                  <p className="text-sm text-gray-500">
+                    Select patients based on criteria
+                  </p>
                 </button>
                 <button
-                  onClick={() => setPatientSelection('individual')}
+                  onClick={() => setPatientSelection("individual")}
                   className={`flex-1 p-4 rounded-lg border ${
-                    patientSelection === 'individual'
-                      ? 'border-primary bg-primary/5'
-                      : 'border-gray-200 hover:border-primary/50'
+                    patientSelection === "individual"
+                      ? "border-primary bg-primary/5"
+                      : "border-gray-200 hover:border-primary/50"
                   }`}
                 >
-                  <h3 className="font-medium text-gray-900">Individual Patients</h3>
-                  <p className="text-sm text-gray-500">Select specific patients</p>
+                  <h3 className="font-medium text-gray-900">
+                    Individual Patients
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Select specific patients
+                  </p>
                 </button>
                 <button
-                  onClick={() => setPatientSelection('upload')}
+                  onClick={() => setPatientSelection("upload")}
                   className={`flex-1 p-4 rounded-lg border ${
-                    patientSelection === 'upload'
-                      ? 'border-primary bg-primary/5'
-                      : 'border-gray-200 hover:border-primary/50'
+                    patientSelection === "upload"
+                      ? "border-primary bg-primary/5"
+                      : "border-gray-200 hover:border-primary/50"
                   }`}
                 >
                   <h3 className="font-medium text-gray-900">Upload List</h3>
-                  <p className="text-sm text-gray-500">Import patient list from file</p>
+                  <p className="text-sm text-gray-500">
+                    Import patient list from file
+                  </p>
                 </button>
               </div>
 
-              {patientSelection === 'group' && (
+              {patientSelection === "group" && (
                 <div className="space-y-4">
                   <div>
                     <div className="flex items-center justify-between mb-2">
@@ -147,18 +202,25 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setCustomCriteria([...customCriteria, { field: '', operator: '', value: '' }])}
+                        onClick={() =>
+                          setCustomCriteria([
+                            ...customCriteria,
+                            { field: "", operator: "", value: "" },
+                          ])
+                        }
                       >
                         <Icons.Plus className="w-4 h-4 mr-2" />
                         Add Criteria
                       </Button>
                     </div>
-                    
+
                     <div className="space-y-3">
                       {/* Predefined Criteria */}
                       <div className="p-4 bg-gray-50 rounded-lg">
                         <select className="w-full px-4 py-2 border border-gray-200 rounded-lg">
-                          <option value="">Select predefined criteria...</option>
+                          <option value="">
+                            Select predefined criteria...
+                          </option>
                           <option>Last visit more than 6 months ago</option>
                           <option>Unscheduled treatment plans</option>
                           <option>Missed appointments</option>
@@ -187,20 +249,38 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
                                 <option value="zipCode">ZIP Code</option>
                               </optgroup>
                               <optgroup label="Clinical">
-                                <option value="lastVisit">Last Visit Date</option>
-                                <option value="nextRecall">Next Recall Date</option>
-                                <option value="treatmentValue">Treatment Value</option>
-                                <option value="procedureCodes">Procedure Codes</option>
+                                <option value="lastVisit">
+                                  Last Visit Date
+                                </option>
+                                <option value="nextRecall">
+                                  Next Recall Date
+                                </option>
+                                <option value="treatmentValue">
+                                  Treatment Value
+                                </option>
+                                <option value="procedureCodes">
+                                  Procedure Codes
+                                </option>
                               </optgroup>
                               <optgroup label="Financial">
-                                <option value="accountBalance">Account Balance</option>
-                                <option value="insuranceType">Insurance Type</option>
-                                <option value="paymentPlan">Payment Plan</option>
+                                <option value="accountBalance">
+                                  Account Balance
+                                </option>
+                                <option value="insuranceType">
+                                  Insurance Type
+                                </option>
+                                <option value="paymentPlan">
+                                  Payment Plan
+                                </option>
                               </optgroup>
                               <optgroup label="Communication">
-                                <option value="preferredContact">Preferred Contact</option>
+                                <option value="preferredContact">
+                                  Preferred Contact
+                                </option>
                                 <option value="language">Language</option>
-                                <option value="marketingConsent">Marketing Consent</option>
+                                <option value="marketingConsent">
+                                  Marketing Consent
+                                </option>
                               </optgroup>
                             </select>
 
@@ -239,7 +319,9 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
                               variant="ghost"
                               size="sm"
                               onClick={() => {
-                                const newCriteria = customCriteria.filter((_, i) => i !== index);
+                                const newCriteria = customCriteria.filter(
+                                  (_, i) => i !== index,
+                                );
                                 setCustomCriteria(newCriteria);
                               }}
                               className="text-red-500 hover:text-red-700"
@@ -258,27 +340,47 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
                     </label>
                     <div className="space-y-2">
                       <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded border-gray-300" />
-                        <span className="text-sm">Include inactive patients</span>
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300"
+                        />
+                        <span className="text-sm">
+                          Include inactive patients
+                        </span>
                       </label>
                       <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded border-gray-300" />
-                        <span className="text-sm">Only patients with valid phone numbers</span>
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300"
+                        />
+                        <span className="text-sm">
+                          Only patients with valid phone numbers
+                        </span>
                       </label>
                       <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded border-gray-300" />
-                        <span className="text-sm">Exclude patients who opted out</span>
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300"
+                        />
+                        <span className="text-sm">
+                          Exclude patients who opted out
+                        </span>
                       </label>
                       <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded border-gray-300" />
-                        <span className="text-sm">Only patients with marketing consent</span>
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300"
+                        />
+                        <span className="text-sm">
+                          Only patients with marketing consent
+                        </span>
                       </label>
                     </div>
                   </div>
                 </div>
               )}
 
-              {patientSelection === 'individual' && (
+              {patientSelection === "individual" && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Search Patients
@@ -294,17 +396,16 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
                 </div>
               )}
 
-              {patientSelection === 'upload' && (
+              {patientSelection === "upload" && (
                 <div className="border-2 border-dashed border-gray-200 rounded-lg p-8">
                   <div className="flex flex-col items-center">
                     <Icons.Upload className="w-12 h-12 text-gray-400 mb-4" />
                     <p className="text-sm text-gray-500 mb-4 text-center">
-                      Drag and drop your patient list here, or click to browse.<br />
+                      Drag and drop your patient list here, or click to browse.
+                      <br />
                       Supported formats: CSV, Excel
                     </p>
-                    <Button variant="outline">
-                      Browse Files
-                    </Button>
+                    <Button variant="outline">Browse Files</Button>
                   </div>
                 </div>
               )}
@@ -319,14 +420,18 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-gray-500 mb-1">Start Date</label>
+                    <label className="block text-sm text-gray-500 mb-1">
+                      Start Date
+                    </label>
                     <input
                       type="date"
                       className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-500 mb-1">Start Time</label>
+                    <label className="block text-sm text-gray-500 mb-1">
+                      Start Time
+                    </label>
                     <input
                       type="time"
                       className="w-full px-4 py-2 border border-gray-200 rounded-lg"
@@ -370,7 +475,8 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
                 </label>
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600">
-                    "Hello, this is [Practice Name] calling to remind you about your upcoming dental appointment..."
+                    "Hello, this is [Practice Name] calling to remind you about
+                    your upcoming dental appointment..."
                   </p>
                 </div>
               </div>
@@ -381,15 +487,15 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
         <div className="p-6 border-t border-gray-200 flex justify-between">
           <Button
             variant="outline"
-            onClick={() => step > 1 ? setStep(step - 1) : onClose}
+            onClick={() => (step > 1 ? setStep(step - 1) : onClose)}
           >
-            {step > 1 ? 'Previous' : 'Cancel'}
+            {step > 1 ? "Previous" : "Cancel"}
           </Button>
           <Button
-            onClick={() => step < 3 ? setStep(step + 1) : onClose}
+            onClick={() => (step < 3 ? setStep(step + 1) : onClose)}
             disabled={step === 1 && !campaignType}
           >
-            {step < 3 ? 'Next' : 'Create Campaign'}
+            {step < 3 ? "Next" : "Create Campaign"}
           </Button>
         </div>
       </motion.div>

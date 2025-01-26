@@ -1,47 +1,47 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { cn } from '../../../../lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { cn } from "../../../../lib/utils";
 
 export const LearningPathProgress = () => {
   const paths = [
     {
-      id: '1',
-      name: 'Clinical Excellence',
+      id: "1",
+      name: "Clinical Excellence",
       progress: 65,
-      nextMilestone: 'Advanced Patient Care',
+      nextMilestone: "Advanced Patient Care",
       remainingCourses: 3,
-      category: 'Clinical',
+      category: "Clinical",
       rewards: [
-        { type: 'badge', name: 'Clinical Expert', unlocked: false },
-        { type: 'points', value: 1000, unlocked: false }
+        { type: "badge", name: "Clinical Expert", unlocked: false },
+        { type: "points", value: 1000, unlocked: false },
       ],
       milestones: [
-        { name: 'Basic Patient Care', completed: true },
-        { name: 'Intermediate Procedures', completed: true },
-        { name: 'Advanced Patient Care', completed: false },
-        { name: 'Specialization', completed: false }
-      ]
+        { name: "Basic Patient Care", completed: true },
+        { name: "Intermediate Procedures", completed: true },
+        { name: "Advanced Patient Care", completed: false },
+        { name: "Specialization", completed: false },
+      ],
     },
     {
-      id: '2',
-      name: 'Leadership Development',
+      id: "2",
+      name: "Leadership Development",
       progress: 40,
-      nextMilestone: 'Team Management',
+      nextMilestone: "Team Management",
       remainingCourses: 5,
-      category: 'Professional',
+      category: "Professional",
       rewards: [
-        { type: 'badge', name: 'Leadership Star', unlocked: false },
-        { type: 'certificate', name: 'Leadership Excellence', unlocked: false }
+        { type: "badge", name: "Leadership Star", unlocked: false },
+        { type: "certificate", name: "Leadership Excellence", unlocked: false },
       ],
       milestones: [
-        { name: 'Communication Basics', completed: true },
-        { name: 'Team Management', completed: false },
-        { name: 'Conflict Resolution', completed: false },
-        { name: 'Strategic Planning', completed: false }
-      ]
-    }
+        { name: "Communication Basics", completed: true },
+        { name: "Team Management", completed: false },
+        { name: "Conflict Resolution", completed: false },
+        { name: "Strategic Planning", completed: false },
+      ],
+    },
   ];
 
   return (
@@ -53,7 +53,9 @@ export const LearningPathProgress = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-lg font-semibold">Learning Paths</h2>
-          <p className="text-sm text-gray-500">Track your progress in different areas</p>
+          <p className="text-sm text-gray-500">
+            Track your progress in different areas
+          </p>
         </div>
         <Button variant="outline">
           <Icons.Plus className="w-4 h-4 mr-2" />
@@ -99,23 +101,31 @@ export const LearningPathProgress = () => {
                     key={index}
                     className={cn(
                       "flex items-center gap-3 p-2 rounded-lg transition-colors",
-                      milestone.completed ? "bg-green-50" : "bg-gray-100"
+                      milestone.completed ? "bg-green-50" : "bg-gray-100",
                     )}
                   >
-                    <div className={cn(
-                      "w-6 h-6 rounded-full flex items-center justify-center",
-                      milestone.completed ? "bg-green-100 text-green-600" : "bg-gray-200 text-gray-400"
-                    )}>
+                    <div
+                      className={cn(
+                        "w-6 h-6 rounded-full flex items-center justify-center",
+                        milestone.completed
+                          ? "bg-green-100 text-green-600"
+                          : "bg-gray-200 text-gray-400",
+                      )}
+                    >
                       {milestone.completed ? (
                         <Icons.Check className="w-4 h-4" />
                       ) : (
                         <span className="text-xs">{index + 1}</span>
                       )}
                     </div>
-                    <span className={cn(
-                      "text-sm",
-                      milestone.completed ? "text-green-600" : "text-gray-600"
-                    )}>
+                    <span
+                      className={cn(
+                        "text-sm",
+                        milestone.completed
+                          ? "text-green-600"
+                          : "text-gray-600",
+                      )}
+                    >
                       {milestone.name}
                     </span>
                   </div>
@@ -124,7 +134,9 @@ export const LearningPathProgress = () => {
 
               {/* Rewards */}
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Path Rewards</h4>
+                <h4 className="text-sm font-medium text-gray-700 mb-2">
+                  Path Rewards
+                </h4>
                 <div className="flex flex-wrap gap-2">
                   {path.rewards.map((reward, index) => (
                     <div
@@ -133,13 +145,21 @@ export const LearningPathProgress = () => {
                         "px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1",
                         reward.unlocked
                           ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-600"
+                          : "bg-gray-100 text-gray-600",
                       )}
                     >
-                      {reward.type === 'badge' && <Icons.Award className="w-3 h-3" />}
-                      {reward.type === 'points' && <Icons.Star className="w-3 h-3" />}
-                      {reward.type === 'certificate' && <Icons.FileCheck className="w-3 h-3" />}
-                      {reward.type === 'points' ? `${reward.value} Points` : reward.name}
+                      {reward.type === "badge" && (
+                        <Icons.Award className="w-3 h-3" />
+                      )}
+                      {reward.type === "points" && (
+                        <Icons.Star className="w-3 h-3" />
+                      )}
+                      {reward.type === "certificate" && (
+                        <Icons.FileCheck className="w-3 h-3" />
+                      )}
+                      {reward.type === "points"
+                        ? `${reward.value} Points`
+                        : reward.name}
                     </div>
                   ))}
                 </div>

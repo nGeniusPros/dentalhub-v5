@@ -1,17 +1,20 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
-import { UserRole } from '../../types/auth.types';
+import { UserRole } from "../../types/auth.types";
 
 interface ProtectedRouteProps {
   children?: React.ReactNode;
   allowedRoles: UserRole[];
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  allowedRoles,
+}) => {
   const { user, loading, session } = useAuth();
-  const userRole = user?.role as 'admin' | 'staff' | 'patient';
+  const userRole = user?.role as "admin" | "staff" | "patient";
 
   if (loading) {
     return (

@@ -1,13 +1,13 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
-import { InsuranceClaimsTable } from './components/InsuranceClaimsTable';
-import { ClaimStatusChart } from './components/ClaimStatusChart';
-import { ARAgingChart } from './components/ARAgingChart';
-import { InsuranceMetrics } from './components/InsuranceMetrics';
-import { EligibilityVerification } from './components/EligibilityVerification';
-import { useInsuranceData } from '../../../hooks/use-insurance-data';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../components/ui/button";
+import { InsuranceClaimsTable } from "./components/InsuranceClaimsTable";
+import { ClaimStatusChart } from "./components/ClaimStatusChart";
+import { ARAgingChart } from "./components/ARAgingChart";
+import { InsuranceMetrics } from "./components/InsuranceMetrics";
+import { EligibilityVerification } from "./components/EligibilityVerification";
+import { useInsuranceData } from "../../../hooks/use-insurance-data";
 
 const InsuranceManager = () => {
   const { claims, metrics, loading, error } = useInsuranceData();
@@ -24,7 +24,9 @@ const InsuranceManager = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Insurance Manager</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Insurance Manager
+          </h1>
           <p className="text-gray-500">Manage claims and verify eligibility</p>
         </div>
         <div className="flex gap-3">

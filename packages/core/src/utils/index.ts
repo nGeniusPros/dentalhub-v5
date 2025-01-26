@@ -11,7 +11,7 @@ export const createPaginationResponse = <T>(
   data: T[],
   total: number,
   page: number,
-  limit: number
+  limit: number,
 ) => {
   return {
     success: true,

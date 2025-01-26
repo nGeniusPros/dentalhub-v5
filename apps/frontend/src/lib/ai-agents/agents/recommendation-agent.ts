@@ -1,7 +1,7 @@
-import { AIResponse, AgentConfig } from '../types/agent-types';
-import { AgentError } from '../types/errors';
-import { RequestManager } from '../infrastructure/request-manager';
-import { ResponseCache } from '../infrastructure/response-cache';
+import { AIResponse, AgentConfig } from "../types/agent-types";
+import { AgentError } from "../types/errors";
+import { RequestManager } from "../infrastructure/request-manager";
+import { ResponseCache } from "../infrastructure/response-cache";
 
 interface RecommendationMetadata {
   optimizationOpportunities: Record<string, number>;
@@ -24,49 +24,55 @@ export class RecommendationAgent {
     try {
       const operational = await this.analyzeOperationalEfficiency(query);
       const strategic = await this.developStrategicRecommendations(operational);
-      const priorities = await this.prioritizeImprovements(operational, strategic);
+      const priorities = await this.prioritizeImprovements(
+        operational,
+        strategic,
+      );
 
       const metadata: RecommendationMetadata = {
         optimizationOpportunities: operational.opportunities,
         implementationPriorities: priorities.rankings,
         successMetrics: priorities.metrics,
         resourceRequirements: priorities.resources,
-        roiProjections: priorities.roi
+        roiProjections: priorities.roi,
       };
 
       return {
         content: this.formatAnalysis(operational, strategic, priorities),
         metadata,
-        confidence: this.calculateConfidence(operational.reliability)
+        confidence: this.calculateConfidence(operational.reliability),
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to process recommendation query',
-        'RECOMMENDATION',
-        'PROCESSING_ERROR',
+        "Failed to process recommendation query",
+        "RECOMMENDATION",
+        "PROCESSING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   private async analyzeOperationalEfficiency(query: string) {
-    return this.requestManager.executeWithRateLimit('RECOMMENDATION', async () => {
-      // Implementation using OpenAI Assistant ID: asst_uZJ45abI0EXICyc23oyee0Bj
-      return {
-        opportunities: {},
-        bottlenecks: [],
-        recommendations: [],
-        reliability: 0
-      };
-    });
+    return this.requestManager.executeWithRateLimit(
+      "RECOMMENDATION",
+      async () => {
+        // Implementation using OpenAI Assistant ID: asst_uZJ45abI0EXICyc23oyee0Bj
+        return {
+          opportunities: {},
+          bottlenecks: [],
+          recommendations: [],
+          reliability: 0,
+        };
+      },
+    );
   }
 
   private async developStrategicRecommendations(operational: any) {
     return {
       strategies: {},
       timeline: [],
-      dependencies: []
+      dependencies: [],
     };
   }
 
@@ -75,12 +81,16 @@ export class RecommendationAgent {
       rankings: {},
       metrics: {},
       resources: {},
-      roi: {}
+      roi: {},
     };
   }
 
-  private formatAnalysis(operational: any, strategic: any, priorities: any): string {
-    return '';
+  private formatAnalysis(
+    operational: any,
+    strategic: any,
+    priorities: any,
+  ): string {
+    return "";
   }
 
   private calculateConfidence(reliability: number): number {

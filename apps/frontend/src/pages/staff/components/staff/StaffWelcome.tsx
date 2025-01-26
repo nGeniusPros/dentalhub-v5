@@ -1,9 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { supabase } from '@/lib/supabase/client';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase/client";
 
 interface StaffMember {
   id: string;
@@ -20,22 +20,24 @@ export const StaffWelcome: React.FC = () => {
   React.useEffect(() => {
     const fetchStaffInfo = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (!user) {
           setIsLoading(false);
           return;
         }
 
         const { data, error } = await supabase
-          .from('staff_members')
-          .select('*')
-          .eq('user_id', user.id)
+          .from("staff_members")
+          .select("*")
+          .eq("user_id", user.id)
           .single();
 
         if (error) throw error;
         setStaffInfo(data);
       } catch (error) {
-        console.error('Error fetching staff info:', error);
+        console.error("Error fetching staff info:", error);
       } finally {
         setIsLoading(false);
       }
@@ -73,10 +75,10 @@ export const StaffWelcome: React.FC = () => {
           )}
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Welcome back, {staffInfo?.first_name || 'Staff Member'}!
+              Welcome back, {staffInfo?.first_name || "Staff Member"}!
             </h1>
             <p className="text-gray-500 dark:text-gray-400">
-              {staffInfo?.role || 'Staff'} • {new Date().toLocaleDateString()}
+              {staffInfo?.role || "Staff"} • {new Date().toLocaleDateString()}
             </p>
           </div>
         </div>

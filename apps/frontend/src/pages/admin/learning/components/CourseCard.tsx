@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { cn } from '../../../../lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { cn } from "../../../../lib/utils";
 
 interface CourseCardProps {
   course: {
@@ -18,7 +18,7 @@ interface CourseCardProps {
     instructor?: string;
     thumbnail?: string;
     tags?: string[];
-    level?: 'beginner' | 'intermediate' | 'advanced';
+    level?: "beginner" | "intermediate" | "advanced";
   };
   onStart: (courseId: string) => void;
 }
@@ -30,8 +30,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onStart }) => {
       className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden"
     >
       {course.thumbnail ? (
-        <img 
-          src={course.thumbnail} 
+        <img
+          src={course.thumbnail}
           alt={course.title}
           className="w-full h-48 object-cover"
         />
@@ -44,12 +44,15 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onStart }) => {
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <span className={cn(
-              "px-2 py-1 text-xs font-medium rounded-full",
-              course.level === 'beginner' && "bg-green-100 text-green-800",
-              course.level === 'intermediate' && "bg-yellow-100 text-yellow-800",
-              course.level === 'advanced' && "bg-red-100 text-red-800"
-            )}>
+            <span
+              className={cn(
+                "px-2 py-1 text-xs font-medium rounded-full",
+                course.level === "beginner" && "bg-green-100 text-green-800",
+                course.level === "intermediate" &&
+                  "bg-yellow-100 text-yellow-800",
+                course.level === "advanced" && "bg-red-100 text-red-800",
+              )}
+            >
               {course.level}
             </span>
             {course.required && (
@@ -64,7 +67,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onStart }) => {
           </div>
         </div>
 
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">{course.title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          {course.title}
+        </h3>
         <p className="text-sm text-gray-500 mb-4">{course.description}</p>
 
         {course.instructor && (
@@ -86,7 +91,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onStart }) => {
               <span className="font-medium">{course.progress}%</span>
             </div>
             <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-primary rounded-full transition-all duration-300"
                 style={{ width: `${course.progress}%` }}
               />
@@ -96,7 +101,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onStart }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <Icons.Award className="w-4 h-4 text-yellow-500" />
-              <span className="text-sm font-medium">{course.points} points</span>
+              <span className="text-sm font-medium">
+                {course.points} points
+              </span>
             </div>
             {course.dueDate && (
               <span className="text-sm text-red-600">
@@ -108,7 +115,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onStart }) => {
           {course.tags && course.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {course.tags.map((tag, index) => (
-                <span 
+                <span
                   key={index}
                   className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full"
                 >
@@ -118,10 +125,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onStart }) => {
             </div>
           )}
 
-          <Button 
-            className="w-full"
-            onClick={() => onStart(course.id)}
-          >
+          <Button className="w-full" onClick={() => onStart(course.id)}>
             {course.progress === 0 ? (
               <>
                 <Icons.Play className="w-4 h-4 mr-2" />

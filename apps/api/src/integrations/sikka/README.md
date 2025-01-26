@@ -13,12 +13,15 @@ This integration handles insurance verification, eligibility checks, benefits ve
 ## Available Endpoints
 
 ### Insurance Verification
+
 ```http
 POST /api/sikka/verify
 ```
+
 Verifies insurance information for a patient.
 
 **Request Body:**
+
 ```json
 {
   "patientId": "string",
@@ -31,12 +34,15 @@ Verifies insurance information for a patient.
 ```
 
 ### Eligibility Check
+
 ```http
 POST /api/sikka/eligibility
 ```
+
 Checks service eligibility for a patient.
 
 **Request Body:**
+
 ```json
 {
   "patientId": "string",
@@ -46,12 +52,15 @@ Checks service eligibility for a patient.
 ```
 
 ### Benefits Verification
+
 ```http
 POST /api/sikka/benefits
 ```
+
 Verifies benefits coverage for specific procedures.
 
 **Request Body:**
+
 ```json
 {
   "patientId": "string",
@@ -61,12 +70,15 @@ Verifies benefits coverage for specific procedures.
 ```
 
 ### Claims Processing
+
 ```http
 POST /api/sikka/claims
 ```
+
 Submits an insurance claim.
 
 **Request Body:**
+
 ```json
 {
   "patientId": "string",
@@ -88,12 +100,14 @@ Submits an insurance claim.
 ## Error Handling
 
 The integration includes comprehensive error handling with:
+
 - Automatic retries for transient failures
 - Rate limiting protection
 - Detailed error responses
 - Logging for debugging
 
 ### Error Response Format
+
 ```json
 {
   "error": {
@@ -107,6 +121,7 @@ The integration includes comprehensive error handling with:
 ## Configuration
 
 Key configuration options can be adjusted through environment variables:
+
 - Request timeouts
 - Retry settings
 - Rate limiting
@@ -117,11 +132,13 @@ See `.env.example` for all available configuration options.
 ## Development
 
 ### Running Tests
+
 ```bash
 pnpm test:sikka
 ```
 
 ### Adding New Endpoints
+
 1. Define types in `types.ts`
 2. Add validation in `validators.ts`
 3. Implement service method in `service.ts`
@@ -131,6 +148,7 @@ pnpm test:sikka
 ## Monitoring
 
 The integration includes built-in monitoring for:
+
 - Response times
 - Error rates
 - API usage patterns
@@ -139,6 +157,7 @@ The integration includes built-in monitoring for:
 ## Security
 
 Security measures include:
+
 - Request validation
 - Rate limiting
 - API key management

@@ -1,4 +1,4 @@
-import { SikkaConfig } from './types';
+import { SikkaConfig } from "./types";
 
 export const SIKKA_API_URL = process.env.SIKKA_API_URL;
 export const SIKKA_API_KEY = process.env.SIKKA_API_KEY;
@@ -7,15 +7,15 @@ export const SIKKA_MASTER_CUSTOMER_ID = process.env.SIKKA_MASTER_CUSTOMER_ID;
 export const SIKKA_PRACTICE_KEY = process.env.SIKKA_PRACTICE_KEY;
 
 if (!process.env.SIKKA_APP_ID) {
-  throw new Error('SIKKA_APP_ID environment variable is required');
+  throw new Error("SIKKA_APP_ID environment variable is required");
 }
 
 if (!process.env.SIKKA_APP_KEY) {
-  throw new Error('SIKKA_APP_KEY environment variable is required');
+  throw new Error("SIKKA_APP_KEY environment variable is required");
 }
 
 if (!process.env.SIKKA_PRACTICE_ID) {
-  throw new Error('SIKKA_PRACTICE_ID environment variable is required');
+  throw new Error("SIKKA_PRACTICE_ID environment variable is required");
 }
 
 // Cache TTL configurations (in seconds)
@@ -40,7 +40,7 @@ export const RETRY_OPTIONS = {
   maxRetryDelay: 10000, // Maximum delay between retries
   retryCondition: (error: any) => {
     return error.response?.status === 429 || error.response?.status >= 500;
-  }
+  },
 } as const;
 
 // Pagination defaults
@@ -52,18 +52,18 @@ export const PAGINATION_DEFAULTS = {
 
 // Sort order options
 export const SORT_ORDER = {
-  ASC: 'asc',
-  DESC: 'desc',
+  ASC: "asc",
+  DESC: "desc",
 } as const;
 
 export const sikkaConfig: SikkaConfig = {
-  baseUrl: process.env.SIKKA_API_URL || 'https://api.sikkasoft.com/v4',
+  baseUrl: process.env.SIKKA_API_URL || "https://api.sikkasoft.com/v4",
   appId: process.env.SIKKA_APP_ID,
   appKey: process.env.SIKKA_APP_KEY,
   practiceId: process.env.SIKKA_PRACTICE_ID,
-  masterCustomerId: process.env.SIKKA_MASTER_CUSTOMER_ID || '',
-  practiceKey: process.env.SIKKA_PRACTICE_KEY || '',
+  masterCustomerId: process.env.SIKKA_MASTER_CUSTOMER_ID || "",
+  practiceKey: process.env.SIKKA_PRACTICE_KEY || "",
   tokenRefreshThreshold: 5, // 5 minutes before expiration
   maxRetryAttempts: 3,
-  rateLimitDelay: 1000 // 1 second
+  rateLimitDelay: 1000, // 1 second
 } as const;

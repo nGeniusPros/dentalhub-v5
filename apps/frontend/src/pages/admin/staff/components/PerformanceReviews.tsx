@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { cn } from '../../../../lib/utils';
-import { ReviewDetailsModal } from './reviews/ReviewDetailsModal';
-import { CompleteReviewModal } from './reviews/CompleteReviewModal';
-import { ScheduleReviewModal } from './reviews/ScheduleReviewModal';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { cn } from "../../../../lib/utils";
+import { ReviewDetailsModal } from "./reviews/ReviewDetailsModal";
+import { CompleteReviewModal } from "./reviews/CompleteReviewModal";
+import { ScheduleReviewModal } from "./reviews/ScheduleReviewModal";
 
 interface Review {
   id: string;
   employee: string;
   position: string;
   reviewDate: string;
-  status: 'scheduled' | 'completed' | 'pending';
+  status: "scheduled" | "completed" | "pending";
   lastReview: string;
   rating: number;
   feedback?: string;
@@ -24,46 +24,51 @@ interface Review {
 export const PerformanceReviews = () => {
   const [reviews, setReviews] = useState<Review[]>([
     {
-      id: '1',
-      employee: 'Dr. Sarah Wilson',
-      position: 'Lead Dentist',
-      reviewDate: '2024-04-15',
-      status: 'scheduled',
-      lastReview: '2023-10-15',
+      id: "1",
+      employee: "Dr. Sarah Wilson",
+      position: "Lead Dentist",
+      reviewDate: "2024-04-15",
+      status: "scheduled",
+      lastReview: "2023-10-15",
       rating: 4.8,
-      goals: ['Increase patient satisfaction', 'Complete advanced certification'],
-      strengths: ['Technical expertise', 'Patient communication'],
-      improvements: ['Time management']
+      goals: [
+        "Increase patient satisfaction",
+        "Complete advanced certification",
+      ],
+      strengths: ["Technical expertise", "Patient communication"],
+      improvements: ["Time management"],
     },
     {
-      id: '2',
-      employee: 'John Smith',
-      position: 'Dental Hygienist',
-      reviewDate: '2024-03-20',
-      status: 'completed',
-      lastReview: '2023-09-20',
+      id: "2",
+      employee: "John Smith",
+      position: "Dental Hygienist",
+      reviewDate: "2024-03-20",
+      status: "completed",
+      lastReview: "2023-09-20",
       rating: 4.5,
-      feedback: 'Excellent performance in patient care and team collaboration.',
-      goals: ['Maintain high cleaning standards', 'Mentor junior staff'],
-      strengths: ['Attention to detail', 'Team player'],
-      improvements: ['Documentation thoroughness']
+      feedback: "Excellent performance in patient care and team collaboration.",
+      goals: ["Maintain high cleaning standards", "Mentor junior staff"],
+      strengths: ["Attention to detail", "Team player"],
+      improvements: ["Documentation thoroughness"],
     },
     {
-      id: '3',
-      employee: 'Emily Parker',
-      position: 'Front Desk',
-      reviewDate: '2024-05-01',
-      status: 'pending',
-      lastReview: '2023-11-01',
+      id: "3",
+      employee: "Emily Parker",
+      position: "Front Desk",
+      reviewDate: "2024-05-01",
+      status: "pending",
+      lastReview: "2023-11-01",
       rating: 4.2,
-      goals: ['Improve scheduling efficiency', 'Enhance customer service'],
-      strengths: ['Organization skills', 'Multi-tasking'],
-      improvements: ['Follow-up communication']
-    }
+      goals: ["Improve scheduling efficiency", "Enhance customer service"],
+      strengths: ["Organization skills", "Multi-tasking"],
+      improvements: ["Follow-up communication"],
+    },
   ]);
 
   const [showDetailsModal, setShowDetailsModal] = useState<string | null>(null);
-  const [showCompleteModal, setShowCompleteModal] = useState<string | null>(null);
+  const [showCompleteModal, setShowCompleteModal] = useState<string | null>(
+    null,
+  );
   const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   const handleScheduleReview = (newReview: Review) => {
@@ -71,19 +76,26 @@ export const PerformanceReviews = () => {
     setShowScheduleModal(false);
   };
 
-  const handleCompleteReview = (reviewId: string, completedReview: Partial<Review>) => {
-    setReviews(reviews.map(review => 
-      review.id === reviewId
-        ? { ...review, ...completedReview, status: 'completed' }
-        : review
-    ));
+  const handleCompleteReview = (
+    reviewId: string,
+    completedReview: Partial<Review>,
+  ) => {
+    setReviews(
+      reviews.map((review) =>
+        review.id === reviewId
+          ? { ...review, ...completedReview, status: "completed" }
+          : review,
+      ),
+    );
     setShowCompleteModal(null);
   };
 
   const handleUpdateReview = (reviewId: string, updates: Partial<Review>) => {
-    setReviews(reviews.map(review =>
-      review.id === reviewId ? { ...review, ...updates } : review
-    ));
+    setReviews(
+      reviews.map((review) =>
+        review.id === reviewId ? { ...review, ...updates } : review,
+      ),
+    );
   };
 
   return (
@@ -97,8 +109,8 @@ export const PerformanceReviews = () => {
           <h2 className="text-lg font-semibold">Performance Reviews</h2>
           <p className="text-sm text-gray-500">Upcoming and recent reviews</p>
         </div>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           size="sm"
           onClick={() => setShowScheduleModal(true)}
         >
@@ -115,12 +127,16 @@ export const PerformanceReviews = () => {
                 <p className="font-medium text-gray-900">{review.employee}</p>
                 <p className="text-sm text-gray-500">{review.position}</p>
               </div>
-              <span className={cn(
-                "px-2 py-1 text-xs font-medium rounded-full",
-                review.status === 'completed' ? "bg-green-100 text-green-800" :
-                review.status === 'scheduled' ? "bg-blue-100 text-blue-800" :
-                "bg-yellow-100 text-yellow-800"
-              )}>
+              <span
+                className={cn(
+                  "px-2 py-1 text-xs font-medium rounded-full",
+                  review.status === "completed"
+                    ? "bg-green-100 text-green-800"
+                    : review.status === "scheduled"
+                      ? "bg-blue-100 text-blue-800"
+                      : "bg-yellow-100 text-yellow-800",
+                )}
+              >
                 {review.status}
               </span>
             </div>
@@ -144,19 +160,19 @@ export const PerformanceReviews = () => {
             </div>
 
             <div className="flex gap-2">
-              <Button 
-                size="sm" 
-                variant="outline" 
+              <Button
+                size="sm"
+                variant="outline"
                 className="flex-1"
                 onClick={() => setShowDetailsModal(review.id)}
               >
                 <Icons.FileText className="w-4 h-4 mr-2" />
                 View Details
               </Button>
-              {review.status !== 'completed' && (
-                <Button 
-                  size="sm" 
-                  variant="outline" 
+              {review.status !== "completed" && (
+                <Button
+                  size="sm"
+                  variant="outline"
                   className="flex-1"
                   onClick={() => setShowCompleteModal(review.id)}
                 >
@@ -171,7 +187,7 @@ export const PerformanceReviews = () => {
 
       <ReviewDetailsModal
         isOpen={!!showDetailsModal}
-        review={reviews.find(r => r.id === showDetailsModal)}
+        review={reviews.find((r) => r.id === showDetailsModal)}
         onClose={() => setShowDetailsModal(null)}
         onUpdate={(updates) => {
           if (showDetailsModal) {
@@ -183,7 +199,7 @@ export const PerformanceReviews = () => {
 
       <CompleteReviewModal
         isOpen={!!showCompleteModal}
-        review={reviews.find(r => r.id === showCompleteModal)}
+        review={reviews.find((r) => r.id === showCompleteModal)}
         onClose={() => setShowCompleteModal(null)}
         onComplete={(completedReview) => {
           if (showCompleteModal) {

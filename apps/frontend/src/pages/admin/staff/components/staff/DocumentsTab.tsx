@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
-import { AddDocumentModal } from '../documents/AddDocumentModal';
-import { useNotifications } from '../../../../../contexts/NotificationContext';
-import { UploadDocumentModal } from '../documents/UploadDocumentModal';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
+import { AddDocumentModal } from "../documents/AddDocumentModal";
+import { useNotifications } from "../../../../../contexts/NotificationContext";
+import { UploadDocumentModal } from "../documents/UploadDocumentModal";
 
 export const DocumentsTab = () => {
   const [showAddDocument, setShowAddDocument] = useState(false);
@@ -14,29 +14,29 @@ export const DocumentsTab = () => {
 
   const documents = [
     {
-      id: '1',
-      name: 'Employee Handbook',
-      type: 'PDF',
-      lastUpdated: '2024-03-01',
-      category: 'Policies',
-      status: 'active'
+      id: "1",
+      name: "Employee Handbook",
+      type: "PDF",
+      lastUpdated: "2024-03-01",
+      category: "Policies",
+      status: "active",
     },
     {
-      id: '2',
-      name: 'HIPAA Training Certificate',
-      type: 'PDF',
-      lastUpdated: '2024-02-15',
-      category: 'Certifications',
-      status: 'expiring'
+      id: "2",
+      name: "HIPAA Training Certificate",
+      type: "PDF",
+      lastUpdated: "2024-02-15",
+      category: "Certifications",
+      status: "expiring",
     },
     {
-      id: '3',
-      name: 'Performance Review Template',
-      type: 'DOCX',
-      lastUpdated: '2024-02-01',
-      category: 'Forms',
-      status: 'active'
-    }
+      id: "3",
+      name: "Performance Review Template",
+      type: "DOCX",
+      lastUpdated: "2024-02-01",
+      category: "Forms",
+      status: "active",
+    },
   ];
 
   return (
@@ -44,7 +44,9 @@ export const DocumentsTab = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-lg font-semibold">Document Management</h2>
-          <p className="text-sm text-gray-500">Manage staff documents and forms</p>
+          <p className="text-sm text-gray-500">
+            Manage staff documents and forms
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setShowUploadModal(true)}>
@@ -79,12 +81,15 @@ export const DocumentsTab = () => {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <span className={cn(
-                  "px-2 py-1 text-xs font-medium rounded-full",
-                  doc.status === 'active' && "bg-green-100 text-green-800",
-                  doc.status === 'expiring' && "bg-yellow-100 text-yellow-800",
-                  doc.status === 'expired' && "bg-red-100 text-red-800"
-                )}>
+                <span
+                  className={cn(
+                    "px-2 py-1 text-xs font-medium rounded-full",
+                    doc.status === "active" && "bg-green-100 text-green-800",
+                    doc.status === "expiring" &&
+                      "bg-yellow-100 text-yellow-800",
+                    doc.status === "expired" && "bg-red-100 text-red-800",
+                  )}
+                >
                   {doc.status}
                 </span>
                 <div className="flex gap-2">
@@ -108,38 +113,38 @@ export const DocumentsTab = () => {
         isOpen={showAddDocument}
         onClose={() => setShowAddDocument(false)}
         onAdd={(document) => {
-          console.log('New document:', document);
+          console.log("New document:", document);
           notifyDispatch({
-            type: 'ADD_NOTIFICATION',
+            type: "ADD_NOTIFICATION",
             payload: {
               id: Date.now().toString(),
-              type: 'message',
-              title: 'Document Added',
+              type: "message",
+              title: "Document Added",
               message: `${document.name} has been added successfully`,
               timestamp: new Date().toISOString(),
               read: false,
-              priority: 'medium'
-            }
+              priority: "medium",
+            },
           });
         }}
       />
-      
+
       <UploadDocumentModal
         isOpen={showUploadModal}
         onClose={() => setShowUploadModal(false)}
         onUpload={(files) => {
-          console.log('Uploaded files:', files);
+          console.log("Uploaded files:", files);
           notifyDispatch({
-            type: 'ADD_NOTIFICATION',
+            type: "ADD_NOTIFICATION",
             payload: {
               id: Date.now().toString(),
-              type: 'message',
-              title: 'Files Uploaded',
+              type: "message",
+              title: "Files Uploaded",
               message: `${files.length} files have been uploaded successfully`,
               timestamp: new Date().toISOString(),
               read: false,
-              priority: 'medium'
-            }
+              priority: "medium",
+            },
           });
         }}
       />

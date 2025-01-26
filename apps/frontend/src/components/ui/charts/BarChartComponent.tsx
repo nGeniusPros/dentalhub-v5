@@ -1,6 +1,14 @@
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { BaseChart } from './BaseChart';
+import React from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
+import { BaseChart } from "./BaseChart";
 
 interface BarChartProps {
   data: any[];
@@ -21,29 +29,32 @@ export const BarChartComponent: React.FC<BarChartProps> = ({
   xAxisKey,
   title,
   height,
-  stacked = false
+  stacked = false,
 }) => {
   return (
     <BaseChart title={title} height={height}>
       <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+        <CartesianGrid
+          strokeDasharray="3 3"
+          stroke="rgba(203, 213, 225, 0.3)"
+        />
         <XAxis
           dataKey={xAxisKey}
           axisLine={false}
           tickLine={false}
-          tick={{ fill: '#1B2B5B', fontSize: 12 }}
+          tick={{ fill: "#1B2B5B", fontSize: 12 }}
         />
         <YAxis
           axisLine={false}
           tickLine={false}
-          tick={{ fill: '#1B2B5B', fontSize: 12 }}
+          tick={{ fill: "#1B2B5B", fontSize: 12 }}
         />
         <Tooltip
           contentStyle={{
-            backgroundColor: '#fff',
-            border: 'none',
-            borderRadius: '0.5rem',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            backgroundColor: "#fff",
+            border: "none",
+            borderRadius: "0.5rem",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
           }}
         />
         <Legend />
@@ -53,7 +64,7 @@ export const BarChartComponent: React.FC<BarChartProps> = ({
             dataKey={bar.key}
             name={bar.name || bar.key}
             fill={bar.color}
-            stackId={stacked ? 'stack' : undefined}
+            stackId={stacked ? "stack" : undefined}
             radius={[4, 4, 0, 0]}
           />
         ))}

@@ -9,7 +9,7 @@ export interface RetellConfig {
 
 export interface RetellTranscriptionData {
   speakerId: string;
-  speakerType: 'agent' | 'customer';
+  speakerType: "agent" | "customer";
   text: string;
   startTime: number;
   endTime: number;
@@ -19,10 +19,10 @@ export interface RetellTranscriptionData {
 
 export interface RetellCallEndedData {
   duration: number;
-  endReason: 'completed' | 'disconnected' | 'error';
+  endReason: "completed" | "disconnected" | "error";
   recordingUrl?: string;
-  transcriptionStatus: 'pending' | 'in-progress' | 'completed' | 'failed';
-  analysisStatus: 'pending' | 'in-progress' | 'completed' | 'failed';
+  transcriptionStatus: "pending" | "in-progress" | "completed" | "failed";
+  analysisStatus: "pending" | "in-progress" | "completed" | "failed";
   metadata?: {
     agentName?: string;
     customerName?: string;
@@ -47,7 +47,7 @@ export interface RetellCallStartedData {
 export interface RetellRecordingData {
   url: string;
   duration: number;
-  format: 'mp3' | 'wav';
+  format: "mp3" | "wav";
   size: number;
   metadata?: {
     quality?: string;
@@ -56,11 +56,11 @@ export interface RetellRecordingData {
   };
 }
 
-export type RetellEventData = 
-  | { eventType: 'call.started'; data: RetellCallStartedData }
-  | { eventType: 'call.ended'; data: RetellCallEndedData }
-  | { eventType: 'call.transcription'; data: RetellTranscriptionData }
-  | { eventType: 'call.recording'; data: RetellRecordingData };
+export type RetellEventData =
+  | { eventType: "call.started"; data: RetellCallStartedData }
+  | { eventType: "call.ended"; data: RetellCallEndedData }
+  | { eventType: "call.transcription"; data: RetellTranscriptionData }
+  | { eventType: "call.recording"; data: RetellRecordingData };
 
 export interface CallEventPayload extends RetellEventData {
   callId: string;
@@ -69,14 +69,14 @@ export interface CallEventPayload extends RetellEventData {
 
 export interface CallResponse {
   callId: string;
-  status: 'initiated' | 'connecting' | 'in-progress' | 'completed' | 'failed';
+  status: "initiated" | "connecting" | "in-progress" | "completed" | "failed";
   agentId: string;
   customerNumber: string;
   createdAt: string;
   metadata?: {
     scheduledTime?: string;
     purpose?: string;
-    priority?: 'high' | 'medium' | 'low';
+    priority?: "high" | "medium" | "low";
   };
 }
 
@@ -91,13 +91,15 @@ export interface CallConfig {
   };
   recordingConfig?: {
     enabled: boolean;
-    format?: 'mp3' | 'wav';
-    quality?: 'high' | 'medium' | 'low';
+    format?: "mp3" | "wav";
+    quality?: "high" | "medium" | "low";
     stereo?: boolean;
   };
   webhookConfig?: {
     url: string;
-    events: Array<'call.started' | 'call.ended' | 'call.transcription' | 'call.recording'>;
+    events: Array<
+      "call.started" | "call.ended" | "call.transcription" | "call.recording"
+    >;
     retryCount?: number;
     secret?: string;
   };

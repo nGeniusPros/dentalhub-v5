@@ -1,7 +1,18 @@
 export interface EmailTemplate {
   id: string;
   name: string;
-  type: 'event' | 'invite' | 'announcement' | 'newsletter' | 'birthday' | 'recall' | 'reactivation' | 'reminder' | 'anniversary' | 'referral' | 'custom';
+  type:
+    | "event"
+    | "invite"
+    | "announcement"
+    | "newsletter"
+    | "birthday"
+    | "recall"
+    | "reactivation"
+    | "reminder"
+    | "anniversary"
+    | "referral"
+    | "custom";
   thumbnail?: string;
   content: string;
   category: string;
@@ -15,13 +26,13 @@ export interface EmailCampaign {
   name: string;
   subject: string;
   template: EmailTemplate;
-  status: 'draft' | 'scheduled' | 'sending' | 'sent' | 'error';
+  status: "draft" | "scheduled" | "sending" | "sent" | "error";
   schedule?: {
     date: string;
     time: string;
   };
   recipients: {
-    type: 'all' | 'segment' | 'list';
+    type: "all" | "segment" | "list";
     criteria?: {
       field: string;
       operator: string;
@@ -53,10 +64,10 @@ export interface EmailRecipient {
   id: string;
   email: string;
   name?: string;
-  type: 'patient' | 'lead';
+  type: "patient" | "lead";
   tags?: string[];
   lastEngagement?: string;
-  status: 'active' | 'unsubscribed' | 'bounced';
+  status: "active" | "unsubscribed" | "bounced";
 }
 
 export interface EmailList {

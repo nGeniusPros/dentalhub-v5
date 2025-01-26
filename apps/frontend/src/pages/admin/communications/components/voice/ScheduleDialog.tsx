@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import type { Campaign } from './VoiceCampaignList';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import type { Campaign } from "./VoiceCampaignList";
 
 interface ScheduleDialogProps {
   open: boolean;
   campaign: Campaign | null;
   onClose: () => void;
-  onSchedule: (schedule: Campaign['schedule']) => void;
+  onSchedule: (schedule: Campaign["schedule"]) => void;
 }
 
 export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
   open,
   campaign,
   onClose,
-  onSchedule
+  onSchedule,
 }) => {
   const [schedule, setSchedule] = useState({
-    startDate: new Date().toISOString().split('T')[0],
-    startTime: '09:00',
+    startDate: new Date().toISOString().split("T")[0],
+    startTime: "09:00",
     maxAttempts: 3,
-    timeBetweenAttempts: 2
+    timeBetweenAttempts: 2,
   });
 
   if (!open || !campaign) return null;
@@ -53,22 +53,36 @@ export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
             <h3 className="font-medium text-gray-900 mb-4">{campaign.name}</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-500 mb-1">Start Date</label>
+                <label className="block text-sm text-gray-500 mb-1">
+                  Start Date
+                </label>
                 <input
                   type="date"
                   value={schedule.startDate}
-                  onChange={(e) => setSchedule(prev => ({ ...prev, startDate: e.target.value }))}
-                  min={new Date().toISOString().split('T')[0]}
+                  onChange={(e) =>
+                    setSchedule((prev) => ({
+                      ...prev,
+                      startDate: e.target.value,
+                    }))
+                  }
+                  min={new Date().toISOString().split("T")[0]}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-500 mb-1">Start Time</label>
+                <label className="block text-sm text-gray-500 mb-1">
+                  Start Time
+                </label>
                 <input
                   type="time"
                   value={schedule.startTime}
-                  onChange={(e) => setSchedule(prev => ({ ...prev, startTime: e.target.value }))}
+                  onChange={(e) =>
+                    setSchedule((prev) => ({
+                      ...prev,
+                      startTime: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -80,10 +94,17 @@ export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
             <h3 className="font-medium text-gray-900 mb-4">Call Settings</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-500 mb-1">Maximum Attempts</label>
+                <label className="block text-sm text-gray-500 mb-1">
+                  Maximum Attempts
+                </label>
                 <select
                   value={schedule.maxAttempts}
-                  onChange={(e) => setSchedule(prev => ({ ...prev, maxAttempts: Number(e.target.value) }))}
+                  onChange={(e) =>
+                    setSchedule((prev) => ({
+                      ...prev,
+                      maxAttempts: Number(e.target.value),
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value={1}>1 attempt</option>
@@ -94,10 +115,17 @@ export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-gray-500 mb-1">Time Between Attempts</label>
+                <label className="block text-sm text-gray-500 mb-1">
+                  Time Between Attempts
+                </label>
                 <select
                   value={schedule.timeBetweenAttempts}
-                  onChange={(e) => setSchedule(prev => ({ ...prev, timeBetweenAttempts: Number(e.target.value) }))}
+                  onChange={(e) =>
+                    setSchedule((prev) => ({
+                      ...prev,
+                      timeBetweenAttempts: Number(e.target.value),
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value={1}>1 hour</option>
@@ -114,9 +142,7 @@ export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Schedule Campaign
-            </Button>
+            <Button type="submit">Schedule Campaign</Button>
           </div>
         </form>
       </motion.div>

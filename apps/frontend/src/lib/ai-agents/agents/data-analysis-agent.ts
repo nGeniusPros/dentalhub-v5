@@ -1,7 +1,7 @@
-import { AIResponse, AgentConfig } from '../types/agent-types';
-import { AgentError } from '../types/errors';
-import { RequestManager } from '../infrastructure/request-manager';
-import { ResponseCache } from '../infrastructure/response-cache';
+import { AIResponse, AgentConfig } from "../types/agent-types";
+import { AgentError } from "../types/errors";
+import { RequestManager } from "../infrastructure/request-manager";
+import { ResponseCache } from "../infrastructure/response-cache";
 
 interface DataAnalysisMetadata {
   performanceTrends: Record<string, number>;
@@ -27,42 +27,45 @@ export class DataAnalysisAgent {
       const metadata: DataAnalysisMetadata = {
         performanceTrends: trends.patterns,
         correlationScores: trends.correlations,
-        insightPriorities: insights.priorities
+        insightPriorities: insights.priorities,
       };
 
       return {
         content: this.formatAnalysis(metrics, trends, insights),
         metadata,
-        confidence: this.calculateConfidence(metrics.reliability)
+        confidence: this.calculateConfidence(metrics.reliability),
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to process data analysis query',
-        'DATA_ANALYSIS',
-        'PROCESSING_ERROR',
+        "Failed to process data analysis query",
+        "DATA_ANALYSIS",
+        "PROCESSING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   private async analyzePerformanceMetrics(query: string) {
-    return this.requestManager.executeWithRateLimit('DATA_ANALYSIS', async () => {
-      // Implementation using OpenAI Assistant ID: asst_QGxpr7wSO5kFgey6jbzgZtwb
-      return {
-        metrics: {},
-        anomalies: [],
-        recommendations: [],
-        reliability: 0
-      };
-    });
+    return this.requestManager.executeWithRateLimit(
+      "DATA_ANALYSIS",
+      async () => {
+        // Implementation using OpenAI Assistant ID: asst_QGxpr7wSO5kFgey6jbzgZtwb
+        return {
+          metrics: {},
+          anomalies: [],
+          recommendations: [],
+          reliability: 0,
+        };
+      },
+    );
   }
 
   private async identifyTrends(metrics: any) {
     return {
       patterns: {},
       correlations: {},
-      significance: []
+      significance: [],
     };
   }
 
@@ -70,12 +73,12 @@ export class DataAnalysisAgent {
     return {
       priorities: {},
       actions: [],
-      impact: []
+      impact: [],
     };
   }
 
   private formatAnalysis(metrics: any, trends: any, insights: any): string {
-    return '';
+    return "";
   }
 
   private calculateConfidence(reliability: number): number {

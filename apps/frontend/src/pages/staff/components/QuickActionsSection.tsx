@@ -1,43 +1,43 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface QuickAction {
   label: string;
   icon: keyof typeof Icons;
   onClick: () => void;
-  variant?: 'default' | 'secondary' | 'outline' | 'ghost';
+  variant?: "default" | "secondary" | "outline" | "ghost";
 }
 
 export const QuickActionsSection: React.FC = () => {
   const quickActions: QuickAction[] = [
     {
-      label: 'Add Patient',
-      icon: 'UserPlus',
-      onClick: () => console.log('Add Patient clicked'),
-      variant: 'default'
+      label: "Add Patient",
+      icon: "UserPlus",
+      onClick: () => console.log("Add Patient clicked"),
+      variant: "default",
     },
     {
-      label: 'Schedule Appointment',
-      icon: 'Calendar',
-      onClick: () => console.log('Schedule Appointment clicked'),
-      variant: 'outline'
+      label: "Schedule Appointment",
+      icon: "Calendar",
+      onClick: () => console.log("Schedule Appointment clicked"),
+      variant: "outline",
     },
     {
-      label: 'Send Message',
-      icon: 'MessageSquare',
-      onClick: () => console.log('Send Message clicked'),
-      variant: 'outline'
+      label: "Send Message",
+      icon: "MessageSquare",
+      onClick: () => console.log("Send Message clicked"),
+      variant: "outline",
     },
     {
-      label: 'Create Invoice',
-      icon: 'FileText',
-      onClick: () => console.log('Create Invoice clicked'),
-      variant: 'outline'
-    }
+      label: "Create Invoice",
+      icon: "FileText",
+      onClick: () => console.log("Create Invoice clicked"),
+      variant: "outline",
+    },
   ];
 
   return (

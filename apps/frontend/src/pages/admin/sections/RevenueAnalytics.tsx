@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { dashboardService } from '../../../services/dashboard';
-import { Button } from '../../../components/ui/button';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { dashboardService } from "../../../services/dashboard";
+import { Button } from "../../../components/ui/button";
 import {
   LineChart,
   Line,
@@ -14,7 +14,7 @@ import {
   PieChart,
   Pie,
   Cell,
-} from 'recharts';
+} from "recharts";
 
 interface RevenueData {
   monthlyRevenue: {
@@ -31,10 +31,10 @@ interface RevenueData {
 }
 
 const COLORS = {
-  'General Dentistry': '#40E0D0',
-  'Orthodontics': '#8B5CF6',
-  'Cosmetic': '#DEB887',
-  'Implants': '#1E40AF',
+  "General Dentistry": "#40E0D0",
+  Orthodontics: "#8B5CF6",
+  Cosmetic: "#DEB887",
+  Implants: "#1E40AF",
 };
 
 export const RevenueAnalytics = () => {
@@ -50,7 +50,9 @@ export const RevenueAnalytics = () => {
         const response = await dashboardService.getRevenueAnalytics();
         setData(response);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch revenue data');
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch revenue data",
+        );
       } finally {
         setLoading(false);
       }
@@ -84,8 +86,12 @@ export const RevenueAnalytics = () => {
     >
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Revenue Analytics</h2>
-          <p className="text-sm text-gray-500">Financial performance overview</p>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Revenue Analytics
+          </h2>
+          <p className="text-sm text-gray-500">
+            Financial performance overview
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
@@ -105,17 +111,17 @@ export const RevenueAnalytics = () => {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={lineChartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis 
-                dataKey="month" 
+              <XAxis
+                dataKey="month"
                 stroke="#6B7280"
                 fontSize={12}
                 tickLine={false}
               />
-              <YAxis 
+              <YAxis
                 stroke="#6B7280"
                 fontSize={12}
                 tickLine={false}
-                tickFormatter={(value) => `$${value/1000}k`}
+                tickFormatter={(value) => `$${value / 1000}k`}
               />
               <Tooltip />
               <Line
@@ -170,8 +176,8 @@ export const RevenueAnalytics = () => {
           <div className="grid grid-cols-2 gap-4 mt-4">
             {data.revenueByService.map((item, index) => (
               <div key={index} className="flex items-center gap-2">
-                <div 
-                  className="w-3 h-3 rounded-full" 
+                <div
+                  className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: item.color }}
                 />
                 <span className="text-sm text-gray-600">{item.service}</span>

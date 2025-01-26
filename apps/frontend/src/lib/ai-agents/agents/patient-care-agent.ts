@@ -1,7 +1,7 @@
-import { AgentConfig } from '../types/agent-types';
-import { AgentError } from '../types/errors';
-import { RequestManager } from '../infrastructure/request-manager';
-import { ResponseCache } from '../infrastructure/response-cache';
+import { AgentConfig } from "../types/agent-types";
+import { AgentError } from "../types/errors";
+import { RequestManager } from "../infrastructure/request-manager";
+import { ResponseCache } from "../infrastructure/response-cache";
 
 interface PatientCareMetadata {
   patientSatisfactionScores: Record<string, number>;
@@ -47,11 +47,11 @@ interface PatientProfile {
 }
 
 interface CareRecommendation {
-  type: 'preventive' | 'restorative' | 'cosmetic' | 'emergency';
+  type: "preventive" | "restorative" | "cosmetic" | "emergency";
   procedures: Array<{
     code: string;
     name: string;
-    priority: 'high' | 'medium' | 'low';
+    priority: "high" | "medium" | "low";
     timeline: string;
     rationale: string;
     alternatives: string[];
@@ -130,32 +130,32 @@ export class PatientCareAgent {
   async analyzeCareNeeds(
     patient: PatientProfile,
     currentSymptoms?: string[],
-    recentChanges?: string[]
+    recentChanges?: string[],
   ): Promise<CareRecommendation> {
     try {
       // 1. Risk Assessment
       const riskFactors = await this.assessRiskFactors(patient);
-      
+
       // 2. Care History Analysis
       const careHistory = await this.analyzeCareHistory(patient);
-      
+
       // 3. Generate Recommendations
       const recommendations = await this.generateCareRecommendations(
         patient,
         riskFactors,
         careHistory,
         currentSymptoms,
-        recentChanges
+        recentChanges,
       );
-      
+
       return recommendations;
     } catch (error) {
       throw new AgentError(
-        'Failed to analyze care needs',
-        'PATIENT_CARE',
-        'ANALYSIS_ERROR',
+        "Failed to analyze care needs",
+        "PATIENT_CARE",
+        "ANALYSIS_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
@@ -164,14 +164,14 @@ export class PatientCareAgent {
     medical: string[];
     dental: string[];
     lifestyle: string[];
-    overall: 'high' | 'medium' | 'low';
+    overall: "high" | "medium" | "low";
   }> {
     // Implement risk factor assessment
     return {
       medical: [],
       dental: [],
       lifestyle: [],
-      overall: 'low'
+      overall: "low",
     };
   }
 
@@ -186,7 +186,7 @@ export class PatientCareAgent {
       patterns: [],
       compliance: 0,
       outcomes: [],
-      concerns: []
+      concerns: [],
     };
   }
 
@@ -195,24 +195,24 @@ export class PatientCareAgent {
     riskFactors: any,
     careHistory: any,
     currentSymptoms?: string[],
-    recentChanges?: string[]
+    recentChanges?: string[],
   ): Promise<CareRecommendation> {
     // Implement care recommendation generation
     return {
-      type: 'preventive',
+      type: "preventive",
       procedures: [],
       precautions: [],
       expectedOutcomes: [],
       followUp: {
-        timing: '',
-        type: '',
-        instructions: []
+        timing: "",
+        type: "",
+        instructions: [],
       },
       homecare: {
         instructions: [],
         products: [],
-        frequency: ''
-      }
+        frequency: "",
+      },
     };
   }
 
@@ -223,41 +223,53 @@ export class PatientCareAgent {
       budget?: number;
       timeline?: string;
       priorities?: string[];
-    }
+    },
   ): Promise<TreatmentPlan> {
     try {
       // 1. Analyze Treatment Options
       const options = await this.analyzeTreatmentOptions(diagnosis, patient);
-      
+
       // 2. Consider Patient Preferences
-      const filteredOptions = await this.filterByPreferences(options, preferences);
-      
+      const filteredOptions = await this.filterByPreferences(
+        options,
+        preferences,
+      );
+
       // 3. Generate Treatment Plan
       const plan = await this.generateTreatmentPlan(patient, filteredOptions);
-      
+
       return plan;
     } catch (error) {
       throw new AgentError(
-        'Failed to create treatment plan',
-        'PATIENT_CARE',
-        'PLANNING_ERROR',
+        "Failed to create treatment plan",
+        "PATIENT_CARE",
+        "PLANNING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
-  private async analyzeTreatmentOptions(diagnosis: string[], patient: PatientProfile): Promise<any> {
+  private async analyzeTreatmentOptions(
+    diagnosis: string[],
+    patient: PatientProfile,
+  ): Promise<any> {
     // Implement treatment options analysis
     return {};
   }
 
-  private async filterByPreferences(options: any, preferences: any): Promise<any> {
+  private async filterByPreferences(
+    options: any,
+    preferences: any,
+  ): Promise<any> {
     // Implement preference-based filtering
     return {};
   }
 
-  private async generateTreatmentPlan(patient: PatientProfile, options: any): Promise<TreatmentPlan> {
+  private async generateTreatmentPlan(
+    patient: PatientProfile,
+    options: any,
+  ): Promise<TreatmentPlan> {
     // Implement treatment plan generation
     return {
       patientId: patient.id,
@@ -267,10 +279,10 @@ export class PatientCareAgent {
       alternatives: [],
       risks: [],
       maintenance: {
-        frequency: '',
+        frequency: "",
         procedures: [],
-        homecare: []
-      }
+        homecare: [],
+      },
     };
   }
 
@@ -279,45 +291,59 @@ export class PatientCareAgent {
     patient: PatientProfile,
     context?: {
       relatedProcedure?: string;
-      comprehensionLevel?: 'basic' | 'intermediate' | 'advanced';
+      comprehensionLevel?: "basic" | "intermediate" | "advanced";
       preferredFormat?: string[];
-    }
+    },
   ): Promise<PatientEducation> {
     try {
       // 1. Content Selection
       const content = await this.selectEducationalContent(topic, context);
-      
+
       // 2. Patient Adaptation
-      const adaptedContent = await this.adaptContentToPatient(content, patient, context);
-      
+      const adaptedContent = await this.adaptContentToPatient(
+        content,
+        patient,
+        context,
+      );
+
       // 3. Generate Resources
-      const resources = await this.generateEducationalResources(topic, adaptedContent);
-      
+      const resources = await this.generateEducationalResources(
+        topic,
+        adaptedContent,
+      );
+
       return {
         topic,
         content: adaptedContent,
-        relevance: '',
+        relevance: "",
         actionItems: [],
         followUpQuestions: [],
-        resources
+        resources,
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to generate patient education',
-        'PATIENT_CARE',
-        'EDUCATION_ERROR',
+        "Failed to generate patient education",
+        "PATIENT_CARE",
+        "EDUCATION_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
-  private async selectEducationalContent(topic: string, context?: any): Promise<any> {
+  private async selectEducationalContent(
+    topic: string,
+    context?: any,
+  ): Promise<any> {
     // Implement content selection
     return {};
   }
 
-  private async adaptContentToPatient(content: any, patient: PatientProfile, context?: any): Promise<{
+  private async adaptContentToPatient(
+    content: any,
+    patient: PatientProfile,
+    context?: any,
+  ): Promise<{
     overview: string;
     details: string[];
     visualAids: string[];
@@ -325,14 +351,17 @@ export class PatientCareAgent {
   }> {
     // Implement content adaptation
     return {
-      overview: '',
+      overview: "",
       details: [],
       visualAids: [],
-      videos: []
+      videos: [],
     };
   }
 
-  private async generateEducationalResources(topic: string, content: any): Promise<string[]> {
+  private async generateEducationalResources(
+    topic: string,
+    content: any,
+  ): Promise<string[]> {
     // Implement resource generation
     return [];
   }
@@ -346,9 +375,9 @@ export class PatientCareAgent {
       outcome: string;
       complications?: string[];
       notes?: string;
-    }>
+    }>,
   ): Promise<{
-    status: 'on-track' | 'needs-attention' | 'off-track';
+    status: "on-track" | "needs-attention" | "off-track";
     completedPhases: string[];
     nextSteps: string[];
     adjustments: string[];
@@ -358,68 +387,79 @@ export class PatientCareAgent {
     try {
       // Implement care progress monitoring
       return {
-        status: 'on-track',
+        status: "on-track",
         completedPhases: [],
         nextSteps: [],
         adjustments: [],
         concerns: [],
-        recommendations: []
+        recommendations: [],
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to monitor care progress',
-        'PATIENT_CARE',
-        'MONITORING_ERROR',
+        "Failed to monitor care progress",
+        "PATIENT_CARE",
+        "MONITORING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   async processQuery(query: string): Promise<any> {
     try {
-      const treatmentEffectiveness = await this.analyzeTreatmentEffectiveness(query);
+      const treatmentEffectiveness =
+        await this.analyzeTreatmentEffectiveness(query);
       const feedback = await this.getPatientFeedbackAnalysis();
-      const improvements = await this.getQualityImprovementPlan(treatmentEffectiveness, feedback);
+      const improvements = await this.getQualityImprovementPlan(
+        treatmentEffectiveness,
+        feedback,
+      );
 
       const metadata: PatientCareMetadata = {
         patientSatisfactionScores: feedback.satisfactionScores,
         treatmentAcceptanceRates: treatmentEffectiveness.acceptanceRates,
-        qualityMetrics: improvements.metrics
+        qualityMetrics: improvements.metrics,
       };
 
       return {
-        content: this.formatAnalysis(treatmentEffectiveness, feedback, improvements),
+        content: this.formatAnalysis(
+          treatmentEffectiveness,
+          feedback,
+          improvements,
+        ),
         metadata,
-        confidence: this.calculateConfidence(feedback.reliability)
+        confidence: this.calculateConfidence(feedback.reliability),
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to process patient care query',
-        'PATIENT_CARE',
-        'PROCESSING_ERROR',
+        "Failed to process patient care query",
+        "PATIENT_CARE",
+        "PROCESSING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   private async analyzeTreatmentEffectiveness(query: string) {
-    return this.requestManager.executeWithRateLimit('PATIENT_CARE', async () => {
-      // Implementation using OpenAI Assistant ID: asst_mqxYmKcpILJgy0wkSOMWMxBo
-      return {
-        acceptanceRates: {},
-        outcomes: [],
-        recommendations: []
-      };
-    });
+    return this.requestManager.executeWithRateLimit(
+      "PATIENT_CARE",
+      async () => {
+        // Implementation using OpenAI Assistant ID: asst_mqxYmKcpILJgy0wkSOMWMxBo
+        return {
+          acceptanceRates: {},
+          outcomes: [],
+          recommendations: [],
+        };
+      },
+    );
   }
 
   private async getPatientFeedbackAnalysis() {
     return {
       satisfactionScores: {},
       trends: [],
-      reliability: 0
+      reliability: 0,
     };
   }
 
@@ -427,12 +467,16 @@ export class PatientCareAgent {
     return {
       metrics: {},
       actions: [],
-      timeline: []
+      timeline: [],
     };
   }
 
-  private formatAnalysis(effectiveness: any, feedback: any, improvements: any): string {
-    return '';
+  private formatAnalysis(
+    effectiveness: any,
+    feedback: any,
+    improvements: any,
+  ): string {
+    return "";
   }
 
   private calculateConfidence(reliability: number): number {

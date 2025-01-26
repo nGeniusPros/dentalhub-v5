@@ -1,49 +1,49 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { AssignmentCard } from './AssignmentCard';
-import { Button } from '../../../../components/ui/button';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { AssignmentCard } from "./AssignmentCard";
+import { Button } from "../../../../components/ui/button";
+import * as Icons from "lucide-react";
 
 export const AssignmentList = () => {
   const assignments = [
     {
-      id: '1',
-      title: 'HIPAA Compliance Quiz',
-      description: 'Test your knowledge of HIPAA regulations',
-      dueDate: '2024-04-15',
-      status: 'pending',
-      type: 'quiz',
+      id: "1",
+      title: "HIPAA Compliance Quiz",
+      description: "Test your knowledge of HIPAA regulations",
+      dueDate: "2024-04-15",
+      status: "pending",
+      type: "quiz",
       points: 100,
-      timeEstimate: '30 minutes'
+      timeEstimate: "30 minutes",
     },
     {
-      id: '2',
-      title: 'Patient Care Assessment',
-      description: 'Demonstrate your patient care skills',
-      dueDate: '2024-04-01',
-      status: 'in_progress',
-      type: 'assessment',
+      id: "2",
+      title: "Patient Care Assessment",
+      description: "Demonstrate your patient care skills",
+      dueDate: "2024-04-01",
+      status: "in_progress",
+      type: "assessment",
       points: 150,
-      timeEstimate: '1 hour'
+      timeEstimate: "1 hour",
     },
     {
-      id: '3',
-      title: 'Team Communication Project',
-      description: 'Group project on improving team communication',
-      dueDate: '2024-04-30',
-      status: 'submitted',
-      type: 'project',
+      id: "3",
+      title: "Team Communication Project",
+      description: "Group project on improving team communication",
+      dueDate: "2024-04-30",
+      status: "submitted",
+      type: "project",
       points: 200,
-      timeEstimate: '2 hours'
-    }
+      timeEstimate: "2 hours",
+    },
   ];
 
   const handleStartAssignment = (id: string) => {
-    console.log('Starting assignment:', id);
+    console.log("Starting assignment:", id);
   };
 
   const handleViewAssignment = (id: string) => {
-    console.log('Viewing assignment:', id);
+    console.log("Viewing assignment:", id);
   };
 
   return (

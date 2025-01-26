@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../../components/ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../../components/ui/button";
 
 interface DateRangePickerProps {
   open: boolean;
@@ -12,17 +12,17 @@ interface DateRangePickerProps {
 export const DateRangePicker: React.FC<DateRangePickerProps> = ({
   open,
   onClose,
-  onSelect
+  onSelect,
 }) => {
-  const [startDate, setStartDate] = React.useState<string>('');
-  const [endDate, setEndDate] = React.useState<string>('');
+  const [startDate, setStartDate] = React.useState<string>("");
+  const [endDate, setEndDate] = React.useState<string>("");
 
   if (!open) return null;
 
   const handleApply = () => {
     onSelect({
       start: startDate || null,
-      end: endDate || null
+      end: endDate || null,
     });
     onClose();
   };
@@ -70,9 +70,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button onClick={handleApply}>
-              Apply
-            </Button>
+            <Button onClick={handleApply}>Apply</Button>
           </div>
         </div>
       </motion.div>

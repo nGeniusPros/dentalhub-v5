@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
-import { Button } from './ui/button';
-import { Download as DownloadIcon } from 'lucide-react';
-import  ExportReportDialog  from './ExportReportDialog';
-import { useNotifications } from '../contexts/NotificationContext';
-import type { Staff } from '../types/models';
+import React, { useState } from "react";
+import { Button } from "./ui/button";
+import { Download as DownloadIcon } from "lucide-react";
+import ExportReportDialog from "./ExportReportDialog";
+import { useNotifications } from "../contexts/NotificationContext";
+import type { Staff } from "../types/models";
 
 /**
  * Properties for the ExportReportButton component.
  * @template T - The type of data being exported ('staff', 'performance', 'training', or 'financial').
  */
-interface ExportReportButtonProps<T extends 'staff' | 'performance' | 'training' | 'financial'> {
+interface ExportReportButtonProps<
+  T extends "staff" | "performance" | "training" | "financial",
+> {
   /**
    * Optional data to be exported.
    */
-  data?: T extends 'staff' ? Staff[] | undefined : any;
+  data?: T extends "staff" ? Staff[] | undefined : any;
   /**
    * The type of report to export.
    */
@@ -21,11 +23,11 @@ interface ExportReportButtonProps<T extends 'staff' | 'performance' | 'training'
   /**
    * The variant of the button.
    */
-  variant?: 'default' | 'outline' | 'ghost';
+  variant?: "default" | "outline" | "ghost";
   /**
    * The size of the button.
    */
-  size?: 'default' | 'sm' | 'lg';
+  size?: "default" | "sm" | "lg";
   /**
    * Additional CSS class names for the button.
    */
@@ -38,12 +40,14 @@ interface ExportReportButtonProps<T extends 'staff' | 'performance' | 'training'
  * @param {ExportReportButtonProps<T>} props - The component props.
  * @returns {JSX.Element} The ExportReportButton component.
  */
-export const ExportReportButton = <T extends 'staff' | 'performance' | 'training' | 'financial'>({
+export const ExportReportButton = <
+  T extends "staff" | "performance" | "training" | "financial",
+>({
   data,
-  type = 'staff' as T,
-  variant = 'outline',
-  size = 'default',
-  className
+  type = "staff" as T,
+  variant = "outline",
+  size = "default",
+  className,
 }: ExportReportButtonProps<T>) => {
   const [showExportDialog, setShowExportDialog] = useState(false);
   const { dispatch: notifyDispatch } = useNotifications();
@@ -55,16 +59,16 @@ export const ExportReportButton = <T extends 'staff' | 'performance' | 'training
    */
   const handleExport = (format: string, options: any) => {
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'message',
-        title: 'Report Export Started',
-        message: 'Your report is being generated and will be ready shortly.',
+        type: "message",
+        title: "Report Export Started",
+        message: "Your report is being generated and will be ready shortly.",
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium'
-      }
+        priority: "medium",
+      },
     });
   };
 

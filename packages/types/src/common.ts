@@ -45,4 +45,4 @@ export interface ApiError {
   issues?: ErrorDetails[];
 }
 
-export type UserRole = 'admin' | 'dentist' | 'hygienist' | 'staff';
+export type UserRole = "admin" | "dentist" | "hygienist" | "staff";

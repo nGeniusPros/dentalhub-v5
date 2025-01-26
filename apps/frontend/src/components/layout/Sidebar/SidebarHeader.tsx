@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../ui/button';
-import { cn } from '../../../lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../ui/button";
+import { cn } from "../../../lib/utils";
 
 interface SidebarHeaderProps {
   collapsed: boolean;
@@ -11,21 +11,23 @@ interface SidebarHeaderProps {
 
 export const SidebarHeader = ({ collapsed, onToggle }: SidebarHeaderProps) => {
   return (
-    <div className={cn(
-      "p-4 border-b flex justify-between items-center sticky top-0 z-10",
-      "bg-gradient-primary-soft backdrop-blur-xl",
-      "border-gray-200/20"
-    )}>
+    <div
+      className={cn(
+        "p-4 border-b flex justify-between items-center sticky top-0 z-10",
+        "bg-gradient-primary-soft backdrop-blur-xl",
+        "border-gray-200/20",
+      )}
+    >
       {!collapsed && (
         <div className="flex items-center gap-3">
           <motion.div
-            animate={{ 
+            animate={{
               rotate: 360,
             }}
-            transition={{ 
+            transition={{
               duration: 20,
               repeat: Infinity,
-              ease: "linear"
+              ease: "linear",
             }}
             className="w-8 h-8"
           >

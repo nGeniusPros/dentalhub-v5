@@ -1,47 +1,47 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface StatItem {
   label: string;
   value: string | number;
   icon: keyof typeof Icons;
   change: number;
-  trend: 'up' | 'down' | 'neutral';
+  trend: "up" | "down" | "neutral";
 }
 
 export const StatsSection: React.FC = () => {
   const stats: StatItem[] = [
     {
-      label: 'Total Patients',
-      value: '2,847',
-      icon: 'Users',
+      label: "Total Patients",
+      value: "2,847",
+      icon: "Users",
       change: 12.5,
-      trend: 'up'
+      trend: "up",
     },
     {
-      label: 'Appointments Today',
+      label: "Appointments Today",
       value: 24,
-      icon: 'Calendar',
+      icon: "Calendar",
       change: -2.3,
-      trend: 'down'
+      trend: "down",
     },
     {
-      label: 'Revenue (MTD)',
-      value: '$48,574',
-      icon: 'DollarSign',
+      label: "Revenue (MTD)",
+      value: "$48,574",
+      icon: "DollarSign",
       change: 8.7,
-      trend: 'up'
+      trend: "up",
     },
     {
-      label: 'Patient Satisfaction',
-      value: '94%',
-      icon: 'Heart',
+      label: "Patient Satisfaction",
+      value: "94%",
+      icon: "Heart",
       change: 1.2,
-      trend: 'up'
-    }
+      trend: "up",
+    },
   ];
 
   return (
@@ -58,20 +58,30 @@ export const StatsSection: React.FC = () => {
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <div className={cn(
-                    'p-2 rounded-full',
-                    'bg-primary/10 text-primary'
-                  )}>
+                  <div
+                    className={cn(
+                      "p-2 rounded-full",
+                      "bg-primary/10 text-primary",
+                    )}
+                  >
                     <Icon className="h-5 w-5" />
                   </div>
-                  <div className={cn(
-                    'flex items-center text-sm',
-                    stat.trend === 'up' ? 'text-green-600' : 
-                    stat.trend === 'down' ? 'text-red-600' : 
-                    'text-gray-600'
-                  )}>
-                    {stat.trend === 'up' && <Icons.TrendingUp className="h-4 w-4 mr-1" />}
-                    {stat.trend === 'down' && <Icons.TrendingDown className="h-4 w-4 mr-1" />}
+                  <div
+                    className={cn(
+                      "flex items-center text-sm",
+                      stat.trend === "up"
+                        ? "text-green-600"
+                        : stat.trend === "down"
+                          ? "text-red-600"
+                          : "text-gray-600",
+                    )}
+                  >
+                    {stat.trend === "up" && (
+                      <Icons.TrendingUp className="h-4 w-4 mr-1" />
+                    )}
+                    {stat.trend === "down" && (
+                      <Icons.TrendingDown className="h-4 w-4 mr-1" />
+                    )}
                     {stat.change}%
                   </div>
                 </div>

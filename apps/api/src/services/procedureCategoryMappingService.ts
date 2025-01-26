@@ -1,22 +1,24 @@
-import { db } from '@dentalhub/database';
+import { db } from "@dentalhub/database";
 import type {
   SikkaProcedureCategoryMappingData,
   ProcedureCategory,
   ProcedureCategoryMapping,
-} from '../types/api';
+} from "../types/api";
 
 /**
  * Syncs procedure category mappings from Sikka API to our database
  */
 export async function syncProcedureCategoryMappings(
   sikkaMappings: SikkaProcedureCategoryMappingData[],
-  practiceId: number
+  practiceId: number,
 ): Promise<void> {
   // Process mappings in batches to avoid overwhelming the database
   const batchSize = 100;
   for (let i = 0; i < sikkaMappings.length; i += batchSize) {
     const batch = sikkaMappings.slice(i, i + batchSize);
-    await Promise.all(batch.map(mapping => syncProcedureCategoryMapping(mapping, practiceId)));
+    await Promise.all(
+      batch.map((mapping) => syncProcedureCategoryMapping(mapping, practiceId)),
+    );
   }
 }
 
@@ -25,7 +27,7 @@ export async function syncProcedureCategoryMappings(
  */
 async function syncProcedureCategoryMapping(
   sikkaMapping: SikkaProcedureCategoryMappingData,
-  practiceId: number
+  practiceId: number,
 ): Promise<void> {
   try {
     // First ensure the category exists
@@ -33,15 +35,15 @@ async function syncProcedureCategoryMapping(
       where: {
         sikka_practice_id_category: {
           sikka_practice_id: practiceId,
-          category: sikkaMapping.category
-        }
+          category: sikkaMapping.category,
+        },
       },
       update: {},
       create: {
         sikka_practice_id: practiceId,
         category: sikkaMapping.category,
-        sikka_category_id: sikkaMapping.category // Using category as ID if not provided separately
-      }
+        sikka_category_id: sikkaMapping.category, // Using category as ID if not provided separately
+      },
     });
 
     // Then upsert the mapping
@@ -49,25 +51,28 @@ async function syncProcedureCategoryMapping(
       where: {
         unique_practice_procedure_mapping: {
           sikka_practice_id: practiceId,
-          procedure_code: sikkaMapping.procedure_code
-        }
+          procedure_code: sikkaMapping.procedure_code,
+        },
       },
       update: {
         category_id: category.id,
         pms_category: sikkaMapping.pms_procedure_category,
         pms_description: sikkaMapping.pms_procedure_description,
-        updated_at: new Date()
+        updated_at: new Date(),
       },
       create: {
         sikka_practice_id: practiceId,
         procedure_code: sikkaMapping.procedure_code,
         category_id: category.id,
         pms_category: sikkaMapping.pms_procedure_category,
-        pms_description: sikkaMapping.pms_procedure_description ?? null
-      }
+        pms_description: sikkaMapping.pms_procedure_description ?? null,
+      },
     });
   } catch (error) {
-    console.error(`Error syncing procedure category mapping for ${sikkaMapping.procedure_code}:`, error);
+    console.error(
+      `Error syncing procedure category mapping for ${sikkaMapping.procedure_code}:`,
+      error,
+    );
     throw error;
   }
 }
@@ -77,16 +82,16 @@ async function syncProcedureCategoryMapping(
  */
 export async function getProceduresInCategory(
   practiceId: number,
-  categoryId: string
+  categoryId: string,
 ): Promise<ProcedureCategoryMapping[]> {
   return db.procedureCategoryMapping.findMany({
     where: {
       sikka_practice_id: practiceId,
-      category_id: categoryId
+      category_id: categoryId,
     },
     include: {
-      category: true
-    }
+      category: true,
+    },
   });
 }
 
@@ -95,18 +100,18 @@ export async function getProceduresInCategory(
  */
 export async function getCategoryForProcedure(
   practiceId: number,
-  procedureCode: string
+  procedureCode: string,
 ): Promise<ProcedureCategoryMapping | null> {
   return db.procedure_category_mappings.findUnique({
     where: {
       sikka_practice_id_procedure_code: {
         sikka_practice_id: practiceId,
-        procedure_code: procedureCode
-      }
+        procedure_code: procedureCode,
+      },
     },
     include: {
-      category: true
-    }
+      category: true,
+    },
   });
 }
 
@@ -114,15 +119,15 @@ export async function getCategoryForProcedure(
  * Gets all categories for a practice
  */
 export async function getPracticeCategories(
-  practiceId: number
+  practiceId: number,
 ): Promise<ProcedureCategory[]> {
   return db.procedure_categories.findMany({
     where: {
-      sikka_practice_id: practiceId
+      sikka_practice_id: practiceId,
     },
     include: {
-      mappings: true
-    }
+      mappings: true,
+    },
   });
 }
 
@@ -130,18 +135,18 @@ export async function getPracticeCategories(
  * Gets all procedure mappings for a practice
  */
 export async function getPracticeMappings(
-  practiceId: number
+  practiceId: number,
 ): Promise<ProcedureCategoryMapping[]> {
   return db.procedure_category_mappings.findMany({
     where: {
-      sikka_practice_id: practiceId
+      sikka_practice_id: practiceId,
     },
     include: {
-      category: true
+      category: true,
     },
     orderBy: {
-      procedure_code: 'asc'
-    }
+      procedure_code: "asc",
+    },
   });
 }
 
@@ -149,15 +154,15 @@ export async function getPracticeMappings(
  * Gets mapping history for a specific mapping
  */
 export async function getMappingHistory(
-  mappingId: string
+  mappingId: string,
 ): Promise<ProcedureCategoryMapping[]> {
   return db.procedure_category_mapping_history.findMany({
     where: {
-      mapping_id: mappingId
+      mapping_id: mappingId,
     },
     orderBy: {
-      changed_at: 'desc'
-    }
+      changed_at: "desc",
+    },
   });
 }
 
@@ -166,14 +171,14 @@ export async function getMappingHistory(
  */
 export async function deleteProcedureCategoryMapping(
   practiceId: number,
-  procedureCode: string
+  procedureCode: string,
 ): Promise<void> {
   await db.procedure_category_mappings.delete({
     where: {
       sikka_practice_id_procedure_code: {
         sikka_practice_id: practiceId,
-        procedure_code: procedureCode
-      }
-    }
+        procedure_code: procedureCode,
+      },
+    },
   });
 }

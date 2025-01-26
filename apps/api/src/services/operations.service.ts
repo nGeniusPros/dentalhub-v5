@@ -1,14 +1,14 @@
-import { MetricsRepository } from './metrics.repository';
-import { KPICalculationEngine } from './kpi.service';
-import { ScheduleOptimizer } from './scheduler.service';
-import { trackPerformance } from '../decorators/performance.decorator';
+import { MetricsRepository } from "./metrics.repository";
+import { KPICalculationEngine } from "./kpi.service";
+import { ScheduleOptimizer } from "./scheduler.service";
+import { trackPerformance } from "../decorators/performance.decorator";
 
 export class OperationsAgent extends BaseAgent {
-  type = 'operations' as const;
+  type = "operations" as const;
   constructor(
     private metricsRepo: MetricsRepository,
     private kpiEngine: KPICalculationEngine,
-    private scheduler: ScheduleOptimizer
+    private scheduler: ScheduleOptimizer,
   ) {
     super();
   }

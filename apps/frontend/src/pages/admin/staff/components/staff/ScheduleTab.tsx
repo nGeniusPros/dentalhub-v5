@@ -1,36 +1,36 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { ShiftCalendar } from '../calendar/ShiftCalendar';
-import { cn } from '../../../../../lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { ShiftCalendar } from "../calendar/ShiftCalendar";
+import { cn } from "../../../../../lib/utils";
 
 export const ScheduleTab = () => {
   const todayShifts = [
     {
-      id: '1',
-      employeeName: 'Dr. Sarah Wilson',
-      role: 'Lead Dentist',
-      startTime: '08:00',
-      endTime: '14:00',
-      status: 'checked-in'
+      id: "1",
+      employeeName: "Dr. Sarah Wilson",
+      role: "Lead Dentist",
+      startTime: "08:00",
+      endTime: "14:00",
+      status: "checked-in",
     },
     {
-      id: '2',
-      employeeName: 'John Smith',
-      role: 'Dental Hygienist',
-      startTime: '09:00',
-      endTime: '15:00',
-      status: 'scheduled'
+      id: "2",
+      employeeName: "John Smith",
+      role: "Dental Hygienist",
+      startTime: "09:00",
+      endTime: "15:00",
+      status: "scheduled",
     },
     {
-      id: '3',
-      employeeName: 'Emily Parker',
-      role: 'Front Desk',
-      startTime: '10:00',
-      endTime: '16:00',
-      status: 'pending'
-    }
+      id: "3",
+      employeeName: "Emily Parker",
+      role: "Front Desk",
+      startTime: "10:00",
+      endTime: "16:00",
+      status: "pending",
+    },
   ];
 
   return (
@@ -38,7 +38,9 @@ export const ScheduleTab = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-lg font-semibold">Staff Schedule</h2>
-          <p className="text-sm text-gray-500">Manage staff shifts and schedules</p>
+          <p className="text-sm text-gray-500">
+            Manage staff shifts and schedules
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline">
@@ -66,7 +68,9 @@ export const ScheduleTab = () => {
                   <Icons.User className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{shift.employeeName}</p>
+                  <p className="font-medium text-gray-900">
+                    {shift.employeeName}
+                  </p>
                   <p className="text-sm text-gray-500">{shift.role}</p>
                 </div>
               </div>
@@ -77,14 +81,18 @@ export const ScheduleTab = () => {
                     {shift.startTime} - {shift.endTime}
                   </span>
                 </div>
-                <span className={cn(
-                  "px-3 py-1 text-xs font-medium rounded-full",
-                  shift.status === 'checked-in' && "bg-green-100 text-green-800",
-                  shift.status === 'scheduled' && "bg-blue-100 text-blue-800",
-                  shift.status === 'pending' && "bg-yellow-100 text-yellow-800"
-                )}>
-                  {shift.status.replace('-', ' ').charAt(0).toUpperCase() + 
-                   shift.status.slice(1).replace('-', ' ')}
+                <span
+                  className={cn(
+                    "px-3 py-1 text-xs font-medium rounded-full",
+                    shift.status === "checked-in" &&
+                      "bg-green-100 text-green-800",
+                    shift.status === "scheduled" && "bg-blue-100 text-blue-800",
+                    shift.status === "pending" &&
+                      "bg-yellow-100 text-yellow-800",
+                  )}
+                >
+                  {shift.status.replace("-", " ").charAt(0).toUpperCase() +
+                    shift.status.slice(1).replace("-", " ")}
                 </span>
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm">

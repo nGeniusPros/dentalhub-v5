@@ -31,15 +31,18 @@ dentalhub-v5/
 ## Getting Started
 
 1. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 2. Set up environment variables:
+
    - Copy .env.example to .env
    - Fill in required API keys and configurations
 
 3. Start development servers:
+
    ```bash
    # Start frontend
    pnpm --filter frontend dev
@@ -65,16 +68,19 @@ dentalhub-v5/
 ## Architecture Overview
 
 1. **Frontend Layer**
+
    - React/TypeScript application
    - Component-based architecture
    - State management with React Context
 
 2. **API Gateway**
+
    - Central entry point for all requests
    - Request routing and validation
    - Authentication/Authorization
 
 3. **Service Layer**
+
    - Independent microservices
    - Domain-specific business logic
    - Scalable and maintainable

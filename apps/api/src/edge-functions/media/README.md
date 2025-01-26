@@ -16,12 +16,15 @@ This edge function handles image and video processing.
 ## Available Endpoints
 
 ### Process Media
+
 ```http
 POST /api/edge-functions/media
 ```
+
 Processes an image or video based on the provided data and options.
 
 **Request Body:**
+
 ```json
 {
   "type": "image | video",
@@ -84,10 +87,12 @@ Processes an image or video based on the provided data and options.
 ## Error Handling
 
 The edge function includes comprehensive error handling with:
+
 - Detailed error responses
 - Logging for debugging
 
 ### Error Response Format
+
 ```json
 {
   "error": {
@@ -101,6 +106,7 @@ The edge function includes comprehensive error handling with:
 ## Configuration
 
 Key configuration options can be adjusted through environment variables:
+
 - Media provider settings
 - Webhook settings
 - Priority queue settings
@@ -110,11 +116,13 @@ See `.env.example` for all available configuration options.
 ## Development
 
 ### Running Tests
+
 ```bash
 pnpm test:media
 ```
 
 ### Adding New Features
+
 1. Define types in `types.ts`
 2. Implement service method in `service.ts`
 3. Add route in `index.ts`
@@ -123,6 +131,7 @@ pnpm test:media
 ## Monitoring
 
 The edge function includes built-in monitoring for:
+
 - Processing success rates
 - Processing times
 - Error rates
@@ -131,6 +140,7 @@ The edge function includes built-in monitoring for:
 ## Security
 
 Security measures include:
+
 - Request validation
 - Secure error handling
 - Access control

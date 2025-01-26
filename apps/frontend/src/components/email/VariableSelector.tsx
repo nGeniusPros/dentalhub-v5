@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
 
 interface Variable {
   name: string;
@@ -16,63 +16,65 @@ interface VariableSelectorProps {
 
 const variables: Variable[] = [
   {
-    name: '{{patient.firstName}}',
-    description: 'Patient\'s first name',
-    category: 'Patient Info',
-    example: 'John'
+    name: "{{patient.firstName}}",
+    description: "Patient's first name",
+    category: "Patient Info",
+    example: "John",
   },
   {
-    name: '{{patient.lastName}}',
-    description: 'Patient\'s last name',
-    category: 'Patient Info',
-    example: 'Smith'
+    name: "{{patient.lastName}}",
+    description: "Patient's last name",
+    category: "Patient Info",
+    example: "Smith",
   },
   {
-    name: '{{appointment.date}}',
-    description: 'Next appointment date',
-    category: 'Appointments',
-    example: 'March 15, 2024'
+    name: "{{appointment.date}}",
+    description: "Next appointment date",
+    category: "Appointments",
+    example: "March 15, 2024",
   },
   {
-    name: '{{appointment.time}}',
-    description: 'Next appointment time',
-    category: 'Appointments',
-    example: '2:30 PM'
+    name: "{{appointment.time}}",
+    description: "Next appointment time",
+    category: "Appointments",
+    example: "2:30 PM",
   },
   {
-    name: '{{practice.name}}',
-    description: 'Practice name',
-    category: 'Practice Info',
-    example: 'NGenius Dental'
+    name: "{{practice.name}}",
+    description: "Practice name",
+    category: "Practice Info",
+    example: "NGenius Dental",
   },
   {
-    name: '{{practice.phone}}',
-    description: 'Practice phone number',
-    category: 'Practice Info',
-    example: '(555) 123-4567'
+    name: "{{practice.phone}}",
+    description: "Practice phone number",
+    category: "Practice Info",
+    example: "(555) 123-4567",
   },
   {
-    name: '{{practice.address}}',
-    description: 'Practice address',
-    category: 'Practice Info',
-    example: '123 Main St, Suite 100'
+    name: "{{practice.address}}",
+    description: "Practice address",
+    category: "Practice Info",
+    example: "123 Main St, Suite 100",
   },
   {
-    name: '{{treatment.name}}',
-    description: 'Treatment name',
-    category: 'Treatment',
-    example: 'Dental Cleaning'
+    name: "{{treatment.name}}",
+    description: "Treatment name",
+    category: "Treatment",
+    example: "Dental Cleaning",
   },
   {
-    name: '{{treatment.cost}}',
-    description: 'Treatment cost',
-    category: 'Treatment',
-    example: '$150'
-  }
+    name: "{{treatment.cost}}",
+    description: "Treatment cost",
+    category: "Treatment",
+    example: "$150",
+  },
 ];
 
-export const VariableSelector: React.FC<VariableSelectorProps> = ({ onSelect }) => {
-  const categories = Array.from(new Set(variables.map(v => v.category)));
+export const VariableSelector: React.FC<VariableSelectorProps> = ({
+  onSelect,
+}) => {
+  const categories = Array.from(new Set(variables.map((v) => v.category)));
 
   return (
     <div className="p-4">
@@ -84,13 +86,15 @@ export const VariableSelector: React.FC<VariableSelectorProps> = ({ onSelect }) 
       </div>
 
       <div className="space-y-6">
-        {categories.map(category => (
+        {categories.map((category) => (
           <div key={category}>
-            <h4 className="text-sm font-medium text-gray-700 mb-2">{category}</h4>
+            <h4 className="text-sm font-medium text-gray-700 mb-2">
+              {category}
+            </h4>
             <div className="space-y-2">
               {variables
-                .filter(v => v.category === category)
-                .map(variable => (
+                .filter((v) => v.category === category)
+                .map((variable) => (
                   <motion.button
                     key={variable.name}
                     whileHover={{ scale: 1.02 }}
@@ -99,8 +103,12 @@ export const VariableSelector: React.FC<VariableSelectorProps> = ({ onSelect }) 
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-medium text-gray-900">{variable.name}</p>
-                        <p className="text-sm text-gray-500">{variable.description}</p>
+                        <p className="font-medium text-gray-900">
+                          {variable.name}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {variable.description}
+                        </p>
                       </div>
                       <div className="text-sm text-gray-400">
                         Example: {variable.example}

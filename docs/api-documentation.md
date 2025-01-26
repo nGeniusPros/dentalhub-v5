@@ -7,6 +7,7 @@
 ### Endpoints
 
 #### 1. Get Patient Profile
+
 - **Method**: GET
 - **URL**: `/:id`
 - **Description**: Retrieve a patient's profile
@@ -27,6 +28,7 @@
   ```
 
 #### 2. Create Patient
+
 - **Method**: POST
 - **URL**: `/`
 - **Description**: Create a new patient
@@ -57,6 +59,7 @@
   ```
 
 #### 3. Update Patient
+
 - **Method**: PUT
 - **URL**: `/:id`
 - **Description**: Update patient information
@@ -89,6 +92,7 @@
   ```
 
 #### 4. Delete Patient
+
 - **Method**: DELETE
 - **URL**: `/:id`
 - **Description**: Delete a patient
@@ -97,6 +101,7 @@
 - **Response**: 204 No Content
 
 #### 5. Get Family Members
+
 - **Method**: GET
 - **URL**: `/:id/family`
 - **Description**: Get a patient's family members
@@ -114,6 +119,7 @@
   ```
 
 #### 6. Add Family Member
+
 - **Method**: POST
 - **URL**: `/:id/family`
 - **Description**: Add a family member to a patient
@@ -137,6 +143,7 @@
   ```
 
 #### 7. Upload Document
+
 - **Method**: POST
 - **URL**: `/:id/documents`
 - **Description**: Upload a document for a patient
@@ -162,6 +169,7 @@
   ```
 
 #### 8. Get Documents
+
 - **Method**: GET
 - **URL**: `/:id/documents`
 - **Description**: Get a patient's documents
@@ -181,6 +189,7 @@
   ```
 
 #### 9. Update Medical History
+
 - **Method**: PUT
 - **URL**: `/:id/medical-history`
 - **Description**: Update a patient's medical history
@@ -201,6 +210,7 @@
   ```
 
 #### 10. Create Treatment Plan
+
 - **Method**: POST
 - **URL**: `/:id/treatment-plans`
 - **Description**: Create a treatment plan for a patient
@@ -231,6 +241,7 @@
   ```
 
 #### 11. Get Treatment Plans
+
 - **Method**: GET
 - **URL**: `/:id/treatment-plans`
 - **Description**: Get a patient's treatment plans
@@ -271,7 +282,7 @@ interface PaginatedResponse<T> extends ApiResponse<T> {
     totalPages: number;
     totalItems: number;
     itemsPerPage: number;
-  }
+  };
 }
 
 interface ErrorResponse {
@@ -279,7 +290,7 @@ interface ErrorResponse {
     code: string;
     message: string;
     details?: Record<string, unknown>;
-  }
+  };
 }
 ```
 
@@ -298,7 +309,8 @@ interface Patient {
   updated_at: string;
 }
 
-type CreatePatientRequest = Omit<Patient, 'id' | 'created_at' | 'updated_at'>;
+type CreatePatientRequest = Omit<Patient, "id" | "created_at" | "updated_at">;
 type UpdatePatientRequest = Partial<CreatePatientRequest>;
 type PatientResponse = ApiResponse<Patient>;
 type PatientsListResponse = PaginatedResponse<Patient[]>;
+```

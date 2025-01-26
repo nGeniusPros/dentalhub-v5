@@ -3,8 +3,8 @@
  * @param ms Duration to sleep in milliseconds
  * @returns Promise that resolves after the specified duration
  */
-export const sleep = (ms: number): Promise<void> => 
-  new Promise(resolve => setTimeout(resolve, ms));
+export const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Retry a function with exponential backoff
@@ -17,7 +17,7 @@ export async function retry<T>(
   fn: () => Promise<T>,
   maxRetries: number = 3,
   baseDelay: number = 1000,
-  maxDelay: number = 32000
+  maxDelay: number = 32000,
 ): Promise<T> {
   let lastError: Error;
 
@@ -32,10 +32,7 @@ export async function retry<T>(
       }
 
       // Calculate delay with exponential backoff
-      const delay = Math.min(
-        baseDelay * Math.pow(2, attempt),
-        maxDelay
-      );
+      const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
 
       // Add some jitter to prevent thundering herd
       const jitter = Math.random() * 200;
@@ -54,7 +51,7 @@ export async function retry<T>(
  */
 export async function withTimeout<T>(
   fn: () => Promise<T>,
-  timeoutMs: number
+  timeoutMs: number,
 ): Promise<T> {
   const timeoutPromise = new Promise<never>((_, reject) => {
     setTimeout(() => {
@@ -72,11 +69,11 @@ export async function withTimeout<T>(
  */
 export function debounce<T extends (...args: any[]) => any>(
   fn: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout;
 
-  return function(...args: Parameters<T>): void {
+  return function (...args: Parameters<T>): void {
     clearTimeout(timeout);
     timeout = setTimeout(() => fn(...args), wait);
   };
@@ -109,7 +106,7 @@ export class AsyncQueue {
       try {
         await task();
       } catch (error) {
-        console.error('Error processing task:', error);
+        console.error("Error processing task:", error);
       }
     }
 

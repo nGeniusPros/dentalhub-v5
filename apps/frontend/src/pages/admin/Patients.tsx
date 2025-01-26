@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../components/ui/button';
-import { usePatients } from '../../hooks/use-patients';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../components/ui/button";
+import { usePatients } from "../../hooks/use-patients";
 
 const Patients = () => {
   const { patients, loading, error } = usePatients();
@@ -18,8 +18,10 @@ const Patients = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-								<div>
-          <h1 className="text-2xl font-bold text-gray-900">Patient Management</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Patient Management
+          </h1>
           <p className="text-gray-500">View and manage patient records</p>
         </div>
         <div className="flex gap-3">
@@ -37,7 +39,7 @@ const Patients = () => {
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
         <div className="p-4 border-b border-gray-200">
           <div className="flex gap-4">
-												<div className="flex-1">
+            <div className="flex-1">
               <div className="relative">
                 <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
@@ -57,7 +59,7 @@ const Patients = () => {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
-														<tr>
+              <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Patient
                 </th>
@@ -89,8 +91,12 @@ const Patients = () => {
                         </div>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{patient.name}</div>
-                        <div className="text-sm text-gray-500">Last visit: {patient.lastVisit}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {patient.name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          Last visit: {patient.lastVisit}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -99,7 +105,9 @@ const Patients = () => {
                     <div className="text-sm text-gray-500">{patient.phone}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{patient.nextAppointment}</div>
+                    <div className="text-sm text-gray-900">
+                      {patient.nextAppointment}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">

@@ -1,6 +1,6 @@
 export interface NotificationConfig {
-  emailProvider: 'sendgrid' | 'mailgun' | 'smtp';
-  smsProvider: 'twilio' | 'nexmo' | 'plivo';
+  emailProvider: "sendgrid" | "mailgun" | "smtp";
+  smsProvider: "twilio" | "nexmo" | "plivo";
   emailApiKey?: string;
   smsApiKey?: string;
   emailDomain?: string;
@@ -24,7 +24,7 @@ export interface SmsOptions {
 }
 
 export interface NotificationData {
-  type: 'email' | 'sms';
+  type: "email" | "sms";
   options: EmailOptions | SmsOptions;
   metadata?: {
     patientId?: string;
@@ -50,13 +50,13 @@ export interface NotificationError {
 export interface NotificationStorageOptions {
   bucket: string;
   path: string;
-  acl?: 'private' | 'public-read';
+  acl?: "private" | "public-read";
   metadata?: Record<string, string>;
   expiresIn?: number;
 }
 
 export interface NotificationOptions {
-  priority?: 'high' | 'normal' | 'low';
+  priority?: "high" | "normal" | "low";
   webhook?: {
     url: string;
     secret: string;

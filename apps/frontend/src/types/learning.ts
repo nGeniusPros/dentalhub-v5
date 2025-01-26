@@ -3,7 +3,7 @@ export interface Course {
   title: string;
   description: string;
   category: string;
-  level: 'beginner' | 'intermediate' | 'advanced';
+  level: "beginner" | "intermediate" | "advanced";
   duration: string;
   points: number;
   progress: number;
@@ -12,7 +12,7 @@ export interface Course {
   tags?: string[];
   thumbnail?: string;
   instructor?: string;
-  status: 'not_started' | 'in_progress' | 'completed';
+  status: "not_started" | "in_progress" | "completed";
   createdAt: string;
   updatedAt: string;
 }
@@ -21,7 +21,7 @@ export interface Module {
   id: string;
   title: string;
   description?: string;
-  type: 'video' | 'quiz' | 'reading' | 'interactive';
+  type: "video" | "quiz" | "reading" | "interactive";
   duration: string;
   completed: boolean;
   order: number;
@@ -63,7 +63,7 @@ export interface Certification {
   description: string;
   earnedDate: string;
   expirationDate: string;
-  status: 'active' | 'expiring' | 'expired';
+  status: "active" | "expiring" | "expired";
   skills: string[];
   credentialId: string;
   thumbnail?: string;
@@ -76,10 +76,10 @@ export interface Assignment {
   title: string;
   description: string;
   dueDate: string;
-  status: 'pending' | 'in_progress' | 'submitted' | 'graded';
+  status: "pending" | "in_progress" | "submitted" | "graded";
   grade?: number;
   feedback?: string;
-  type: 'quiz' | 'assessment' | 'project';
+  type: "quiz" | "assessment" | "project";
   points: number;
   timeEstimate: string;
   attachments?: Array<{
@@ -101,7 +101,7 @@ export interface LearningPath {
     completed: boolean;
   }>;
   rewards: Array<{
-    type: 'points' | 'badge' | 'certificate';
+    type: "points" | "badge" | "certificate";
     value: number | string;
     unlockedAt?: string;
   }>;
@@ -109,7 +109,7 @@ export interface LearningPath {
 
 export interface GameElement {
   id: string;
-  type: 'points' | 'badge' | 'level' | 'achievement';
+  type: "points" | "badge" | "level" | "achievement";
   name: string;
   description: string;
   value: number | string;

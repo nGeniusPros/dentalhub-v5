@@ -9,7 +9,7 @@ export interface Integration {
   reviews: number;
   pricing: string;
   features: string[];
-  status: 'available' | 'installed';
+  status: "available" | "installed";
   featured?: boolean;
   website?: string;
   location?: string;

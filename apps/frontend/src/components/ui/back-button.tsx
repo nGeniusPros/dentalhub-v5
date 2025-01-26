@@ -1,7 +1,7 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import * as Icons from 'lucide-react';
-import { Button } from './button';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import * as Icons from "lucide-react";
+import { Button } from "./button";
 
 interface BackButtonProps {
   className?: string;

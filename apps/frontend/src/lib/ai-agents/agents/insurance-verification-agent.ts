@@ -1,7 +1,7 @@
-import { AIResponse, AgentConfig } from '../types/agent-types';
-import { AgentError } from '../types/errors';
-import { RequestManager } from '../infrastructure/request-manager';
-import { ResponseCache } from '../infrastructure/response-cache';
+import { AIResponse, AgentConfig } from "../types/agent-types";
+import { AgentError } from "../types/errors";
+import { RequestManager } from "../infrastructure/request-manager";
+import { ResponseCache } from "../infrastructure/response-cache";
 
 interface InsuranceMetadata {
   verificationRates: Record<string, number>;
@@ -22,47 +22,53 @@ export class InsuranceVerificationAgent {
     try {
       const verification = await this.analyzeVerificationEfficiency(query);
       const denials = await this.getDenialAnalysis();
-      const processing = await this.getProcessingAnalysis(verification, denials);
+      const processing = await this.getProcessingAnalysis(
+        verification,
+        denials,
+      );
 
       const metadata: InsuranceMetadata = {
         verificationRates: verification.rates,
         denialRates: denials.rates,
-        processingTimes: processing.times
+        processingTimes: processing.times,
       };
 
       return {
         content: this.formatAnalysis(verification, denials, processing),
         metadata,
-        confidence: this.calculateConfidence(verification.reliability)
+        confidence: this.calculateConfidence(verification.reliability),
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to process insurance verification query',
-        'INSURANCE_VERIFICATION',
-        'PROCESSING_ERROR',
+        "Failed to process insurance verification query",
+        "INSURANCE_VERIFICATION",
+        "PROCESSING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   private async analyzeVerificationEfficiency(query: string) {
-    return this.requestManager.executeWithRateLimit('INSURANCE_VERIFICATION', async () => {
-      // Implementation using OpenAI Assistant ID: asst_pKlWxF3mQvD9nYtR8sHbGjE2
-      return {
-        rates: {},
-        bottlenecks: [],
-        recommendations: [],
-        reliability: 0
-      };
-    });
+    return this.requestManager.executeWithRateLimit(
+      "INSURANCE_VERIFICATION",
+      async () => {
+        // Implementation using OpenAI Assistant ID: asst_pKlWxF3mQvD9nYtR8sHbGjE2
+        return {
+          rates: {},
+          bottlenecks: [],
+          recommendations: [],
+          reliability: 0,
+        };
+      },
+    );
   }
 
   private async getDenialAnalysis() {
     return {
       rates: {},
       reasons: [],
-      patterns: []
+      patterns: [],
     };
   }
 
@@ -70,12 +76,16 @@ export class InsuranceVerificationAgent {
     return {
       times: {},
       delays: [],
-      improvements: []
+      improvements: [],
     };
   }
 
-  private formatAnalysis(verification: any, denials: any, processing: any): string {
-    return '';
+  private formatAnalysis(
+    verification: any,
+    denials: any,
+    processing: any,
+  ): string {
+    return "";
   }
 
   private calculateConfidence(reliability: number): number {

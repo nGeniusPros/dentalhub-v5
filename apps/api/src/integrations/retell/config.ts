@@ -1,41 +1,44 @@
-import { RetellConfig, AgentConfig } from './types';
+import { RetellConfig, AgentConfig } from "./types";
 
-function validateConfig(config: Partial<RetellConfig>): asserts config is RetellConfig {
-  const required: (keyof RetellConfig)[] = ['apiKey', 'baseUrl', 'webhookUrl'];
-  const missing = required.filter(key => !config[key]);
+function validateConfig(
+  config: Partial<RetellConfig>,
+): asserts config is RetellConfig {
+  const required: (keyof RetellConfig)[] = ["apiKey", "baseUrl", "webhookUrl"];
+  const missing = required.filter((key) => !config[key]);
 
   if (missing.length > 0) {
     throw new Error(
-      `Missing required Retell configuration: ${missing.join(', ')}. ` +
-      'Please ensure all required environment variables are set.'
+      `Missing required Retell configuration: ${missing.join(", ")}. ` +
+        "Please ensure all required environment variables are set.",
     );
   }
 }
 
 function loadAgentConfigs(): AgentConfig[] {
   const agents: AgentConfig[] = [];
-  
+
   // Load all configured agents (up to 3 in current env)
   for (let i = 1; i <= 3; i++) {
     const agentId = process.env[`RETELL_AGENT_${i}_ID`];
     const llmId = process.env[`RETELL_AGENT_${i}_LLM`];
     const phoneNumber = process.env[`RETELL_AGENT_${i}_PHONE`];
-    
+
     if (agentId && llmId && phoneNumber) {
       agents.push({ agentId, llmId, phoneNumber });
     }
   }
-  
+
   return agents;
 }
 
 function loadConfig(): RetellConfig {
   const config: Partial<RetellConfig> = {
     apiKey: process.env.RETELL_API_KEY,
-    baseUrl: process.env.RETELL_BASE_URL || 'https://api.retellai.com/v1',
-    wsUrl: process.env.RETELL_WEBSOCKET_URL || 'wss://api.retellai.com/v1/websocket',
+    baseUrl: process.env.RETELL_BASE_URL || "https://api.retellai.com/v1",
+    wsUrl:
+      process.env.RETELL_WEBSOCKET_URL || "wss://api.retellai.com/v1/websocket",
     webhookUrl: process.env.RETELL_WEBHOOK_URL,
-    agents: loadAgentConfigs()
+    agents: loadAgentConfigs(),
   };
 
   validateConfig(config);
@@ -54,7 +57,7 @@ export const {
   wsUrl: RETELL_WS_URL,
   webhookUrl: RETELL_WEBHOOK_URL,
   webhookSecret: RETELL_WEBHOOK_SECRET,
-  agents: RETELL_AGENTS
+  agents: RETELL_AGENTS,
 } = retellConfig;
 
 // Call configuration
@@ -62,7 +65,7 @@ export const CALL_CONFIG = {
   maxDuration: 30 * 60, // 30 minutes in seconds
   maxRetries: 2,
   minDelayBetweenCalls: 60, // 1 minute in seconds
-  defaultLanguage: 'en-US',
+  defaultLanguage: "en-US",
   recordingEnabled: true,
   transcriptionEnabled: true,
   aiAnalysisEnabled: true,
@@ -85,7 +88,7 @@ export const WEBHOOK_CONFIG = {
   maxRetries: 3,
   retryDelay: 5000, // 5 seconds
   timeout: 10000, // 10 seconds
-  signatureHeader: 'X-Retell-Signature',
+  signatureHeader: "X-Retell-Signature",
 };
 
 // Analysis configuration

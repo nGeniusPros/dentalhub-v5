@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
 
 interface ComposeDialogProps {
   open: boolean;
   onClose: () => void;
-  type: 'all' | 'outbound' | 'newsletter';
+  type: "all" | "outbound" | "newsletter";
 }
 
 export const ComposeDialog = ({ open, onClose, type }: ComposeDialogProps) => {
-  const [subject, setSubject] = useState('');
-  const [content, setContent] = useState('');
+  const [subject, setSubject] = useState("");
+  const [content, setContent] = useState("");
 
   if (!open) return null;
 
@@ -27,7 +27,7 @@ export const ComposeDialog = ({ open, onClose, type }: ComposeDialogProps) => {
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-gray-900">
-                {type === 'newsletter' ? 'Create Newsletter' : 'Compose Email'}
+                {type === "newsletter" ? "Create Newsletter" : "Compose Email"}
               </h2>
               <Button variant="ghost" size="sm" onClick={onClose}>
                 <Icons.X className="w-5 h-5" />

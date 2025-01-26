@@ -1,4 +1,4 @@
-import { ISO8601String, UUID, Timestamps } from './common.js';
+import { ISO8601String, UUID, Timestamps } from "./common.js";
 
 export interface ProcedureCode extends Timestamps {
   id: UUID;
@@ -48,7 +48,12 @@ export interface ProcedureFeeSchedule extends Timestamps {
   fee_amount: number;
 }
 
-export type ChangeType = 'created' | 'updated' | 'activated' | 'deactivated' | 'deleted';
+export type ChangeType =
+  | "created"
+  | "updated"
+  | "activated"
+  | "deactivated"
+  | "deleted";
 
 export interface ChangeHistory<T> {
   id: UUID;
@@ -63,6 +68,7 @@ export interface ProcedureCodeHistory extends ChangeHistory<ProcedureCode> {
   procedure_code_id: UUID;
 }
 
-export interface ProcedureCategoryMappingHistory extends ChangeHistory<ProcedureCategoryMapping> {
+export interface ProcedureCategoryMappingHistory
+  extends ChangeHistory<ProcedureCategoryMapping> {
   mapping_id: UUID;
 }

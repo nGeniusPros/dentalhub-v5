@@ -1,12 +1,12 @@
-import { AxiosError } from 'axios';
-import { DentalAgentType } from '@dental/core/ai/types';
-import { 
-  SikkaErrorCode, 
-  SikkaApiError, 
+import { AxiosError } from "axios";
+import { DentalAgentType } from "@dental/core/ai/types";
+import {
+  SikkaErrorCode,
+  SikkaApiError,
   SikkaErrorDetails,
   SikkaAuthenticationError,
-  SikkaRateLimitError 
-} from '../../../../frontend/src/lib/ai-agents/types/errors';
+  SikkaRateLimitError,
+} from "../../../../frontend/src/lib/ai-agents/types/errors";
 
 // Base Sikka error classes for backend
 export class SikkaAuthorizationError extends SikkaApiError {
@@ -17,9 +17,9 @@ export class SikkaAuthorizationError extends SikkaApiError {
       SikkaErrorCode.UNAUTHORIZED,
       false,
       details,
-      underlying
+      underlying,
     );
-    this.name = 'SikkaAuthorizationError';
+    this.name = "SikkaAuthorizationError";
   }
 }
 
@@ -31,9 +31,9 @@ export class SikkaValidationError extends SikkaApiError {
       SikkaErrorCode.VALIDATION_ERROR,
       false,
       details,
-      underlying
+      underlying,
     );
-    this.name = 'SikkaValidationError';
+    this.name = "SikkaValidationError";
   }
 }
 
@@ -45,9 +45,9 @@ export class SikkaNotFoundError extends SikkaApiError {
       SikkaErrorCode.RESOURCE_NOT_FOUND,
       false,
       details,
-      underlying
+      underlying,
     );
-    this.name = 'SikkaNotFoundError';
+    this.name = "SikkaNotFoundError";
   }
 }
 
@@ -59,23 +59,27 @@ export class SikkaServerError extends SikkaApiError {
       SikkaErrorCode.SERVER_ERROR,
       true,
       details,
-      underlying
+      underlying,
     );
-    this.name = 'SikkaServerError';
+    this.name = "SikkaServerError";
   }
 }
 
 export class SikkaNetworkError extends SikkaApiError {
-  constructor(message: string, details: SikkaErrorDetails = {}, underlying?: Error) {
+  constructor(
+    message: string,
+    details: SikkaErrorDetails = {},
+    underlying?: Error,
+  ) {
     super(
       message,
       DentalAgentType.SIKKA,
       SikkaErrorCode.SERVICE_UNAVAILABLE,
       true,
       details,
-      underlying
+      underlying,
     );
-    this.name = 'SikkaNetworkError';
+    this.name = "SikkaNetworkError";
   }
 }
 
@@ -83,10 +87,10 @@ export class SikkaError extends Error {
   constructor(
     message: string,
     public readonly agentType: DentalAgentType,
-    public readonly cause?: unknown
+    public readonly cause?: unknown,
   ) {
     super(message);
-    this.name = 'SikkaError';
+    this.name = "SikkaError";
   }
 }
 
@@ -94,95 +98,97 @@ export function handleSikkaError(error: unknown): never {
   if (error instanceof AxiosError) {
     const response = error.response?.data;
     const status = error.response?.status || 500;
-    const requestId = error.response?.headers['x-request-id'];
+    const requestId = error.response?.headers["x-request-id"];
     const details: SikkaErrorDetails = {
       requestId,
       statusCode: status,
       path: error.config?.url,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
-    
+
     // Handle rate limiting
     if (status === 429) {
-      const retryAfter = parseInt(error.response?.headers['retry-after'] || '60');
+      const retryAfter = parseInt(
+        error.response?.headers["retry-after"] || "60",
+      );
       details.retryAfter = retryAfter;
       throw new SikkaRateLimitError(
-        'Rate limit exceeded',
+        "Rate limit exceeded",
         DentalAgentType.SIKKA,
         details,
-        error
+        error,
       );
     }
 
     // Handle authentication errors
     if (status === 401) {
       throw new SikkaAuthenticationError(
-        response?.error?.message || 'Authentication failed',
+        response?.error?.message || "Authentication failed",
         DentalAgentType.SIKKA,
         details,
-        error
+        error,
       );
     }
 
     // Handle authorization errors
     if (status === 403) {
       throw new SikkaAuthorizationError(
-        response?.error?.message || 'Authorization failed',
+        response?.error?.message || "Authorization failed",
         details,
-        error
+        error,
       );
     }
 
     // Handle validation errors
     if (status === 400) {
       throw new SikkaValidationError(
-        response?.error?.message || 'Validation failed',
+        response?.error?.message || "Validation failed",
         details,
-        error
+        error,
       );
     }
 
     // Handle not found errors
     if (status === 404) {
       throw new SikkaNotFoundError(
-        response?.error?.message || 'Resource not found',
+        response?.error?.message || "Resource not found",
         details,
-        error
+        error,
       );
     }
 
     // Handle server errors
     if (status >= 500) {
       throw new SikkaServerError(
-        response?.error?.message || 'Server error occurred',
+        response?.error?.message || "Server error occurred",
         details,
-        error
+        error,
       );
     }
 
     // Handle all other errors
     throw new SikkaApiError(
-      response?.error?.message || 'An unexpected error occurred',
+      response?.error?.message || "An unexpected error occurred",
       DentalAgentType.SIKKA,
       SikkaErrorCode.INVALID_REQUEST,
       false,
       details,
-      error
+      error,
     );
   }
 
   // Handle network errors
-  if (error instanceof Error && error.message.includes('Network Error')) {
-    throw new SikkaNetworkError('Network connection failed', {}, error);
+  if (error instanceof Error && error.message.includes("Network Error")) {
+    throw new SikkaNetworkError("Network connection failed", {}, error);
   }
 
   // Handle unknown errors
   throw new SikkaApiError(
-    error instanceof Error ? error.message : 'An unknown error occurred',
+    error instanceof Error ? error.message : "An unknown error occurred",
     DentalAgentType.SIKKA,
     SikkaErrorCode.SERVER_ERROR,
     false,
     { details: error },
-    error instanceof Error ? error : undefined
+    error instanceof Error ? error : undefined,
   );
 }

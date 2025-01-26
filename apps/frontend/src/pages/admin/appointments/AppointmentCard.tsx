@@ -1,18 +1,29 @@
-import React from 'react';
-import { Clock, User, Phone } from 'lucide-react';
-import type { SikkaAppointment } from '@/types/appointments.js';
+import React from "react";
+import { Clock, User, Phone } from "lucide-react";
+import type { SikkaAppointment } from "@/types/appointments.js";
 
-interface AppointmentCardProps extends Pick<SikkaAppointment, 
-  'id' | 'startTime' | 'patientName' | 'type' | 'duration' | 'phone' | 
-  'status' | 'provider' | 'operatory' | 'insuranceInfo'> {
+interface AppointmentCardProps
+  extends Pick<
+    SikkaAppointment,
+    | "id"
+    | "startTime"
+    | "patientName"
+    | "type"
+    | "duration"
+    | "phone"
+    | "status"
+    | "provider"
+    | "operatory"
+    | "insuranceInfo"
+  > {
   onClick?: () => void;
 }
 
 const statusStyles = {
-  'scheduled': 'bg-purple bg-opacity-10 text-purple',
-  'in-progress': 'bg-turquoise bg-opacity-10 text-turquoise',
-  'completed': 'bg-green bg-opacity-10 text-green',
-  'cancelled': 'bg-red-100 text-red-500'
+  scheduled: "bg-purple bg-opacity-10 text-purple",
+  "in-progress": "bg-turquoise bg-opacity-10 text-turquoise",
+  completed: "bg-green bg-opacity-10 text-green",
+  cancelled: "bg-red-100 text-red-500",
 };
 
 const AppointmentCard: React.FC<AppointmentCardProps> = ({
@@ -25,7 +36,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   provider,
   operatory,
   onClick,
-  insuranceInfo
+  insuranceInfo,
 }) => {
   return (
     <div
@@ -37,7 +48,9 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           <p className="text-navy font-semibold">{startTime}</p>
           <p className="text-sm text-gray-darker">{duration}</p>
         </div>
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusStyles[status]}`}>
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-medium ${statusStyles[status]}`}
+        >
           {status.charAt(0).toUpperCase() + status.slice(1)}
         </span>
       </div>
@@ -63,9 +76,15 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
 
       {insuranceInfo && (
         <div className="mt-2 p-2 bg-gray-smoke rounded-lg">
-          <p className="text-xs text-gray-darker">Insurance: {insuranceInfo.provider}</p>
-          <p className="text-xs text-gray-darker">Status: {insuranceInfo.verificationStatus}</p>
-          <p className="text-xs text-gray-darker">Copay: ${insuranceInfo.copay}</p>
+          <p className="text-xs text-gray-darker">
+            Insurance: {insuranceInfo.provider}
+          </p>
+          <p className="text-xs text-gray-darker">
+            Status: {insuranceInfo.verificationStatus}
+          </p>
+          <p className="text-xs text-gray-darker">
+            Copay: ${insuranceInfo.copay}
+          </p>
         </div>
       )}
 

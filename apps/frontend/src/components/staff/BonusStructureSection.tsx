@@ -1,8 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
 
 interface BonusTarget {
   metric: string;
@@ -12,8 +11,8 @@ interface BonusTarget {
 
 interface BonusStructureValue {
   enrolled: boolean;
-  type: 'production' | 'collection' | 'performance' | 'hybrid' | 'custom';
-  frequency: 'monthly' | 'quarterly' | 'biannual' | 'annual' | 'custom';
+  type: "production" | "collection" | "performance" | "hybrid" | "custom";
+  frequency: "monthly" | "quarterly" | "biannual" | "annual" | "custom";
   targets: BonusTarget[];
   customPayoutDates?: string[];
   notes?: string;
@@ -25,15 +24,12 @@ interface BonusStructureProps {
 }
 export const BonusStructureSection: React.FC<BonusStructureProps> = ({
   value,
-  onChange
+  onChange,
 }) => {
   const handleAddTarget = () => {
     onChange({
       ...value,
-      targets: [
-        ...value.targets,
-        { metric: '', target: 0, bonus: 0 }
-      ]
+      targets: [...value.targets, { metric: "", target: 0, bonus: 0 }],
     });
   };
 
@@ -45,14 +41,16 @@ export const BonusStructureSection: React.FC<BonusStructureProps> = ({
   return (
     <div className="border-t border-gray-200 pt-6">
       <h3 className="text-lg font-medium mb-4">Bonus Structure</h3>
-      
+
       <div className="space-y-4">
         <div className="flex items-center gap-4">
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={value.enrolled}
-              onChange={(e) => onChange({ ...value, enrolled: e.target.checked })}
+              onChange={(e) =>
+                onChange({ ...value, enrolled: e.target.checked })
+              }
               className="rounded border-gray-300"
             />
             <span className="text-sm font-medium">Enroll in Bonus Program</span>
@@ -68,7 +66,12 @@ export const BonusStructureSection: React.FC<BonusStructureProps> = ({
                 </label>
                 <select
                   value={value.type}
-                  onChange={(e) => onChange({ ...value, type: e.target.value as BonusStructureValue['type'] })}
+                  onChange={(e) =>
+                    onChange({
+                      ...value,
+                      type: e.target.value as BonusStructureValue["type"],
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value="production">Production Based</option>
@@ -85,7 +88,13 @@ export const BonusStructureSection: React.FC<BonusStructureProps> = ({
                 </label>
                 <select
                   value={value.frequency}
-                  onChange={(e) => onChange({ ...value, frequency: e.target.value as BonusStructureValue['frequency'] })}
+                  onChange={(e) =>
+                    onChange({
+                      ...value,
+                      frequency: e.target
+                        .value as BonusStructureValue["frequency"],
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value="monthly">Monthly</option>
@@ -97,19 +106,24 @@ export const BonusStructureSection: React.FC<BonusStructureProps> = ({
               </div>
             </div>
 
-            {value.frequency === 'custom' && (
+            {value.frequency === "custom" && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Custom Payout Dates
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {value.customPayoutDates?.map((date, index) => (
-                    <div key={index} className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full">
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full"
+                    >
                       <span className="text-sm">{date}</span>
                       <button
                         type="button"
                         onClick={() => {
-                          const newDates = value.customPayoutDates?.filter((_, i) => i !== index);
+                          const newDates = value.customPayoutDates?.filter(
+                            (_, i) => i !== index,
+                          );
                           onChange({ ...value, customPayoutDates: newDates });
                         }}
                         className="text-gray-500 hover:text-red-500"
@@ -123,11 +137,14 @@ export const BonusStructureSection: React.FC<BonusStructureProps> = ({
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      const date = prompt('Enter payout date (MM/DD):');
+                      const date = prompt("Enter payout date (MM/DD):");
                       if (date) {
                         onChange({
                           ...value,
-                          customPayoutDates: [...(value.customPayoutDates || []), date]
+                          customPayoutDates: [
+                            ...(value.customPayoutDates || []),
+                            date,
+                          ],
                         });
                       }
                     }}
@@ -141,15 +158,25 @@ export const BonusStructureSection: React.FC<BonusStructureProps> = ({
 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-medium text-gray-700">Bonus Targets</h4>
-                <Button type="button" variant="outline" size="sm" onClick={handleAddTarget}>
+                <h4 className="text-sm font-medium text-gray-700">
+                  Bonus Targets
+                </h4>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddTarget}
+                >
                   <Icons.Plus className="w-4 h-4 mr-2" />
                   Add Target
                 </Button>
               </div>
 
               {value.targets.map((target, index) => (
-                <div key={index} className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+                <div
+                  key={index}
+                  className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg"
+                >
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Metric
@@ -159,7 +186,10 @@ export const BonusStructureSection: React.FC<BonusStructureProps> = ({
                       value={target.metric}
                       onChange={(e) => {
                         const newTargets = [...value.targets];
-                        newTargets[index] = { ...target, metric: e.target.value };
+                        newTargets[index] = {
+                          ...target,
+                          metric: e.target.value,
+                        };
                         onChange({ ...value, targets: newTargets });
                       }}
                       className="w-full px-4 py-2 border border-gray-200 rounded-lg"
@@ -175,7 +205,10 @@ export const BonusStructureSection: React.FC<BonusStructureProps> = ({
                       value={target.target}
                       onChange={(e) => {
                         const newTargets = [...value.targets];
-                        newTargets[index] = { ...target, target: Number(e.target.value) };
+                        newTargets[index] = {
+                          ...target,
+                          target: Number(e.target.value),
+                        };
                         onChange({ ...value, targets: newTargets });
                       }}
                       className="w-full px-4 py-2 border border-gray-200 rounded-lg"
@@ -192,7 +225,10 @@ export const BonusStructureSection: React.FC<BonusStructureProps> = ({
                         value={target.bonus}
                         onChange={(e) => {
                           const newTargets = [...value.targets];
-                          newTargets[index] = { ...target, bonus: Number(e.target.value) };
+                          newTargets[index] = {
+                            ...target,
+                            bonus: Number(e.target.value),
+                          };
                           onChange({ ...value, targets: newTargets });
                         }}
                         className="w-full px-4 py-2 border border-gray-200 rounded-lg"

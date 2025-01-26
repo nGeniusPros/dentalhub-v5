@@ -1,6 +1,6 @@
-import { ISO8601String, UUID } from './common.js';
+import { ISO8601String, UUID } from "./common.js";
 
-export type DocumentFormat = 'pdf' | 'docx';
+export type DocumentFormat = "pdf" | "docx";
 
 export interface DocumentTemplate {
   id: UUID;

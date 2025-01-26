@@ -1,9 +1,9 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { cn } from '../../../utils/cn';
-import type { MenuItem as MenuItemType } from '../../../types';
+import React from "react";
+import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { cn } from "../../../utils/cn";
+import type { MenuItem as MenuItemType } from "../../../types";
 
 interface MenuItemProps {
   item: MenuItemType;
@@ -14,19 +14,16 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, isCollapsed }) => {
   const Icon = Icons[item.icon as keyof typeof Icons];
 
   return (
-    <motion.li
-      whileHover={{ x: 4 }}
-      transition={{ duration: 0.2 }}
-    >
+    <motion.li whileHover={{ x: 4 }} transition={{ duration: 0.2 }}>
       <NavLink
         to={item.path}
         className={({ isActive }) =>
           cn(
-            'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
-            'hover:bg-sidebar-hover group relative',
-            isActive 
-              ? 'bg-sidebar-active text-white font-medium shadow-glow' 
-              : 'text-white/70 hover:text-white'
+            "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+            "hover:bg-sidebar-hover group relative",
+            isActive
+              ? "bg-sidebar-active text-white font-medium shadow-glow"
+              : "text-white/70 hover:text-white",
           )
         }
       >

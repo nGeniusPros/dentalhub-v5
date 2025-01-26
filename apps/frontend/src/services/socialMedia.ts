@@ -1,4 +1,4 @@
-import { supabaseService } from './supabase';
+import { supabaseService } from "./supabase";
 
 interface SocialMediaData {
   stats: {
@@ -56,8 +56,8 @@ class SocialMediaService {
   async getData(): Promise<SocialMediaData> {
     try {
       const { data, error } = await supabaseService
-        .from('social_media_analytics')
-        .select('*')
+        .from("social_media_analytics")
+        .select("*")
         .single();
 
       if (error) {
@@ -66,7 +66,7 @@ class SocialMediaService {
 
       return data as SocialMediaData;
     } catch (error) {
-      console.error('Error fetching social media data:', error);
+      console.error("Error fetching social media data:", error);
       throw error;
     }
   }
@@ -74,15 +74,15 @@ class SocialMediaService {
   async updateData(newData: Partial<SocialMediaData>): Promise<void> {
     try {
       const { error } = await supabaseService
-        .from('social_media_analytics')
+        .from("social_media_analytics")
         .update(newData)
-        .eq('id', 1); // Assuming we're using a single row for the current data
+        .eq("id", 1); // Assuming we're using a single row for the current data
 
       if (error) {
         throw new Error(`Failed to update social media data: ${error.message}`);
       }
     } catch (error) {
-      console.error('Error updating social media data:', error);
+      console.error("Error updating social media data:", error);
       throw error;
     }
   }

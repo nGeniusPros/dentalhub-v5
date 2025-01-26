@@ -13,12 +13,15 @@ This integration handles voice calls, transcription, and AI analysis through the
 ## Available Endpoints
 
 ### Initiate Voice Call
+
 ```http
 POST /api/retell/calls
 ```
+
 Initiates a voice call to a patient.
 
 **Request Body:**
+
 ```json
 {
   "patientId": "string",
@@ -31,36 +34,47 @@ Initiates a voice call to a patient.
 ```
 
 ### Get Call Status
+
 ```http
 GET /api/retell/calls/:callId
 ```
+
 Retrieves the status of a specific call.
 
 ### Get Call Transcription
+
 ```http
 GET /api/retell/calls/:callId/transcription
 ```
+
 Retrieves the transcription of a completed call.
 
 ### Get Call Analysis
+
 ```http
 GET /api/retell/calls/:callId/analysis
 ```
+
 Retrieves the AI analysis of a completed call.
 
 ### Cancel Call
+
 ```http
 POST /api/retell/calls/:callId/cancel
 ```
+
 Cancels an ongoing or queued call.
 
 ### Update Call Priority
+
 ```http
 PATCH /api/retell/calls/:callId
 ```
+
 Updates the priority of a queued call.
 
 **Request Body:**
+
 ```json
 {
   "priority": "high | normal | low"
@@ -68,20 +82,25 @@ Updates the priority of a queued call.
 ```
 
 ### Get Recording URL
+
 ```http
 GET /api/retell/calls/:callId/recording
 ```
+
 Retrieves the URL for the call recording.
 
 ### Webhook Endpoint
+
 ```http
 POST /api/retell/webhook
 ```
+
 Receives webhooks from Retell.ai for call events.
 
 ## Features
 
 ### Voice Calls
+
 - Automated outbound calls
 - Multiple call purposes
 - Custom scripts support
@@ -89,12 +108,14 @@ Receives webhooks from Retell.ai for call events.
 - Call recording
 
 ### Transcription
+
 - Real-time transcription
 - Speaker diarization
 - Confidence scores
 - Segment timestamps
 
 ### AI Analysis
+
 - Sentiment analysis
 - Intent detection
 - Entity extraction
@@ -104,12 +125,14 @@ Receives webhooks from Retell.ai for call events.
 ## Error Handling
 
 The integration includes comprehensive error handling with:
+
 - Automatic retries for transient failures
 - Rate limiting protection
 - Detailed error responses
 - Webhook signature validation
 
 ### Error Response Format
+
 ```json
 {
   "error": {
@@ -123,6 +146,7 @@ The integration includes comprehensive error handling with:
 ## Configuration
 
 Key configuration options can be adjusted through environment variables:
+
 - Call settings (duration, recording, etc.)
 - Queue management
 - Analysis parameters
@@ -133,11 +157,13 @@ See `.env.example` for all available configuration options.
 ## Development
 
 ### Running Tests
+
 ```bash
 pnpm test:retell
 ```
 
 ### Adding New Features
+
 1. Define types in `types.ts`
 2. Add validation in `validators.ts`
 3. Implement service method in `service.ts`
@@ -147,6 +173,7 @@ pnpm test:retell
 ## Monitoring
 
 The integration includes built-in monitoring for:
+
 - Call success rates
 - Transcription accuracy
 - Analysis performance
@@ -156,6 +183,7 @@ The integration includes built-in monitoring for:
 ## Security
 
 Security measures include:
+
 - Webhook signature validation
 - API key management
 - Rate limiting

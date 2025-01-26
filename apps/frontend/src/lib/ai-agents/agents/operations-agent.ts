@@ -1,7 +1,7 @@
-import { AIResponse, AgentConfig } from '../types/agent-types';
-import { AgentError } from '../types/errors';
-import { RequestManager } from '../infrastructure/request-manager';
-import { ResponseCache } from '../infrastructure/response-cache';
+import { AIResponse, AgentConfig } from "../types/agent-types";
+import { AgentError } from "../types/errors";
+import { RequestManager } from "../infrastructure/request-manager";
+import { ResponseCache } from "../infrastructure/response-cache";
 
 interface OperationsMetadata {
   utilizationRates: Record<string, number>;
@@ -27,33 +27,33 @@ export class OperationsAgent {
       const metadata: OperationsMetadata = {
         utilizationRates: resources.rates,
         efficiencyScores: efficiency.scores,
-        workflowMetrics: workflow.metrics
+        workflowMetrics: workflow.metrics,
       };
 
       return {
         content: this.formatAnalysis(efficiency, resources, workflow),
         metadata,
-        confidence: this.calculateConfidence(efficiency.reliability)
+        confidence: this.calculateConfidence(efficiency.reliability),
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to process operations query',
-        'OPERATIONS',
-        'PROCESSING_ERROR',
+        "Failed to process operations query",
+        "OPERATIONS",
+        "PROCESSING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   private async analyzeOperationalEfficiency(query: string) {
-    return this.requestManager.executeWithRateLimit('OPERATIONS', async () => {
+    return this.requestManager.executeWithRateLimit("OPERATIONS", async () => {
       // Implementation using OpenAI Assistant ID: asst_db4kubaAGSWrK8PbqQXcnjFV
       return {
         scores: {},
         bottlenecks: [],
         recommendations: [],
-        reliability: 0
+        reliability: 0,
       };
     });
   }
@@ -62,7 +62,7 @@ export class OperationsAgent {
     return {
       rates: {},
       allocation: [],
-      optimization: []
+      optimization: [],
     };
   }
 
@@ -70,12 +70,16 @@ export class OperationsAgent {
     return {
       metrics: {},
       bottlenecks: [],
-      improvements: []
+      improvements: [],
     };
   }
 
-  private formatAnalysis(efficiency: any, resources: any, workflow: any): string {
-    return '';
+  private formatAnalysis(
+    efficiency: any,
+    resources: any,
+    workflow: any,
+  ): string {
+    return "";
   }
 
   private calculateConfidence(reliability: number): number {

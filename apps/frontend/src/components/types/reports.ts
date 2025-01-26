@@ -23,7 +23,7 @@ export interface TrainingReportData extends BaseReportData {
   course: string;
   completionDate: Date;
   score: number;
-  status: 'completed' | 'in-progress' | 'not-started';
+  status: "completed" | "in-progress" | "not-started";
 }
 
 export interface FinancialReportData extends BaseReportData {
@@ -33,4 +33,8 @@ export interface FinancialReportData extends BaseReportData {
   profit: number;
 }
 
-export type ReportData = StaffReportData | PerformanceReportData | TrainingReportData | FinancialReportData;
+export type ReportData =
+  | StaffReportData
+  | PerformanceReportData
+  | TrainingReportData
+  | FinancialReportData;

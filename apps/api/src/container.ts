@@ -1,9 +1,9 @@
-import type { AgentType, BaseAgent } from './types';
-import { AgentFactory } from './services/agent.factory';
+import type { AgentType, BaseAgent } from "./types";
+import { AgentFactory } from "./services/agent.factory";
 
 export class AgentContainer {
   private agents = new Map<AgentType, BaseAgent>();
-  
+
   constructor(private factory: AgentFactory) {}
 
   register<T extends BaseAgent>(type: AgentType, provider: () => T) {

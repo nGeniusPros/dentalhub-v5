@@ -1,4 +1,4 @@
-import { SyncError } from './types';
+import { SyncError } from "./types";
 
 export class SyncException extends Error {
   code: string;
@@ -6,7 +6,7 @@ export class SyncException extends Error {
 
   constructor(message: string, code: string, details?: any) {
     super(message);
-    this.name = 'SyncException';
+    this.name = "SyncException";
     this.code = code;
     this.details = details;
   }
@@ -14,7 +14,7 @@ export class SyncException extends Error {
 
 export function handleSyncError(
   error: unknown,
-  defaultCode: string = 'UNKNOWN_ERROR'
+  defaultCode: string = "UNKNOWN_ERROR",
 ): SyncError {
   if (error instanceof SyncException) {
     return {
@@ -30,14 +30,14 @@ export function handleSyncError(
       message: error.message,
       details: {
         name: error.name,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+        stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
       },
     };
   }
 
   return {
     code: defaultCode,
-    message: 'An unexpected error occurred during synchronization',
+    message: "An unexpected error occurred during synchronization",
     details: error,
   };
 }
@@ -45,47 +45,47 @@ export function handleSyncError(
 // Error code mappings
 export const ErrorCodes = {
   // Calendar sync errors
-  CALENDAR_SYNC_FAILED: 'calendar_sync_failed',
-  CALENDAR_AUTH_ERROR: 'calendar_auth_error',
-  CALENDAR_NOT_FOUND: 'calendar_not_found',
-  INVALID_CALENDAR_EVENT: 'invalid_calendar_event',
-  
+  CALENDAR_SYNC_FAILED: "calendar_sync_failed",
+  CALENDAR_AUTH_ERROR: "calendar_auth_error",
+  CALENDAR_NOT_FOUND: "calendar_not_found",
+  INVALID_CALENDAR_EVENT: "invalid_calendar_event",
+
   // Contacts sync errors
-  CONTACTS_SYNC_FAILED: 'contacts_sync_failed',
-  CONTACTS_AUTH_ERROR: 'contacts_auth_error',
-  CONTACTS_LIST_NOT_FOUND: 'contacts_list_not_found',
-  INVALID_CONTACT_DATA: 'invalid_contact_data',
-  
+  CONTACTS_SYNC_FAILED: "contacts_sync_failed",
+  CONTACTS_AUTH_ERROR: "contacts_auth_error",
+  CONTACTS_LIST_NOT_FOUND: "contacts_list_not_found",
+  INVALID_CONTACT_DATA: "invalid_contact_data",
+
   // Provider errors
-  PROVIDER_ERROR: 'provider_error',
-  PROVIDER_RATE_LIMIT: 'provider_rate_limit',
-  PROVIDER_UNAVAILABLE: 'provider_unavailable',
-  
+  PROVIDER_ERROR: "provider_error",
+  PROVIDER_RATE_LIMIT: "provider_rate_limit",
+  PROVIDER_UNAVAILABLE: "provider_unavailable",
+
   // Sync errors
-  SYNC_CONFLICT: 'sync_conflict',
-  SYNC_INTERRUPTED: 'sync_interrupted',
-  SYNC_TIMEOUT: 'sync_timeout',
-  
+  SYNC_CONFLICT: "sync_conflict",
+  SYNC_INTERRUPTED: "sync_interrupted",
+  SYNC_TIMEOUT: "sync_timeout",
+
   // Configuration errors
-  INVALID_CONFIG: 'invalid_config',
-  MISSING_CREDENTIALS: 'missing_credentials',
-  
+  INVALID_CONFIG: "invalid_config",
+  MISSING_CREDENTIALS: "missing_credentials",
+
   // System errors
-  INTERNAL_ERROR: 'internal_error',
-  SERVICE_UNAVAILABLE: 'service_unavailable',
-  TIMEOUT: 'timeout',
+  INTERNAL_ERROR: "internal_error",
+  SERVICE_UNAVAILABLE: "service_unavailable",
+  TIMEOUT: "timeout",
 } as const;
 
 export function isRetryableError(error: SyncError): boolean {
   const retryableCodes = new Set([
-    'calendar_sync_failed',
-    'contacts_sync_failed',
-    'provider_rate_limit',
-    'provider_unavailable',
-    'sync_interrupted',
-    'sync_timeout',
-    'service_unavailable',
-    'timeout',
+    "calendar_sync_failed",
+    "contacts_sync_failed",
+    "provider_rate_limit",
+    "provider_unavailable",
+    "sync_interrupted",
+    "sync_timeout",
+    "service_unavailable",
+    "timeout",
   ]);
   return retryableCodes.has(error.code);
 }
@@ -93,7 +93,7 @@ export function isRetryableError(error: SyncError): boolean {
 export function createError(
   code: keyof typeof ErrorCodes,
   message: string,
-  details?: any
+  details?: any,
 ): SyncException {
   return new SyncException(message, ErrorCodes[code], details);
 }
@@ -103,12 +103,16 @@ export function isSyncConflict(error: SyncError): boolean {
 }
 
 export function isAuthError(error: SyncError): boolean {
-  return error.code === ErrorCodes.CALENDAR_AUTH_ERROR || 
-         error.code === ErrorCodes.CONTACTS_AUTH_ERROR;
+  return (
+    error.code === ErrorCodes.CALENDAR_AUTH_ERROR ||
+    error.code === ErrorCodes.CONTACTS_AUTH_ERROR
+  );
 }
 
 export function isProviderError(error: SyncError): boolean {
-  return error.code === ErrorCodes.PROVIDER_ERROR || 
-         error.code === ErrorCodes.PROVIDER_RATE_LIMIT || 
-         error.code === ErrorCodes.PROVIDER_UNAVAILABLE;
+  return (
+    error.code === ErrorCodes.PROVIDER_ERROR ||
+    error.code === ErrorCodes.PROVIDER_RATE_LIMIT ||
+    error.code === ErrorCodes.PROVIDER_UNAVAILABLE
+  );
 }

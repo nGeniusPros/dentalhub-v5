@@ -1,13 +1,13 @@
 export interface ProviderCredential {
   id: string;
-  type: 'license' | 'dea' | 'npi' | 'tax' | 'ssn' | 'cpr' | 'other';
+  type: "license" | "dea" | "npi" | "tax" | "ssn" | "cpr" | "other";
   number: string;
   state?: string;
   issueDate: string;
   expirationDate: string;
   verificationDate?: string;
   verifiedBy?: string;
-  status: 'active' | 'expired' | 'pending';
+  status: "active" | "expired" | "pending";
   documentUrl?: string;
   notes?: string[];
 }
@@ -35,7 +35,7 @@ export interface Provider {
     startDate: string;
     role: string;
     department: string;
-    status: 'active' | 'inactive' | 'on-leave';
+    status: "active" | "inactive" | "on-leave";
   };
   insurance: {
     malpractice: {

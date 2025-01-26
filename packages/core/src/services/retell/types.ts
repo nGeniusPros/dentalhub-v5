@@ -8,7 +8,11 @@ export interface RetellConfig {
 }
 
 export interface CallEventPayload {
-  eventType: 'call.started' | 'call.ended' | 'call.transcription' | 'call.recording';
+  eventType:
+    | "call.started"
+    | "call.ended"
+    | "call.transcription"
+    | "call.recording";
   callId: string;
   timestamp: string;
   data: any;
@@ -29,7 +33,7 @@ export interface CallConfig {
   };
   recordingConfig?: {
     enabled: boolean;
-    format?: 'mp3' | 'wav';
+    format?: "mp3" | "wav";
   };
   webhookConfig?: {
     url: string;

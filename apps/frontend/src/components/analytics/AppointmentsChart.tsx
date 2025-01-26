@@ -1,8 +1,17 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Button } from '../ui/button';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { Button } from "../ui/button";
+import * as Icons from "lucide-react";
 
 interface AppointmentsChartProps {
   data: Array<{
@@ -11,7 +20,9 @@ interface AppointmentsChartProps {
   }>;
 }
 
-export const AppointmentsChart: React.FC<AppointmentsChartProps> = ({ data }) => {
+export const AppointmentsChart: React.FC<AppointmentsChartProps> = ({
+  data,
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -29,12 +40,21 @@ export const AppointmentsChart: React.FC<AppointmentsChartProps> = ({ data }) =>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <defs>
-              <linearGradient id="appointmentsGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#4BC5BD" stopOpacity={0.1}/>
-                <stop offset="95%" stopColor="#4BC5BD" stopOpacity={0}/>
+              <linearGradient
+                id="appointmentsGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop offset="5%" stopColor="#4BC5BD" stopOpacity={0.1} />
+                <stop offset="95%" stopColor="#4BC5BD" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="rgba(203, 213, 225, 0.3)"
+            />
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip />

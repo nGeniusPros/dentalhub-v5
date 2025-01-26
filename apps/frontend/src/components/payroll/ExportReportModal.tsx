@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
 
 interface ExportReportModalProps {
   isOpen: boolean;
   onClose: () => void;
   onExport: (format: string, options: any) => void;
   data?: any;
-  type?: 'staff' | 'performance' | 'training' | 'financial';
+  type?: "staff" | "performance" | "training" | "financial";
 }
 
 export const ExportReportModal: React.FC<ExportReportModalProps> = ({
@@ -16,23 +16,23 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
   onClose,
   onExport,
   data,
-  type = 'staff'
+  type = "staff",
 }) => {
-  const [format, setFormat] = useState('pdf');
+  const [format, setFormat] = useState("pdf");
   const [options, setOptions] = useState({
     includeCharts: true,
     includeTables: true,
-    dateRange: 'all',
+    dateRange: "all",
     sections: {
       overview: true,
       details: true,
       metrics: true,
-      trends: true
+      trends: true,
     },
     customDateRange: {
-      start: '',
-      end: ''
-    }
+      start: "",
+      end: "",
+    },
   });
 
   if (!isOpen) return null;
@@ -77,7 +77,9 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
             </label>
             <select
               value={options.dateRange}
-              onChange={(e) => setOptions(prev => ({ ...prev, dateRange: e.target.value }))}
+              onChange={(e) =>
+                setOptions((prev) => ({ ...prev, dateRange: e.target.value }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg mb-2"
             >
               <option value="all">All Time</option>
@@ -89,29 +91,43 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
               <option value="custom">Custom Range</option>
             </select>
 
-            {options.dateRange === 'custom' && (
+            {options.dateRange === "custom" && (
               <div className="grid grid-cols-2 gap-4 mt-2">
                 <div>
-                  <label className="block text-sm text-gray-500 mb-1">Start Date</label>
+                  <label className="block text-sm text-gray-500 mb-1">
+                    Start Date
+                  </label>
                   <input
                     type="date"
                     value={options.customDateRange.start}
-                    onChange={(e) => setOptions(prev => ({
-                      ...prev,
-                      customDateRange: { ...prev.customDateRange, start: e.target.value }
-                    }))}
+                    onChange={(e) =>
+                      setOptions((prev) => ({
+                        ...prev,
+                        customDateRange: {
+                          ...prev.customDateRange,
+                          start: e.target.value,
+                        },
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-500 mb-1">End Date</label>
+                  <label className="block text-sm text-gray-500 mb-1">
+                    End Date
+                  </label>
                   <input
                     type="date"
                     value={options.customDateRange.end}
-                    onChange={(e) => setOptions(prev => ({
-                      ...prev,
-                      customDateRange: { ...prev.customDateRange, end: e.target.value }
-                    }))}
+                    onChange={(e) =>
+                      setOptions((prev) => ({
+                        ...prev,
+                        customDateRange: {
+                          ...prev.customDateRange,
+                          end: e.target.value,
+                        },
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
@@ -129,10 +145,12 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
                 <input
                   type="checkbox"
                   checked={options.includeCharts}
-                  onChange={(e) => setOptions(prev => ({
-                    ...prev,
-                    includeCharts: e.target.checked
-                  }))}
+                  onChange={(e) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      includeCharts: e.target.checked,
+                    }))
+                  }
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm">Charts and Graphs</span>
@@ -141,10 +159,12 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
                 <input
                   type="checkbox"
                   checked={options.includeTables}
-                  onChange={(e) => setOptions(prev => ({
-                    ...prev,
-                    includeTables: e.target.checked
-                  }))}
+                  onChange={(e) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      includeTables: e.target.checked,
+                    }))
+                  }
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm">Data Tables</span>
@@ -163,13 +183,15 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
                   <input
                     type="checkbox"
                     checked={value}
-                    onChange={(e) => setOptions(prev => ({
-                      ...prev,
-                      sections: {
-                        ...prev.sections,
-                        [key]: e.target.checked
-                      }
-                    }))}
+                    onChange={(e) =>
+                      setOptions((prev) => ({
+                        ...prev,
+                        sections: {
+                          ...prev.sections,
+                          [key]: e.target.checked,
+                        },
+                      }))
+                    }
                     className="rounded border-gray-300"
                   />
                   <span className="text-sm capitalize">{key}</span>

@@ -1,4 +1,4 @@
-import { ISO8601String } from './common.js';
+import { ISO8601String } from "./common.js";
 
 // Retell Webhook Types
 export interface RetellBaseEvent {
@@ -8,7 +8,7 @@ export interface RetellBaseEvent {
 }
 
 export interface RetellCallStartedEvent extends RetellBaseEvent {
-  eventType: 'call.started';
+  eventType: "call.started";
   data: {
     agentId: string;
     customerId?: string;
@@ -18,7 +18,7 @@ export interface RetellCallStartedEvent extends RetellBaseEvent {
 }
 
 export interface RetellCallEndedEvent extends RetellBaseEvent {
-  eventType: 'call.ended';
+  eventType: "call.ended";
   data: {
     duration: number;
     endTime: ISO8601String;
@@ -28,11 +28,11 @@ export interface RetellCallEndedEvent extends RetellBaseEvent {
 }
 
 export interface RetellTranscriptionEvent extends RetellBaseEvent {
-  eventType: 'call.transcription';
+  eventType: "call.transcription";
   data: {
     text: string;
     speakerId: string;
-    speakerType: 'agent' | 'customer';
+    speakerType: "agent" | "customer";
     startTime: ISO8601String;
     endTime: ISO8601String;
     metadata?: Record<string, unknown>;
@@ -40,7 +40,7 @@ export interface RetellTranscriptionEvent extends RetellBaseEvent {
 }
 
 export interface RetellRecordingEvent extends RetellBaseEvent {
-  eventType: 'call.recording';
+  eventType: "call.recording";
   data: {
     url: string;
     duration: number;
@@ -64,11 +64,11 @@ export interface SikkaBaseEvent {
 }
 
 export interface SikkaEligibilityVerifiedEvent extends SikkaBaseEvent {
-  eventType: 'eligibility.verified';
+  eventType: "eligibility.verified";
   data: {
     patientId: string;
     insuranceId: string;
-    status: 'active' | 'inactive' | 'pending';
+    status: "active" | "inactive" | "pending";
     verificationDate: ISO8601String;
     coverage: {
       planType: string;
@@ -88,11 +88,11 @@ export interface SikkaEligibilityVerifiedEvent extends SikkaBaseEvent {
 }
 
 export interface SikkaClaimStatusEvent extends SikkaBaseEvent {
-  eventType: 'claim.status_update';
+  eventType: "claim.status_update";
   data: {
     claimId: string;
     patientId: string;
-    status: 'submitted' | 'in_process' | 'approved' | 'denied' | 'partial';
+    status: "submitted" | "in_process" | "approved" | "denied" | "partial";
     updateDate: ISO8601String;
     paymentAmount?: number;
     denialReason?: string;
@@ -106,11 +106,16 @@ export interface SikkaClaimStatusEvent extends SikkaBaseEvent {
 }
 
 export interface SikkaPreAuthStatusEvent extends SikkaBaseEvent {
-  eventType: 'preauth.status_update';
+  eventType: "preauth.status_update";
   data: {
     preAuthId: string;
     patientId: string;
-    status: 'submitted' | 'in_review' | 'approved' | 'denied' | 'additional_info_needed';
+    status:
+      | "submitted"
+      | "in_review"
+      | "approved"
+      | "denied"
+      | "additional_info_needed";
     updateDate: ISO8601String;
     approvedProcedures?: Array<{
       code: string;
@@ -125,7 +130,7 @@ export interface SikkaPreAuthStatusEvent extends SikkaBaseEvent {
 }
 
 export interface SikkaBenefitsUpdateEvent extends SikkaBaseEvent {
-  eventType: 'benefits.update';
+  eventType: "benefits.update";
   data: {
     patientId: string;
     insuranceId: string;
@@ -155,7 +160,7 @@ export interface OpenAIBaseEvent {
 }
 
 export interface OpenAICompletionEvent extends OpenAIBaseEvent {
-  eventType: 'completion.finished';
+  eventType: "completion.finished";
   data: {
     completionId: string;
     requestId: string;
@@ -163,7 +168,7 @@ export interface OpenAICompletionEvent extends OpenAIBaseEvent {
     choices: Array<{
       text: string;
       index: number;
-      finishReason: 'stop' | 'length' | 'content_filter';
+      finishReason: "stop" | "length" | "content_filter";
     }>;
     usage: {
       promptTokens: number;
@@ -174,7 +179,7 @@ export interface OpenAICompletionEvent extends OpenAIBaseEvent {
 }
 
 export interface OpenAIErrorEvent extends OpenAIBaseEvent {
-  eventType: 'error';
+  eventType: "error";
   data: {
     error: {
       code: string;
@@ -187,7 +192,7 @@ export interface OpenAIErrorEvent extends OpenAIBaseEvent {
 }
 
 export interface OpenAIModeratedEvent extends OpenAIBaseEvent {
-  eventType: 'moderation.flagged';
+  eventType: "moderation.flagged";
   data: {
     requestId: string;
     results: Array<{

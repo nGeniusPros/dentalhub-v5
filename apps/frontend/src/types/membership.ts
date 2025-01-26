@@ -14,13 +14,13 @@ export interface RewardItem {
   name: string;
   description: string;
   pointsCost: number;
-  category: 'treatment' | 'product' | 'service';
+  category: "treatment" | "product" | "service";
   imageUrl?: string;
 }
 
 export interface MembershipActivity {
   id: string;
-  type: 'visit' | 'treatment' | 'referral' | 'review' | 'purchase';
+  type: "visit" | "treatment" | "referral" | "review" | "purchase";
   points: number;
   description: string;
   date: string;
@@ -32,8 +32,8 @@ export interface PatientMembership {
   tierId: string;
   startDate: string;
   renewalDate: string;
-  paymentFrequency: 'monthly' | 'annual';
-  status: 'active' | 'inactive' | 'pending';
+  paymentFrequency: "monthly" | "annual";
+  status: "active" | "inactive" | "pending";
   totalPoints: number;
   pointsHistory: MembershipActivity[];
 }

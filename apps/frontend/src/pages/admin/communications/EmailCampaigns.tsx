@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Campaign {
   id: string;
   name: string;
   subject: string;
-  status: 'draft' | 'scheduled' | 'sent';
+  status: "draft" | "scheduled" | "sent";
   recipients: number;
   openRate?: number;
   clickRate?: number;
@@ -19,41 +19,42 @@ interface Campaign {
 }
 
 export const EmailCampaigns: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const campaigns: Campaign[] = [
     {
-      id: '1',
-      name: 'Monthly Newsletter',
-      subject: 'Your Dental Health Update - January 2025',
-      status: 'sent',
+      id: "1",
+      name: "Monthly Newsletter",
+      subject: "Your Dental Health Update - January 2025",
+      status: "sent",
       recipients: 2500,
       openRate: 45.2,
       clickRate: 12.8,
-      sentDate: '2025-01-15'
+      sentDate: "2025-01-15",
     },
     {
-      id: '2',
-      name: 'Appointment Reminder',
-      subject: 'Your Upcoming Dental Appointment',
-      status: 'scheduled',
+      id: "2",
+      name: "Appointment Reminder",
+      subject: "Your Upcoming Dental Appointment",
+      status: "scheduled",
       recipients: 150,
-      scheduledDate: '2025-01-25'
+      scheduledDate: "2025-01-25",
     },
     {
-      id: '3',
-      name: 'Special Offer',
-      subject: 'Save 20% on Teeth Whitening',
-      status: 'draft',
-      recipients: 0
-    }
+      id: "3",
+      name: "Special Offer",
+      subject: "Save 20% on Teeth Whitening",
+      status: "draft",
+      recipients: 0,
+    },
   ];
 
-  const filteredCampaigns = campaigns.filter(campaign => 
-    (activeTab === 'all' || campaign.status === activeTab) &&
-    (campaign.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-     campaign.subject.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredCampaigns = campaigns.filter(
+    (campaign) =>
+      (activeTab === "all" || campaign.status === activeTab) &&
+      (campaign.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        campaign.subject.toLowerCase().includes(searchQuery.toLowerCase())),
   );
 
   return (
@@ -65,8 +66,12 @@ export const EmailCampaigns: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Email Campaigns</h1>
-          <p className="text-gray-500 dark:text-gray-400">Create and manage email campaigns</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Email Campaigns
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400">
+            Create and manage email campaigns
+          </p>
         </div>
         <Button>
           <Icons.Plus className="h-4 w-4 mr-2" />
@@ -83,34 +88,48 @@ export const EmailCampaigns: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12,234</div>
-            <p className="text-xs text-muted-foreground">+2.1% from last month</p>
+            <p className="text-xs text-muted-foreground">
+              +2.1% from last month
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Open Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Average Open Rate
+            </CardTitle>
             <Icons.Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">42.8%</div>
-            <p className="text-xs text-muted-foreground">+3.2% from last month</p>
+            <p className="text-xs text-muted-foreground">
+              +3.2% from last month
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Click Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Average Click Rate
+            </CardTitle>
             <Icons.MousePointerClick className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12.3%</div>
-            <p className="text-xs text-muted-foreground">+0.8% from last month</p>
+            <p className="text-xs text-muted-foreground">
+              +0.8% from last month
+            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full sm:w-auto"
+        >
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="draft">Drafts</TabsTrigger>
@@ -141,16 +160,25 @@ export const EmailCampaigns: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-medium text-gray-900 dark:text-white">{campaign.name}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{campaign.subject}</p>
+                <h3 className="font-medium text-gray-900 dark:text-white">
+                  {campaign.name}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {campaign.subject}
+                </p>
               </div>
               <div className="flex items-center space-x-2">
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  campaign.status === 'sent' ? 'bg-green-100 text-green-800' :
-                  campaign.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                <span
+                  className={`px-2 py-1 text-xs rounded-full ${
+                    campaign.status === "sent"
+                      ? "bg-green-100 text-green-800"
+                      : campaign.status === "scheduled"
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {campaign.status.charAt(0).toUpperCase() +
+                    campaign.status.slice(1)}
                 </span>
                 <Button variant="ghost" size="sm">
                   <Icons.MoreVertical className="h-4 w-4" />

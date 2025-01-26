@@ -1,4 +1,4 @@
-import { ISO8601String, UUID, Timestamps } from './common.js';
+import { ISO8601String, UUID, Timestamps } from "./common.js";
 
 export interface PatientContact {
   email?: string;
@@ -40,10 +40,10 @@ export interface Patient extends Timestamps {
   firstName: string;
   lastName: string;
   dateOfBirth: ISO8601String;
-  gender: 'male' | 'female' | 'other';
+  gender: "male" | "female" | "other";
   contact: PatientContact;
   insurance: PatientInsurance[];
   medicalHistory: PatientMedicalHistory;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   notes?: string;
 }

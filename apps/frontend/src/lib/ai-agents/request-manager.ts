@@ -1,8 +1,8 @@
-import { apiClient } from '../../config/api';
+import { apiClient } from "../../config/api";
 
 export interface RequestConfig {
   endpoint: string;
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: "GET" | "POST" | "PUT" | "DELETE";
   data?: any;
   params?: Record<string, any>;
 }
@@ -12,7 +12,7 @@ export class RequestManager {
   private baseURL: string;
 
   private constructor() {
-    this.baseURL = '/api';
+    this.baseURL = "/api";
   }
 
   public static getInstance(): RequestManager {
@@ -24,7 +24,7 @@ export class RequestManager {
 
   async makeRequest<T>(config: RequestConfig): Promise<T> {
     try {
-      const { endpoint, method = 'GET', data, params } = config;
+      const { endpoint, method = "GET", data, params } = config;
       const response = await apiClient.request({
         url: endpoint,
         method,
@@ -33,24 +33,24 @@ export class RequestManager {
       });
       return response.data;
     } catch (error) {
-      console.error('Request failed:', error);
+      console.error("Request failed:", error);
       throw error;
     }
   }
 
   async get<T>(endpoint: string, params?: Record<string, any>): Promise<T> {
-    return this.makeRequest({ endpoint, method: 'GET', params });
+    return this.makeRequest({ endpoint, method: "GET", params });
   }
 
   async post<T>(endpoint: string, data?: any): Promise<T> {
-    return this.makeRequest({ endpoint, method: 'POST', data });
+    return this.makeRequest({ endpoint, method: "POST", data });
   }
 
   async put<T>(endpoint: string, data?: any): Promise<T> {
-    return this.makeRequest({ endpoint, method: 'PUT', data });
+    return this.makeRequest({ endpoint, method: "PUT", data });
   }
 
   async delete<T>(endpoint: string): Promise<T> {
-    return this.makeRequest({ endpoint, method: 'DELETE' });
+    return this.makeRequest({ endpoint, method: "DELETE" });
   }
 }

@@ -1,12 +1,12 @@
-import { PostgrestFilterBuilder } from '@supabase/supabase-js';
-import { supabase } from './client.js';
+import { PostgrestFilterBuilder } from "@supabase/supabase-js";
+import { supabase } from "./client.js";
 
 /**
  * Safely perform a select query on a table with proper error handling
  * @param table The table name to query
  * @returns A query builder with error handling
  */
-export const safeSelect = <T>(table: string) => 
+export const safeSelect = <T>(table: string) =>
   supabase.from<T>(table).select().throwOnError();
 
 /**
@@ -17,17 +17,14 @@ export const safeSelect = <T>(table: string) =>
  * @returns The paginated query
  */
 export const withPagination = (
-  query: PostgrestFilterBuilder<any>, 
-  page: number, 
-  pageSize: number
+  query: PostgrestFilterBuilder<any>,
+  page: number,
+  pageSize: number,
 ) => {
-  if (page < 1) throw new Error('Page must be greater than 0');
-  if (pageSize < 1) throw new Error('Page size must be greater than 0');
-  
-  return query.range(
-    (page - 1) * pageSize, 
-    page * pageSize - 1
-  );
+  if (page < 1) throw new Error("Page must be greater than 0");
+  if (pageSize < 1) throw new Error("Page size must be greater than 0");
+
+  return query.range((page - 1) * pageSize, page * pageSize - 1);
 };
 
 /**

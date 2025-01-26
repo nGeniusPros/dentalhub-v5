@@ -1,7 +1,7 @@
 export interface User {
   id: string;
   name: string;
-  role: 'admin' | 'staff' | 'patient';
+  role: "admin" | "staff" | "patient";
   email: string;
   title?: string;
   department?: string;
@@ -22,7 +22,7 @@ export interface Appointment {
   date: string;
   time: string;
   type: string;
-  status: 'confirmed' | 'pending' | 'cancelled';
+  status: "confirmed" | "pending" | "cancelled";
   provider?: string;
 }
 
@@ -30,7 +30,7 @@ export interface Treatment {
   id: string;
   type: string;
   tooth?: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   estimatedCost: number;
   insuranceCoverage: number;
   recommendedDate: string;
@@ -44,7 +44,7 @@ export interface FamilyMember {
   dob: string;
   nextAppointment?: string;
   insurance?: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
 }
 
 export interface Document {

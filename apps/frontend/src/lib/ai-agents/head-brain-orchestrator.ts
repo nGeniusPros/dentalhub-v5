@@ -1,5 +1,5 @@
-import { AgentFactory, AgentType, AIAgent } from './agent-factory';
-import { PracticeMetrics } from './types/frontend-types';
+import { AgentFactory, AgentType, AIAgent } from "./agent-factory";
+import { PracticeMetrics } from "./types/frontend-types";
 
 export class HeadBrainOrchestrator {
   private static instance: HeadBrainOrchestrator;
@@ -23,7 +23,10 @@ export class HeadBrainOrchestrator {
     this.agents = this.agentFactory.initializeAgents();
   }
 
-  public async processQuery(content: string, agentType: AgentType = 'head-brain'): Promise<string> {
+  public async processQuery(
+    content: string,
+    agentType: AgentType = "head-brain",
+  ): Promise<string> {
     try {
       const agent = this.agents.get(agentType);
       if (!agent) {
@@ -37,7 +40,7 @@ export class HeadBrainOrchestrator {
 
       return response.content;
     } catch (error) {
-      console.error('Error processing query:', error);
+      console.error("Error processing query:", error);
       throw error;
     }
   }

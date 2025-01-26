@@ -1,16 +1,24 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
 
 export const ARAgingChart = () => {
   const agingData = [
-    { range: 'Current', amount: 45000 },
-    { range: '1-30', amount: 35000 },
-    { range: '31-60', amount: 25000 },
-    { range: '61-90', amount: 15000 },
-    { range: '90+', amount: 10000 }
+    { range: "Current", amount: 45000 },
+    { range: "1-30", amount: 35000 },
+    { range: "31-60", amount: 25000 },
+    { range: "61-90", amount: 15000 },
+    { range: "90+", amount: 10000 },
   ];
 
   return (
@@ -36,8 +44,11 @@ export const ARAgingChart = () => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="range" />
             <YAxis />
-            <Tooltip 
-              formatter={(value: number) => [`$${value.toLocaleString()}`, 'Amount']}
+            <Tooltip
+              formatter={(value: number) => [
+                `$${value.toLocaleString()}`,
+                "Amount",
+              ]}
             />
             <Bar dataKey="amount" fill="#1B2B85" />
           </BarChart>

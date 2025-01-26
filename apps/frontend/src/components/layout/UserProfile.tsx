@@ -1,7 +1,7 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import * as Icons from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import * as Icons from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
 
 export const UserProfile = () => {
   const navigate = useNavigate();
@@ -10,9 +10,9 @@ export const UserProfile = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error("Logout failed:", error);
     }
   };
 
@@ -24,16 +24,16 @@ export const UserProfile = () => {
         <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] flex items-center justify-center text-white">
           {user.email?.[0].toUpperCase() || <Icons.User className="w-4 h-4" />}
         </div>
-        <span className="text-sm font-medium text-gray-700">
-          {user.email}
-        </span>
+        <span className="text-sm font-medium text-gray-700">{user.email}</span>
         <Icons.ChevronDown className="w-4 h-4 text-gray-500" />
       </button>
 
       <div className="absolute right-0 mt-2 w-48 py-2 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
         <div className="px-4 py-2 border-b border-gray-200">
           <p className="text-sm font-medium text-gray-900">{user.email}</p>
-          <p className="text-xs text-gray-500">{user.user_metadata?.role || 'User'}</p>
+          <p className="text-xs text-gray-500">
+            {user.user_metadata?.role || "User"}
+          </p>
         </div>
 
         <button

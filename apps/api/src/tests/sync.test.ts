@@ -1,12 +1,12 @@
-import { synchronize } from '../edge-functions/sync/service';
-import { SyncData, SyncOptions } from '../edge-functions/sync/types';
+import { synchronize } from "../edge-functions/sync/service";
+import { SyncData, SyncOptions } from "../edge-functions/sync/types";
 
-describe('Sync Service', () => {
-  it('should synchronize calendar successfully', async () => {
+describe("Sync Service", () => {
+  it("should synchronize calendar successfully", async () => {
     const data: SyncData = {
-      type: 'calendar',
+      type: "calendar",
       options: {
-        syncDirection: 'two-way',
+        syncDirection: "two-way",
         syncInterval: 15,
       },
     };
@@ -16,11 +16,11 @@ describe('Sync Service', () => {
     expect(result.syncId).toBeDefined();
   });
 
-  it('should synchronize contacts successfully', async () => {
+  it("should synchronize contacts successfully", async () => {
     const data: SyncData = {
-      type: 'contacts',
+      type: "contacts",
       options: {
-        syncDirection: 'one-way',
+        syncDirection: "one-way",
         syncInterval: 60,
       },
     };
@@ -30,11 +30,11 @@ describe('Sync Service', () => {
     expect(result.syncId).toBeDefined();
   });
 
-  it('should handle an unsupported sync type', async () => {
+  it("should handle an unsupported sync type", async () => {
     const data: SyncData = {
-      type: 'invalid' as any,
+      type: "invalid" as any,
       options: {
-        syncDirection: 'two-way',
+        syncDirection: "two-way",
         syncInterval: 15,
       },
     };
@@ -42,22 +42,22 @@ describe('Sync Service', () => {
     const result = await synchronize(data, options);
     expect(result.success).toBe(false);
     expect(result.error).toBeDefined();
-    expect(result.error?.code).toBe('UNSUPPORTED_SYNC_TYPE');
+    expect(result.error?.code).toBe("UNSUPPORTED_SYNC_TYPE");
   });
 
-  it('should handle calendar sync errors', async () => {
+  it("should handle calendar sync errors", async () => {
     const data: SyncData = {
-      type: 'calendar',
+      type: "calendar",
       options: {
-        syncDirection: 'two-way',
+        syncDirection: "two-way",
         syncInterval: 15,
-        timeZone: 'invalid-timezone'
+        timeZone: "invalid-timezone",
       },
     };
     const options: SyncOptions = {};
     const result = await synchronize(data, options);
-     expect(result.success).toBe(false);
-     expect(result.error).toBeDefined();
-     expect(result.error?.code).toBe('CALENDAR_SYNC_FAILED');
+    expect(result.success).toBe(false);
+    expect(result.error).toBeDefined();
+    expect(result.error?.code).toBe("CALENDAR_SYNC_FAILED");
   });
 });

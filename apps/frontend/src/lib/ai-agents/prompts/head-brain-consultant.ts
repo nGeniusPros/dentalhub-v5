@@ -51,18 +51,18 @@ Response Structure:
 
 export const HEAD_BRAIN_METRICS = {
   clinical: {
-    perOperatoryProductivity: { min: 300, target: 350, unit: 'USD/hour' },
-    hygieneProduction: { target: 2500, unit: 'USD/day' },
-    treatmentAcceptance: { target: 85, unit: 'percent' },
-    patientSatisfaction: { target: 95, unit: 'percent' }
+    perOperatoryProductivity: { min: 300, target: 350, unit: "USD/hour" },
+    hygieneProduction: { target: 2500, unit: "USD/day" },
+    treatmentAcceptance: { target: 85, unit: "percent" },
+    patientSatisfaction: { target: 95, unit: "percent" },
   },
   financial: {
-    collectionsToProduction: { target: 98, unit: 'percent' },
-    insuranceAging: { target: 30, unit: 'days' },
-    supplyCosts: { target: 6, unit: 'percent' },
-    marketingROI: { target: 3, unit: 'ratio' }
+    collectionsToProduction: { target: 98, unit: "percent" },
+    insuranceAging: { target: 30, unit: "days" },
+    supplyCosts: { target: 6, unit: "percent" },
+    marketingROI: { target: 3, unit: "ratio" },
   },
   operational: {
-    scheduleOptimization: { target: 85, unit: 'percent' }
-  }
+    scheduleOptimization: { target: 85, unit: "percent" },
+  },
 };

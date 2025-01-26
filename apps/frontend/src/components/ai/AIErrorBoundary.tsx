@@ -1,8 +1,8 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AgentError } from '../../lib/ai-agents/types/errors';
-import { Button } from '../ui/button';
-import { Alert, AlertTitle, AlertDescription } from '../ui/alert';
-import { ExclamationTriangleIcon, ReloadIcon } from '@radix-ui/react-icons';
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import { AgentError } from "../../lib/ai-agents/types/errors";
+import { Button } from "../ui/button";
+import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
+import { ExclamationTriangleIcon, ReloadIcon } from "@radix-ui/react-icons";
 
 interface Props {
   children: ReactNode;
@@ -20,26 +20,26 @@ export class AIErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,
     error: null,
-    errorInfo: null
+    errorInfo: null,
   };
 
   public static getDerivedStateFromError(error: Error): State {
     return {
       hasError: true,
       error,
-      errorInfo: null
+      errorInfo: null,
     };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('AI Error:', error, errorInfo);
+    console.error("AI Error:", error, errorInfo);
   }
 
   private handleReset = () => {
     this.setState({
       hasError: false,
       error: null,
-      errorInfo: null
+      errorInfo: null,
     });
     this.props.onReset?.();
   };
@@ -48,7 +48,7 @@ export class AIErrorBoundary extends Component<Props, State> {
     if (error instanceof AgentError) {
       return `AI Assistant Error: ${error.message}`;
     }
-    return 'An unexpected error occurred with the AI Assistant';
+    return "An unexpected error occurred with the AI Assistant";
   }
 
   private isRetryable(error: Error): boolean {

@@ -8,14 +8,14 @@ export interface SikkaInsuranceVerification {
   terminationDate?: string;
   groupNumber?: string;
   planType: string;
-  status: 'active' | 'inactive' | 'pending';
+  status: "active" | "inactive" | "pending";
   verificationDate: string;
 }
 
 export interface SikkaEligibilityCheck {
   patientId: string;
   insuranceId: string;
-  eligibilityStatus: 'eligible' | 'ineligible' | 'pending';
+  eligibilityStatus: "eligible" | "ineligible" | "pending";
   checkDate: string;
   coverageDetails: {
     preventiveCare: boolean;
@@ -80,7 +80,7 @@ export interface SikkaClaimProcessing {
   patientId: string;
   insuranceId: string;
   submissionDate: string;
-  status: 'submitted' | 'processing' | 'accepted' | 'rejected' | 'pending';
+  status: "submitted" | "processing" | "accepted" | "rejected" | "pending";
   procedures: Array<{
     code: string;
     description: string;
@@ -117,13 +117,16 @@ export interface SikkaErrorDetails {
 }
 
 export interface SikkaResponse<T> {
-  status: 'success' | 'error' | 'pending';
+  status: "success" | "error" | "pending";
   message?: string;
   data?: T;
   errors?: SikkaErrorDetails[];
 }
 
-export type SikkaVerifyInsuranceResponse = SikkaResponse<SikkaInsuranceVerification>;
-export type SikkaCheckEligibilityResponse = SikkaResponse<SikkaEligibilityCheck>;
-export type SikkaVerifyBenefitsResponse = SikkaResponse<SikkaBenefitsVerification>;
+export type SikkaVerifyInsuranceResponse =
+  SikkaResponse<SikkaInsuranceVerification>;
+export type SikkaCheckEligibilityResponse =
+  SikkaResponse<SikkaEligibilityCheck>;
+export type SikkaVerifyBenefitsResponse =
+  SikkaResponse<SikkaBenefitsVerification>;
 export type SikkaProcessClaimResponse = SikkaResponse<SikkaClaimProcessing>;

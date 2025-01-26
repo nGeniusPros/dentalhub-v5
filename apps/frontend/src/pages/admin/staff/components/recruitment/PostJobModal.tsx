@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { JobBoardIntegration } from './JobBoardIntegration';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { JobBoardIntegration } from "./JobBoardIntegration";
 
 interface PostJobModalProps {
   isOpen: boolean;
@@ -13,20 +13,20 @@ interface PostJobModalProps {
 export const PostJobModal: React.FC<PostJobModalProps> = ({
   isOpen,
   onClose,
-  onSubmit
+  onSubmit,
 }) => {
   const [jobData, setJobData] = useState({
-    position: '',
-    department: '',
-    type: 'full-time',
-    experience: '',
-    salary: { min: '', max: '' },
-    requirements: [''],
-    responsibilities: [''],
-    benefits: [''],
-    startDate: '',
-    location: '',
-    description: ''
+    position: "",
+    department: "",
+    type: "full-time",
+    experience: "",
+    salary: { min: "", max: "" },
+    requirements: [""],
+    responsibilities: [""],
+    benefits: [""],
+    startDate: "",
+    location: "",
+    description: "",
   });
 
   if (!isOpen) return null;
@@ -37,25 +37,30 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
       ...jobData,
       requirements: jobData.requirements.filter(Boolean),
       responsibilities: jobData.responsibilities.filter(Boolean),
-      benefits: jobData.benefits.filter(Boolean)
+      benefits: jobData.benefits.filter(Boolean),
     });
   };
 
   const handleArrayInput = (
-    field: 'requirements' | 'responsibilities' | 'benefits',
+    field: "requirements" | "responsibilities" | "benefits",
     index: number,
-    value: string
+    value: string,
   ) => {
     const newArray = [...jobData[field]];
     newArray[index] = value;
     setJobData({ ...jobData, [field]: newArray });
   };
 
-  const addArrayItem = (field: 'requirements' | 'responsibilities' | 'benefits') => {
-    setJobData({ ...jobData, [field]: [...jobData[field], ''] });
+  const addArrayItem = (
+    field: "requirements" | "responsibilities" | "benefits",
+  ) => {
+    setJobData({ ...jobData, [field]: [...jobData[field], ""] });
   };
 
-  const removeArrayItem = (field: 'requirements' | 'responsibilities' | 'benefits', index: number) => {
+  const removeArrayItem = (
+    field: "requirements" | "responsibilities" | "benefits",
+    index: number,
+  ) => {
     const newArray = jobData[field].filter((_, i) => i !== index);
     setJobData({ ...jobData, [field]: newArray });
   };
@@ -90,7 +95,9 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
               <input
                 type="text"
                 value={jobData.position}
-                onChange={(e) => setJobData({ ...jobData, position: e.target.value })}
+                onChange={(e) =>
+                  setJobData({ ...jobData, position: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -103,7 +110,9 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
               <input
                 type="text"
                 value={jobData.department}
-                onChange={(e) => setJobData({ ...jobData, department: e.target.value })}
+                onChange={(e) =>
+                  setJobData({ ...jobData, department: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -117,7 +126,9 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
               </label>
               <select
                 value={jobData.type}
-                onChange={(e) => setJobData({ ...jobData, type: e.target.value })}
+                onChange={(e) =>
+                  setJobData({ ...jobData, type: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -135,7 +146,9 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
               <input
                 type="text"
                 value={jobData.experience}
-                onChange={(e) => setJobData({ ...jobData, experience: e.target.value })}
+                onChange={(e) =>
+                  setJobData({ ...jobData, experience: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 placeholder="e.g., 3-5 years"
                 required
@@ -151,10 +164,12 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
               <input
                 type="number"
                 value={jobData.salary.min}
-                onChange={(e) => setJobData({
-                  ...jobData,
-                  salary: { ...jobData.salary, min: e.target.value }
-                })}
+                onChange={(e) =>
+                  setJobData({
+                    ...jobData,
+                    salary: { ...jobData.salary, min: e.target.value },
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 placeholder="Minimum salary"
                 required
@@ -168,10 +183,12 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
               <input
                 type="number"
                 value={jobData.salary.max}
-                onChange={(e) => setJobData({
-                  ...jobData,
-                  salary: { ...jobData.salary, max: e.target.value }
-                })}
+                onChange={(e) =>
+                  setJobData({
+                    ...jobData,
+                    salary: { ...jobData.salary, max: e.target.value },
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 placeholder="Maximum salary"
                 required
@@ -185,7 +202,9 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
             </label>
             <textarea
               value={jobData.description}
-              onChange={(e) => setJobData({ ...jobData, description: e.target.value })}
+              onChange={(e) =>
+                setJobData({ ...jobData, description: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               rows={4}
               required
@@ -202,7 +221,7 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => addArrayItem('requirements')}
+                onClick={() => addArrayItem("requirements")}
               >
                 <Icons.Plus className="w-4 h-4 mr-2" />
                 Add Requirement
@@ -214,7 +233,9 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
                   <input
                     type="text"
                     value={req}
-                    onChange={(e) => handleArrayInput('requirements', index, e.target.value)}
+                    onChange={(e) =>
+                      handleArrayInput("requirements", index, e.target.value)
+                    }
                     className="flex-1 px-4 py-2 border border-gray-200 rounded-lg"
                     placeholder="Enter requirement..."
                   />
@@ -222,7 +243,7 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeArrayItem('requirements', index)}
+                    onClick={() => removeArrayItem("requirements", index)}
                   >
                     <Icons.X className="w-4 h-4 text-red-500" />
                   </Button>
@@ -241,7 +262,7 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => addArrayItem('responsibilities')}
+                onClick={() => addArrayItem("responsibilities")}
               >
                 <Icons.Plus className="w-4 h-4 mr-2" />
                 Add Responsibility
@@ -253,7 +274,13 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
                   <input
                     type="text"
                     value={resp}
-                    onChange={(e) => handleArrayInput('responsibilities', index, e.target.value)}
+                    onChange={(e) =>
+                      handleArrayInput(
+                        "responsibilities",
+                        index,
+                        e.target.value,
+                      )
+                    }
                     className="flex-1 px-4 py-2 border border-gray-200 rounded-lg"
                     placeholder="Enter responsibility..."
                   />
@@ -261,7 +288,7 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeArrayItem('responsibilities', index)}
+                    onClick={() => removeArrayItem("responsibilities", index)}
                   >
                     <Icons.X className="w-4 h-4 text-red-500" />
                   </Button>
@@ -280,7 +307,7 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => addArrayItem('benefits')}
+                onClick={() => addArrayItem("benefits")}
               >
                 <Icons.Plus className="w-4 h-4 mr-2" />
                 Add Benefit
@@ -292,7 +319,9 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
                   <input
                     type="text"
                     value={benefit}
-                    onChange={(e) => handleArrayInput('benefits', index, e.target.value)}
+                    onChange={(e) =>
+                      handleArrayInput("benefits", index, e.target.value)
+                    }
                     className="flex-1 px-4 py-2 border border-gray-200 rounded-lg"
                     placeholder="Enter benefit..."
                   />
@@ -300,7 +329,7 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeArrayItem('benefits', index)}
+                    onClick={() => removeArrayItem("benefits", index)}
                   >
                     <Icons.X className="w-4 h-4 text-red-500" />
                   </Button>
@@ -317,7 +346,9 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
               <input
                 type="date"
                 value={jobData.startDate}
-                onChange={(e) => setJobData({ ...jobData, startDate: e.target.value })}
+                onChange={(e) =>
+                  setJobData({ ...jobData, startDate: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -330,7 +361,9 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
               <input
                 type="text"
                 value={jobData.location}
-                onChange={(e) => setJobData({ ...jobData, location: e.target.value })}
+                onChange={(e) =>
+                  setJobData({ ...jobData, location: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 placeholder="e.g., New York, NY"
                 required
@@ -342,9 +375,7 @@ export const PostJobModal: React.FC<PostJobModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Post Job
-            </Button>
+            <Button type="submit">Post Job</Button>
           </div>
         </form>
       </motion.div>

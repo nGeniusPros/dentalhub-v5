@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { useNotifications } from '@/contexts/NotificationContext';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useNotifications } from "@/contexts/NotificationContext";
 interface StaffAssignment {
   staffId: string;
   assignedAt: string;
-  status: 'pending' | 'active' | 'completed';
+  status: "pending" | "active" | "completed";
 }
 
 interface FilterState {
@@ -27,46 +27,65 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
   isOpen,
   onClose,
   onAssign,
-  currentAssignments = []
+  currentAssignments = [],
 }) => {
   const { dispatch: notifyDispatch } = useNotifications();
-  const [assignments, setAssignments] = useState<StaffAssignment[]>(currentAssignments);
+  const [assignments, setAssignments] =
+    useState<StaffAssignment[]>(currentAssignments);
   const [selectedStaff, setSelectedStaff] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterState>({
-    department: '',
-    role: '',
-    availability: ''
+    department: "",
+    role: "",
+    availability: "",
   });
 
   const staffMembers = [
-    { id: '1', name: 'Dr. Sarah Wilson', role: 'Lead Dentist', department: 'Clinical', availability: 'Full-time' },
-    { id: '2', name: 'John Smith', role: 'Dental Hygienist', department: 'Clinical', availability: 'Part-time' },
-    { id: '3', name: 'Emily Parker', role: 'Front Desk', department: 'Administrative', availability: 'Full-time' }
+    {
+      id: "1",
+      name: "Dr. Sarah Wilson",
+      role: "Lead Dentist",
+      department: "Clinical",
+      availability: "Full-time",
+    },
+    {
+      id: "2",
+      name: "John Smith",
+      role: "Dental Hygienist",
+      department: "Clinical",
+      availability: "Part-time",
+    },
+    {
+      id: "3",
+      name: "Emily Parker",
+      role: "Front Desk",
+      department: "Administrative",
+      availability: "Full-time",
+    },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const newAssignments = selectedStaff.map(staffId => ({
+
+    const newAssignments = selectedStaff.map((staffId) => ({
       staffId,
       assignedAt: new Date().toISOString(),
-      status: 'pending' as const
+      status: "pending" as const,
     }));
 
     onAssign(newAssignments);
-    
+
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'message',
-        title: 'Staff Assigned',
-        message: `Successfully assigned ${selectedStaff.length} staff member${selectedStaff.length === 1 ? '' : 's'}`,
+        type: "message",
+        title: "Staff Assigned",
+        message: `Successfully assigned ${selectedStaff.length} staff member${selectedStaff.length === 1 ? "" : "s"}`,
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium'
-      }
+        priority: "medium",
+      },
     });
 
     onClose();
@@ -74,14 +93,19 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
 
   if (!isOpen) return null;
 
-  const filteredStaff = staffMembers.filter(staff => {
-    const matchesSearch = staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         staff.role.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDepartment = !filters.department || staff.department === filters.department;
+  const filteredStaff = staffMembers.filter((staff) => {
+    const matchesSearch =
+      staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      staff.role.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDepartment =
+      !filters.department || staff.department === filters.department;
     const matchesRole = !filters.role || staff.role === filters.role;
-    const matchesAvailability = !filters.availability || staff.availability === filters.availability;
+    const matchesAvailability =
+      !filters.availability || staff.availability === filters.availability;
 
-    return matchesSearch && matchesDepartment && matchesRole && matchesAvailability;
+    return (
+      matchesSearch && matchesDepartment && matchesRole && matchesAvailability
+    );
   });
 
   return (
@@ -117,7 +141,12 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
             <div className="grid grid-cols-3 gap-4">
               <select
                 value={filters.department}
-                onChange={(e) => setFilters({ ...filters, department: e.target.value as FilterState['department'] })}
+                onChange={(e) =>
+                  setFilters({
+                    ...filters,
+                    department: e.target.value as FilterState["department"],
+                  })
+                }
                 className="px-4 py-2 border border-gray-200 rounded-lg"
               >
                 <option value="">All Departments</option>
@@ -128,7 +157,9 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
 
               <select
                 value={filters.role}
-                onChange={(e) => setFilters({ ...filters, role: e.target.value })}
+                onChange={(e) =>
+                  setFilters({ ...filters, role: e.target.value })
+                }
                 className="px-4 py-2 border border-gray-200 rounded-lg"
               >
                 <option value="">All Roles</option>
@@ -139,7 +170,9 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
 
               <select
                 value={filters.availability}
-                onChange={(e) => setFilters({ ...filters, availability: e.target.value })}
+                onChange={(e) =>
+                  setFilters({ ...filters, availability: e.target.value })
+                }
                 className="px-4 py-2 border border-gray-200 rounded-lg"
               >
                 <option value="">All Availability</option>
@@ -158,7 +191,7 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
                   "flex items-center justify-between p-4 rounded-lg transition-colors",
                   selectedStaff.includes(staff.id)
                     ? "bg-primary/10 border border-primary"
-                    : "bg-gray-50 border border-transparent hover:border-gray-200"
+                    : "bg-gray-50 border border-transparent hover:border-gray-200",
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -169,7 +202,9 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
                       if (e.target.checked) {
                         setSelectedStaff([...selectedStaff, staff.id]);
                       } else {
-                        setSelectedStaff(selectedStaff.filter(id => id !== staff.id));
+                        setSelectedStaff(
+                          selectedStaff.filter((id) => id !== staff.id),
+                        );
                       }
                     }}
                     className="rounded border-gray-300"
@@ -180,11 +215,17 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-sm text-gray-500">{staff.department}</span>
-                  <span className={cn(
-                    "px-2 py-1 text-xs font-medium rounded-full",
-                    staff.availability === 'Full-time' ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
-                  )}>
+                  <span className="text-sm text-gray-500">
+                    {staff.department}
+                  </span>
+                  <span
+                    className={cn(
+                      "px-2 py-1 text-xs font-medium rounded-full",
+                      staff.availability === "Full-time"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800",
+                    )}
+                  >
                     {staff.availability}
                   </span>
                 </div>
@@ -195,7 +236,8 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
 
         <div className="p-6 border-t border-gray-200 flex justify-between items-center">
           <p className="text-sm text-gray-500">
-            {selectedStaff.length} staff member{selectedStaff.length === 1 ? '' : 's'} selected
+            {selectedStaff.length} staff member
+            {selectedStaff.length === 1 ? "" : "s"} selected
           </p>
           <div className="flex gap-3">
             <Button variant="outline" onClick={onClose}>

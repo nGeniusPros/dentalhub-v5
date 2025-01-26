@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
 
 interface CommentDialogProps {
   isOpen: boolean;
@@ -14,16 +14,16 @@ export const CommentDialog: React.FC<CommentDialogProps> = ({
   isOpen,
   onClose,
   onSubmit,
-  title = 'Add Comment'
+  title = "Add Comment",
 }) => {
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(comment);
-    setComment('');
+    setComment("");
     onClose();
   };
 
@@ -57,9 +57,7 @@ export const CommentDialog: React.FC<CommentDialogProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Submit
-            </Button>
+            <Button type="submit">Submit</Button>
           </div>
         </form>
       </motion.div>

@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { Campaign } from './use-campaigns';
+import { useState } from "react";
+import { Campaign } from "./use-campaigns";
 
 export const useCampaignActions = () => {
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
+    null,
+  );
 
   const handleEditCampaign = (campaign: Campaign) => {
     setEditingCampaign(campaign);
@@ -32,6 +34,6 @@ export const useCampaignActions = () => {
     handleScheduleCampaign,
     handleCloseScheduleDialog,
     handleCloseEditDialog,
-    setEditingCampaign
+    setEditingCampaign,
   };
 };

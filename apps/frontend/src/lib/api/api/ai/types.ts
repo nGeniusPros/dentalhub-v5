@@ -1,5 +1,8 @@
-import { PracticeMetrics, GenerationOptions } from '../../../lib/ai-agents/types/frontend-types';
-import { DentalAgentType } from '../../../lib/ai-agents/types/agent-types';
+import {
+  PracticeMetrics,
+  GenerationOptions,
+} from "../../../lib/ai-agents/types/frontend-types";
+import { DentalAgentType } from "../../../lib/ai-agents/types/agent-types";
 
 export interface AIQueryRequest {
   query: string;
@@ -20,7 +23,7 @@ export interface AIQueryResponse {
 
 export interface AIMetricsRequest {
   metrics: PracticeMetrics;
-  timeframe: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  timeframe: "daily" | "weekly" | "monthly" | "yearly";
 }
 
 export interface AIMetricsResponse {

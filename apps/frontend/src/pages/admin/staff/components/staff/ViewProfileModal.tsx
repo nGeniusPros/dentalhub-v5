@@ -1,11 +1,11 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
-import { TrainingAssignmentButton } from '../../../../../components/staff/TrainingAssignmentButton';
-import { formatCurrency } from '../../../../../lib/utils/currency';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
+import { TrainingAssignmentButton } from "../../../../../components/staff/TrainingAssignmentButton";
+import { formatCurrency } from "../../../../../lib/utils/currency";
 
 interface ViewProfileModalProps {
   isOpen: boolean;
@@ -80,7 +80,7 @@ interface ViewProfileModalProps {
 export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
   isOpen,
   onClose,
-  staff
+  staff,
 }) => {
   const navigate = useNavigate();
 
@@ -100,19 +100,23 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
                 <Icons.User className="w-8 h-8 text-primary" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">{staff.name}</h2>
-                <p className="text-gray-500">{staff.role} - {staff.department}</p>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {staff.name}
+                </h2>
+                <p className="text-gray-500">
+                  {staff.role} - {staff.department}
+                </p>
               </div>
             </div>
             <Button variant="ghost" onClick={onClose}>
               <Icons.X className="w-5 h-5" />
             </Button>
             <div className="flex gap-2">
-              <Button 
+              <Button
                 variant="outline"
                 onClick={() => {
                   onClose();
-                  navigate('/admin-dashboard/resources');
+                  navigate("/admin-dashboard/resources");
                 }}
               >
                 <Icons.BookOpen className="w-4 h-4 mr-2" />
@@ -128,16 +132,22 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
 
         <div className="p-6 space-y-8">
           {/* Status Banner */}
-          <div className={cn(
-            "p-4 rounded-lg",
-            staff.status === 'active' ? "bg-green-50" : "bg-gray-50"
-          )}>
+          <div
+            className={cn(
+              "p-4 rounded-lg",
+              staff.status === "active" ? "bg-green-50" : "bg-gray-50",
+            )}
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Icons.CircleDot className={cn(
-                  "w-4 h-4",
-                  staff.status === 'active' ? "text-green-500" : "text-gray-500"
-                )} />
+                <Icons.CircleDot
+                  className={cn(
+                    "w-4 h-4",
+                    staff.status === "active"
+                      ? "text-green-500"
+                      : "text-gray-500",
+                  )}
+                />
                 <span className="font-medium capitalize">{staff.status}</span>
               </div>
               <div className="text-sm text-gray-500">
@@ -162,8 +172,10 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
                 <div className="col-span-2">
                   <label className="text-sm text-gray-500">Address</label>
                   <p className="font-medium">
-                    {staff.address.street}<br />
-                    {staff.address.city}, {staff.address.state} {staff.address.zip}
+                    {staff.address.street}
+                    <br />
+                    {staff.address.city}, {staff.address.state}{" "}
+                    {staff.address.zip}
                   </p>
                 </div>
               )}
@@ -184,7 +196,9 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
               </div>
               <div>
                 <label className="text-sm text-gray-500">Start Date</label>
-                <p className="font-medium">{new Date(staff.startDate).toLocaleDateString()}</p>
+                <p className="font-medium">
+                  {new Date(staff.startDate).toLocaleDateString()}
+                </p>
               </div>
               <div>
                 <label className="text-sm text-gray-500">Status</label>
@@ -196,26 +210,40 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
           {/* Payroll Information */}
           {staff.payrollInfo && (
             <section>
-              <h3 className="text-lg font-semibold mb-4">Payroll Information</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Payroll Information
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm text-gray-500">Salary/Rate</label>
-                  <p className="font-medium">{formatCurrency(parseFloat(staff.payrollInfo.salary))}</p>
+                  <p className="font-medium">
+                    {formatCurrency(parseFloat(staff.payrollInfo.salary))}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm text-gray-500">Pay Frequency</label>
-                  <p className="font-medium capitalize">{staff.payrollInfo.payFrequency}</p>
+                  <p className="font-medium capitalize">
+                    {staff.payrollInfo.payFrequency}
+                  </p>
                 </div>
                 {staff.payrollInfo.lastReviewDate && (
                   <div>
                     <label className="text-sm text-gray-500">Last Review</label>
-                    <p className="font-medium">{new Date(staff.payrollInfo.lastReviewDate).toLocaleDateString()}</p>
+                    <p className="font-medium">
+                      {new Date(
+                        staff.payrollInfo.lastReviewDate,
+                      ).toLocaleDateString()}
+                    </p>
                   </div>
                 )}
                 {staff.payrollInfo.nextReviewDate && (
                   <div>
                     <label className="text-sm text-gray-500">Next Review</label>
-                    <p className="font-medium">{new Date(staff.payrollInfo.nextReviewDate).toLocaleDateString()}</p>
+                    <p className="font-medium">
+                      {new Date(
+                        staff.payrollInfo.nextReviewDate,
+                      ).toLocaleDateString()}
+                    </p>
                   </div>
                 )}
               </div>
@@ -228,12 +256,18 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
               <h3 className="text-lg font-semibold mb-4">Bonus Structure</h3>
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <Icons.CheckCircle2 className={cn(
-                    "w-5 h-5",
-                    staff.bonusStructure.enrolled ? "text-green-500" : "text-gray-400"
-                  )} />
+                  <Icons.CheckCircle2
+                    className={cn(
+                      "w-5 h-5",
+                      staff.bonusStructure.enrolled
+                        ? "text-green-500"
+                        : "text-gray-400",
+                    )}
+                  />
                   <span className="font-medium">
-                    {staff.bonusStructure.enrolled ? "Enrolled in Bonus Program" : "Not Enrolled in Bonus Program"}
+                    {staff.bonusStructure.enrolled
+                      ? "Enrolled in Bonus Program"
+                      : "Not Enrolled in Bonus Program"}
                   </span>
                 </div>
 
@@ -241,33 +275,54 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm text-gray-500">Bonus Type</label>
-                        <p className="font-medium capitalize">{staff.bonusStructure.type}</p>
+                        <label className="text-sm text-gray-500">
+                          Bonus Type
+                        </label>
+                        <p className="font-medium capitalize">
+                          {staff.bonusStructure.type}
+                        </p>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-500">Payout Frequency</label>
-                        <p className="font-medium capitalize">{staff.bonusStructure.frequency}</p>
+                        <label className="text-sm text-gray-500">
+                          Payout Frequency
+                        </label>
+                        <p className="font-medium capitalize">
+                          {staff.bonusStructure.frequency}
+                        </p>
                       </div>
                     </div>
 
                     {staff.bonusStructure.targets.length > 0 && (
                       <div>
-                        <label className="text-sm text-gray-500 block mb-2">Bonus Targets</label>
+                        <label className="text-sm text-gray-500 block mb-2">
+                          Bonus Targets
+                        </label>
                         <div className="space-y-2">
                           {staff.bonusStructure.targets.map((target, index) => (
-                            <div key={index} className="p-3 bg-gray-50 rounded-lg">
+                            <div
+                              key={index}
+                              className="p-3 bg-gray-50 rounded-lg"
+                            >
                               <div className="grid grid-cols-3 gap-4">
                                 <div>
-                                  <label className="text-xs text-gray-500">Metric</label>
+                                  <label className="text-xs text-gray-500">
+                                    Metric
+                                  </label>
                                   <p className="font-medium">{target.metric}</p>
                                 </div>
                                 <div>
-                                  <label className="text-xs text-gray-500">Target</label>
+                                  <label className="text-xs text-gray-500">
+                                    Target
+                                  </label>
                                   <p className="font-medium">{target.target}</p>
                                 </div>
                                 <div>
-                                  <label className="text-xs text-gray-500">Bonus</label>
-                                  <p className="font-medium">{formatCurrency(target.bonus)}</p>
+                                  <label className="text-xs text-gray-500">
+                                    Bonus
+                                  </label>
+                                  <p className="font-medium">
+                                    {formatCurrency(target.bonus)}
+                                  </p>
                                 </div>
                               </div>
                             </div>
@@ -276,23 +331,35 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
                       </div>
                     )}
 
-                    {staff.bonusStructure.customPayoutDates && staff.bonusStructure.customPayoutDates.length > 0 && (
-                      <div>
-                        <label className="text-sm text-gray-500 block mb-2">Custom Payout Dates</label>
-                        <div className="flex flex-wrap gap-2">
-                          {staff.bonusStructure.customPayoutDates.map((date, index) => (
-                            <span key={index} className="px-3 py-1 bg-gray-100 rounded-full text-sm">
-                              {date}
-                            </span>
-                          ))}
+                    {staff.bonusStructure.customPayoutDates &&
+                      staff.bonusStructure.customPayoutDates.length > 0 && (
+                        <div>
+                          <label className="text-sm text-gray-500 block mb-2">
+                            Custom Payout Dates
+                          </label>
+                          <div className="flex flex-wrap gap-2">
+                            {staff.bonusStructure.customPayoutDates.map(
+                              (date, index) => (
+                                <span
+                                  key={index}
+                                  className="px-3 py-1 bg-gray-100 rounded-full text-sm"
+                                >
+                                  {date}
+                                </span>
+                              ),
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
                     {staff.bonusStructure.notes && (
                       <div>
-                        <label className="text-sm text-gray-500 block mb-2">Bonus Notes</label>
-                        <p className="text-sm bg-gray-50 p-3 rounded-lg">{staff.bonusStructure.notes}</p>
+                        <label className="text-sm text-gray-500 block mb-2">
+                          Bonus Notes
+                        </label>
+                        <p className="text-sm bg-gray-50 p-3 rounded-lg">
+                          {staff.bonusStructure.notes}
+                        </p>
                       </div>
                     )}
                   </>
@@ -304,7 +371,9 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
           {/* Credentials & Licenses */}
           {staff.credentials && (
             <section>
-              <h3 className="text-lg font-semibold mb-4">Credentials & Licenses</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Credentials & Licenses
+              </h3>
               <div className="space-y-4">
                 {staff.credentials.licenses?.map((license, index) => (
                   <div key={index} className="p-4 bg-gray-50 rounded-lg">
@@ -318,8 +387,14 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
                         <p className="font-medium">{license.number}</p>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-500">Expiration</label>
-                        <p className="font-medium">{new Date(license.expirationDate).toLocaleDateString()}</p>
+                        <label className="text-sm text-gray-500">
+                          Expiration
+                        </label>
+                        <p className="font-medium">
+                          {new Date(
+                            license.expirationDate,
+                          ).toLocaleDateString()}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -329,16 +404,26 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
                   <div key={index} className="p-4 bg-gray-50 rounded-lg">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label className="text-sm text-gray-500">Certification</label>
+                        <label className="text-sm text-gray-500">
+                          Certification
+                        </label>
                         <p className="font-medium">{cert.name}</p>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-500">Issued Date</label>
-                        <p className="font-medium">{new Date(cert.issuedDate).toLocaleDateString()}</p>
+                        <label className="text-sm text-gray-500">
+                          Issued Date
+                        </label>
+                        <p className="font-medium">
+                          {new Date(cert.issuedDate).toLocaleDateString()}
+                        </p>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-500">Expiration</label>
-                        <p className="font-medium">{new Date(cert.expirationDate).toLocaleDateString()}</p>
+                        <label className="text-sm text-gray-500">
+                          Expiration
+                        </label>
+                        <p className="font-medium">
+                          {new Date(cert.expirationDate).toLocaleDateString()}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -358,7 +443,9 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
                 </div>
                 <div>
                   <label className="text-sm text-gray-500">Relationship</label>
-                  <p className="font-medium">{staff.emergencyContact.relationship}</p>
+                  <p className="font-medium">
+                    {staff.emergencyContact.relationship}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm text-gray-500">Phone</label>
@@ -367,7 +454,9 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
                 {staff.emergencyContact.email && (
                   <div>
                     <label className="text-sm text-gray-500">Email</label>
-                    <p className="font-medium">{staff.emergencyContact.email}</p>
+                    <p className="font-medium">
+                      {staff.emergencyContact.email}
+                    </p>
                   </div>
                 )}
               </div>
@@ -380,22 +469,29 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
               <h3 className="text-lg font-semibold mb-4">Documents</h3>
               <div className="space-y-2">
                 {staff.documents.map((doc) => (
-                  <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div
+                    key={doc.id}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       <Icons.FileText className="w-5 h-5 text-gray-400" />
                       <div>
                         <p className="font-medium">{doc.name}</p>
                         <p className="text-sm text-gray-500">
-                          Uploaded {new Date(doc.uploadDate).toLocaleDateString()}
+                          Uploaded{" "}
+                          {new Date(doc.uploadDate).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
-                    <span className={cn(
-                      "px-2 py-1 text-xs font-medium rounded-full",
-                      doc.status === 'valid' && "bg-green-100 text-green-800",
-                      doc.status === 'expired' && "bg-red-100 text-red-800",
-                      doc.status === 'pending' && "bg-yellow-100 text-yellow-800"
-                    )}>
+                    <span
+                      className={cn(
+                        "px-2 py-1 text-xs font-medium rounded-full",
+                        doc.status === "valid" && "bg-green-100 text-green-800",
+                        doc.status === "expired" && "bg-red-100 text-red-800",
+                        doc.status === "pending" &&
+                          "bg-yellow-100 text-yellow-800",
+                      )}
+                    >
                       {doc.status}
                     </span>
                   </div>
@@ -420,7 +516,9 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
                       </span>
                     </div>
                     <p className="text-gray-700 mb-2">{note.content}</p>
-                    <p className="text-sm text-gray-500">Added by {note.author}</p>
+                    <p className="text-sm text-gray-500">
+                      Added by {note.author}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -437,7 +535,7 @@ export const ViewProfileModal: React.FC<ViewProfileModalProps> = ({
               staffId={staff.id}
               staffName={staff.name}
               onAssign={(modules) => {
-                console.log('Assigned modules:', modules);
+                console.log("Assigned modules:", modules);
                 // Handle module assignment
               }}
             />

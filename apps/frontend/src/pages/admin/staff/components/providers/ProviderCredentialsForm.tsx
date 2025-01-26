@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import type { Provider, ProviderCredential } from '../../../../../types/provider';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import type {
+  Provider,
+  ProviderCredential,
+} from "../../../../../types/provider";
 
 interface ProviderCredentialsFormProps {
   provider?: Provider;
@@ -11,30 +14,29 @@ interface ProviderCredentialsFormProps {
   onSave: (provider: Partial<Provider>) => void;
 }
 
-export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = ({
-  provider,
-  isOpen,
-  onClose,
-  onSave
-}) => {
-  const [formData, setFormData] = useState<Partial<Provider>>(provider || {
-    personalInfo: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      address: '',
-      ssn: '',
-      dateOfBirth: ''
+export const ProviderCredentialsForm: React.FC<
+  ProviderCredentialsFormProps
+> = ({ provider, isOpen, onClose, onSave }) => {
+  const [formData, setFormData] = useState<Partial<Provider>>(
+    provider || {
+      personalInfo: {
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        address: "",
+        ssn: "",
+        dateOfBirth: "",
+      },
+      credentials: {
+        license: [],
+        dea: [],
+        npi: [],
+        taxId: "",
+        specialtyCertifications: [],
+      },
     },
-    credentials: {
-      license: [],
-      dea: [],
-      npi: [],
-      taxId: '',
-      specialtyCertifications: []
-    }
-  });
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +44,7 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
     onClose();
   };
 
-  const handleAddCredential = (type: keyof Provider['credentials']) => {
+  const handleAddCredential = (type: keyof Provider["credentials"]) => {
     if (Array.isArray(formData.credentials?.[type])) {
       setFormData({
         ...formData,
@@ -52,28 +54,31 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
             ...(formData.credentials?.[type] as ProviderCredential[]),
             {
               id: Date.now().toString(),
-              type: type as ProviderCredential['type'],
-              number: '',
-              issueDate: '',
-              expirationDate: '',
-              status: 'pending'
-            }
-          ]
-        }
+              type: type as ProviderCredential["type"],
+              number: "",
+              issueDate: "",
+              expirationDate: "",
+              status: "pending",
+            },
+          ],
+        },
       });
     }
   };
 
-  const handleRemoveCredential = (type: keyof Provider['credentials'], id: string) => {
+  const handleRemoveCredential = (
+    type: keyof Provider["credentials"],
+    id: string,
+  ) => {
     if (Array.isArray(formData.credentials?.[type])) {
       setFormData({
         ...formData,
         credentials: {
           ...formData.credentials,
           [type]: (formData.credentials[type] as ProviderCredential[]).filter(
-            cred => cred.id !== id
-          )
-        }
+            (cred) => cred.id !== id,
+          ),
+        },
       });
     }
   };
@@ -108,10 +113,15 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                 <input
                   type="text"
                   value={formData.personalInfo?.firstName}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    personalInfo: { ...formData.personalInfo!, firstName: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      personalInfo: {
+                        ...formData.personalInfo!,
+                        firstName: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -123,10 +133,15 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                 <input
                   type="text"
                   value={formData.personalInfo?.lastName}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    personalInfo: { ...formData.personalInfo!, lastName: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      personalInfo: {
+                        ...formData.personalInfo!,
+                        lastName: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -138,10 +153,15 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                 <input
                   type="password"
                   value={formData.personalInfo?.ssn}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    personalInfo: { ...formData.personalInfo!, ssn: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      personalInfo: {
+                        ...formData.personalInfo!,
+                        ssn: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -153,10 +173,15 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                 <input
                   type="date"
                   value={formData.personalInfo?.dateOfBirth}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    personalInfo: { ...formData.personalInfo!, dateOfBirth: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      personalInfo: {
+                        ...formData.personalInfo!,
+                        dateOfBirth: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -170,7 +195,7 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
               <h3 className="text-lg font-semibold">License Information</h3>
               <Button
                 type="button"
-                onClick={() => handleAddCredential('license')}
+                onClick={() => handleAddCredential("license")}
               >
                 <Icons.Plus className="w-4 h-4 mr-2" />
                 Add License
@@ -188,11 +213,19 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                         type="text"
                         value={license.number}
                         onChange={(e) => {
-                          const newLicenses = [...formData.credentials!.license];
-                          newLicenses[index] = { ...license, number: e.target.value };
+                          const newLicenses = [
+                            ...formData.credentials!.license,
+                          ];
+                          newLicenses[index] = {
+                            ...license,
+                            number: e.target.value,
+                          };
                           setFormData({
                             ...formData,
-                            credentials: { ...formData.credentials!, license: newLicenses }
+                            credentials: {
+                              ...formData.credentials!,
+                              license: newLicenses,
+                            },
                           });
                         }}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg"
@@ -207,11 +240,19 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                         type="text"
                         value={license.state}
                         onChange={(e) => {
-                          const newLicenses = [...formData.credentials!.license];
-                          newLicenses[index] = { ...license, state: e.target.value };
+                          const newLicenses = [
+                            ...formData.credentials!.license,
+                          ];
+                          newLicenses[index] = {
+                            ...license,
+                            state: e.target.value,
+                          };
                           setFormData({
                             ...formData,
-                            credentials: { ...formData.credentials!, license: newLicenses }
+                            credentials: {
+                              ...formData.credentials!,
+                              license: newLicenses,
+                            },
                           });
                         }}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg"
@@ -226,11 +267,19 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                         type="date"
                         value={license.issueDate}
                         onChange={(e) => {
-                          const newLicenses = [...formData.credentials!.license];
-                          newLicenses[index] = { ...license, issueDate: e.target.value };
+                          const newLicenses = [
+                            ...formData.credentials!.license,
+                          ];
+                          newLicenses[index] = {
+                            ...license,
+                            issueDate: e.target.value,
+                          };
                           setFormData({
                             ...formData,
-                            credentials: { ...formData.credentials!, license: newLicenses }
+                            credentials: {
+                              ...formData.credentials!,
+                              license: newLicenses,
+                            },
                           });
                         }}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg"
@@ -245,11 +294,19 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                         type="date"
                         value={license.expirationDate}
                         onChange={(e) => {
-                          const newLicenses = [...formData.credentials!.license];
-                          newLicenses[index] = { ...license, expirationDate: e.target.value };
+                          const newLicenses = [
+                            ...formData.credentials!.license,
+                          ];
+                          newLicenses[index] = {
+                            ...license,
+                            expirationDate: e.target.value,
+                          };
                           setFormData({
                             ...formData,
-                            credentials: { ...formData.credentials!, license: newLicenses }
+                            credentials: {
+                              ...formData.credentials!,
+                              license: newLicenses,
+                            },
                           });
                         }}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg"
@@ -261,7 +318,9 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                     <Button
                       type="button"
                       variant="ghost"
-                      onClick={() => handleRemoveCredential('license', license.id)}
+                      onClick={() =>
+                        handleRemoveCredential("license", license.id)
+                      }
                       className="text-red-600 hover:text-red-700"
                     >
                       <Icons.Trash2 className="w-4 h-4 mr-2" />
@@ -277,10 +336,7 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
           <section>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">DEA Registration</h3>
-              <Button
-                type="button"
-                onClick={() => handleAddCredential('dea')}
-              >
+              <Button type="button" onClick={() => handleAddCredential("dea")}>
                 <Icons.Plus className="w-4 h-4 mr-2" />
                 Add DEA
               </Button>
@@ -301,7 +357,10 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                           newDEAs[index] = { ...dea, number: e.target.value };
                           setFormData({
                             ...formData,
-                            credentials: { ...formData.credentials!, dea: newDEAs }
+                            credentials: {
+                              ...formData.credentials!,
+                              dea: newDEAs,
+                            },
                           });
                         }}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg"
@@ -317,10 +376,16 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                         value={dea.expirationDate}
                         onChange={(e) => {
                           const newDEAs = [...formData.credentials!.dea];
-                          newDEAs[index] = { ...dea, expirationDate: e.target.value };
+                          newDEAs[index] = {
+                            ...dea,
+                            expirationDate: e.target.value,
+                          };
                           setFormData({
                             ...formData,
-                            credentials: { ...formData.credentials!, dea: newDEAs }
+                            credentials: {
+                              ...formData.credentials!,
+                              dea: newDEAs,
+                            },
                           });
                         }}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg"
@@ -332,7 +397,7 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                     <Button
                       type="button"
                       variant="ghost"
-                      onClick={() => handleRemoveCredential('dea', dea.id)}
+                      onClick={() => handleRemoveCredential("dea", dea.id)}
                       className="text-red-600 hover:text-red-700"
                     >
                       <Icons.Trash2 className="w-4 h-4 mr-2" />
@@ -348,10 +413,7 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
           <section>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">NPI Information</h3>
-              <Button
-                type="button"
-                onClick={() => handleAddCredential('npi')}
-              >
+              <Button type="button" onClick={() => handleAddCredential("npi")}>
                 <Icons.Plus className="w-4 h-4 mr-2" />
                 Add NPI
               </Button>
@@ -372,7 +434,10 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                           newNPIs[index] = { ...npi, number: e.target.value };
                           setFormData({
                             ...formData,
-                            credentials: { ...formData.credentials!, npi: newNPIs }
+                            credentials: {
+                              ...formData.credentials!,
+                              npi: newNPIs,
+                            },
                           });
                         }}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg"
@@ -388,10 +453,16 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                         value={npi.verificationDate}
                         onChange={(e) => {
                           const newNPIs = [...formData.credentials!.npi];
-                          newNPIs[index] = { ...npi, verificationDate: e.target.value };
+                          newNPIs[index] = {
+                            ...npi,
+                            verificationDate: e.target.value,
+                          };
                           setFormData({
                             ...formData,
-                            credentials: { ...formData.credentials!, npi: newNPIs }
+                            credentials: {
+                              ...formData.credentials!,
+                              npi: newNPIs,
+                            },
                           });
                         }}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg"
@@ -402,7 +473,7 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                     <Button
                       type="button"
                       variant="ghost"
-                      onClick={() => handleRemoveCredential('npi', npi.id)}
+                      onClick={() => handleRemoveCredential("npi", npi.id)}
                       className="text-red-600 hover:text-red-700"
                     >
                       <Icons.Trash2 className="w-4 h-4 mr-2" />
@@ -424,10 +495,15 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
               <input
                 type="text"
                 value={formData.credentials?.taxId}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  credentials: { ...formData.credentials!, taxId: e.target.value }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    credentials: {
+                      ...formData.credentials!,
+                      taxId: e.target.value,
+                    },
+                  })
+                }
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -446,19 +522,23 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                   <input
                     type="text"
                     value={formData.credentials?.cprCertification?.number}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      credentials: {
-                        ...formData.credentials!,
-                        cprCertification: {
-                          ...formData.credentials?.cprCertification,
-                          id: formData.credentials?.cprCertification?.id || Date.now().toString(),
-                          type: 'cpr',
-                          number: e.target.value,
-                          status: 'active'
-                        }
-                      }
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        credentials: {
+                          ...formData.credentials!,
+                          cprCertification: {
+                            ...formData.credentials?.cprCertification,
+                            id:
+                              formData.credentials?.cprCertification?.id ||
+                              Date.now().toString(),
+                            type: "cpr",
+                            number: e.target.value,
+                            status: "active",
+                          },
+                        },
+                      })
+                    }
                     className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
@@ -468,17 +548,21 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
                   </label>
                   <input
                     type="date"
-                    value={formData.credentials?.cprCertification?.expirationDate}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      credentials: {
-                        ...formData.credentials!,
-                        cprCertification: {
-                          ...formData.credentials?.cprCertification,
-                          expirationDate: e.target.value
-                        }
-                      }
-                    })}
+                    value={
+                      formData.credentials?.cprCertification?.expirationDate
+                    }
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        credentials: {
+                          ...formData.credentials!,
+                          cprCertification: {
+                            ...formData.credentials?.cprCertification,
+                            expirationDate: e.target.value,
+                          },
+                        },
+                      })
+                    }
                     className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
@@ -490,9 +574,7 @@ export const ProviderCredentialsForm: React.FC<ProviderCredentialsFormProps> = (
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Save Credentials
-            </Button>
+            <Button type="submit">Save Credentials</Button>
           </div>
         </form>
       </motion.div>

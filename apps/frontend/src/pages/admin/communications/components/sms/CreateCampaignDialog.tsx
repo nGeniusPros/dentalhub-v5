@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
 
 interface CreateCampaignDialogProps {
   open: boolean;
@@ -10,7 +10,7 @@ interface CreateCampaignDialogProps {
 
 export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
   open,
-  onClose
+  onClose,
 }) => {
   if (!open) return null;
 
@@ -54,7 +54,8 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
                 placeholder="Enter your message"
               />
               <p className="mt-1 text-sm text-gray-500">
-                Available variables: {'{patient_name}'}, {'{appointment_date}'}, {'{appointment_time}'}
+                Available variables: {"{patient_name}"}, {"{appointment_date}"},{" "}
+                {"{appointment_time}"}
               </p>
             </div>
 
@@ -77,14 +78,18 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Date</label>
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Date
+                  </label>
                   <input
                     type="date"
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Time</label>
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Time
+                  </label>
                   <input
                     type="time"
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
@@ -99,9 +104,7 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button>
-            Create Campaign
-          </Button>
+          <Button>Create Campaign</Button>
         </div>
       </motion.div>
     </div>

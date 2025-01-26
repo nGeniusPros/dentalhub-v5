@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { fetchEligibility } from '../../../../lib/api/dentalxchange';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { fetchEligibility } from "../../../../lib/api/dentalxchange";
 
 export const EligibilityVerification = () => {
-  const [patientId, setPatientId] = useState('');
+  const [patientId, setPatientId] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleVerify = async () => {
@@ -14,7 +14,7 @@ export const EligibilityVerification = () => {
       const eligibility = await fetchEligibility(patientId);
       // Handle eligibility response
     } catch (error) {
-      console.error('Error verifying eligibility:', error);
+      console.error("Error verifying eligibility:", error);
     } finally {
       setLoading(false);
     }
@@ -26,8 +26,10 @@ export const EligibilityVerification = () => {
       animate={{ opacity: 1, y: 0 }}
       className="bg-white rounded-xl shadow-lg border border-gray-200 p-6"
     >
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Eligibility Verification</h2>
-      
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        Eligibility Verification
+      </h2>
+
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -56,16 +58,24 @@ export const EligibilityVerification = () => {
         </Button>
 
         <div className="mt-6">
-          <h3 className="text-sm font-medium text-gray-900 mb-2">Recent Verifications</h3>
+          <h3 className="text-sm font-medium text-gray-900 mb-2">
+            Recent Verifications
+          </h3>
           <div className="space-y-2">
             {[
-              { patient: 'John Smith', date: '2024-03-10', status: 'Active' },
-              { patient: 'Sarah Johnson', date: '2024-03-09', status: 'Active' }
+              { patient: "John Smith", date: "2024-03-10", status: "Active" },
+              {
+                patient: "Sarah Johnson",
+                date: "2024-03-09",
+                status: "Active",
+              },
             ].map((verification, index) => (
               <div key={index} className="p-3 bg-gray-50 rounded-lg">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{verification.patient}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {verification.patient}
+                    </p>
                     <p className="text-xs text-gray-500">{verification.date}</p>
                   </div>
                   <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">

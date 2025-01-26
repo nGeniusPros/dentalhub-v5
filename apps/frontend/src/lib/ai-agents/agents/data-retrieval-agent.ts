@@ -1,6 +1,6 @@
-import type { Agent, AgentConfig, AgentResponse } from '../types/agent';
-import { RequestManager } from '../infrastructure/request-manager';
-import { ResponseCache } from '../infrastructure/response-cache';
+import type { Agent, AgentConfig, AgentResponse } from "../types/agent";
+import { RequestManager } from "../infrastructure/request-manager";
+import { ResponseCache } from "../infrastructure/response-cache";
 
 export class DataRetrievalAgent implements Agent {
   private requestManager: RequestManager;
@@ -25,17 +25,19 @@ export class DataRetrievalAgent implements Agent {
       // Process new request
       const response = await this.requestManager.handleRequest(query);
       this.responseCache.set(query, response);
-      
+
       return {
         content: response.data,
         metadata: {
           dataQuality: this.calculateDataQuality(response),
           sources: response.sources,
-          executionTime: response.duration
-        }
+          executionTime: response.duration,
+        },
       };
     } catch (error) {
-      throw new Error(`Data retrieval failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Data retrieval failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 

@@ -3,13 +3,13 @@ export interface Task {
   title: string;
   description: string;
   assignee: {
-    type: 'individual' | 'department' | 'group';
+    type: "individual" | "department" | "group";
     value: string;
   };
   dueDate: string;
-  priority: 'high' | 'medium' | 'low';
-  status: 'pending' | 'in-progress' | 'completed';
-  category: 'request' | 'assignment' | 'message';
+  priority: "high" | "medium" | "low";
+  status: "pending" | "in-progress" | "completed";
+  category: "request" | "assignment" | "message";
   createdBy: string;
   createdAt: string;
   department?: string;

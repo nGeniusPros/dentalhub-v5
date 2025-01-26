@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
 
 interface ReportsFilterProps {
   isOpen: boolean;
@@ -15,18 +15,18 @@ export const ReportsFilter: React.FC<ReportsFilterProps> = ({
   isOpen,
   onClose,
   onApply,
-  currentFilters = {}
+  currentFilters = {},
 }) => {
   const [filters, setFilters] = useState({
     type: [] as string[],
     frequency: [] as string[],
     status: [] as string[],
-    dateRange: 'all',
+    dateRange: "all",
     department: [] as string[],
     customDateRange: {
-      start: '',
-      end: ''
-    }
+      start: "",
+      end: "",
+    },
   });
 
   if (!isOpen) return null;
@@ -55,15 +55,17 @@ export const ReportsFilter: React.FC<ReportsFilterProps> = ({
         <div className="p-6 space-y-6">
           {/* Report Type */}
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Report Type</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">
+              Report Type
+            </h3>
             <div className="space-y-2">
               {[
-                'Performance',
-                'Attendance',
-                'Training',
-                'Payroll',
-                'Compliance',
-                'Custom'
+                "Performance",
+                "Attendance",
+                "Training",
+                "Payroll",
+                "Compliance",
+                "Custom",
               ].map((type) => (
                 <label key={type} className="flex items-center gap-2">
                   <input
@@ -71,14 +73,14 @@ export const ReportsFilter: React.FC<ReportsFilterProps> = ({
                     checked={filters.type.includes(type)}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setFilters(prev => ({
+                        setFilters((prev) => ({
                           ...prev,
-                          type: [...prev.type, type]
+                          type: [...prev.type, type],
                         }));
                       } else {
-                        setFilters(prev => ({
+                        setFilters((prev) => ({
                           ...prev,
-                          type: prev.type.filter(t => t !== type)
+                          type: prev.type.filter((t) => t !== type),
                         }));
                       }
                     }}
@@ -92,15 +94,17 @@ export const ReportsFilter: React.FC<ReportsFilterProps> = ({
 
           {/* Frequency */}
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Frequency</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">
+              Frequency
+            </h3>
             <div className="space-y-2">
               {[
-                'Daily',
-                'Weekly',
-                'Monthly',
-                'Quarterly',
-                'Annual',
-                'One-time'
+                "Daily",
+                "Weekly",
+                "Monthly",
+                "Quarterly",
+                "Annual",
+                "One-time",
               ].map((freq) => (
                 <label key={freq} className="flex items-center gap-2">
                   <input
@@ -108,14 +112,14 @@ export const ReportsFilter: React.FC<ReportsFilterProps> = ({
                     checked={filters.frequency.includes(freq)}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setFilters(prev => ({
+                        setFilters((prev) => ({
                           ...prev,
-                          frequency: [...prev.frequency, freq]
+                          frequency: [...prev.frequency, freq],
                         }));
                       } else {
-                        setFilters(prev => ({
+                        setFilters((prev) => ({
                           ...prev,
-                          frequency: prev.frequency.filter(f => f !== freq)
+                          frequency: prev.frequency.filter((f) => f !== freq),
                         }));
                       }
                     }}
@@ -131,26 +135,21 @@ export const ReportsFilter: React.FC<ReportsFilterProps> = ({
           <div>
             <h3 className="text-sm font-medium text-gray-700 mb-2">Status</h3>
             <div className="space-y-2">
-              {[
-                'Scheduled',
-                'Generated',
-                'Failed',
-                'Pending'
-              ].map((status) => (
+              {["Scheduled", "Generated", "Failed", "Pending"].map((status) => (
                 <label key={status} className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     checked={filters.status.includes(status)}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setFilters(prev => ({
+                        setFilters((prev) => ({
                           ...prev,
-                          status: [...prev.status, status]
+                          status: [...prev.status, status],
                         }));
                       } else {
-                        setFilters(prev => ({
+                        setFilters((prev) => ({
                           ...prev,
-                          status: prev.status.filter(s => s !== status)
+                          status: prev.status.filter((s) => s !== status),
                         }));
                       }
                     }}
@@ -164,45 +163,50 @@ export const ReportsFilter: React.FC<ReportsFilterProps> = ({
 
           {/* Department */}
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Department</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">
+              Department
+            </h3>
             <div className="space-y-2">
-              {[
-                'Clinical',
-                'Administrative',
-                'Management',
-                'All Staff'
-              ].map((dept) => (
-                <label key={dept} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={filters.department.includes(dept)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setFilters(prev => ({
-                          ...prev,
-                          department: [...prev.department, dept]
-                        }));
-                      } else {
-                        setFilters(prev => ({
-                          ...prev,
-                          department: prev.department.filter(d => d !== dept)
-                        }));
-                      }
-                    }}
-                    className="rounded border-gray-300"
-                  />
-                  <span className="text-sm">{dept}</span>
-                </label>
-              ))}
+              {["Clinical", "Administrative", "Management", "All Staff"].map(
+                (dept) => (
+                  <label key={dept} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={filters.department.includes(dept)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setFilters((prev) => ({
+                            ...prev,
+                            department: [...prev.department, dept],
+                          }));
+                        } else {
+                          setFilters((prev) => ({
+                            ...prev,
+                            department: prev.department.filter(
+                              (d) => d !== dept,
+                            ),
+                          }));
+                        }
+                      }}
+                      className="rounded border-gray-300"
+                    />
+                    <span className="text-sm">{dept}</span>
+                  </label>
+                ),
+              )}
             </div>
           </div>
 
           {/* Date Range */}
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Date Range</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">
+              Date Range
+            </h3>
             <select
               value={filters.dateRange}
-              onChange={(e) => setFilters(prev => ({ ...prev, dateRange: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, dateRange: e.target.value }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg mb-4"
             >
               <option value="all">All Time</option>
@@ -214,35 +218,43 @@ export const ReportsFilter: React.FC<ReportsFilterProps> = ({
               <option value="custom">Custom Range</option>
             </select>
 
-            {filters.dateRange === 'custom' && (
+            {filters.dateRange === "custom" && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-500 mb-1">Start Date</label>
+                  <label className="block text-sm text-gray-500 mb-1">
+                    Start Date
+                  </label>
                   <input
                     type="date"
                     value={filters.customDateRange.start}
-                    onChange={(e) => setFilters(prev => ({
-                      ...prev,
-                      customDateRange: {
-                        ...prev.customDateRange,
-                        start: e.target.value
-                      }
-                    }))}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        customDateRange: {
+                          ...prev.customDateRange,
+                          start: e.target.value,
+                        },
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-500 mb-1">End Date</label>
+                  <label className="block text-sm text-gray-500 mb-1">
+                    End Date
+                  </label>
                   <input
                     type="date"
                     value={filters.customDateRange.end}
-                    onChange={(e) => setFilters(prev => ({
-                      ...prev,
-                      customDateRange: {
-                        ...prev.customDateRange,
-                        end: e.target.value
-                      }
-                    }))}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        customDateRange: {
+                          ...prev.customDateRange,
+                          end: e.target.value,
+                        },
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
@@ -252,19 +264,19 @@ export const ReportsFilter: React.FC<ReportsFilterProps> = ({
         </div>
 
         <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => {
               setFilters({
                 type: [],
                 frequency: [],
                 status: [],
-                dateRange: 'all',
+                dateRange: "all",
                 department: [],
                 customDateRange: {
-                  start: '',
-                  end: ''
-                }
+                  start: "",
+                  end: "",
+                },
               });
             }}
           >
@@ -273,9 +285,7 @@ export const ReportsFilter: React.FC<ReportsFilterProps> = ({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleApply}>
-            Apply Filters
-          </Button>
+          <Button onClick={handleApply}>Apply Filters</Button>
         </div>
       </motion.div>
     </div>

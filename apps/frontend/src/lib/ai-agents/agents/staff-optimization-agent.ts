@@ -1,5 +1,5 @@
-import { AgentConfig } from '../types/agent-types';
-import { AgentError } from '../types/errors';
+import { AgentConfig } from "../types/agent-types";
+import { AgentError } from "../types/errors";
 
 export interface StaffMember {
   id: string;
@@ -40,7 +40,7 @@ export interface StaffingRequirement {
   }>;
   workload: {
     averagePatients: number;
-    complexity: 'low' | 'medium' | 'high';
+    complexity: "low" | "medium" | "high";
   };
 }
 
@@ -65,7 +65,7 @@ export interface ScheduleOptimization {
   conflicts: Array<{
     type: string;
     description: string;
-    severity: 'low' | 'medium' | 'high';
+    severity: "low" | "medium" | "high";
     resolution?: string;
   }>;
   recommendations: Array<{
@@ -77,23 +77,26 @@ export interface ScheduleOptimization {
 }
 
 export interface PerformanceMetrics {
-  individual: Record<string, {
-    productivity: {
-      patientsPerHour: number;
-      proceduresPerHour: number;
-      revenue: number;
-    };
-    quality: {
-      errorRate: number;
-      complaintRate: number;
-      complianceScore: number;
-    };
-    engagement: {
-      attendance: number;
-      punctuality: number;
-      training: number;
-    };
-  }>;
+  individual: Record<
+    string,
+    {
+      productivity: {
+        patientsPerHour: number;
+        proceduresPerHour: number;
+        revenue: number;
+      };
+      quality: {
+        errorRate: number;
+        complaintRate: number;
+        complianceScore: number;
+      };
+      engagement: {
+        attendance: number;
+        punctuality: number;
+        training: number;
+      };
+    }
+  >;
   team: {
     overallProductivity: number;
     qualityScore: number;
@@ -108,7 +111,7 @@ export interface TrainingRecommendation {
     role: string;
     areas: Array<{
       topic: string;
-      priority: 'high' | 'medium' | 'low';
+      priority: "high" | "medium" | "low";
       timeline: string;
       resources: string[];
     }>;
@@ -146,44 +149,56 @@ export class StaffOptimizationAgent {
       budget?: number;
       preferences?: boolean;
       minimumCoverage?: number;
-    }
+    },
   ): Promise<ScheduleOptimization> {
     try {
       // 1. Analyze Requirements
       const analysis = await this.analyzeStaffingRequirements(requirements);
-      
+
       // 2. Match Staff to Requirements
       const matches = await this.matchStaffToRequirements(staff, analysis);
-      
+
       // 3. Generate Schedule
       const schedule = await this.generateOptimalSchedule(matches, constraints);
-      
+
       // 4. Validate and Optimize
-      const optimization = await this.validateAndOptimize(schedule, requirements, constraints);
-      
+      const optimization = await this.validateAndOptimize(
+        schedule,
+        requirements,
+        constraints,
+      );
+
       return optimization;
     } catch (error) {
       throw new AgentError(
-        'Failed to optimize schedule',
-        'STAFF_OPTIMIZATION',
-        'SCHEDULING_ERROR',
+        "Failed to optimize schedule",
+        "STAFF_OPTIMIZATION",
+        "SCHEDULING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
-  private async analyzeStaffingRequirements(requirements: StaffingRequirement[]): Promise<any> {
+  private async analyzeStaffingRequirements(
+    requirements: StaffingRequirement[],
+  ): Promise<any> {
     // Implement staffing requirements analysis
     return {};
   }
 
-  private async matchStaffToRequirements(staff: StaffMember[], analysis: any): Promise<any> {
+  private async matchStaffToRequirements(
+    staff: StaffMember[],
+    analysis: any,
+  ): Promise<any> {
     // Implement staff matching
     return {};
   }
 
-  private async generateOptimalSchedule(matches: any, constraints?: any): Promise<any> {
+  private async generateOptimalSchedule(
+    matches: any,
+    constraints?: any,
+  ): Promise<any> {
     // Implement schedule generation
     return {};
   }
@@ -191,7 +206,7 @@ export class StaffOptimizationAgent {
   private async validateAndOptimize(
     schedule: any,
     requirements: StaffingRequirement[],
-    constraints?: any
+    constraints?: any,
   ): Promise<ScheduleOptimization> {
     // Implement schedule validation and optimization
     return {
@@ -200,10 +215,10 @@ export class StaffOptimizationAgent {
         coverage: 0,
         efficiency: 0,
         satisfaction: 0,
-        cost: 0
+        cost: 0,
       },
       conflicts: [],
-      recommendations: []
+      recommendations: [],
     };
   }
 
@@ -224,7 +239,7 @@ export class StaffOptimizationAgent {
         comments: string;
       }>;
       metrics: Record<string, number>;
-    }
+    },
   ): Promise<{
     metrics: PerformanceMetrics;
     insights: string[];
@@ -232,36 +247,42 @@ export class StaffOptimizationAgent {
       staffId: string;
       area: string;
       action: string;
-      priority: 'high' | 'medium' | 'low';
+      priority: "high" | "medium" | "low";
     }>;
   }> {
     try {
       // 1. Calculate Performance Metrics
       const metrics = await this.calculatePerformanceMetrics(staff, data);
-      
+
       // 2. Generate Insights
       const insights = await this.generatePerformanceInsights(metrics);
-      
+
       // 3. Generate Recommendations
-      const recommendations = await this.generatePerformanceRecommendations(metrics, insights);
-      
+      const recommendations = await this.generatePerformanceRecommendations(
+        metrics,
+        insights,
+      );
+
       return {
         metrics,
         insights,
-        recommendations
+        recommendations,
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to analyze performance',
-        'STAFF_OPTIMIZATION',
-        'PERFORMANCE_ERROR',
+        "Failed to analyze performance",
+        "STAFF_OPTIMIZATION",
+        "PERFORMANCE_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
-  private async calculatePerformanceMetrics(staff: StaffMember[], data: any): Promise<PerformanceMetrics> {
+  private async calculatePerformanceMetrics(
+    staff: StaffMember[],
+    data: any,
+  ): Promise<PerformanceMetrics> {
     // Implement performance metrics calculation
     return {
       individual: {},
@@ -269,25 +290,29 @@ export class StaffOptimizationAgent {
         overallProductivity: 0,
         qualityScore: 0,
         satisfaction: 0,
-        turnover: 0
-      }
+        turnover: 0,
+      },
     };
   }
 
-  private async generatePerformanceInsights(metrics: PerformanceMetrics): Promise<string[]> {
+  private async generatePerformanceInsights(
+    metrics: PerformanceMetrics,
+  ): Promise<string[]> {
     // Implement insight generation
     return [];
   }
 
   private async generatePerformanceRecommendations(
     metrics: PerformanceMetrics,
-    insights: string[]
-  ): Promise<Array<{
-    staffId: string;
-    area: string;
-    action: string;
-    priority: 'high' | 'medium' | 'low';
-  }>> {
+    insights: string[],
+  ): Promise<
+    Array<{
+      staffId: string;
+      area: string;
+      action: string;
+      priority: "high" | "medium" | "low";
+    }>
+  > {
     // Implement recommendation generation
     return [];
   }
@@ -303,62 +328,70 @@ export class StaffOptimizationAgent {
       budget?: number;
       timeline?: string;
       format?: string[];
-    }
+    },
   ): Promise<TrainingRecommendation> {
     try {
       // 1. Analyze Training Needs
       const needs = await this.analyzeTrainingNeeds(staff, goals);
-      
+
       // 2. Design Training Programs
       const programs = await this.designTrainingPrograms(needs, constraints);
-      
+
       // 3. Create Training Schedule
-      const schedule = await this.createTrainingSchedule(programs, staff, constraints);
-      
+      const schedule = await this.createTrainingSchedule(
+        programs,
+        staff,
+        constraints,
+      );
+
       return {
         staff: needs,
         programs,
-        schedule
+        schedule,
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to recommend training',
-        'STAFF_OPTIMIZATION',
-        'TRAINING_ERROR',
+        "Failed to recommend training",
+        "STAFF_OPTIMIZATION",
+        "TRAINING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   private async analyzeTrainingNeeds(
     staff: StaffMember[],
-    goals: any
-  ): Promise<Array<{
-    id: string;
-    role: string;
-    areas: Array<{
-      topic: string;
-      priority: 'high' | 'medium' | 'low';
-      timeline: string;
-      resources: string[];
-    }>;
-  }>> {
+    goals: any,
+  ): Promise<
+    Array<{
+      id: string;
+      role: string;
+      areas: Array<{
+        topic: string;
+        priority: "high" | "medium" | "low";
+        timeline: string;
+        resources: string[];
+      }>;
+    }>
+  > {
     // Implement training needs analysis
     return [];
   }
 
   private async designTrainingPrograms(
     needs: any,
-    constraints?: any
-  ): Promise<Array<{
-    name: string;
-    description: string;
-    participants: string[];
-    duration: string;
-    cost: number;
-    expectedOutcomes: string[];
-  }>> {
+    constraints?: any,
+  ): Promise<
+    Array<{
+      name: string;
+      description: string;
+      participants: string[];
+      duration: string;
+      cost: number;
+      expectedOutcomes: string[];
+    }>
+  > {
     // Implement training program design
     return [];
   }
@@ -366,14 +399,16 @@ export class StaffOptimizationAgent {
   private async createTrainingSchedule(
     programs: any,
     staff: StaffMember[],
-    constraints?: any
-  ): Promise<Array<{
-    topic: string;
-    date: string;
-    duration: string;
-    trainer: string;
-    participants: string[];
-  }>> {
+    constraints?: any,
+  ): Promise<
+    Array<{
+      topic: string;
+      date: string;
+      duration: string;
+      trainer: string;
+      participants: string[];
+    }>
+  > {
     // Implement training schedule creation
     return [];
   }

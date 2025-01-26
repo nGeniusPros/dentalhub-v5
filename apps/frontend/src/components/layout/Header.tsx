@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
-import { UserProfile } from './UserProfile';
+import React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import { UserProfile } from "./UserProfile";
 
 export const Header = () => {
   const { user } = useAuth();
@@ -20,7 +20,7 @@ export const Header = () => {
               transition={{
                 duration: 20,
                 repeat: Infinity,
-                ease: "linear"
+                ease: "linear",
               }}
               className="w-8 h-8"
             >

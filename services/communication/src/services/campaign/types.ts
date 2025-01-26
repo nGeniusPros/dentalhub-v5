@@ -1,5 +1,11 @@
-export type CampaignType = 'voice' | 'sms' | 'email';
-export type CampaignStatus = 'draft' | 'scheduled' | 'active' | 'paused' | 'completed' | 'failed';
+export type CampaignType = "voice" | "sms" | "email";
+export type CampaignStatus =
+  | "draft"
+  | "scheduled"
+  | "active"
+  | "paused"
+  | "completed"
+  | "failed";
 
 export interface Campaign {
   id: string;

@@ -1,41 +1,50 @@
-import { AnimationConfig, AnimationType, EaseType, StaggerConfig } from '../ai-agents/types';
+import {
+  AnimationConfig,
+  AnimationType,
+  EaseType,
+  StaggerConfig,
+} from "../ai-agents/types";
 
 const defaultDuration = 0.3;
-const defaultEase: EaseType = 'ease-out';
+const defaultEase: EaseType = "ease-out";
 
-export const createAnimation = (config: Partial<AnimationConfig>): AnimationConfig => ({
-  type: 'fade',
+export const createAnimation = (
+  config: Partial<AnimationConfig>,
+): AnimationConfig => ({
+  type: "fade",
   duration: defaultDuration,
   ease: defaultEase,
   ...config,
 });
 
 export const fadeAnimation = (duration = defaultDuration): AnimationConfig => ({
-  type: 'fade',
+  type: "fade",
   duration,
   ease: defaultEase,
 });
 
 export const slideAnimation = (
-  direction: 'up' | 'down' | 'left' | 'right',
-  duration = defaultDuration
+  direction: "up" | "down" | "left" | "right",
+  duration = defaultDuration,
 ): AnimationConfig => ({
-  type: 'slide',
+  type: "slide",
   direction,
   duration,
   ease: defaultEase,
 });
 
-export const scaleAnimation = (duration = defaultDuration): AnimationConfig => ({
-  type: 'scale',
+export const scaleAnimation = (
+  duration = defaultDuration,
+): AnimationConfig => ({
+  type: "scale",
   duration,
   ease: defaultEase,
 });
 
 export const springAnimation = (
-  config: Partial<AnimationConfig['springConfig']> = {}
+  config: Partial<AnimationConfig["springConfig"]> = {},
 ): AnimationConfig => ({
-  type: 'spring',
+  type: "spring",
   duration: defaultDuration,
   springConfig: {
     stiffness: 100,
@@ -47,7 +56,7 @@ export const springAnimation = (
 
 export const createStaggerAnimation = (
   animation: AnimationConfig,
-  staggerConfig: Partial<StaggerConfig>
+  staggerConfig: Partial<StaggerConfig>,
 ): StaggerConfig => ({
   ...animation,
   staggerChildren: 0.05,
@@ -59,13 +68,15 @@ export const createStaggerAnimation = (
 export const presets = {
   fadeIn: fadeAnimation(),
   fadeOut: { ...fadeAnimation(), delay: 0.2 },
-  slideUp: slideAnimation('up'),
-  slideDown: slideAnimation('down'),
-  slideLeft: slideAnimation('left'),
-  slideRight: slideAnimation('right'),
+  slideUp: slideAnimation("up"),
+  slideDown: slideAnimation("down"),
+  slideLeft: slideAnimation("left"),
+  slideRight: slideAnimation("right"),
   popIn: scaleAnimation(),
   bounceIn: springAnimation({ stiffness: 200, damping: 15 }),
-  listStagger: createStaggerAnimation(fadeAnimation(), { staggerChildren: 0.1 }),
+  listStagger: createStaggerAnimation(fadeAnimation(), {
+    staggerChildren: 0.1,
+  }),
 };
 
 // Animation variants for Framer Motion

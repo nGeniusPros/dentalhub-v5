@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
-import { supabaseService } from '../services/supabase';
-import type { PostgrestError } from '@supabase/supabase-js';
-import type { DatabasePatient, DatabaseAppointment } from '@dentalhub/types/database';
+import { useState, useEffect } from "react";
+import { supabaseService } from "../services/supabase";
+import type { PostgrestError } from "@supabase/supabase-js";
+import type {
+  DatabasePatient,
+  DatabaseAppointment,
+} from "@dentalhub/types/database";
 
 export interface Patient {
   id: string;
@@ -9,7 +12,7 @@ export interface Patient {
   email: string | null;
   phone: string | null;
   nextAppointment?: string;
-  status: 'active' | 'inactive' | 'pending';
+  status: "active" | "inactive" | "pending";
   balance: number;
   lastVisit?: string;
 }
@@ -28,8 +31,9 @@ export const usePatients = () => {
     setError(null);
     try {
       const { data, error: supabaseError } = await supabaseService
-        .from('patients')
-        .select<'*', PatientWithAppointments>(`
+        .from("patients")
+        .select<"*", PatientWithAppointments>(
+          `
           id,
           first_name,
           last_name,
@@ -48,8 +52,9 @@ export const usePatients = () => {
             type,
             notes
           )
-        `)
-        .order('last_name', { ascending: true });
+        `,
+        )
+        .order("last_name", { ascending: true });
 
       if (supabaseError) {
         throw supabaseError;
@@ -60,14 +65,15 @@ export const usePatients = () => {
         name: `${patient.first_name} ${patient.last_name}`,
         email: patient.email,
         phone: patient.phone,
-        nextAppointment: patient.appointments
-          ?.find(a => a.status === 'scheduled')
-          ?.start_time,
+        nextAppointment: patient.appointments?.find(
+          (a) => a.status === "scheduled",
+        )?.start_time,
         status: patient.status,
         balance: patient.balance,
-        lastVisit: patient.appointments
-          ?.sort((a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime())
-          ?.[0]?.start_time
+        lastVisit: patient.appointments?.sort(
+          (a, b) =>
+            new Date(b.start_time).getTime() - new Date(a.start_time).getTime(),
+        )?.[0]?.start_time,
       }));
 
       setPatients(formattedPatients);
@@ -82,23 +88,27 @@ export const usePatients = () => {
     fetchPatients();
   }, []);
 
-  const addPatient = async (patientData: Omit<Patient, 'id' | 'nextAppointment' | 'lastVisit'>) => {
+  const addPatient = async (
+    patientData: Omit<Patient, "id" | "nextAppointment" | "lastVisit">,
+  ) => {
     setLoading(true);
     setError(null);
     try {
       const { data, error: supabaseError } = await supabaseService
-        .from('patients')
-        .insert<DatabasePatient>([{
-          first_name: patientData.name.split(' ')[0],
-          last_name: patientData.name.split(' ').slice(1).join(' '),
-          email: patientData.email,
-          phone: patientData.phone,
-          status: patientData.status,
-          balance: patientData.balance,
-          date_of_birth: null,
-          address: null,
-          medical_history: null
-        }])
+        .from("patients")
+        .insert<DatabasePatient>([
+          {
+            first_name: patientData.name.split(" ")[0],
+            last_name: patientData.name.split(" ").slice(1).join(" "),
+            email: patientData.email,
+            phone: patientData.phone,
+            status: patientData.status,
+            balance: patientData.balance,
+            date_of_birth: null,
+            address: null,
+            medical_history: null,
+          },
+        ])
         .select()
         .single();
 
@@ -110,32 +120,37 @@ export const usePatients = () => {
       return data;
     } catch (err) {
       setError(err as PostgrestError);
-      console.error('Error adding patient:', err);
+      console.error("Error adding patient:", err);
       throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  const updatePatient = async (id: string, patientData: Partial<Omit<Patient, 'id' | 'nextAppointment' | 'lastVisit'>>) => {
+  const updatePatient = async (
+    id: string,
+    patientData: Partial<Omit<Patient, "id" | "nextAppointment" | "lastVisit">>,
+  ) => {
     setLoading(true);
     setError(null);
     try {
       const updateData: Partial<DatabasePatient> = {
         ...(patientData.name && {
-          first_name: patientData.name.split(' ')[0],
-          last_name: patientData.name.split(' ').slice(1).join(' ')
+          first_name: patientData.name.split(" ")[0],
+          last_name: patientData.name.split(" ").slice(1).join(" "),
         }),
         ...(patientData.email !== undefined && { email: patientData.email }),
         ...(patientData.phone !== undefined && { phone: patientData.phone }),
         ...(patientData.status && { status: patientData.status }),
-        ...(patientData.balance !== undefined && { balance: patientData.balance })
+        ...(patientData.balance !== undefined && {
+          balance: patientData.balance,
+        }),
       };
 
       const { data, error: supabaseError } = await supabaseService
-        .from('patients')
+        .from("patients")
         .update(updateData)
-        .eq('id', id)
+        .eq("id", id)
         .select()
         .single();
 
@@ -147,7 +162,7 @@ export const usePatients = () => {
       return data;
     } catch (err) {
       setError(err as PostgrestError);
-      console.error('Error updating patient:', err);
+      console.error("Error updating patient:", err);
       throw err;
     } finally {
       setLoading(false);
@@ -159,9 +174,9 @@ export const usePatients = () => {
     setError(null);
     try {
       const { error: supabaseError } = await supabaseService
-        .from('patients')
+        .from("patients")
         .delete()
-        .eq('id', id);
+        .eq("id", id);
 
       if (supabaseError) {
         throw supabaseError;
@@ -170,7 +185,7 @@ export const usePatients = () => {
       await fetchPatients();
     } catch (err) {
       setError(err as PostgrestError);
-      console.error('Error deleting patient:', err);
+      console.error("Error deleting patient:", err);
       throw err;
     } finally {
       setLoading(false);
@@ -184,6 +199,6 @@ export const usePatients = () => {
     fetchPatients,
     addPatient,
     updatePatient,
-    deletePatient
+    deletePatient,
   };
 };

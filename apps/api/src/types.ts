@@ -1,6 +1,6 @@
-import { AuditService } from './services/audit.service';
-import { EncryptionService } from './services/encryption.service';
-import { ComplianceService } from './services/compliance.service';
+import { AuditService } from "./services/audit.service";
+import { EncryptionService } from "./services/encryption.service";
+import { ComplianceService } from "./services/compliance.service";
 
 export interface User {
   id: string;
@@ -12,24 +12,24 @@ export interface User {
   phone_number: string | null;
 }
 
-export type AgentType = 
-  | 'operations'
-  | 'revenue'
-  | 'patient-care'
-  | 'compliance';
+export type AgentType =
+  | "operations"
+  | "revenue"
+  | "patient-care"
+  | "compliance";
 
 export abstract class BaseAgent {
   abstract type: string;
-  
+
   protected async executeSecurely<T>(task: () => Promise<T>): Promise<T> {
     try {
       AuditService.logAccess(this.constructor.name);
       const result = await task();
-      return await EncryptionService.encryptEntity(result, 'agent-operation');
+      return await EncryptionService.encryptEntity(result, "agent-operation");
     } catch (error) {
       ComplianceService.reportViolation({
         agent: this.constructor.name,
-        error: error instanceof Error ? error : new Error(String(error))
+        error: error instanceof Error ? error : new Error(String(error)),
       });
       throw error;
     }
@@ -68,4 +68,4 @@ export interface Patient {
   dateOfBirth: Date;
 }
 
-export type { ProcedureCategoryMapping } from '@prisma/client';
+export type { ProcedureCategoryMapping } from "@prisma/client";

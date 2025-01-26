@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios';
+import { AxiosError } from "axios";
 
 export class ApiError extends Error {
   code: string;
@@ -17,11 +17,12 @@ export function handleError(error: any, defaultMessage: string): ApiError {
   }
 
   if (error instanceof AxiosError) {
-    const code = error.response?.status?.toString() || 'API_ERROR';
-    const message = error.response?.data?.message || error.message || defaultMessage;
+    const code = error.response?.status?.toString() || "API_ERROR";
+    const message =
+      error.response?.data?.message || error.message || defaultMessage;
     const details = error.response?.data?.details;
     return new ApiError(message, code, details);
   }
 
-  return new ApiError(defaultMessage, 'UNKNOWN_ERROR', error);
+  return new ApiError(defaultMessage, "UNKNOWN_ERROR", error);
 }

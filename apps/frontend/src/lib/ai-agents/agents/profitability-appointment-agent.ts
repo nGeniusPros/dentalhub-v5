@@ -1,5 +1,5 @@
-import type { AgentConfig } from '../types/agent-types';
-import { AgentError } from '../types/errors';
+import type { AgentConfig } from "../types/agent-types";
+import { AgentError } from "../types/errors";
 
 export interface AppointmentMetrics {
   revenuePerHour: number;
@@ -66,7 +66,7 @@ export class ProfitabilityAppointmentAgent {
       preferredProvider?: string;
       isHighPriority?: boolean;
     },
-    constraints: SchedulingConstraints
+    constraints: SchedulingConstraints,
   ): Promise<AppointmentOptimizationResult> {
     try {
       // Calculate appointment metrics
@@ -80,7 +80,7 @@ export class ProfitabilityAppointmentAgent {
         appointment,
         constraints,
         metrics,
-        resources
+        resources,
       );
 
       // Calculate operational impact
@@ -91,48 +91,44 @@ export class ProfitabilityAppointmentAgent {
         metrics,
         resourceAllocation: resources,
         operationalImpact: impact,
-        warnings: []
+        warnings: [],
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to optimize appointment',
-        'PROFITABILITY_APPOINTMENT',
-        'OPTIMIZATION_ERROR',
+        "Failed to optimize appointment",
+        "PROFITABILITY_APPOINTMENT",
+        "OPTIMIZATION_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
-  private async calculateAppointmentMetrics(
-    appointment: {
-      procedureCodes: string[];
-      estimatedDuration: number;
-    }
-  ): Promise<AppointmentMetrics> {
+  private async calculateAppointmentMetrics(appointment: {
+    procedureCodes: string[];
+    estimatedDuration: number;
+  }): Promise<AppointmentMetrics> {
     // Add metrics calculation logic here
     return {
       revenuePerHour: 0,
       profitabilityRank: 0,
       utilizationRate: 0,
       patientFlowScore: 0,
-      resourceEfficiency: 0
+      resourceEfficiency: 0,
     };
   }
 
-  private async determineResourceRequirements(
-    appointment: {
-      procedureCodes: string[];
-      estimatedDuration: number;
-    }
-  ): Promise<ResourceRequirements> {
+  private async determineResourceRequirements(appointment: {
+    procedureCodes: string[];
+    estimatedDuration: number;
+  }): Promise<ResourceRequirements> {
     // Add resource requirements calculation logic here
     return {
       providers: [],
       equipment: [],
       assistants: [],
       setupTime: 0,
-      breakdownTime: 0
+      breakdownTime: 0,
     };
   }
 
@@ -146,14 +142,16 @@ export class ProfitabilityAppointmentAgent {
     },
     constraints: SchedulingConstraints,
     metrics: AppointmentMetrics,
-    resources: ResourceRequirements
-  ): Promise<Array<{
-    startTime: string;
-    endTime: string;
-    provider: string;
-    operatory: string;
-    expectedRevenue: number;
-  }>> {
+    resources: ResourceRequirements,
+  ): Promise<
+    Array<{
+      startTime: string;
+      endTime: string;
+      provider: string;
+      operatory: string;
+      expectedRevenue: number;
+    }>
+  > {
     // Add slot optimization logic here
     return [];
   }
@@ -166,7 +164,7 @@ export class ProfitabilityAppointmentAgent {
       operatory: string;
       expectedRevenue: number;
     }>,
-    constraints: SchedulingConstraints
+    constraints: SchedulingConstraints,
   ): Promise<{
     dailyProductionImpact: number;
     scheduleUtilization: number;
@@ -178,23 +176,21 @@ export class ProfitabilityAppointmentAgent {
       dailyProductionImpact: 0,
       scheduleUtilization: 0,
       resourceUtilization: 0,
-      patientFlowImpact: 0
+      patientFlowImpact: 0,
     };
   }
 
-  async analyzeScheduleEfficiency(
-    scheduleData: {
-      appointments: Array<{
-        startTime: string;
-        endTime: string;
-        provider: string;
-        procedureCodes: string[];
-      }>;
-      providers: string[];
-      operatories: string[];
-      date: string;
-    }
-  ): Promise<{
+  async analyzeScheduleEfficiency(scheduleData: {
+    appointments: Array<{
+      startTime: string;
+      endTime: string;
+      provider: string;
+      procedureCodes: string[];
+    }>;
+    providers: string[];
+    operatories: string[];
+    date: string;
+  }): Promise<{
     overallEfficiency: number;
     providerUtilization: Record<string, number>;
     operatoryUtilization: Record<string, number>;
@@ -208,63 +204,62 @@ export class ProfitabilityAppointmentAgent {
         providerUtilization: {},
         operatoryUtilization: {},
         revenueProjection: 0,
-        optimizationSuggestions: []
+        optimizationSuggestions: [],
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to analyze schedule efficiency',
-        'PROFITABILITY_APPOINTMENT',
-        'ANALYSIS_ERROR',
+        "Failed to analyze schedule efficiency",
+        "PROFITABILITY_APPOINTMENT",
+        "ANALYSIS_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
-  async analyzeAppointmentProfitability(
-    appointmentData: {
-      procedureCodes: string[];
-      duration: number;
-      materials: string[];
-      staffInvolved: string[];
-      insuranceDetails?: {
-        coverage: number;
-        preAuth?: boolean;
-      };
-    }
-  ) {
+  async analyzeAppointmentProfitability(appointmentData: {
+    procedureCodes: string[];
+    duration: number;
+    materials: string[];
+    staffInvolved: string[];
+    insuranceDetails?: {
+      coverage: number;
+      preAuth?: boolean;
+    };
+  }) {
     try {
       // Implement profitability analysis logic here
       const analysis = await this.generateResponse({
-        role: 'system',
+        role: "system",
         content: `Analyze the profitability of the following dental appointment:
-          - Procedure Codes: ${appointmentData.procedureCodes.join(', ')}
+          - Procedure Codes: ${appointmentData.procedureCodes.join(", ")}
           - Duration: ${appointmentData.duration} minutes
-          - Materials Used: ${appointmentData.materials.join(', ')}
-          - Staff Involved: ${appointmentData.staffInvolved.join(', ')}
-          ${appointmentData.insuranceDetails ? 
-            `- Insurance Coverage: ${appointmentData.insuranceDetails.coverage}%
-             - Pre-Authorization: ${appointmentData.insuranceDetails.preAuth ? 'Yes' : 'No'}`
-            : '- No Insurance Information'
+          - Materials Used: ${appointmentData.materials.join(", ")}
+          - Staff Involved: ${appointmentData.staffInvolved.join(", ")}
+          ${
+            appointmentData.insuranceDetails
+              ? `- Insurance Coverage: ${appointmentData.insuranceDetails.coverage}%
+             - Pre-Authorization: ${appointmentData.insuranceDetails.preAuth ? "Yes" : "No"}`
+              : "- No Insurance Information"
           }
-        `
+        `,
       });
 
       return {
         analysis,
         metrics: {
           estimatedRevenue: 0, // To be implemented
-          estimatedCosts: 0,   // To be implemented
-          profitMargin: 0      // To be implemented
-        }
+          estimatedCosts: 0, // To be implemented
+          profitMargin: 0, // To be implemented
+        },
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to analyze appointment profitability',
-        'PROFITABILITY_APPOINTMENT',
-        'ANALYSIS_ERROR',
+        "Failed to analyze appointment profitability",
+        "PROFITABILITY_APPOINTMENT",
+        "ANALYSIS_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
@@ -276,29 +271,29 @@ export class ProfitabilityAppointmentAgent {
   }) {
     try {
       const suggestions = await this.generateResponse({
-        role: 'system',
+        role: "system",
         content: `Based on the following metrics, suggest optimizations to improve profitability:
           - Current Revenue: $${currentMetrics.revenue}
           - Current Costs: $${currentMetrics.costs}
           - Appointment Duration: ${currentMetrics.duration} minutes
-        `
+        `,
       });
 
       return {
         suggestions,
         estimatedImpact: {
-          revenueIncrease: 0,  // To be implemented
-          costReduction: 0,    // To be implemented
-          timeOptimization: 0  // To be implemented
-        }
+          revenueIncrease: 0, // To be implemented
+          costReduction: 0, // To be implemented
+          timeOptimization: 0, // To be implemented
+        },
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to generate optimization suggestions',
-        'PROFITABILITY_APPOINTMENT',
-        'OPTIMIZATION_ERROR',
+        "Failed to generate optimization suggestions",
+        "PROFITABILITY_APPOINTMENT",
+        "OPTIMIZATION_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }

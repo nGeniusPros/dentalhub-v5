@@ -1,4 +1,4 @@
-import { PracticeMetrics } from '../types';
+import { PracticeMetrics } from "../types";
 
 export class MetricsRepository {
   async getCurrentMetrics(): Promise<PracticeMetrics> {
@@ -8,7 +8,7 @@ export class MetricsRepository {
       productionHours: 160,
       hygieneProduction: 7500,
       treatmentPresentations: 45,
-      treatmentAcceptances: 38
+      treatmentAcceptances: 38,
     };
   }
 }

@@ -378,4 +378,4 @@ export const AddPrizeModal: React.FC<AddPrizeModalProps> = ({
     </div>
   );
 };
-```
+```;

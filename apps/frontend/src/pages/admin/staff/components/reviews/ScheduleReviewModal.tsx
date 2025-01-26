@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { useNotifications } from '../../../../../contexts/NotificationContext';
-import type { Review } from '../PerformanceReviews';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { useNotifications } from "../../../../../contexts/NotificationContext";
+import type { Review } from "../PerformanceReviews";
 
 interface ScheduleReviewModalProps {
   isOpen: boolean;
@@ -14,13 +14,13 @@ interface ScheduleReviewModalProps {
 export const ScheduleReviewModal: React.FC<ScheduleReviewModalProps> = ({
   isOpen,
   onClose,
-  onSchedule
+  onSchedule,
 }) => {
   const [formData, setFormData] = useState({
-    employee: '',
-    position: '',
-    reviewDate: '',
-    lastReview: ''
+    employee: "",
+    position: "",
+    reviewDate: "",
+    lastReview: "",
   });
 
   const { dispatch: notifyDispatch } = useNotifications();
@@ -32,27 +32,27 @@ export const ScheduleReviewModal: React.FC<ScheduleReviewModalProps> = ({
     const newReview: Review = {
       id: Date.now().toString(),
       ...formData,
-      status: 'scheduled',
-      rating: 0
+      status: "scheduled",
+      rating: 0,
     };
-    
+
     // Create notification for the employee
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'review',
-        title: 'Performance Review Scheduled',
+        type: "review",
+        title: "Performance Review Scheduled",
         message: `Your performance review has been scheduled for ${formData.reviewDate}`,
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'high',
-        link: '/staff-dashboard/reviews',
+        priority: "high",
+        link: "/staff-dashboard/reviews",
         metadata: {
           reviewId: newReview.id,
-          reviewDate: formData.reviewDate
-        }
-      }
+          reviewDate: formData.reviewDate,
+        },
+      },
     });
 
     onSchedule(newReview);
@@ -67,7 +67,9 @@ export const ScheduleReviewModal: React.FC<ScheduleReviewModalProps> = ({
       >
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Schedule Performance Review</h2>
+            <h2 className="text-xl font-semibold">
+              Schedule Performance Review
+            </h2>
             <Button variant="ghost" size="sm" onClick={onClose}>
               <Icons.X className="w-5 h-5" />
             </Button>
@@ -82,7 +84,9 @@ export const ScheduleReviewModal: React.FC<ScheduleReviewModalProps> = ({
             <input
               type="text"
               value={formData.employee}
-              onChange={(e) => setFormData({ ...formData, employee: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, employee: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               required
             />
@@ -95,7 +99,9 @@ export const ScheduleReviewModal: React.FC<ScheduleReviewModalProps> = ({
             <input
               type="text"
               value={formData.position}
-              onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, position: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               required
             />
@@ -108,7 +114,9 @@ export const ScheduleReviewModal: React.FC<ScheduleReviewModalProps> = ({
             <input
               type="date"
               value={formData.reviewDate}
-              onChange={(e) => setFormData({ ...formData, reviewDate: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, reviewDate: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               required
             />
@@ -121,7 +129,9 @@ export const ScheduleReviewModal: React.FC<ScheduleReviewModalProps> = ({
             <input
               type="date"
               value={formData.lastReview}
-              onChange={(e) => setFormData({ ...formData, lastReview: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, lastReview: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               required
             />
@@ -131,9 +141,7 @@ export const ScheduleReviewModal: React.FC<ScheduleReviewModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Schedule Review
-            </Button>
+            <Button type="submit">Schedule Review</Button>
           </div>
         </form>
       </motion.div>

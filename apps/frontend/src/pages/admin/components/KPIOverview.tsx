@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import StatsCard from '@/components/dashboard/StatsCard';
+import React from "react";
+import { motion } from "framer-motion";
+import StatsCard from "@/components/dashboard/StatsCard";
 
 interface KPIOverviewProps {
   timeRange: string;
@@ -11,9 +11,9 @@ const container = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 export const KPIOverview: React.FC<KPIOverviewProps> = ({ timeRange }) => {

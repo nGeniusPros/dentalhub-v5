@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import supabase from '../../../../../lib/supabase/client';
-import { syncManager } from '../../../../../lib/utils/sync';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import supabase from "../../../../../lib/supabase/client";
+import { syncManager } from "../../../../../lib/utils/sync";
 
 interface EditStaffModalProps {
   isOpen: boolean;
@@ -16,17 +16,19 @@ export const EditStaffModal: React.FC<EditStaffModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  staff
+  staff,
 }) => {
-  const [formData, setFormData] = useState<any>(staff || {
-    name: '',
-    role: '',
-    department: '',
-    email: '',
-    phone: '',
-    status: 'active',
-    startDate: ''
-  });
+  const [formData, setFormData] = useState<any>(
+    staff || {
+      name: "",
+      role: "",
+      department: "",
+      email: "",
+      phone: "",
+      status: "active",
+      startDate: "",
+    },
+  );
 
   // Update form data when staff prop changes
   useEffect(() => {
@@ -41,22 +43,22 @@ export const EditStaffModal: React.FC<EditStaffModalProps> = ({
     e.preventDefault();
     try {
       await syncManager.addOperation({
-        table: 'staff_profiles',
-        type: 'UPDATE',
+        table: "staff_profiles",
+        type: "UPDATE",
         data: {
           id: staff.id,
           role: formData.role,
           specialization: formData.department,
           contact_info: {
-            phone: formData.phone
+            phone: formData.phone,
           },
           status: formData.status,
         },
         timestamp: Date.now(),
       });
-      console.log('Staff profile update queued');
+      console.log("Staff profile update queued");
     } catch (error) {
-      console.error('Error queueing staff profile update:', error);
+      console.error("Error queueing staff profile update:", error);
     }
     onSave(formData);
     onClose();
@@ -74,7 +76,7 @@ export const EditStaffModal: React.FC<EditStaffModalProps> = ({
             <h2 className="text-xl font-semibold">Edit Staff Member</h2>
             <Button variant="ghost" size="sm" onClick={onClose}>
               {React.createElement((Icons as any).X, {
-                className: "w-5 h-5"
+                className: "w-5 h-5",
               })}
             </Button>
           </div>
@@ -88,8 +90,19 @@ export const EditStaffModal: React.FC<EditStaffModalProps> = ({
               </label>
               <input
                 type="text"
-                value={formData.user?.raw_user_meta_data?.full_name || ''}
-                onChange={(e) => setFormData({ ...formData, user: { ...formData.user, raw_user_meta_data: { ...formData.user.raw_user_meta_data, full_name: e.target.value } } })}
+                value={formData.user?.raw_user_meta_data?.full_name || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    user: {
+                      ...formData.user,
+                      raw_user_meta_data: {
+                        ...formData.user.raw_user_meta_data,
+                        full_name: e.target.value,
+                      },
+                    },
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -101,7 +114,9 @@ export const EditStaffModal: React.FC<EditStaffModalProps> = ({
               </label>
               <select
                 value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, role: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -119,7 +134,9 @@ export const EditStaffModal: React.FC<EditStaffModalProps> = ({
               </label>
               <select
                 value={formData.specialization}
-                onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, specialization: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -135,8 +152,13 @@ export const EditStaffModal: React.FC<EditStaffModalProps> = ({
               </label>
               <input
                 type="email"
-                value={formData.user?.email || ''}
-                onChange={(e) => setFormData({ ...formData, user: { ...formData.user, email: e.target.value } })}
+                value={formData.user?.email || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    user: { ...formData.user, email: e.target.value },
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -148,8 +170,16 @@ export const EditStaffModal: React.FC<EditStaffModalProps> = ({
               </label>
               <input
                 type="tel"
-                value={formData.contact_info?.phone || ''}
-                onChange={(e) => setFormData({ ...formData, contact_info: { ...formData.contact_info, phone: e.target.value } })}
+                value={formData.contact_info?.phone || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    contact_info: {
+                      ...formData.contact_info,
+                      phone: e.target.value,
+                    },
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -161,7 +191,9 @@ export const EditStaffModal: React.FC<EditStaffModalProps> = ({
               </label>
               <select
                 value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, status: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -176,9 +208,7 @@ export const EditStaffModal: React.FC<EditStaffModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Save Changes
-            </Button>
+            <Button type="submit">Save Changes</Button>
           </div>
         </form>
       </motion.div>

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
 
 interface ViewShiftModalProps {
   shift: any;
@@ -15,7 +15,7 @@ export const ViewShiftModal: React.FC<ViewShiftModalProps> = ({
   shift,
   onClose,
   onUpdate,
-  onDelete
+  onDelete,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedShift, setEditedShift] = useState(shift);
@@ -58,7 +58,12 @@ export const ViewShiftModal: React.FC<ViewShiftModalProps> = ({
               <input
                 type="text"
                 value={editedShift.employeeName}
-                onChange={(e) => setEditedShift({ ...editedShift, employeeName: e.target.value })}
+                onChange={(e) =>
+                  setEditedShift({
+                    ...editedShift,
+                    employeeName: e.target.value,
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -71,7 +76,9 @@ export const ViewShiftModal: React.FC<ViewShiftModalProps> = ({
               <input
                 type="text"
                 value={editedShift.role}
-                onChange={(e) => setEditedShift({ ...editedShift, role: e.target.value })}
+                onChange={(e) =>
+                  setEditedShift({ ...editedShift, role: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -85,7 +92,12 @@ export const ViewShiftModal: React.FC<ViewShiftModalProps> = ({
                 <input
                   type="time"
                   value={editedShift.startTime}
-                  onChange={(e) => setEditedShift({ ...editedShift, startTime: e.target.value })}
+                  onChange={(e) =>
+                    setEditedShift({
+                      ...editedShift,
+                      startTime: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -97,7 +109,9 @@ export const ViewShiftModal: React.FC<ViewShiftModalProps> = ({
                 <input
                   type="time"
                   value={editedShift.endTime}
-                  onChange={(e) => setEditedShift({ ...editedShift, endTime: e.target.value })}
+                  onChange={(e) =>
+                    setEditedShift({ ...editedShift, endTime: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -111,19 +125,23 @@ export const ViewShiftModal: React.FC<ViewShiftModalProps> = ({
               <input
                 type="date"
                 value={editedShift.date}
-                onChange={(e) => setEditedShift({ ...editedShift, date: e.target.value })}
+                onChange={(e) =>
+                  setEditedShift({ ...editedShift, date: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
             </div>
 
             <div className="flex justify-end gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsEditing(false)}
+              >
                 Cancel
               </Button>
-              <Button type="submit">
-                Save Changes
-              </Button>
+              <Button type="submit">Save Changes</Button>
             </div>
           </form>
         ) : (
@@ -143,7 +161,9 @@ export const ViewShiftModal: React.FC<ViewShiftModalProps> = ({
               </div>
               <div>
                 <p className="text-sm text-gray-500">Time</p>
-                <p className="font-medium">{shift.startTime} - {shift.endTime}</p>
+                <p className="font-medium">
+                  {shift.startTime} - {shift.endTime}
+                </p>
               </div>
             </div>
 
@@ -152,29 +172,33 @@ export const ViewShiftModal: React.FC<ViewShiftModalProps> = ({
               <div className="flex gap-2">
                 <Button
                   size="sm"
-                  variant={shift.status === 'scheduled' ? 'default' : 'outline'}
-                  onClick={() => handleStatusChange('scheduled')}
+                  variant={shift.status === "scheduled" ? "default" : "outline"}
+                  onClick={() => handleStatusChange("scheduled")}
                 >
                   Scheduled
                 </Button>
                 <Button
                   size="sm"
-                  variant={shift.status === 'checked-in' ? 'default' : 'outline'}
-                  onClick={() => handleStatusChange('checked-in')}
+                  variant={
+                    shift.status === "checked-in" ? "default" : "outline"
+                  }
+                  onClick={() => handleStatusChange("checked-in")}
                 >
                   Check In
                 </Button>
                 <Button
                   size="sm"
-                  variant={shift.status === 'checked-out' ? 'default' : 'outline'}
-                  onClick={() => handleStatusChange('checked-out')}
+                  variant={
+                    shift.status === "checked-out" ? "default" : "outline"
+                  }
+                  onClick={() => handleStatusChange("checked-out")}
                 >
                   Check Out
                 </Button>
                 <Button
                   size="sm"
-                  variant={shift.status === 'absent' ? 'default' : 'outline'}
-                  onClick={() => handleStatusChange('absent')}
+                  variant={shift.status === "absent" ? "default" : "outline"}
+                  onClick={() => handleStatusChange("absent")}
                 >
                   Absent
                 </Button>
@@ -182,10 +206,7 @@ export const ViewShiftModal: React.FC<ViewShiftModalProps> = ({
             </div>
 
             <div className="flex justify-end gap-3 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setIsEditing(true)}
-              >
+              <Button variant="outline" onClick={() => setIsEditing(true)}>
                 <Icons.Edit2 className="w-4 h-4 mr-2" />
                 Edit
               </Button>

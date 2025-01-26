@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { useNotifications } from '../../../../../contexts/NotificationContext';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { useNotifications } from "../../../../../contexts/NotificationContext";
 
 interface AddProviderModalProps {
   isOpen: boolean;
@@ -13,39 +13,39 @@ interface AddProviderModalProps {
 export const AddProviderModal: React.FC<AddProviderModalProps> = ({
   isOpen,
   onClose,
-  onAdd
+  onAdd,
 }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    license: '',
-    expiration: '',
+    name: "",
+    license: "",
+    expiration: "",
     documents: [] as Array<{
       type: string;
       number: string;
       expirationDate: string;
       file?: File;
     }>,
-    email: '',
-    phone: '',
-    specialty: '',
-    startDate: ''
+    email: "",
+    phone: "",
+    specialty: "",
+    startDate: "",
   });
 
   const { dispatch: notifyDispatch } = useNotifications();
 
   const documentTypes = [
-    'State License',
-    'DEA Registration',
-    'Malpractice Insurance',
-    'Board Certification',
-    'CPR Certification',
-    'Controlled Substance License',
-    'HIPAA Certification',
-    'Continuing Education Records',
-    'Professional References',
-    'Background Check',
-    'Immunization Records',
-    'COVID-19 Vaccination'
+    "State License",
+    "DEA Registration",
+    "Malpractice Insurance",
+    "Board Certification",
+    "CPR Certification",
+    "Controlled Substance License",
+    "HIPAA Certification",
+    "Continuing Education Records",
+    "Professional References",
+    "Background Check",
+    "Immunization Records",
+    "COVID-19 Vaccination",
   ];
 
   const handleFileUpload = (index: number, file: File) => {
@@ -59,8 +59,8 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
       ...formData,
       documents: [
         ...formData.documents,
-        { type: '', number: '', expirationDate: '' }
-      ]
+        { type: "", number: "", expirationDate: "" },
+      ],
     });
   };
 
@@ -71,29 +71,29 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Create notifications for document expirations
-    formData.documents.forEach(doc => {
+    formData.documents.forEach((doc) => {
       const expirationDate = new Date(doc.expirationDate);
       const thirtyDaysBefore = new Date(expirationDate);
       thirtyDaysBefore.setDate(thirtyDaysBefore.getDate() - 30);
 
       notifyDispatch({
-        type: 'ADD_NOTIFICATION',
+        type: "ADD_NOTIFICATION",
         payload: {
           id: Date.now().toString(),
-          type: 'alert',
-          title: 'Document Expiration Reminder',
+          type: "alert",
+          title: "Document Expiration Reminder",
           message: `${doc.type} for ${formData.name} expires on ${doc.expirationDate}`,
           timestamp: thirtyDaysBefore.toISOString(),
           read: false,
-          priority: 'high',
+          priority: "high",
           metadata: {
             providerName: formData.name,
             documentType: doc.type,
-            expirationDate: doc.expirationDate
-          }
-        }
+            expirationDate: doc.expirationDate,
+          },
+        },
       });
     });
 
@@ -128,7 +128,9 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -141,7 +143,9 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
               <input
                 type="text"
                 value={formData.license}
-                onChange={(e) => setFormData({ ...formData, license: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, license: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -154,7 +158,9 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
               <input
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -167,7 +173,9 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
               <input
                 type="tel"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -180,7 +188,9 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
               <input
                 type="text"
                 value={formData.specialty}
-                onChange={(e) => setFormData({ ...formData, specialty: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, specialty: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -193,7 +203,9 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
               <input
                 type="date"
                 value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, startDate: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -229,8 +241,10 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
                         required
                       >
                         <option value="">Select type...</option>
-                        {documentTypes.map(type => (
-                          <option key={type} value={type}>{type}</option>
+                        {documentTypes.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -261,7 +275,10 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
                         value={doc.expirationDate}
                         onChange={(e) => {
                           const newDocs = [...formData.documents];
-                          newDocs[index] = { ...doc, expirationDate: e.target.value };
+                          newDocs[index] = {
+                            ...doc,
+                            expirationDate: e.target.value,
+                          };
                           setFormData({ ...formData, documents: newDocs });
                         }}
                         className="w-full px-4 py-2 border border-gray-200 rounded-lg"
@@ -289,7 +306,7 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
                         className="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                       >
                         <Icons.Upload className="w-4 h-4 mr-2" />
-                        {doc.file ? doc.file.name : 'Upload Document'}
+                        {doc.file ? doc.file.name : "Upload Document"}
                       </label>
                     </div>
                     <Button
@@ -311,9 +328,7 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Add Provider
-            </Button>
+            <Button type="submit">Add Provider</Button>
           </div>
         </form>
       </motion.div>

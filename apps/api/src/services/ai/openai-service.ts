@@ -1,8 +1,8 @@
-import OpenAI from 'openai';
-import { Redis } from 'ioredis';
-import { rateLimit } from '@dental/core/middleware';
-import { AiServiceError } from '@dental/core/ai/errors';
-import { AgentMessage, AgentContext, AgentConfig } from '@dental/core/ai/types';
+import OpenAI from "openai";
+import { Redis } from "ioredis";
+import { rateLimit } from "@dental/core/middleware";
+import { AiServiceError } from "@dental/core/ai/errors";
+import { AgentMessage, AgentContext, AgentConfig } from "@dental/core/ai/types";
 
 export class OpenAIService {
   private static instance: OpenAIService;
@@ -37,12 +37,12 @@ export class OpenAIService {
   async createChatCompletion(
     messages: AgentMessage[],
     config: Partial<AgentConfig>,
-    context: AgentContext
+    context: AgentContext,
   ) {
     try {
       const response = await this.client.chat.completions.create({
         messages,
-        model: config.model || 'gpt-4-turbo-preview',
+        model: config.model || "gpt-4-turbo-preview",
         temperature: config.temperature,
         max_tokens: config.maxTokens,
         user: context.sessionId, // For tracking purposes
@@ -56,13 +56,13 @@ export class OpenAIService {
           JSON.stringify({
             response,
             metadata: context.metadata,
-          })
+          }),
         );
       }
 
       return response;
     } catch (error) {
-      throw new AiServiceError('OpenAI API call failed', error);
+      throw new AiServiceError("OpenAI API call failed", error);
     }
   }
 
@@ -75,7 +75,7 @@ export class OpenAIService {
       const messages = await this.client.beta.threads.messages.list(threadId);
       return messages.data;
     } catch (error) {
-      throw new AiServiceError('Failed to get thread messages', error);
+      throw new AiServiceError("Failed to get thread messages", error);
     }
   }
 
@@ -87,7 +87,7 @@ export class OpenAIService {
     try {
       return await this.client.beta.threads.create();
     } catch (error) {
-      throw new AiServiceError('Failed to create thread', error);
+      throw new AiServiceError("Failed to create thread", error);
     }
   }
 
@@ -98,11 +98,11 @@ export class OpenAIService {
   async addMessageToThread(threadId: string, content: string) {
     try {
       return await this.client.beta.threads.messages.create(threadId, {
-        role: 'user',
+        role: "user",
         content,
       });
     } catch (error) {
-      throw new AiServiceError('Failed to add message to thread', error);
+      throw new AiServiceError("Failed to add message to thread", error);
     }
   }
 
@@ -119,23 +119,26 @@ export class OpenAIService {
       // Wait for completion with timeout
       const startTime = Date.now();
       const timeout = 30000; // 30 seconds
-      let status = await this.client.beta.threads.runs.retrieve(threadId, run.id);
-      
+      let status = await this.client.beta.threads.runs.retrieve(
+        threadId,
+        run.id,
+      );
+
       while (
-        (status.status === 'queued' || status.status === 'in_progress') &&
+        (status.status === "queued" || status.status === "in_progress") &&
         Date.now() - startTime < timeout
       ) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         status = await this.client.beta.threads.runs.retrieve(threadId, run.id);
       }
 
-      if (status.status === 'completed') {
+      if (status.status === "completed") {
         return await this.getThreadMessages(threadId);
       } else {
         throw new Error(`Run failed with status: ${status.status}`);
       }
     } catch (error) {
-      throw new AiServiceError('Failed to run assistant', error);
+      throw new AiServiceError("Failed to run assistant", error);
     }
   }
 }

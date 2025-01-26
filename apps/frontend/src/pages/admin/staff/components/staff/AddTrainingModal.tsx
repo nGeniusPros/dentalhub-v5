@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
 
 interface AddTrainingModalProps {
   isOpen: boolean;
@@ -13,22 +13,22 @@ interface AddTrainingModalProps {
 export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
   isOpen,
   onClose,
-  onAdd
+  onAdd,
 }) => {
   const [training, setTraining] = useState({
-    title: '',
-    description: '',
-    type: 'course',
-    category: '',
-    duration: '',
-    dueDate: '',
+    title: "",
+    description: "",
+    type: "course",
+    category: "",
+    duration: "",
+    dueDate: "",
     required: false,
     assignees: [] as string[],
     materials: [] as { name: string; type: string; url: string }[],
-    redirectToLearning: false
+    redirectToLearning: false,
   });
 
-  const [currentAssignee, setCurrentAssignee] = useState('');
+  const [currentAssignee, setCurrentAssignee] = useState("");
 
   if (!isOpen) return null;
 
@@ -42,9 +42,9 @@ export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
     if (currentAssignee && !training.assignees.includes(currentAssignee)) {
       setTraining({
         ...training,
-        assignees: [...training.assignees, currentAssignee]
+        assignees: [...training.assignees, currentAssignee],
       });
-      setCurrentAssignee('');
+      setCurrentAssignee("");
     }
   };
 
@@ -74,7 +74,9 @@ export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
               <input
                 type="text"
                 value={training.title}
-                onChange={(e) => setTraining({ ...training, title: e.target.value })}
+                onChange={(e) =>
+                  setTraining({ ...training, title: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -86,7 +88,9 @@ export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
               </label>
               <textarea
                 value={training.description}
-                onChange={(e) => setTraining({ ...training, description: e.target.value })}
+                onChange={(e) =>
+                  setTraining({ ...training, description: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 rows={3}
                 required
@@ -99,7 +103,9 @@ export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
               </label>
               <select
                 value={training.type}
-                onChange={(e) => setTraining({ ...training, type: e.target.value })}
+                onChange={(e) =>
+                  setTraining({ ...training, type: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -117,7 +123,9 @@ export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
               </label>
               <select
                 value={training.category}
-                onChange={(e) => setTraining({ ...training, category: e.target.value })}
+                onChange={(e) =>
+                  setTraining({ ...training, category: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -138,7 +146,9 @@ export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
               <input
                 type="text"
                 value={training.duration}
-                onChange={(e) => setTraining({ ...training, duration: e.target.value })}
+                onChange={(e) =>
+                  setTraining({ ...training, duration: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 placeholder="e.g., 2 hours"
                 required
@@ -152,9 +162,11 @@ export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
               <input
                 type="date"
                 value={training.dueDate}
-                onChange={(e) => setTraining({ ...training, dueDate: e.target.value })}
+                onChange={(e) =>
+                  setTraining({ ...training, dueDate: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
-                min={new Date().toISOString().split('T')[0]}
+                min={new Date().toISOString().split("T")[0]}
                 required
               />
             </div>
@@ -174,7 +186,7 @@ export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-lg"
                   placeholder="Enter staff member name..."
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === "Enter") {
                       e.preventDefault();
                       handleAddAssignee();
                     }
@@ -193,10 +205,14 @@ export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
                     {assignee}
                     <button
                       type="button"
-                      onClick={() => setTraining({
-                        ...training,
-                        assignees: training.assignees.filter((_, i) => i !== index)
-                      })}
+                      onClick={() =>
+                        setTraining({
+                          ...training,
+                          assignees: training.assignees.filter(
+                            (_, i) => i !== index,
+                          ),
+                        })
+                      }
                       className="text-gray-500 hover:text-red-500"
                     >
                       <Icons.X className="w-3 h-3" />
@@ -231,7 +247,9 @@ export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
               <input
                 type="checkbox"
                 checked={training.required}
-                onChange={(e) => setTraining({ ...training, required: e.target.checked })}
+                onChange={(e) =>
+                  setTraining({ ...training, required: e.target.checked })
+                }
                 className="rounded border-gray-300"
               />
               <span className="text-sm">Required Training</span>
@@ -241,7 +259,12 @@ export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
               <input
                 type="checkbox"
                 checked={training.redirectToLearning}
-                onChange={(e) => setTraining({ ...training, redirectToLearning: e.target.checked })}
+                onChange={(e) =>
+                  setTraining({
+                    ...training,
+                    redirectToLearning: e.target.checked,
+                  })
+                }
                 className="rounded border-gray-300"
               />
               <span className="text-sm">Continue setup in Learning Center</span>
@@ -252,9 +275,11 @@ export const AddTrainingModal: React.FC<AddTrainingModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button 
+            <Button
               type="submit"
-              disabled={!training.title || !training.description || !training.dueDate}
+              disabled={
+                !training.title || !training.description || !training.dueDate
+              }
             >
               Add Training
             </Button>

@@ -1,9 +1,9 @@
-import { RealtimeChannel } from '@supabase/supabase-js';
-import { supabase } from '../supabase/client';
+import { RealtimeChannel } from "@supabase/supabase-js";
+import { supabase } from "../supabase/client";
 
 interface SyncOperation {
   table: string;
-  type: 'INSERT' | 'UPDATE' | 'DELETE';
+  type: "INSERT" | "UPDATE" | "DELETE";
   data: any;
   timestamp: number;
 }
@@ -15,8 +15,8 @@ class SyncManager {
 
   constructor() {
     // Initialize online/offline listeners
-    window.addEventListener('online', this.handleOnline);
-    window.addEventListener('offline', this.handleOffline);
+    window.addEventListener("online", this.handleOnline);
+    window.addEventListener("offline", this.handleOffline);
 
     // Load pending operations from localStorage
     this.loadPendingOperations();
@@ -32,14 +32,14 @@ class SyncManager {
   };
 
   private loadPendingOperations() {
-    const pendingOps = localStorage.getItem('syncQueue');
+    const pendingOps = localStorage.getItem("syncQueue");
     if (pendingOps) {
       this.syncQueue = JSON.parse(pendingOps);
     }
   }
 
   private savePendingOperations() {
-    localStorage.setItem('syncQueue', JSON.stringify(this.syncQueue));
+    localStorage.setItem("syncQueue", JSON.stringify(this.syncQueue));
   }
 
   private async processPendingOperations() {
@@ -50,7 +50,7 @@ class SyncManager {
         this.syncQueue.shift();
         this.savePendingOperations();
       } catch (error) {
-        console.error('Failed to process operation:', error);
+        console.error("Failed to process operation:", error);
         break;
       }
     }
@@ -60,14 +60,14 @@ class SyncManager {
     const { table, type, data } = operation;
 
     switch (type) {
-      case 'INSERT':
+      case "INSERT":
         await supabase.from(table).insert(data);
         break;
-      case 'UPDATE':
-        await supabase.from(table).update(data).eq('id', data.id);
+      case "UPDATE":
+        await supabase.from(table).update(data).eq("id", data.id);
         break;
-      case 'DELETE':
-        await supabase.from(table).delete().eq('id', data.id);
+      case "DELETE":
+        await supabase.from(table).delete().eq("id", data.id);
         break;
     }
   }
@@ -80,9 +80,9 @@ class SyncManager {
     const channel = supabase
       .channel(`public:${tableName}`)
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: tableName },
-        callback
+        "postgres_changes",
+        { event: "*", schema: "public", table: tableName },
+        callback,
       )
       .subscribe();
 
@@ -107,9 +107,9 @@ class SyncManager {
   }
 
   public cleanup() {
-    window.removeEventListener('online', this.handleOnline);
-    window.removeEventListener('offline', this.handleOffline);
-    this.channels.forEach(channel => channel.unsubscribe());
+    window.removeEventListener("online", this.handleOnline);
+    window.removeEventListener("offline", this.handleOffline);
+    this.channels.forEach((channel) => channel.unsubscribe());
     this.channels.clear();
   }
 }

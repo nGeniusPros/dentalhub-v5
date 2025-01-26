@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
 
 interface RenewDialogProps {
   isOpen: boolean;
@@ -18,12 +18,12 @@ export const RenewDialog: React.FC<RenewDialogProps> = ({
   isOpen,
   onClose,
   onRenew,
-  credential
+  credential,
 }) => {
   const [details, setDetails] = useState({
-    newExpirationDate: '',
+    newExpirationDate: "",
     documentFile: null as File | null,
-    notes: ''
+    notes: "",
   });
 
   if (!isOpen) return null;
@@ -39,7 +39,9 @@ export const RenewDialog: React.FC<RenewDialogProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold">Renew Credential</h2>
-              <p className="text-sm text-gray-500">{credential.type} #{credential.number}</p>
+              <p className="text-sm text-gray-500">
+                {credential.type} #{credential.number}
+              </p>
             </div>
             <Button variant="ghost" size="sm" onClick={onClose}>
               <Icons.X className="w-5 h-5" />
@@ -62,9 +64,14 @@ export const RenewDialog: React.FC<RenewDialogProps> = ({
             <input
               type="date"
               value={details.newExpirationDate}
-              onChange={(e) => setDetails(prev => ({ ...prev, newExpirationDate: e.target.value }))}
+              onChange={(e) =>
+                setDetails((prev) => ({
+                  ...prev,
+                  newExpirationDate: e.target.value,
+                }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
-              min={new Date().toISOString().split('T')[0]}
+              min={new Date().toISOString().split("T")[0]}
               required
             />
           </div>
@@ -90,7 +97,10 @@ export const RenewDialog: React.FC<RenewDialogProps> = ({
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          setDetails(prev => ({ ...prev, documentFile: file }));
+                          setDetails((prev) => ({
+                            ...prev,
+                            documentFile: file,
+                          }));
                         }
                       }}
                     />
@@ -110,7 +120,9 @@ export const RenewDialog: React.FC<RenewDialogProps> = ({
             </label>
             <textarea
               value={details.notes}
-              onChange={(e) => setDetails(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={(e) =>
+                setDetails((prev) => ({ ...prev, notes: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
               rows={3}
               placeholder="Add any notes about the renewal..."
@@ -122,9 +134,7 @@ export const RenewDialog: React.FC<RenewDialogProps> = ({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={() => onRenew(details)}>
-            Renew Credential
-          </Button>
+          <Button onClick={() => onRenew(details)}>Renew Credential</Button>
         </div>
       </motion.div>
     </div>

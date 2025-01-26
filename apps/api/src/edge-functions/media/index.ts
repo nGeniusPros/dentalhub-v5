@@ -1,13 +1,13 @@
-import express from 'express';
-import { processMedia } from './service';
-import { MediaData, MediaOptions } from './types';
-import { handleError } from '../../utils/errorHandler';
-import { Router } from 'express';
+import express from "express";
+import { processMedia } from "./service";
+import { MediaData, MediaOptions } from "./types";
+import { handleError } from "../../utils/errorHandler";
+import { Router } from "express";
 
 const router: Router = express.Router();
 
 // Process media
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const data = req.body as MediaData;
     const options = req.body.options as MediaOptions;

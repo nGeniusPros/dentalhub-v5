@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
-import type { LearningPath } from '../../../../../types/learning';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
+import type { LearningPath } from "../../../../../types/learning";
 
 interface AddPathModalProps {
   isOpen: boolean;
@@ -14,52 +14,49 @@ interface AddPathModalProps {
 export const AddPathModal: React.FC<AddPathModalProps> = ({
   isOpen,
   onClose,
-  onAdd
+  onAdd,
 }) => {
   const [path, setPath] = useState<Partial<LearningPath>>({
-    name: '',
-    description: '',
-    category: '',
+    name: "",
+    description: "",
+    category: "",
     progress: 0,
     milestones: [],
-    rewards: []
+    rewards: [],
   });
 
   const [currentMilestone, setCurrentMilestone] = useState({
-    title: '',
-    completed: false
+    title: "",
+    completed: false,
   });
 
   const [currentReward, setCurrentReward] = useState({
-    type: 'points' as const,
-    value: ''
+    type: "points" as const,
+    value: "",
   });
 
   if (!isOpen) return null;
 
   const handleAddMilestone = () => {
     if (currentMilestone.title) {
-      setPath(prev => ({
+      setPath((prev) => ({
         ...prev,
         milestones: [
           ...(prev.milestones || []),
-          { ...currentMilestone, id: Date.now().toString() }
-        ]
+          { ...currentMilestone, id: Date.now().toString() },
+        ],
       }));
-      setCurrentMilestone({ title: '', completed: false });
+      setCurrentMilestone({ title: "", completed: false });
     }
   };
 
   const handleAddReward = () => {
     if (currentReward.value) {
-      setPath(prev => ({
+      setPath((prev) => ({
         ...prev,
-        rewards: [
-          ...(prev.rewards || []),
-          { ...currentReward }
-        ]
+        rewards: [...(prev.rewards || []), { ...currentReward }],
       }));
-      setCurrentReward({ type: 'points', value: '' });
+      setCurrentReward({ type: "points", value: "" });
     }
   };
 
@@ -71,7 +68,7 @@ export const AddPathModal: React.FC<AddPathModalProps> = ({
         id: Date.now().toString(),
         progress: 0,
         milestones: path.milestones || [],
-        rewards: path.rewards || []
+        rewards: path.rewards || [],
       } as LearningPath);
       onClose();
     }
@@ -115,7 +112,9 @@ export const AddPathModal: React.FC<AddPathModalProps> = ({
               </label>
               <textarea
                 value={path.description}
-                onChange={(e) => setPath({ ...path, description: e.target.value })}
+                onChange={(e) =>
+                  setPath({ ...path, description: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 rows={3}
                 required
@@ -161,10 +160,12 @@ export const AddPathModal: React.FC<AddPathModalProps> = ({
               <input
                 type="text"
                 value={currentMilestone.title}
-                onChange={(e) => setCurrentMilestone({
-                  ...currentMilestone,
-                  title: e.target.value
-                })}
+                onChange={(e) =>
+                  setCurrentMilestone({
+                    ...currentMilestone,
+                    title: e.target.value,
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 placeholder="Enter milestone title..."
               />
@@ -184,10 +185,14 @@ export const AddPathModal: React.FC<AddPathModalProps> = ({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => setPath({
-                        ...path,
-                        milestones: path.milestones?.filter((_, i) => i !== index)
-                      })}
+                      onClick={() =>
+                        setPath({
+                          ...path,
+                          milestones: path.milestones?.filter(
+                            (_, i) => i !== index,
+                          ),
+                        })
+                      }
                       className="text-red-500 hover:text-red-700"
                     >
                       <Icons.Trash2 className="w-4 h-4" />
@@ -217,10 +222,15 @@ export const AddPathModal: React.FC<AddPathModalProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 <select
                   value={currentReward.type}
-                  onChange={(e) => setCurrentReward({
-                    ...currentReward,
-                    type: e.target.value as 'points' | 'badge' | 'certificate'
-                  })}
+                  onChange={(e) =>
+                    setCurrentReward({
+                      ...currentReward,
+                      type: e.target.value as
+                        | "points"
+                        | "badge"
+                        | "certificate",
+                    })
+                  }
                   className="px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value="points">Points</option>
@@ -228,14 +238,20 @@ export const AddPathModal: React.FC<AddPathModalProps> = ({
                   <option value="certificate">Certificate</option>
                 </select>
                 <input
-                  type={currentReward.type === 'points' ? 'number' : 'text'}
+                  type={currentReward.type === "points" ? "number" : "text"}
                   value={currentReward.value}
-                  onChange={(e) => setCurrentReward({
-                    ...currentReward,
-                    value: e.target.value
-                  })}
+                  onChange={(e) =>
+                    setCurrentReward({
+                      ...currentReward,
+                      value: e.target.value,
+                    })
+                  }
                   className="px-4 py-2 border border-gray-200 rounded-lg"
-                  placeholder={currentReward.type === 'points' ? 'Points value' : 'Reward name'}
+                  placeholder={
+                    currentReward.type === "points"
+                      ? "Points value"
+                      : "Reward name"
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -245,12 +261,18 @@ export const AddPathModal: React.FC<AddPathModalProps> = ({
                     className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                   >
                     <div className="flex items-center gap-2">
-                      {reward.type === 'points' && <Icons.Award className="w-4 h-4 text-yellow-500" />}
-                      {reward.type === 'badge' && <Icons.Shield className="w-4 h-4 text-blue-500" />}
-                      {reward.type === 'certificate' && <Icons.FileCheck className="w-4 h-4 text-green-500" />}
+                      {reward.type === "points" && (
+                        <Icons.Award className="w-4 h-4 text-yellow-500" />
+                      )}
+                      {reward.type === "badge" && (
+                        <Icons.Shield className="w-4 h-4 text-blue-500" />
+                      )}
+                      {reward.type === "certificate" && (
+                        <Icons.FileCheck className="w-4 h-4 text-green-500" />
+                      )}
                       <span>
-                        {reward.type === 'points' 
-                          ? `${reward.value} points` 
+                        {reward.type === "points"
+                          ? `${reward.value} points`
                           : reward.value}
                       </span>
                     </div>
@@ -258,10 +280,12 @@ export const AddPathModal: React.FC<AddPathModalProps> = ({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => setPath({
-                        ...path,
-                        rewards: path.rewards?.filter((_, i) => i !== index)
-                      })}
+                      onClick={() =>
+                        setPath({
+                          ...path,
+                          rewards: path.rewards?.filter((_, i) => i !== index),
+                        })
+                      }
                       className="text-red-500 hover:text-red-700"
                     >
                       <Icons.Trash2 className="w-4 h-4" />
@@ -276,10 +300,7 @@ export const AddPathModal: React.FC<AddPathModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button 
-              type="submit"
-              disabled={!path.name || !path.description}
-            >
+            <Button type="submit" disabled={!path.name || !path.description}>
               Create Learning Path
             </Button>
           </div>

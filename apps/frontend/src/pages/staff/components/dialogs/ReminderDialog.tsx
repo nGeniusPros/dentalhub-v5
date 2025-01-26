@@ -1,12 +1,23 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface ReminderDialogProps {
   isOpen: boolean;
@@ -18,18 +29,22 @@ interface ReminderDialogProps {
 }
 
 interface ReminderForm {
-  type: 'appointment' | 'medication' | 'followup';
+  type: "appointment" | "medication" | "followup";
   date: string;
   time: string;
   notes: string;
 }
 
-export const ReminderDialog: React.FC<ReminderDialogProps> = ({ isOpen, onClose, patient }) => {
+export const ReminderDialog: React.FC<ReminderDialogProps> = ({
+  isOpen,
+  onClose,
+  patient,
+}) => {
   const [form, setForm] = React.useState<ReminderForm>({
-    type: 'appointment',
-    date: '',
-    time: '',
-    notes: ''
+    type: "appointment",
+    date: "",
+    time: "",
+    notes: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -52,14 +67,14 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({ isOpen, onClose,
               <span>For: {patient.name}</span>
             </div>
           )}
-          
+
           <div className="space-y-2">
             <label className="text-sm font-medium">Type</label>
             <Select
               value={form.type}
-              onValueChange={(value: 'appointment' | 'medication' | 'followup') => 
-                setForm(prev => ({ ...prev, type: value }))
-              }
+              onValueChange={(
+                value: "appointment" | "medication" | "followup",
+              ) => setForm((prev) => ({ ...prev, type: value }))}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select reminder type" />
@@ -78,7 +93,9 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({ isOpen, onClose,
               <Input
                 type="date"
                 value={form.date}
-                onChange={(e) => setForm(prev => ({ ...prev, date: e.target.value }))}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, date: e.target.value }))
+                }
               />
             </div>
             <div className="space-y-2">
@@ -86,7 +103,9 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({ isOpen, onClose,
               <Input
                 type="time"
                 value={form.time}
-                onChange={(e) => setForm(prev => ({ ...prev, time: e.target.value }))}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, time: e.target.value }))
+                }
               />
             </div>
           </div>
@@ -95,7 +114,9 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({ isOpen, onClose,
             <label className="text-sm font-medium">Notes</label>
             <Textarea
               value={form.notes}
-              onChange={(e) => setForm(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, notes: e.target.value }))
+              }
               placeholder="Add any additional notes..."
               className="min-h-[100px]"
             />

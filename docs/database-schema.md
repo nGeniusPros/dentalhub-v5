@@ -3,6 +3,7 @@
 ## Tables
 
 ### 1. family_relationships
+
 - **Description**: Tracks family relationships between patients
 - **Columns**:
   - `id` (UUID, Primary Key): Unique identifier
@@ -13,6 +14,7 @@
   - `updated_at` (Timestamp): Last update time
 
 ### 2. patient_documents
+
 - **Description**: Stores patient documents and files
 - **Columns**:
   - `id` (UUID, Primary Key): Unique identifier
@@ -25,6 +27,7 @@
   - `updated_at` (Timestamp): Last update time
 
 ### 3. treatment_plans
+
 - **Description**: Stores dental treatment plans
 - **Columns**:
   - `id` (UUID, Primary Key): Unique identifier
@@ -42,6 +45,7 @@
 ## Enums
 
 ### 1. relationship_type
+
 - **Values**:
   - spouse
   - child
@@ -50,6 +54,7 @@
   - other
 
 ### 2. document_type
+
 - **Values**:
   - treatment_plan
   - x_ray
@@ -59,6 +64,7 @@
   - other
 
 ### 3. treatment_status
+
 - **Values**:
   - planned
   - in_progress
@@ -86,10 +92,12 @@
 All tables have RLS enabled with the following policies:
 
 1. **family_relationships**:
+
    - Read access for related users
    - Insert/update for staff and admin
 
 2. **patient_documents**:
+
    - Read access for document owners and staff
    - Insert/update for staff and admin
 

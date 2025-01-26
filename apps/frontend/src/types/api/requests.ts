@@ -6,19 +6,19 @@ export type SikkaVerifyInsuranceRequest = {
 };
 
 export type SikkaCheckEligibilityRequest = {
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-    insuranceId: string;
-  };
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  insuranceId: string;
+};
 
 export type SikkaVerifyBenefitsRequest = {
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-    insuranceId: string;
-  };
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  insuranceId: string;
+};
 
 export type SikkaProcessClaimRequest = {
-    claimId: string;
-  };
+  claimId: string;
+};

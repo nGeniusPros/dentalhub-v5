@@ -16,16 +16,16 @@ export interface RetellConfig {
 export interface VoiceCallRequest {
   patientId: string;
   phoneNumber: string;
-  purpose: 'appointment_reminder' | 'follow_up' | 'billing' | 'custom';
+  purpose: "appointment_reminder" | "follow_up" | "billing" | "custom";
   customScript?: string;
   language?: string;
-  priority?: 'high' | 'normal' | 'low';
+  priority?: "high" | "normal" | "low";
   agentId?: string; // Optional - will use first available agent if not specified
 }
 
 export interface CallStatus {
   callId: string;
-  status: 'queued' | 'in_progress' | 'completed' | 'failed';
+  status: "queued" | "in_progress" | "completed" | "failed";
   duration?: number;
   startTime?: string;
   endTime?: string;
@@ -38,7 +38,7 @@ export interface TranscriptionResult {
   transcript: string;
   confidence: number;
   segments: Array<{
-    speaker: 'agent' | 'customer';
+    speaker: "agent" | "customer";
     text: string;
     startTime: number;
     endTime: number;
@@ -71,7 +71,11 @@ export interface AIAnalysisResult {
 }
 
 export interface WebhookEvent {
-  type: 'call.completed' | 'call.failed' | 'transcription.completed' | 'analysis.completed';
+  type:
+    | "call.completed"
+    | "call.failed"
+    | "transcription.completed"
+    | "analysis.completed";
   timestamp: string;
   data: CallStatus | TranscriptionResult | AIAnalysisResult;
   signature?: string;

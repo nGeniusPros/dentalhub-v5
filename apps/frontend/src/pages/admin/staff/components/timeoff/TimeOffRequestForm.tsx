@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import type { TimeOffRequest } from '../../../../../types/timeOff';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import type { TimeOffRequest } from "../../../../../types/timeOff";
 
 interface TimeOffRequestFormProps {
   isOpen: boolean;
@@ -13,13 +13,13 @@ interface TimeOffRequestFormProps {
 export const TimeOffRequestForm: React.FC<TimeOffRequestFormProps> = ({
   isOpen,
   onClose,
-  onSubmit
+  onSubmit,
 }) => {
   const [request, setRequest] = useState<Partial<TimeOffRequest>>({
-    type: 'vacation',
-    startDate: '',
-    endDate: '',
-    reason: ''
+    type: "vacation",
+    startDate: "",
+    endDate: "",
+    reason: "",
   });
 
   if (!isOpen) return null;
@@ -52,10 +52,12 @@ export const TimeOffRequestForm: React.FC<TimeOffRequestFormProps> = ({
             </label>
             <select
               value={request.type}
-              onChange={(e) => setRequest(prev => ({ 
-                ...prev, 
-                type: e.target.value as TimeOffRequest['type']
-              }))}
+              onChange={(e) =>
+                setRequest((prev) => ({
+                  ...prev,
+                  type: e.target.value as TimeOffRequest["type"],
+                }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
               required
             >
@@ -73,9 +75,11 @@ export const TimeOffRequestForm: React.FC<TimeOffRequestFormProps> = ({
               <input
                 type="date"
                 value={request.startDate}
-                onChange={(e) => setRequest(prev => ({ ...prev, startDate: e.target.value }))}
+                onChange={(e) =>
+                  setRequest((prev) => ({ ...prev, startDate: e.target.value }))
+                }
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg"
-                min={new Date().toISOString().split('T')[0]}
+                min={new Date().toISOString().split("T")[0]}
                 required
               />
             </div>
@@ -86,9 +90,13 @@ export const TimeOffRequestForm: React.FC<TimeOffRequestFormProps> = ({
               <input
                 type="date"
                 value={request.endDate}
-                onChange={(e) => setRequest(prev => ({ ...prev, endDate: e.target.value }))}
+                onChange={(e) =>
+                  setRequest((prev) => ({ ...prev, endDate: e.target.value }))
+                }
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg"
-                min={request.startDate || new Date().toISOString().split('T')[0]}
+                min={
+                  request.startDate || new Date().toISOString().split("T")[0]
+                }
                 required
               />
             </div>
@@ -100,7 +108,9 @@ export const TimeOffRequestForm: React.FC<TimeOffRequestFormProps> = ({
             </label>
             <textarea
               value={request.reason}
-              onChange={(e) => setRequest(prev => ({ ...prev, reason: e.target.value }))}
+              onChange={(e) =>
+                setRequest((prev) => ({ ...prev, reason: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
               rows={4}
               placeholder="Please provide a reason for your request..."
@@ -112,9 +122,7 @@ export const TimeOffRequestForm: React.FC<TimeOffRequestFormProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Submit Request
-            </Button>
+            <Button type="submit">Submit Request</Button>
           </div>
         </form>
       </motion.div>

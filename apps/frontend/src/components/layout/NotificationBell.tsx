@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { useNotifications } from '../../contexts/NotificationContext';
-import { cn } from '../../lib/utils';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { useNotifications } from "../../contexts/NotificationContext";
+import { cn } from "../../lib/utils";
 
 interface NotificationBellProps {
   count: number;
 }
 
-export const NotificationBell: React.FC<NotificationBellProps> = ({ count }) => {
+export const NotificationBell: React.FC<NotificationBellProps> = ({
+  count,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const { state, dispatch } = useNotifications();
 
@@ -43,7 +45,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ count }) => 
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => dispatch({ type: 'MARK_ALL_AS_READ' })}
+                  onClick={() => dispatch({ type: "MARK_ALL_AS_READ" })}
                 >
                   Mark all as read
                 </Button>
@@ -61,23 +63,35 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ count }) => 
                     key={notification.id}
                     className={cn(
                       "p-4 border-b border-gray-100 hover:bg-gray-50",
-                      !notification.read && "bg-blue-50/50"
+                      !notification.read && "bg-blue-50/50",
                     )}
                   >
                     <div className="flex items-start gap-3">
-                      <div className={cn(
-                        "p-2 rounded-lg",
-                        notification.type === 'task' && "bg-blue-100",
-                        notification.type === 'message' && "bg-green-100",
-                        notification.type === 'alert' && "bg-red-100"
-                      )}>
-                        {notification.type === 'task' && <Icons.CheckSquare className="w-4 h-4 text-blue-600" />}
-                        {notification.type === 'message' && <Icons.MessageSquare className="w-4 h-4 text-green-600" />}
-                        {notification.type === 'alert' && <Icons.AlertTriangle className="w-4 h-4 text-red-600" />}
+                      <div
+                        className={cn(
+                          "p-2 rounded-lg",
+                          notification.type === "task" && "bg-blue-100",
+                          notification.type === "message" && "bg-green-100",
+                          notification.type === "alert" && "bg-red-100",
+                        )}
+                      >
+                        {notification.type === "task" && (
+                          <Icons.CheckSquare className="w-4 h-4 text-blue-600" />
+                        )}
+                        {notification.type === "message" && (
+                          <Icons.MessageSquare className="w-4 h-4 text-green-600" />
+                        )}
+                        {notification.type === "alert" && (
+                          <Icons.AlertTriangle className="w-4 h-4 text-red-600" />
+                        )}
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{notification.title}</p>
-                        <p className="text-sm text-gray-600">{notification.message}</p>
+                        <p className="font-medium text-gray-900">
+                          {notification.title}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {notification.message}
+                        </p>
                         <div className="mt-2 text-xs text-gray-500">
                           {new Date(notification.timestamp).toLocaleString()}
                         </div>

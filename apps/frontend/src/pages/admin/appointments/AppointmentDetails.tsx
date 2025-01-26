@@ -1,11 +1,19 @@
-import React from 'react';
-import { Clock, User, Phone, Mail, AlertCircle, FileText, DollarSign } from 'lucide-react';
-import type { SikkaAppointment } from '@/types/appointments';
+import React from "react";
+import {
+  Clock,
+  User,
+  Phone,
+  Mail,
+  AlertCircle,
+  FileText,
+  DollarSign,
+} from "lucide-react";
+import type { SikkaAppointment } from "@/types/appointments";
 
 interface AppointmentDetailsProps {
   appointment: SikkaAppointment;
   onClose: () => void;
-  onStatusUpdate: (status: SikkaAppointment['status']) => void;
+  onStatusUpdate: (status: SikkaAppointment["status"]) => void;
 }
 
 const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
@@ -19,7 +27,9 @@ const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
         <div className="p-6 border-b border-gray-light">
           <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-xl font-semibold text-navy">{appointment.patientName}</h2>
+              <h2 className="text-xl font-semibold text-navy">
+                {appointment.patientName}
+              </h2>
               <p className="text-gray-darker">{appointment.type}</p>
             </div>
             <button
@@ -30,9 +40,7 @@ const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
             </button>
           </div>
         </div>
-        <div className="p-6 space-y-6">
-          {/* Details implementation */}
-        </div>
+        <div className="p-6 space-y-6">{/* Details implementation */}</div>
       </div>
     </div>
   );

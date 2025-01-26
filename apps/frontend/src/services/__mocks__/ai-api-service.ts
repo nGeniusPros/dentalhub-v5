@@ -1,13 +1,15 @@
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 export const aiApiService = {
   processRequest: vi.fn().mockResolvedValue({
     success: true,
-    data: 'Mock response'
+    data: "Mock response",
   }),
-  initializeSession: vi.fn().mockResolvedValue({ sessionId: 'mock-session-id' }),
+  initializeSession: vi
+    .fn()
+    .mockResolvedValue({ sessionId: "mock-session-id" }),
   handleError: vi.fn().mockImplementation((error) => ({
-    errorCode: 'MOCK_ERROR',
-    message: 'Mock error message'
-  }))
+    errorCode: "MOCK_ERROR",
+    message: "Mock error message",
+  })),
 };

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { dashboardService } from '../../../services/dashboard';
-import { Button } from '../../../components/ui/button';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { dashboardService } from "../../../services/dashboard";
+import { Button } from "../../../components/ui/button";
 import {
   LineChart,
   Line,
@@ -11,7 +11,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from 'recharts';
+} from "recharts";
 
 interface PatientData {
   patientGrowth: {
@@ -37,7 +37,9 @@ export const PatientMetrics = () => {
         const response = await dashboardService.getPatientMetrics();
         setData(response);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch patient data');
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch patient data",
+        );
       } finally {
         setLoading(false);
       }
@@ -69,8 +71,12 @@ export const PatientMetrics = () => {
     >
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Patient Analytics</h2>
-          <p className="text-sm text-gray-500">Patient growth and satisfaction metrics</p>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Patient Analytics
+          </h2>
+          <p className="text-sm text-gray-500">
+            Patient growth and satisfaction metrics
+          </p>
         </div>
         <Button variant="outline" size="sm">
           <Icons.Download className="w-4 h-4 mr-2" />
@@ -84,17 +90,13 @@ export const PatientMetrics = () => {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={growthData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis 
-                dataKey="month" 
+              <XAxis
+                dataKey="month"
                 stroke="#6B7280"
                 fontSize={12}
                 tickLine={false}
               />
-              <YAxis 
-                stroke="#6B7280"
-                fontSize={12}
-                tickLine={false}
-              />
+              <YAxis stroke="#6B7280" fontSize={12} tickLine={false} />
               <Tooltip />
               <Line
                 type="monotone"

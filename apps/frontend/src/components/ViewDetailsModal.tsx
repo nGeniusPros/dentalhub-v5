@@ -1,14 +1,14 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from './ui/button';
-import { cn } from '../lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "./ui/button";
+import { cn } from "../lib/utils";
 
 interface ViewDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   data: any;
-  type: 'course' | 'challenge' | 'certification' | 'assignment';
+  type: "course" | "challenge" | "certification" | "assignment";
   onAction?: (action: string) => void;
 }
 
@@ -17,13 +17,13 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
   onClose,
   data,
   type,
-  onAction
+  onAction,
 }) => {
   if (!isOpen || !data) return null;
 
   const renderMetrics = () => {
     switch (type) {
-      case 'course':
+      case "course":
         return (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
@@ -45,7 +45,7 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
           </div>
         );
 
-      case 'challenge':
+      case "challenge":
         return (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div>
@@ -54,7 +54,9 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
             </div>
             <div>
               <label className="text-sm text-gray-500">End Date</label>
-              <p className="font-medium">{new Date(data.endDate).toLocaleDateString()}</p>
+              <p className="font-medium">
+                {new Date(data.endDate).toLocaleDateString()}
+              </p>
             </div>
             <div>
               <label className="text-sm text-gray-500">Participants</label>
@@ -63,7 +65,7 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
           </div>
         );
 
-      case 'certification':
+      case "certification":
         return (
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -72,32 +74,40 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
             </div>
             <div>
               <label className="text-sm text-gray-500">Status</label>
-              <span className={cn(
-                "px-2 py-1 text-xs font-medium rounded-full",
-                data.status === 'active' && "bg-green-100 text-green-800",
-                data.status === 'expiring' && "bg-yellow-100 text-yellow-800",
-                data.status === 'expired' && "bg-red-100 text-red-800"
-              )}>
+              <span
+                className={cn(
+                  "px-2 py-1 text-xs font-medium rounded-full",
+                  data.status === "active" && "bg-green-100 text-green-800",
+                  data.status === "expiring" && "bg-yellow-100 text-yellow-800",
+                  data.status === "expired" && "bg-red-100 text-red-800",
+                )}
+              >
                 {data.status}
               </span>
             </div>
             <div>
               <label className="text-sm text-gray-500">Earned Date</label>
-              <p className="font-medium">{new Date(data.earnedDate).toLocaleDateString()}</p>
+              <p className="font-medium">
+                {new Date(data.earnedDate).toLocaleDateString()}
+              </p>
             </div>
             <div>
               <label className="text-sm text-gray-500">Expiration Date</label>
-              <p className="font-medium">{new Date(data.expirationDate).toLocaleDateString()}</p>
+              <p className="font-medium">
+                {new Date(data.expirationDate).toLocaleDateString()}
+              </p>
             </div>
           </div>
         );
 
-      case 'assignment':
+      case "assignment":
         return (
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm text-gray-500">Due Date</label>
-              <p className="font-medium">{new Date(data.dueDate).toLocaleDateString()}</p>
+              <p className="font-medium">
+                {new Date(data.dueDate).toLocaleDateString()}
+              </p>
             </div>
             <div>
               <label className="text-sm text-gray-500">Points</label>
@@ -109,13 +119,15 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
             </div>
             <div>
               <label className="text-sm text-gray-500">Status</label>
-              <span className={cn(
-                "px-2 py-1 text-xs font-medium rounded-full",
-                data.status === 'completed' && "bg-green-100 text-green-800",
-                data.status === 'in_progress' && "bg-blue-100 text-blue-800",
-                data.status === 'pending' && "bg-yellow-100 text-yellow-800"
-              )}>
-                {data.status.replace('_', ' ')}
+              <span
+                className={cn(
+                  "px-2 py-1 text-xs font-medium rounded-full",
+                  data.status === "completed" && "bg-green-100 text-green-800",
+                  data.status === "in_progress" && "bg-blue-100 text-blue-800",
+                  data.status === "pending" && "bg-yellow-100 text-yellow-800",
+                )}
+              >
+                {data.status.replace("_", " ")}
               </span>
             </div>
           </div>
@@ -125,7 +137,7 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
 
   const renderContent = () => {
     switch (type) {
-      case 'course':
+      case "course":
         return (
           <>
             {/* Progress */}
@@ -145,14 +157,16 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
             {/* Modules */}
             {data.modules && (
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Modules</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Modules
+                </h3>
                 <div className="space-y-2">
                   {data.modules.map((module: any, index: number) => (
                     <div
                       key={index}
                       className={cn(
                         "p-3 rounded-lg",
-                        module.completed ? "bg-green-50" : "bg-gray-50"
+                        module.completed ? "bg-green-50" : "bg-gray-50",
                       )}
                     >
                       <div className="flex items-center justify-between">
@@ -164,7 +178,9 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                           )}
                           <span className="font-medium">{module.title}</span>
                         </div>
-                        <span className="text-sm text-gray-500">{module.duration}</span>
+                        <span className="text-sm text-gray-500">
+                          {module.duration}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -174,13 +190,15 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
           </>
         );
 
-      case 'challenge':
+      case "challenge":
         return (
           <>
             {/* Requirements */}
             {data.requirements && (
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Requirements</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Requirements
+                </h3>
                 <div className="space-y-2">
                   {data.requirements.map((req: string, index: number) => (
                     <div key={index} className="flex items-center gap-2">
@@ -195,12 +213,19 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
             {/* Tasks */}
             {data.tasks && (
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Challenge Tasks</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Challenge Tasks
+                </h3>
                 <div className="space-y-2">
                   {data.tasks.map((task: any, index: number) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
                       <span>{task.title}</span>
-                      <span className="text-sm text-gray-500">{task.points} points</span>
+                      <span className="text-sm text-gray-500">
+                        {task.points} points
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -209,13 +234,15 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
           </>
         );
 
-      case 'certification':
+      case "certification":
         return (
           <>
             {/* Skills */}
             {data.skills && (
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Skills</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Skills
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {data.skills.map((skill: string, index: number) => (
                     <span
@@ -232,7 +259,9 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
             {/* Validation */}
             {data.validationUrl && (
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Validation</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Validation
+                </h3>
                 <a
                   href={data.validationUrl}
                   target="_blank"
@@ -246,13 +275,15 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
           </>
         );
 
-      case 'assignment':
+      case "assignment":
         return (
           <>
             {/* Attachments */}
             {data.attachments && (
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Attachments</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Attachments
+                </h3>
                 <div className="space-y-2">
                   {data.attachments.map((file: any, index: number) => (
                     <div
@@ -271,11 +302,13 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
             )}
 
             {/* Grade & Feedback */}
-            {data.status === 'graded' && (
+            {data.status === "graded" && (
               <div className="p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">Grade</span>
-                  <span className="text-lg font-bold text-primary">{data.grade}%</span>
+                  <span className="text-lg font-bold text-primary">
+                    {data.grade}%
+                  </span>
                 </div>
                 {data.feedback && (
                   <p className="text-sm text-gray-600">{data.feedback}</p>
@@ -306,7 +339,9 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
         <div className="p-6 space-y-6">
           {/* Description */}
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Description</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">
+              Description
+            </h3>
             <p className="text-gray-600">{data.description}</p>
           </div>
 
@@ -322,8 +357,8 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
             <Button variant="outline" onClick={onClose}>
               Close
             </Button>
-            {type === 'course' && (
-              <Button onClick={() => onAction?.('start-course')}>
+            {type === "course" && (
+              <Button onClick={() => onAction?.("start-course")}>
                 {data.progress === 0 ? (
                   <>
                     <Icons.Play className="w-4 h-4 mr-2" />
@@ -342,20 +377,20 @@ export const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                 )}
               </Button>
             )}
-            {type === 'challenge' && (
-              <Button onClick={() => onAction?.('join-challenge')}>
+            {type === "challenge" && (
+              <Button onClick={() => onAction?.("join-challenge")}>
                 <Icons.Users className="w-4 h-4 mr-2" />
                 Join Challenge
               </Button>
             )}
-            {type === 'certification' && (
-              <Button onClick={() => onAction?.('start-certification')}>
+            {type === "certification" && (
+              <Button onClick={() => onAction?.("start-certification")}>
                 <Icons.FileCheck className="w-4 h-4 mr-2" />
                 Begin Certification
               </Button>
             )}
-            {type === 'assignment' && (
-              <Button onClick={() => onAction?.('start-assignment')}>
+            {type === "assignment" && (
+              <Button onClick={() => onAction?.("start-assignment")}>
                 <Icons.Play className="w-4 h-4 mr-2" />
                 Start Assignment
               </Button>

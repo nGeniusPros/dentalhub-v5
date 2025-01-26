@@ -63,7 +63,7 @@ export interface SettingsState {
 }
 
 export type SettingsAction =
-  | { type: 'SET_SETTINGS'; payload: Settings }
-  | { type: 'UPDATE_SETTINGS'; payload: Partial<Settings> }
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_ERROR'; payload: string | null };
+  | { type: "SET_SETTINGS"; payload: Settings }
+  | { type: "UPDATE_SETTINGS"; payload: Partial<Settings> }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: string | null };

@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import type { Employee, PerformanceReview } from '../../../../../types/employee';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import type {
+  Employee,
+  PerformanceReview,
+} from "../../../../../types/employee";
 
 interface PerformanceReviewFormProps {
   employee: Employee;
@@ -17,38 +20,41 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
   isOpen,
   onClose,
   onSubmit,
-  existingReview
+  existingReview,
 }) => {
   const [review, setReview] = useState<Partial<PerformanceReview>>(
     existingReview || {
       employeeId: employee.id,
-      reviewDate: new Date().toISOString().split('T')[0],
+      reviewDate: new Date().toISOString().split("T")[0],
       rating: 3,
-      strengths: [''],
-      improvements: [''],
-      goals: [''],
-      comments: ''
-    }
+      strengths: [""],
+      improvements: [""],
+      goals: [""],
+      comments: "",
+    },
   );
 
   const handleArrayInput = (
-    field: 'strengths' | 'improvements' | 'goals',
+    field: "strengths" | "improvements" | "goals",
     index: number,
-    value: string
+    value: string,
   ) => {
     const newArray = [...(review[field] as string[])];
     newArray[index] = value;
     setReview({ ...review, [field]: newArray });
   };
 
-  const addArrayItem = (field: 'strengths' | 'improvements' | 'goals') => {
+  const addArrayItem = (field: "strengths" | "improvements" | "goals") => {
     setReview({
       ...review,
-      [field]: [...(review[field] as string[]), '']
+      [field]: [...(review[field] as string[]), ""],
     });
   };
 
-  const removeArrayItem = (field: 'strengths' | 'improvements' | 'goals', index: number) => {
+  const removeArrayItem = (
+    field: "strengths" | "improvements" | "goals",
+    index: number,
+  ) => {
     const newArray = (review[field] as string[]).filter((_, i) => i !== index);
     setReview({ ...review, [field]: newArray });
   };
@@ -61,13 +67,13 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
       id: existingReview?.id || Date.now().toString(),
       employeeId: employee.id,
       reviewDate: review.reviewDate,
-      reviewer: 'Current User', // In real app, get from auth context
+      reviewer: "Current User", // In real app, get from auth context
       rating: review.rating,
-      strengths: review.strengths?.filter(s => s.trim()) || [],
-      improvements: review.improvements?.filter(i => i.trim()) || [],
-      goals: review.goals?.filter(g => g.trim()) || [],
-      comments: review.comments || '',
-      nextReviewDate: review.nextReviewDate || ''
+      strengths: review.strengths?.filter((s) => s.trim()) || [],
+      improvements: review.improvements?.filter((i) => i.trim()) || [],
+      goals: review.goals?.filter((g) => g.trim()) || [],
+      comments: review.comments || "",
+      nextReviewDate: review.nextReviewDate || "",
     };
 
     onSubmit(newReview);
@@ -104,7 +110,9 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
               <input
                 type="date"
                 value={review.reviewDate}
-                onChange={(e) => setReview({ ...review, reviewDate: e.target.value })}
+                onChange={(e) =>
+                  setReview({ ...review, reviewDate: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -116,7 +124,9 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
               <input
                 type="date"
                 value={review.nextReviewDate}
-                onChange={(e) => setReview({ ...review, nextReviewDate: e.target.value })}
+                onChange={(e) =>
+                  setReview({ ...review, nextReviewDate: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -135,8 +145,8 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
                   onClick={() => setReview({ ...review, rating })}
                   className={`p-2 rounded-full ${
                     review.rating === rating
-                      ? 'text-yellow-400'
-                      : 'text-gray-300'
+                      ? "text-yellow-400"
+                      : "text-gray-300"
                   }`}
                 >
                   <Icons.Star className="w-8 h-8 fill-current" />
@@ -155,7 +165,7 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => addArrayItem('strengths')}
+                onClick={() => addArrayItem("strengths")}
               >
                 <Icons.Plus className="w-4 h-4 mr-2" />
                 Add Strength
@@ -167,7 +177,9 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
                   <input
                     type="text"
                     value={strength}
-                    onChange={(e) => handleArrayInput('strengths', index, e.target.value)}
+                    onChange={(e) =>
+                      handleArrayInput("strengths", index, e.target.value)
+                    }
                     className="flex-1 px-3 py-2 border border-gray-200 rounded-lg"
                     placeholder="Enter strength..."
                   />
@@ -175,7 +187,7 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeArrayItem('strengths', index)}
+                    onClick={() => removeArrayItem("strengths", index)}
                   >
                     <Icons.X className="w-4 h-4 text-red-500" />
                   </Button>
@@ -194,7 +206,7 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => addArrayItem('improvements')}
+                onClick={() => addArrayItem("improvements")}
               >
                 <Icons.Plus className="w-4 h-4 mr-2" />
                 Add Area
@@ -206,7 +218,9 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
                   <input
                     type="text"
                     value={improvement}
-                    onChange={(e) => handleArrayInput('improvements', index, e.target.value)}
+                    onChange={(e) =>
+                      handleArrayInput("improvements", index, e.target.value)
+                    }
                     className="flex-1 px-3 py-2 border border-gray-200 rounded-lg"
                     placeholder="Enter area for improvement..."
                   />
@@ -214,7 +228,7 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeArrayItem('improvements', index)}
+                    onClick={() => removeArrayItem("improvements", index)}
                   >
                     <Icons.X className="w-4 h-4 text-red-500" />
                   </Button>
@@ -233,7 +247,7 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => addArrayItem('goals')}
+                onClick={() => addArrayItem("goals")}
               >
                 <Icons.Plus className="w-4 h-4 mr-2" />
                 Add Goal
@@ -245,7 +259,9 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
                   <input
                     type="text"
                     value={goal}
-                    onChange={(e) => handleArrayInput('goals', index, e.target.value)}
+                    onChange={(e) =>
+                      handleArrayInput("goals", index, e.target.value)
+                    }
                     className="flex-1 px-3 py-2 border border-gray-200 rounded-lg"
                     placeholder="Enter goal..."
                   />
@@ -253,7 +269,7 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeArrayItem('goals', index)}
+                    onClick={() => removeArrayItem("goals", index)}
                   >
                     <Icons.X className="w-4 h-4 text-red-500" />
                   </Button>
@@ -269,7 +285,9 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
             </label>
             <textarea
               value={review.comments}
-              onChange={(e) => setReview({ ...review, comments: e.target.value })}
+              onChange={(e) =>
+                setReview({ ...review, comments: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
               rows={4}
             />
@@ -280,7 +298,7 @@ export const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({
               Cancel
             </Button>
             <Button type="submit">
-              {existingReview ? 'Update Review' : 'Submit Review'}
+              {existingReview ? "Update Review" : "Submit Review"}
             </Button>
           </div>
         </form>

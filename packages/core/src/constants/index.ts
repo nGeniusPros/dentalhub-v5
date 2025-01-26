@@ -1,23 +1,23 @@
 // API Endpoints
 export const API_ROUTES = {
   AUTH: {
-    LOGIN: '/auth/login',
-    LOGOUT: '/auth/logout',
-    REFRESH: '/auth/refresh',
+    LOGIN: "/auth/login",
+    LOGOUT: "/auth/logout",
+    REFRESH: "/auth/refresh",
   },
-  PATIENTS: '/patients',
-  APPOINTMENTS: '/appointments',
-  STAFF: '/staff',
-  COMMUNICATIONS: '/communications',
+  PATIENTS: "/patients",
+  APPOINTMENTS: "/appointments",
+  STAFF: "/staff",
+  COMMUNICATIONS: "/communications",
 } as const;
 
 // Error Messages
 export const ERROR_MESSAGES = {
-  UNAUTHORIZED: 'Unauthorized access',
-  INVALID_CREDENTIALS: 'Invalid credentials',
-  SERVER_ERROR: 'Internal server error',
-  NOT_FOUND: 'Resource not found',
-  VALIDATION_ERROR: 'Validation error',
+  UNAUTHORIZED: "Unauthorized access",
+  INVALID_CREDENTIALS: "Invalid credentials",
+  SERVER_ERROR: "Internal server error",
+  NOT_FOUND: "Resource not found",
+  VALIDATION_ERROR: "Validation error",
 } as const;
 
 // HTTP Status Codes

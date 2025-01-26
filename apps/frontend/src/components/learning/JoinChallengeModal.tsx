@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { useNotifications } from '../../contexts/NotificationContext';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { useNotifications } from "../../contexts/NotificationContext";
 
 interface JoinChallengeModalProps {
   isOpen: boolean;
@@ -29,7 +29,7 @@ export const JoinChallengeModal: React.FC<JoinChallengeModalProps> = ({
   isOpen,
   onClose,
   challenge,
-  onJoin
+  onJoin,
 }) => {
   const [teamMembers, setTeamMembers] = useState<string[]>([]);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -40,16 +40,16 @@ export const JoinChallengeModal: React.FC<JoinChallengeModalProps> = ({
   const handleJoin = () => {
     if (!agreedToTerms) {
       notifyDispatch({
-        type: 'ADD_NOTIFICATION',
+        type: "ADD_NOTIFICATION",
         payload: {
           id: Date.now().toString(),
-          type: 'alert',
-          title: 'Agreement Required',
-          message: 'Please agree to the challenge terms to continue.',
+          type: "alert",
+          title: "Agreement Required",
+          message: "Please agree to the challenge terms to continue.",
           timestamp: new Date().toISOString(),
           read: false,
-          priority: 'medium'
-        }
+          priority: "medium",
+        },
       });
       return;
     }
@@ -90,7 +90,9 @@ export const JoinChallengeModal: React.FC<JoinChallengeModalProps> = ({
             </div>
             <div>
               <label className="text-sm text-gray-500">End Date</label>
-              <p className="font-medium">{new Date(challenge.endDate).toLocaleDateString()}</p>
+              <p className="font-medium">
+                {new Date(challenge.endDate).toLocaleDateString()}
+              </p>
             </div>
             <div>
               <label className="text-sm text-gray-500">Participants</label>
@@ -103,9 +105,14 @@ export const JoinChallengeModal: React.FC<JoinChallengeModalProps> = ({
               <h3 className="font-medium mb-2">Challenge Tasks</h3>
               <div className="space-y-2">
                 {challenge.tasks.map((task) => (
-                  <div key={task.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div
+                    key={task.id}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
                     <span>{task.title}</span>
-                    <span className="text-sm text-gray-500">{task.points} points</span>
+                    <span className="text-sm text-gray-500">
+                      {task.points} points
+                    </span>
                   </div>
                 ))}
               </div>
@@ -130,12 +137,17 @@ export const JoinChallengeModal: React.FC<JoinChallengeModalProps> = ({
             <h3 className="font-medium mb-2">Team Members (Optional)</h3>
             <div className="space-y-2">
               {teamMembers.map((member, index) => (
-                <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+                >
                   <span>{member}</span>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setTeamMembers(teamMembers.filter((_, i) => i !== index))}
+                    onClick={() =>
+                      setTeamMembers(teamMembers.filter((_, i) => i !== index))
+                    }
                   >
                     <Icons.X className="w-4 h-4 text-red-500" />
                   </Button>
@@ -145,7 +157,7 @@ export const JoinChallengeModal: React.FC<JoinChallengeModalProps> = ({
                 variant="outline"
                 className="w-full"
                 onClick={() => {
-                  const member = prompt('Enter team member name:');
+                  const member = prompt("Enter team member name:");
                   if (member) {
                     setTeamMembers([...teamMembers, member]);
                   }
@@ -165,7 +177,8 @@ export const JoinChallengeModal: React.FC<JoinChallengeModalProps> = ({
               className="rounded border-gray-300"
             />
             <span className="text-sm">
-              I agree to the challenge terms and commit to completing all required tasks
+              I agree to the challenge terms and commit to completing all
+              required tasks
             </span>
           </label>
         </div>

@@ -27,8 +27,7 @@ class DashboardService {
   private cache: Map<string, { data: any; timestamp: number }> = new Map();
   private cacheDuration: number = 5 * 60 * 1000; // 5 minutes
 
-  private constructor() {
-  }
+  private constructor() {}
 
   public static getInstance(): DashboardService {
     if (!DashboardService.instance) {
@@ -62,32 +61,32 @@ class DashboardService {
   }
 
   async getStats(forceRefresh: boolean = false): Promise<DashboardStats> {
-    const cacheKey = this.getCacheKey('dashboard-stats');
-    
+    const cacheKey = this.getCacheKey("dashboard-stats");
+
     if (!forceRefresh) {
       const cached = this.getFromCache<DashboardStats>(cacheKey);
       if (cached) return cached;
     }
 
     try {
-      const response = await fetch('/api/dashboard/stats');
+      const response = await fetch("/api/dashboard/stats");
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch dashboard stats');
+        throw new Error(error.message || "Failed to fetch dashboard stats");
       }
 
       const data = await response.json();
       this.setCache(cacheKey, data);
       return data;
     } catch (error: any) {
-      console.error('Error fetching dashboard stats:', error);
+      console.error("Error fetching dashboard stats:", error);
       throw error;
     }
   }
 
   async getPerformanceMetrics(
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<{
     appointments: Array<{
       date: string;
@@ -99,7 +98,10 @@ class DashboardService {
       amount: number;
     }>;
   } | null> {
-    const cacheKey = this.getCacheKey('performance-metrics', { startDate, endDate });
+    const cacheKey = this.getCacheKey("performance-metrics", {
+      startDate,
+      endDate,
+    });
     const cached = this.getFromCache<{
       appointments: Array<{
         date: string;
@@ -114,24 +116,24 @@ class DashboardService {
     if (cached) return cached;
 
     try {
-      const response = await fetch('/api/dashboard/performance', {
-        method: 'POST',
+      const response = await fetch("/api/dashboard/performance", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ startDate, endDate }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch performance metrics');
+        throw new Error(error.message || "Failed to fetch performance metrics");
       }
 
       const data = await response.json();
       this.setCache(cacheKey, data);
       return data;
     } catch (error: any) {
-      console.error('Error fetching performance metrics:', error);
+      console.error("Error fetching performance metrics:", error);
       throw error;
     }
   }
@@ -146,31 +148,33 @@ class DashboardService {
       revenue: number;
     };
   }> | null> {
-    const cacheKey = this.getCacheKey('staff-metrics');
-    const cached = this.getFromCache<Array<{
-      staffId: string;
-      name: string;
-      role: string;
-      metrics: {
-        appointmentsCompleted: number;
-        patientSatisfaction: number;
-        revenue: number;
-      };
-    }>>(cacheKey);
+    const cacheKey = this.getCacheKey("staff-metrics");
+    const cached = this.getFromCache<
+      Array<{
+        staffId: string;
+        name: string;
+        role: string;
+        metrics: {
+          appointmentsCompleted: number;
+          patientSatisfaction: number;
+          revenue: number;
+        };
+      }>
+    >(cacheKey);
     if (cached) return cached;
 
     try {
-      const response = await fetch('/api/dashboard/staff-metrics');
+      const response = await fetch("/api/dashboard/staff-metrics");
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch staff metrics');
+        throw new Error(error.message || "Failed to fetch staff metrics");
       }
 
       const data = await response.json();
       this.setCache(cacheKey, data);
       return data;
     } catch (error: any) {
-      console.error('Error fetching staff metrics:', error);
+      console.error("Error fetching staff metrics:", error);
       throw error;
     }
   }

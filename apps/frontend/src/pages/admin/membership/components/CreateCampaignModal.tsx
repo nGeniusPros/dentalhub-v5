@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
 
 interface CreateCampaignModalProps {
   isOpen: boolean;
@@ -12,21 +12,21 @@ interface CreateCampaignModalProps {
 export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
   isOpen,
   onClose,
-  onSave
+  onSave,
 }) => {
   const [step, setStep] = useState(1);
   const [campaign, setCampaign] = useState({
-    name: '',
-    type: 'upgrade',
-    targetAudience: 'all',
-    startDate: '',
-    endDate: '',
+    name: "",
+    type: "upgrade",
+    targetAudience: "all",
+    startDate: "",
+    endDate: "",
     incentive: {
-      type: 'points',
-      value: 0
+      type: "points",
+      value: 0,
     },
-    message: '',
-    channels: [] as string[]
+    message: "",
+    channels: [] as string[],
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -57,24 +57,28 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
           {/* Progress Steps */}
           <div className="flex justify-between mt-6">
             {[
-              { num: 1, label: 'Campaign Details' },
-              { num: 2, label: 'Target Audience' },
-              { num: 3, label: 'Incentives' }
+              { num: 1, label: "Campaign Details" },
+              { num: 2, label: "Target Audience" },
+              { num: 3, label: "Incentives" },
             ].map(({ num, label }) => (
               <div key={num} className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  step >= num ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'
-                }`}>
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    step >= num
+                      ? "bg-primary text-white"
+                      : "bg-gray-100 text-gray-400"
+                  }`}
+                >
                   {num}
                 </div>
-                <span className={`ml-2 ${
-                  step >= num ? 'text-gray-900' : 'text-gray-400'
-                }`}>
+                <span
+                  className={`ml-2 ${
+                    step >= num ? "text-gray-900" : "text-gray-400"
+                  }`}
+                >
                   {label}
                 </span>
-                {num < 3 && (
-                  <div className="w-12 h-0.5 mx-2 bg-gray-200" />
-                )}
+                {num < 3 && <div className="w-12 h-0.5 mx-2 bg-gray-200" />}
               </div>
             ))}
           </div>
@@ -90,7 +94,9 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
                 <input
                   type="text"
                   value={campaign.name}
-                  onChange={(e) => setCampaign(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) =>
+                    setCampaign((prev) => ({ ...prev, name: e.target.value }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -102,7 +108,9 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
                 </label>
                 <select
                   value={campaign.type}
-                  onChange={(e) => setCampaign(prev => ({ ...prev, type: e.target.value }))}
+                  onChange={(e) =>
+                    setCampaign((prev) => ({ ...prev, type: e.target.value }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value="upgrade">Membership Upgrade</option>
@@ -120,7 +128,12 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
                   <input
                     type="date"
                     value={campaign.startDate}
-                    onChange={(e) => setCampaign(prev => ({ ...prev, startDate: e.target.value }))}
+                    onChange={(e) =>
+                      setCampaign((prev) => ({
+                        ...prev,
+                        startDate: e.target.value,
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     required
                   />
@@ -132,7 +145,12 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
                   <input
                     type="date"
                     value={campaign.endDate}
-                    onChange={(e) => setCampaign(prev => ({ ...prev, endDate: e.target.value }))}
+                    onChange={(e) =>
+                      setCampaign((prev) => ({
+                        ...prev,
+                        endDate: e.target.value,
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     required
                   />
@@ -149,7 +167,12 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
                 </label>
                 <select
                   value={campaign.targetAudience}
-                  onChange={(e) => setCampaign(prev => ({ ...prev, targetAudience: e.target.value }))}
+                  onChange={(e) =>
+                    setCampaign((prev) => ({
+                      ...prev,
+                      targetAudience: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value="all">All Members</option>
@@ -165,28 +188,30 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
                   Communication Channels
                 </label>
                 <div className="space-y-2">
-                  {['email', 'sms', 'push', 'in_app'].map((channel) => (
+                  {["email", "sms", "push", "in_app"].map((channel) => (
                     <label key={channel} className="flex items-center gap-2">
                       <input
                         type="checkbox"
                         checked={campaign.channels.includes(channel)}
                         onChange={(e) => {
                           if (e.target.checked) {
-                            setCampaign(prev => ({
+                            setCampaign((prev) => ({
                               ...prev,
-                              channels: [...prev.channels, channel]
+                              channels: [...prev.channels, channel],
                             }));
                           } else {
-                            setCampaign(prev => ({
+                            setCampaign((prev) => ({
                               ...prev,
-                              channels: prev.channels.filter(c => c !== channel)
+                              channels: prev.channels.filter(
+                                (c) => c !== channel,
+                              ),
                             }));
                           }
                         }}
                         className="rounded border-gray-300"
                       />
                       <span className="text-sm capitalize">
-                        {channel.replace('_', ' ')}
+                        {channel.replace("_", " ")}
                       </span>
                     </label>
                   ))}
@@ -203,10 +228,12 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
                 </label>
                 <select
                   value={campaign.incentive.type}
-                  onChange={(e) => setCampaign(prev => ({
-                    ...prev,
-                    incentive: { ...prev.incentive, type: e.target.value }
-                  }))}
+                  onChange={(e) =>
+                    setCampaign((prev) => ({
+                      ...prev,
+                      incentive: { ...prev.incentive, type: e.target.value },
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value="points">Bonus Points</option>
@@ -223,10 +250,15 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
                 <input
                   type="number"
                   value={campaign.incentive.value}
-                  onChange={(e) => setCampaign(prev => ({
-                    ...prev,
-                    incentive: { ...prev.incentive, value: parseFloat(e.target.value) }
-                  }))}
+                  onChange={(e) =>
+                    setCampaign((prev) => ({
+                      ...prev,
+                      incentive: {
+                        ...prev.incentive,
+                        value: parseFloat(e.target.value),
+                      },
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -238,7 +270,12 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
                 </label>
                 <textarea
                   value={campaign.message}
-                  onChange={(e) => setCampaign(prev => ({ ...prev, message: e.target.value }))}
+                  onChange={(e) =>
+                    setCampaign((prev) => ({
+                      ...prev,
+                      message: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg h-32"
                   placeholder="Enter campaign message..."
                   required
@@ -258,16 +295,11 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
               </Button>
             )}
             {step < 3 ? (
-              <Button
-                type="button"
-                onClick={() => setStep(step + 1)}
-              >
+              <Button type="button" onClick={() => setStep(step + 1)}>
                 Next
               </Button>
             ) : (
-              <Button type="submit">
-                Launch Campaign
-              </Button>
+              <Button type="submit">Launch Campaign</Button>
             )}
           </div>
         </form>

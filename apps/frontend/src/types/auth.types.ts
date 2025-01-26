@@ -8,9 +8,4 @@
  * @property {'staff'} staff - Administrative and support roles
  * @property {'patient'} patient - Clinic patient access
  */
-export type UserRole =
-  | 'admin'
-  | 'dentist'
-  | 'hygienist'
-  | 'staff'
-  | 'patient';
+export type UserRole = "admin" | "dentist" | "hygienist" | "staff" | "patient";

@@ -1,8 +1,17 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Button } from '../ui/button';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { Button } from "../ui/button";
+import * as Icons from "lucide-react";
 
 interface RevenueChartProps {
   data: any[];
@@ -27,34 +36,37 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
           <AreaChart data={data}>
             <defs>
               <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#1B2B5B" stopOpacity={0.1}/>
-                <stop offset="95%" stopColor="#1B2B5B" stopOpacity={0}/>
+                <stop offset="5%" stopColor="#1B2B5B" stopOpacity={0.1} />
+                <stop offset="95%" stopColor="#1B2B5B" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="rgba(203, 213, 225, 0.3)"
+            />
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Area 
-              type="monotone" 
-              dataKey="revenue" 
-              stroke="#1B2B5B" 
-              fill="url(#revenueGradient)" 
+            <Area
+              type="monotone"
+              dataKey="revenue"
+              stroke="#1B2B5B"
+              fill="url(#revenueGradient)"
               name="Revenue"
             />
-            <Area 
-              type="monotone" 
-              dataKey="collections" 
-              stroke="#4BC5BD" 
-              fill="none" 
+            <Area
+              type="monotone"
+              dataKey="collections"
+              stroke="#4BC5BD"
+              fill="none"
               name="Collections"
             />
-            <Area 
-              type="monotone" 
-              dataKey="expenses" 
-              stroke="#C5A572" 
-              fill="none" 
+            <Area
+              type="monotone"
+              dataKey="expenses"
+              stroke="#C5A572"
+              fill="none"
               name="Expenses"
             />
           </AreaChart>

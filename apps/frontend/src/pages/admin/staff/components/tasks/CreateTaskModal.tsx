@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import type { Task } from '../../../../../types/task';
-import supabase from '../../../../../lib/supabase/client';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import type { Task } from "../../../../../types/task";
+import supabase from "../../../../../lib/supabase/client";
 
 interface CreateTaskModalProps {
   isOpen: boolean;
@@ -14,25 +14,23 @@ interface CreateTaskModalProps {
 export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   isOpen,
   onClose,
-  onSave
+  onSave,
 }) => {
   const [task, setTask] = useState<Partial<Task>>({
-    priority: 'medium',
-    status: 'pending',
-    category: 'assignment',
+    priority: "medium",
+    status: "pending",
+    category: "assignment",
     assignee: {
-      type: 'individual',
-      value: ''
-    }
+      type: "individual",
+      value: "",
+    },
   });
   const [staff, setStaff] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchStaff = async () => {
       try {
-        const { data, error } = await supabase
-          .from('staff_profiles')
-          .select(`
+        const { data, error } = await supabase.from("staff_profiles").select(`
             id,
             user:auth.users!user_id(
               id,
@@ -43,12 +41,12 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
           `);
 
         if (error) {
-          console.error('Error fetching staff:', error);
+          console.error("Error fetching staff:", error);
         } else {
           setStaff(data);
         }
       } catch (error) {
-        console.error('Error fetching staff:', error);
+        console.error("Error fetching staff:", error);
       }
     };
 
@@ -56,19 +54,19 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   }, [supabase]);
 
   const departments = [
-    'Clinical',
-    'Administrative',
-    'Hygiene',
-    'Front Desk',
-    'Billing'
+    "Clinical",
+    "Administrative",
+    "Hygiene",
+    "Front Desk",
+    "Billing",
   ];
 
   const groups = [
-    'Morning Shift',
-    'Afternoon Shift',
-    'Evening Shift',
-    'Weekend Team',
-    'On-Call Team'
+    "Morning Shift",
+    "Afternoon Shift",
+    "Evening Shift",
+    "Weekend Team",
+    "On-Call Team",
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -76,9 +74,9 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     if (task.title && task.assignee?.value && task.dueDate) {
       const newTask: Task = {
         id: Date.now().toString(),
-        ...task as Omit<Task, 'id'>,
-        createdBy: 'HR Manager',
-        createdAt: new Date().toISOString().split('T')[0]
+        ...(task as Omit<Task, "id">),
+        createdBy: "HR Manager",
+        createdAt: new Date().toISOString().split("T")[0],
       } as Task;
       onSave(newTask);
       onClose();
@@ -99,7 +97,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
             <h2 className="text-xl font-semibold">Create New Task</h2>
             <Button variant="ghost" size="sm" onClick={onClose}>
               {React.createElement((Icons as any).X, {
-                className: "w-5 h-5"
+                className: "w-5 h-5",
               })}
             </Button>
           </div>
@@ -112,7 +110,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
             </label>
             <input
               type="text"
-              value={task.title || ''}
+              value={task.title || ""}
               onChange={(e) => setTask({ ...task, title: e.target.value })}
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               required
@@ -124,8 +122,10 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               Description
             </label>
             <textarea
-              value={task.description || ''}
-              onChange={(e) => setTask({ ...task, description: e.target.value })}
+              value={task.description || ""}
+              onChange={(e) =>
+                setTask({ ...task, description: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               rows={3}
               required
@@ -139,10 +139,15 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               </label>
               <select
                 value={task.assignee?.type}
-                onChange={(e) => setTask({
-                  ...task,
-                  assignee: { type: e.target.value as Task['assignee']['type'], value: '' }
-                })}
+                onChange={(e) =>
+                  setTask({
+                    ...task,
+                    assignee: {
+                      type: e.target.value as Task["assignee"]["type"],
+                      value: "",
+                    },
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               >
                 <option value="individual">Individual</option>
@@ -153,31 +158,46 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {task.assignee?.type === 'individual' ? 'Select Staff' :
-                  task.assignee?.type === 'department' ? 'Select Department' :
-                  'Select Group'}
+                {task.assignee?.type === "individual"
+                  ? "Select Staff"
+                  : task.assignee?.type === "department"
+                    ? "Select Department"
+                    : "Select Group"}
               </label>
               <select
                 value={task.assignee?.value}
-                onChange={(e) => setTask({
-                  ...task,
-                  assignee: { ...task.assignee!, value: e.target.value }
-                })}
+                onChange={(e) =>
+                  setTask({
+                    ...task,
+                    assignee: { ...task.assignee!, value: e.target.value },
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
                 <option value="">Select...</option>
-                {task.assignee?.type === 'individual' && staff.map(person => (
-                  <option key={person.id} value={person.user?.raw_user_meta_data?.full_name}>
-                    {person.user?.raw_user_meta_data?.full_name} ({person.role})
-                  </option>
-                ))}
-                {task.assignee?.type === 'department' && departments.map(dept => (
-                  <option key={dept} value={dept}>{dept}</option>
-                ))}
-                {task.assignee?.type === 'group' && groups.map(group => (
-                  <option key={group} value={group}>{group}</option>
-                ))}
+                {task.assignee?.type === "individual" &&
+                  staff.map((person) => (
+                    <option
+                      key={person.id}
+                      value={person.user?.raw_user_meta_data?.full_name}
+                    >
+                      {person.user?.raw_user_meta_data?.full_name} (
+                      {person.role})
+                    </option>
+                  ))}
+                {task.assignee?.type === "department" &&
+                  departments.map((dept) => (
+                    <option key={dept} value={dept}>
+                      {dept}
+                    </option>
+                  ))}
+                {task.assignee?.type === "group" &&
+                  groups.map((group) => (
+                    <option key={group} value={group}>
+                      {group}
+                    </option>
+                  ))}
               </select>
             </div>
 
@@ -187,7 +207,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               </label>
               <input
                 type="date"
-                value={task.dueDate || ''}
+                value={task.dueDate || ""}
                 onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
@@ -202,7 +222,12 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               </label>
               <select
                 value={task.priority}
-                onChange={(e) => setTask({ ...task, priority: e.target.value as Task['priority'] })}
+                onChange={(e) =>
+                  setTask({
+                    ...task,
+                    priority: e.target.value as Task["priority"],
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               >
                 <option value="low">Low</option>
@@ -217,7 +242,12 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               </label>
               <select
                 value={task.category}
-                onChange={(e) => setTask({ ...task, category: e.target.value as Task['category'] })}
+                onChange={(e) =>
+                  setTask({
+                    ...task,
+                    category: e.target.value as Task["category"],
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               >
                 <option value="assignment">Assignment</option>
@@ -231,9 +261,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Create Task
-            </Button>
+            <Button type="submit">Create Task</Button>
           </div>
         </form>
       </motion.div>

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { cn } from '../../lib/utils';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { cn } from "../../lib/utils";
 
 interface AITutorAvatarProps {
   name: string;
@@ -15,24 +15,25 @@ export const AITutorAvatar: React.FC<AITutorAvatarProps> = ({
   name,
   expertise = [],
   avatar,
-  onInteract
+  onInteract,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentMessage, setCurrentMessage] = useState('');
+  const [currentMessage, setCurrentMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
   const messages = [
     "Need help understanding a concept?",
     "Let's practice together!",
     "I can explain that in a different way.",
-    "Want to review your progress?"
+    "Want to review your progress?",
   ];
 
   useEffect(() => {
     if (isOpen) {
       const interval = setInterval(() => {
         setIsTyping(true);
-        const newMessage = messages[Math.floor(Math.random() * messages.length)];
+        const newMessage =
+          messages[Math.floor(Math.random() * messages.length)];
         let i = 0;
         const typing = setInterval(() => {
           setCurrentMessage(newMessage.substring(0, i));
@@ -93,12 +94,15 @@ export const AITutorAvatar: React.FC<AITutorAvatarProps> = ({
                 </div>
               )}
 
-              <div className={cn(
-                "p-3 bg-gray-50 rounded-lg",
-                isTyping && "animate-pulse"
-              )}>
+              <div
+                className={cn(
+                  "p-3 bg-gray-50 rounded-lg",
+                  isTyping && "animate-pulse",
+                )}
+              >
                 <p className="text-sm">
-                  {currentMessage || "Hi! How can I help you with your learning today?"}
+                  {currentMessage ||
+                    "Hi! How can I help you with your learning today?"}
                   {isTyping && <span className="animate-pulse">|</span>}
                 </p>
               </div>
@@ -108,7 +112,7 @@ export const AITutorAvatar: React.FC<AITutorAvatarProps> = ({
               <Button
                 variant="outline"
                 className="flex-1"
-                onClick={() => onInteract?.('explain')}
+                onClick={() => onInteract?.("explain")}
               >
                 <Icons.BookOpen className="w-4 h-4 mr-2" />
                 Explain Topic
@@ -116,7 +120,7 @@ export const AITutorAvatar: React.FC<AITutorAvatarProps> = ({
               <Button
                 variant="outline"
                 className="flex-1"
-                onClick={() => onInteract?.('practice')}
+                onClick={() => onInteract?.("practice")}
               >
                 <Icons.Target className="w-4 h-4 mr-2" />
                 Practice

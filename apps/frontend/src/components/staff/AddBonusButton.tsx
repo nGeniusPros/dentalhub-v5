@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { Button } from '../ui/button';
-import * as Icons from 'lucide-react';
-import { AddBonusModal } from './AddBonusModal';
-import { useNotifications } from '../../contexts/NotificationContext';
+import React, { useState } from "react";
+import { Button } from "../ui/button";
+import * as Icons from "lucide-react";
+import { AddBonusModal } from "./AddBonusModal";
+import { useNotifications } from "../../contexts/NotificationContext";
 
 interface AddBonusButtonProps {
   staffId: string;
   staffName: string;
   onAdd?: (bonus: any) => void;
-  variant?: 'default' | 'outline' | 'ghost';
-  size?: 'default' | 'sm' | 'lg';
+  variant?: "default" | "outline" | "ghost";
+  size?: "default" | "sm" | "lg";
   className?: string;
 }
 
@@ -17,9 +17,9 @@ export const AddBonusButton: React.FC<AddBonusButtonProps> = ({
   staffId,
   staffName,
   onAdd,
-  variant = 'default',
-  size = 'default',
-  className
+  variant = "default",
+  size = "default",
+  className,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const { dispatch: notifyDispatch } = useNotifications();
@@ -30,16 +30,16 @@ export const AddBonusButton: React.FC<AddBonusButtonProps> = ({
     }
 
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'message',
-        title: 'Bonus Added',
+        type: "message",
+        title: "Bonus Added",
         message: `Successfully added ${bonus.type} bonus for ${staffName}`,
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium'
-      }
+        priority: "medium",
+      },
     });
   };
 

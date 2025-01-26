@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { SettingsToggle } from './SettingsToggle';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { SettingsToggle } from "./SettingsToggle";
 
 interface SecuritySettings {
   twoFactorAuth: boolean;
@@ -18,7 +18,7 @@ export const SecuritySettings = () => {
     passwordExpiration: 90,
     loginAttempts: 3,
     sessionTimeout: 30,
-    ipWhitelist: []
+    ipWhitelist: [],
   });
 
   return (
@@ -28,7 +28,7 @@ export const SecuritySettings = () => {
       className="bg-white rounded-xl shadow-lg border border-gray-200 p-6"
     >
       <h2 className="text-lg font-semibold mb-4">Security Settings</h2>
-      
+
       <div className="space-y-6">
         <SettingsToggle
           section="security"
@@ -66,11 +66,16 @@ export const SecuritySettings = () => {
             <input
               type="number"
               value={settings.passwordExpiration}
-              onChange={(e) => setSettings(prev => ({ ...prev, passwordExpiration: parseInt(e.target.value) }))}
+              onChange={(e) =>
+                setSettings((prev) => ({
+                  ...prev,
+                  passwordExpiration: parseInt(e.target.value),
+                }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Failed Login Attempts
@@ -78,7 +83,12 @@ export const SecuritySettings = () => {
             <input
               type="number"
               value={settings.loginAttempts}
-              onChange={(e) => setSettings(prev => ({ ...prev, loginAttempts: parseInt(e.target.value) }))}
+              onChange={(e) =>
+                setSettings((prev) => ({
+                  ...prev,
+                  loginAttempts: parseInt(e.target.value),
+                }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             />
           </div>
@@ -90,7 +100,12 @@ export const SecuritySettings = () => {
           </label>
           <select
             value={settings.sessionTimeout}
-            onChange={(e) => setSettings(prev => ({ ...prev, sessionTimeout: parseInt(e.target.value) }))}
+            onChange={(e) =>
+              setSettings((prev) => ({
+                ...prev,
+                sessionTimeout: parseInt(e.target.value),
+              }))
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg"
           >
             <option value={15}>15 minutes</option>
@@ -113,7 +128,7 @@ export const SecuritySettings = () => {
                   onChange={(e) => {
                     const newList = [...settings.ipWhitelist];
                     newList[index] = e.target.value;
-                    setSettings(prev => ({ ...prev, ipWhitelist: newList }));
+                    setSettings((prev) => ({ ...prev, ipWhitelist: newList }));
                   }}
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-lg"
                   placeholder="Enter IP address"
@@ -121,8 +136,10 @@ export const SecuritySettings = () => {
                 <Button
                   variant="ghost"
                   onClick={() => {
-                    const newList = settings.ipWhitelist.filter((_, i) => i !== index);
-                    setSettings(prev => ({ ...prev, ipWhitelist: newList }));
+                    const newList = settings.ipWhitelist.filter(
+                      (_, i) => i !== index,
+                    );
+                    setSettings((prev) => ({ ...prev, ipWhitelist: newList }));
                   }}
                 >
                   <Icons.X className="w-4 h-4 text-red-500" />
@@ -131,10 +148,12 @@ export const SecuritySettings = () => {
             ))}
             <Button
               variant="outline"
-              onClick={() => setSettings(prev => ({ 
-                ...prev, 
-                ipWhitelist: [...prev.ipWhitelist, ''] 
-              }))}
+              onClick={() =>
+                setSettings((prev) => ({
+                  ...prev,
+                  ipWhitelist: [...prev.ipWhitelist, ""],
+                }))
+              }
             >
               <Icons.Plus className="w-4 h-4 mr-2" />
               Add IP Address

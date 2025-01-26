@@ -1,7 +1,7 @@
-import React from 'react';
-import { Toggle } from '../../../../components/ui/toggle';
-import { useSettings } from '../../../../contexts/SettingsContext';
-import type { Settings } from '../../../../types/settings';
+import React from "react";
+import { Toggle } from "../../../../components/ui/toggle";
+import { useSettings } from "../../../../contexts/SettingsContext";
+import type { Settings } from "../../../../types/settings";
 
 interface SettingsToggleProps {
   section: keyof Settings;
@@ -14,7 +14,7 @@ export const SettingsToggle: React.FC<SettingsToggleProps> = ({
   section,
   setting,
   title,
-  description
+  description,
 }) => {
   const { state, updateSettings } = useSettings();
   const { settings } = state;
@@ -23,8 +23,8 @@ export const SettingsToggle: React.FC<SettingsToggleProps> = ({
     await updateSettings({
       [section]: {
         ...settings[section],
-        [setting]: checked
-      }
+        [setting]: checked,
+      },
     });
   };
 

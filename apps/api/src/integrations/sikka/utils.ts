@@ -1,5 +1,5 @@
-import { RequestOptions } from './types';
-import { CACHE_TTL, TIMEOUT_OPTIONS } from './config';
+import { RequestOptions } from "./types";
+import { CACHE_TTL, TIMEOUT_OPTIONS } from "./config";
 
 /**
  * Prepare request parameters with sorting and pagination
@@ -7,27 +7,30 @@ import { CACHE_TTL, TIMEOUT_OPTIONS } from './config';
  * @param options Additional request options including sorting and pagination
  * @returns Combined parameters for the API request
  */
-export function prepareRequestParams(params: Record<string, any> = {}, options: RequestOptions = {}): Record<string, any> {
-  const { 
-    sortBy, 
-    sortOrder, 
-    page, 
-    limit, 
-    offset, 
-    cache, 
-    cacheTTL, 
+export function prepareRequestParams(
+  params: Record<string, any> = {},
+  options: RequestOptions = {},
+): Record<string, any> {
+  const {
+    sortBy,
+    sortOrder,
+    page,
+    limit,
+    offset,
+    cache,
+    cacheTTL,
     timeout,
-    ...rest 
+    ...rest
   } = options;
-  
+
   const requestParams = { ...params };
-  
+
   // Add sorting
   if (sortBy) {
     requestParams.sort_by = sortBy;
-    requestParams.sort_order = sortOrder || 'asc';
+    requestParams.sort_order = sortOrder || "asc";
   }
-  
+
   // Add pagination
   if (page) {
     requestParams.page = page;
@@ -38,14 +41,14 @@ export function prepareRequestParams(params: Record<string, any> = {}, options: 
   if (offset) {
     requestParams.offset = offset;
   }
-  
+
   // Remove undefined values
-  Object.keys(requestParams).forEach(key => {
+  Object.keys(requestParams).forEach((key) => {
     if (requestParams[key] === undefined) {
       delete requestParams[key];
     }
   });
-  
+
   return { ...requestParams, ...rest };
 }
 
@@ -76,14 +79,20 @@ export function getRequestTimeout(options?: RequestOptions): number {
  * @param params Request parameters
  * @returns Cache key string
  */
-export function generateCacheKey(endpoint: string, params: Record<string, any> = {}): string {
+export function generateCacheKey(
+  endpoint: string,
+  params: Record<string, any> = {},
+): string {
   const sortedParams = Object.keys(params)
     .sort()
-    .reduce((acc, key) => {
-      acc[key] = params[key];
-      return acc;
-    }, {} as Record<string, any>);
-    
+    .reduce(
+      (acc, key) => {
+        acc[key] = params[key];
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+
   return `${endpoint}-${JSON.stringify(sortedParams)}`;
 }
 
@@ -97,7 +106,7 @@ export function isValidDateFormat(date: string): boolean {
   if (!dateRegex.test(date)) {
     return false;
   }
-  
+
   const parsedDate = new Date(date);
   return parsedDate instanceof Date && !isNaN(parsedDate.getTime());
 }
@@ -110,7 +119,7 @@ export function isValidDateFormat(date: string): boolean {
  */
 export function validateRequestParams(
   params: Record<string, any>,
-  requiredFields: string[] = []
+  requiredFields: string[] = [],
 ): void {
   // Check required fields
   for (const field of requiredFields) {
@@ -118,9 +127,9 @@ export function validateRequestParams(
       throw new Error(`Missing required field: ${field}`);
     }
   }
-  
+
   // Validate dates if present
-  const dateFields = ['startdate', 'enddate', 'first_visit', 'last_visit'];
+  const dateFields = ["startdate", "enddate", "first_visit", "last_visit"];
   for (const field of dateFields) {
     if (params[field] && !isValidDateFormat(params[field])) {
       throw new Error(`Invalid date format for ${field}. Expected yyyy-mm-dd`);

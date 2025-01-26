@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
-import { useNotifications } from '../../../contexts/NotificationContext';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../components/ui/button";
+import { useNotifications } from "../../../contexts/NotificationContext";
 
 interface TreatmentPlan {
   id: string;
@@ -10,62 +10,62 @@ interface TreatmentPlan {
   diagnosis: string;
   procedures: {
     name: string;
-    status: 'pending' | 'completed' | 'scheduled';
+    status: "pending" | "completed" | "scheduled";
     estimatedCost: number;
     scheduledDate?: string;
   }[];
   startDate: string;
   endDate: string;
-  status: 'active' | 'completed' | 'on-hold';
+  status: "active" | "completed" | "on-hold";
   totalCost: number;
 }
 
 export const TreatmentPlans: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('active');
+  const [activeTab, setActiveTab] = useState("active");
   const { dispatch: notifyDispatch } = useNotifications();
 
   const [plans] = useState<TreatmentPlan[]>([
     {
-      id: '1',
-      patientName: 'John Smith',
-      diagnosis: 'Multiple cavities and gum disease',
+      id: "1",
+      patientName: "John Smith",
+      diagnosis: "Multiple cavities and gum disease",
       procedures: [
         {
-          name: 'Deep Cleaning',
-          status: 'completed',
+          name: "Deep Cleaning",
+          status: "completed",
           estimatedCost: 200,
-          scheduledDate: '2025-01-15',
+          scheduledDate: "2025-01-15",
         },
         {
-          name: 'Cavity Filling (3)',
-          status: 'scheduled',
+          name: "Cavity Filling (3)",
+          status: "scheduled",
           estimatedCost: 450,
-          scheduledDate: '2025-02-01',
+          scheduledDate: "2025-02-01",
         },
         {
-          name: 'Root Canal',
-          status: 'pending',
+          name: "Root Canal",
+          status: "pending",
           estimatedCost: 800,
         },
       ],
-      startDate: '2025-01-15',
-      endDate: '2025-03-15',
-      status: 'active',
+      startDate: "2025-01-15",
+      endDate: "2025-03-15",
+      status: "active",
       totalCost: 1450,
     },
   ]);
 
   const handleCreatePlan = () => {
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'info',
-        title: 'New Treatment Plan',
-        message: 'Opening treatment plan creator...',
+        type: "info",
+        title: "New Treatment Plan",
+        message: "Opening treatment plan creator...",
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium',
+        priority: "medium",
       },
     });
   };
@@ -74,7 +74,9 @@ export const TreatmentPlans: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Treatment Plans</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Treatment Plans
+          </h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             Manage and track patient treatment plans
           </p>
@@ -89,17 +91,17 @@ export const TreatmentPlans: React.FC = () => {
       <div className="mb-6">
         <div className="flex space-x-4">
           {[
-            { id: 'active', label: 'Active Plans' },
-            { id: 'completed', label: 'Completed' },
-            { id: 'on-hold', label: 'On Hold' },
+            { id: "active", label: "Active Plans" },
+            { id: "completed", label: "Completed" },
+            { id: "on-hold", label: "On Hold" },
           ].map(({ id, label }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
               className={`px-4 py-2 rounded-md ${
                 activeTab === id
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'
+                  ? "bg-primary text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
               }`}
             >
               {label}
@@ -123,16 +125,18 @@ export const TreatmentPlans: React.FC = () => {
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                     {plan.patientName}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{plan.diagnosis}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {plan.diagnosis}
+                  </p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span
                     className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      plan.status === 'active'
-                        ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
-                        : plan.status === 'completed'
-                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100'
-                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100'
+                      plan.status === "active"
+                        ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
+                        : plan.status === "completed"
+                          ? "bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100"
+                          : "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100"
                     }`}
                   >
                     {plan.status.charAt(0).toUpperCase() + plan.status.slice(1)}
@@ -175,14 +179,15 @@ export const TreatmentPlans: React.FC = () => {
                           </span>
                           <span
                             className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                              procedure.status === 'completed'
-                                ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
-                                : procedure.status === 'scheduled'
-                                ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100'
-                                : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100'
+                              procedure.status === "completed"
+                                ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
+                                : procedure.status === "scheduled"
+                                  ? "bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100"
+                                  : "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100"
                             }`}
                           >
-                            {procedure.status.charAt(0).toUpperCase() + procedure.status.slice(1)}
+                            {procedure.status.charAt(0).toUpperCase() +
+                              procedure.status.slice(1)}
                           </span>
                         </div>
                       </div>

@@ -13,7 +13,7 @@ class RateLimiter {
       this.requestCount++;
       if (this.requestCount > MAX_REQUESTS_PER_MINUTE) {
         const delay = REQUEST_INTERVAL_MS - timeSinceLastRequest;
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
         this.requestCount = 1;
       }
     } else {

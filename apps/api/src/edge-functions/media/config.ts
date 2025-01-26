@@ -1,13 +1,15 @@
-import { MediaConfig } from './types';
+import { MediaConfig } from "./types";
 
-function validateConfig(config: Partial<MediaConfig>): asserts config is MediaConfig {
-  const required: (keyof MediaConfig)[] = ['imageProvider'];
-  const missing = required.filter(key => !config[key]);
+function validateConfig(
+  config: Partial<MediaConfig>,
+): asserts config is MediaConfig {
+  const required: (keyof MediaConfig)[] = ["imageProvider"];
+  const missing = required.filter((key) => !config[key]);
 
   if (missing.length > 0) {
     throw new Error(
-      `Missing required media configuration: ${missing.join(', ')}. ` +
-      'Please ensure all required environment variables are set.'
+      `Missing required media configuration: ${missing.join(", ")}. ` +
+        "Please ensure all required environment variables are set.",
     );
   }
 }
@@ -51,11 +53,11 @@ export const RETRY_OPTIONS = {
 // Timeout configuration
 export const TIMEOUT_OPTIONS = {
   request: 30000, // 30 seconds
-  connect: 5000,  // 5 seconds
+  connect: 5000, // 5 seconds
 };
 
 // Rate limiting configuration
 export const RATE_LIMIT = {
   windowMs: 60 * 1000, // 1 minute
-  maxRequests: 100,    // max 100 requests per minute
+  maxRequests: 100, // max 100 requests per minute
 };

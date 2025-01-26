@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Button } from './ui/button';
-import * as Icons from 'lucide-react';
-import { ViewDetailsModal } from './ViewDetailsModal';
+import React, { useState } from "react";
+import { Button } from "./ui/button";
+import * as Icons from "lucide-react";
+import { ViewDetailsModal } from "./ViewDetailsModal";
 
 interface ViewDetailsButtonProps {
   data: any;
-  type: 'course' | 'challenge' | 'certification' | 'assignment';
-  variant?: 'default' | 'outline' | 'ghost';
-  size?: 'default' | 'sm' | 'lg';
+  type: "course" | "challenge" | "certification" | "assignment";
+  variant?: "default" | "outline" | "ghost";
+  size?: "default" | "sm" | "lg";
   className?: string;
   onAction?: (action: string) => void;
 }
@@ -15,10 +15,10 @@ interface ViewDetailsButtonProps {
 export const ViewDetailsButton: React.FC<ViewDetailsButtonProps> = ({
   data,
   type,
-  variant = 'outline',
-  size = 'default',
+  variant = "outline",
+  size = "default",
   className,
-  onAction
+  onAction,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 

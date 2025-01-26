@@ -1,6 +1,14 @@
-import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { BaseChart } from './BaseChart';
+import React from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
+import { BaseChart } from "./BaseChart";
 
 interface LineChartProps {
   data: any[];
@@ -19,29 +27,32 @@ export const LineChartComponent: React.FC<LineChartProps> = ({
   lines,
   xAxisKey,
   title,
-  height
+  height,
 }) => {
   return (
     <BaseChart title={title} height={height}>
       <LineChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+        <CartesianGrid
+          strokeDasharray="3 3"
+          stroke="rgba(203, 213, 225, 0.3)"
+        />
         <XAxis
           dataKey={xAxisKey}
           axisLine={false}
           tickLine={false}
-          tick={{ fill: '#1B2B5B', fontSize: 12 }}
+          tick={{ fill: "#1B2B5B", fontSize: 12 }}
         />
         <YAxis
           axisLine={false}
           tickLine={false}
-          tick={{ fill: '#1B2B5B', fontSize: 12 }}
+          tick={{ fill: "#1B2B5B", fontSize: 12 }}
         />
         <Tooltip
           contentStyle={{
-            backgroundColor: '#fff',
-            border: 'none',
-            borderRadius: '0.5rem',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            backgroundColor: "#fff",
+            border: "none",
+            borderRadius: "0.5rem",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
           }}
         />
         <Legend />

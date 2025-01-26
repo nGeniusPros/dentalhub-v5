@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { saveAs } from 'file-saver';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { saveAs } from "file-saver";
 
 interface GenerateReportDialogProps {
   isOpen: boolean;
@@ -13,10 +13,10 @@ interface GenerateReportDialogProps {
 export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
   isOpen,
   onClose,
-  data
+  data,
 }) => {
   const [reportConfig, setReportConfig] = useState({
-    format: 'pdf',
+    format: "pdf",
     sections: {
       overview: true,
       financial: true,
@@ -24,15 +24,15 @@ export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
       treatments: true,
       staff: true,
       appointments: true,
-      marketing: true
+      marketing: true,
     },
-    dateRange: 'month',
+    dateRange: "month",
     customDateRange: {
-      start: '',
-      end: ''
+      start: "",
+      end: "",
     },
     includeCharts: true,
-    includeComparisons: true
+    includeComparisons: true,
   });
 
   if (!isOpen) return null;
@@ -42,13 +42,16 @@ export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
     // For demo, we'll create a CSV of the data
     const csvContent = [
       // Headers
-      Object.keys(data.revenueData[0]).join(','),
+      Object.keys(data.revenueData[0]).join(","),
       // Data rows
-      ...data.revenueData.map((row: any) => Object.values(row).join(','))
-    ].join('\n');
+      ...data.revenueData.map((row: any) => Object.values(row).join(",")),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, `practice-analytics-report-${new Date().toISOString().split('T')[0]}.csv`);
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    saveAs(
+      blob,
+      `practice-analytics-report-${new Date().toISOString().split("T")[0]}.csv`,
+    );
     onClose();
   };
 
@@ -76,7 +79,9 @@ export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
             </label>
             <select
               value={reportConfig.format}
-              onChange={(e) => setReportConfig(prev => ({ ...prev, format: e.target.value }))}
+              onChange={(e) =>
+                setReportConfig((prev) => ({ ...prev, format: e.target.value }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             >
               <option value="pdf">PDF Report</option>
@@ -96,13 +101,15 @@ export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
                   <input
                     type="checkbox"
                     checked={value}
-                    onChange={(e) => setReportConfig(prev => ({
-                      ...prev,
-                      sections: {
-                        ...prev.sections,
-                        [key]: e.target.checked
-                      }
-                    }))}
+                    onChange={(e) =>
+                      setReportConfig((prev) => ({
+                        ...prev,
+                        sections: {
+                          ...prev.sections,
+                          [key]: e.target.checked,
+                        },
+                      }))
+                    }
                     className="rounded border-gray-300"
                   />
                   <span className="text-sm capitalize">{key}</span>
@@ -118,7 +125,12 @@ export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
             </label>
             <select
               value={reportConfig.dateRange}
-              onChange={(e) => setReportConfig(prev => ({ ...prev, dateRange: e.target.value }))}
+              onChange={(e) =>
+                setReportConfig((prev) => ({
+                  ...prev,
+                  dateRange: e.target.value,
+                }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg mb-2"
             >
               <option value="week">This Week</option>
@@ -128,29 +140,43 @@ export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
               <option value="custom">Custom Range</option>
             </select>
 
-            {reportConfig.dateRange === 'custom' && (
+            {reportConfig.dateRange === "custom" && (
               <div className="grid grid-cols-2 gap-4 mt-2">
                 <div>
-                  <label className="block text-sm text-gray-500 mb-1">Start Date</label>
+                  <label className="block text-sm text-gray-500 mb-1">
+                    Start Date
+                  </label>
                   <input
                     type="date"
                     value={reportConfig.customDateRange.start}
-                    onChange={(e) => setReportConfig(prev => ({
-                      ...prev,
-                      customDateRange: { ...prev.customDateRange, start: e.target.value }
-                    }))}
+                    onChange={(e) =>
+                      setReportConfig((prev) => ({
+                        ...prev,
+                        customDateRange: {
+                          ...prev.customDateRange,
+                          start: e.target.value,
+                        },
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-500 mb-1">End Date</label>
+                  <label className="block text-sm text-gray-500 mb-1">
+                    End Date
+                  </label>
                   <input
                     type="date"
                     value={reportConfig.customDateRange.end}
-                    onChange={(e) => setReportConfig(prev => ({
-                      ...prev,
-                      customDateRange: { ...prev.customDateRange, end: e.target.value }
-                    }))}
+                    onChange={(e) =>
+                      setReportConfig((prev) => ({
+                        ...prev,
+                        customDateRange: {
+                          ...prev.customDateRange,
+                          end: e.target.value,
+                        },
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
@@ -168,10 +194,12 @@ export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
                 <input
                   type="checkbox"
                   checked={reportConfig.includeCharts}
-                  onChange={(e) => setReportConfig(prev => ({
-                    ...prev,
-                    includeCharts: e.target.checked
-                  }))}
+                  onChange={(e) =>
+                    setReportConfig((prev) => ({
+                      ...prev,
+                      includeCharts: e.target.checked,
+                    }))
+                  }
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm">Include Charts and Graphs</span>
@@ -180,13 +208,17 @@ export const GenerateReportDialog: React.FC<GenerateReportDialogProps> = ({
                 <input
                   type="checkbox"
                   checked={reportConfig.includeComparisons}
-                  onChange={(e) => setReportConfig(prev => ({
-                    ...prev,
-                    includeComparisons: e.target.checked
-                  }))}
+                  onChange={(e) =>
+                    setReportConfig((prev) => ({
+                      ...prev,
+                      includeComparisons: e.target.checked,
+                    }))
+                  }
                   className="rounded border-gray-300"
                 />
-                <span className="text-sm">Include Year-over-Year Comparisons</span>
+                <span className="text-sm">
+                  Include Year-over-Year Comparisons
+                </span>
               </label>
             </div>
           </div>

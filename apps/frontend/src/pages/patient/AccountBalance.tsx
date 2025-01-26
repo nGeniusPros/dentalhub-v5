@@ -1,30 +1,30 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
 
 const AccountBalance = () => {
   const balanceInfo = {
-    total: 850.00,
-    nextPayment: '2024-03-20',
+    total: 850.0,
+    nextPayment: "2024-03-20",
     paymentPlan: {
-      monthly: 150.00,
-      remaining: 4
-    }
+      monthly: 150.0,
+      remaining: 4,
+    },
   };
 
   const recentCharges = [
     {
-      date: '2024-03-01',
-      description: 'Dental Cleaning',
-      amount: 200.00,
-      status: 'Pending Insurance'
+      date: "2024-03-01",
+      description: "Dental Cleaning",
+      amount: 200.0,
+      status: "Pending Insurance",
     },
     {
-      date: '2024-02-15',
-      description: 'X-Ray Series',
-      amount: 350.00,
-      status: 'Insurance Processed'
-    }
+      date: "2024-02-15",
+      description: "X-Ray Series",
+      amount: 350.0,
+      status: "Insurance Processed",
+    },
   ];
 
   return (
@@ -56,11 +56,15 @@ const AccountBalance = () => {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Monthly Payment:</span>
-              <span className="font-medium">${balanceInfo.paymentPlan.monthly.toFixed(2)}</span>
+              <span className="font-medium">
+                ${balanceInfo.paymentPlan.monthly.toFixed(2)}
+              </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Remaining Payments:</span>
-              <span className="font-medium">{balanceInfo.paymentPlan.remaining}</span>
+              <span className="font-medium">
+                {balanceInfo.paymentPlan.remaining}
+              </span>
             </div>
           </div>
         </motion.div>
@@ -99,14 +103,19 @@ const AccountBalance = () => {
         <h2 className="text-lg font-semibold mb-4">Recent Charges</h2>
         <div className="space-y-4">
           {recentCharges.map((charge, index) => (
-            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div
+              key={index}
+              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+            >
               <div>
                 <p className="font-medium">{charge.description}</p>
                 <p className="text-sm text-gray-500">{charge.date}</p>
               </div>
               <div className="text-right">
                 <p className="font-medium">${charge.amount.toFixed(2)}</p>
-                <span className="text-sm text-primary-600">{charge.status}</span>
+                <span className="text-sm text-primary-600">
+                  {charge.status}
+                </span>
               </div>
             </div>
           ))}

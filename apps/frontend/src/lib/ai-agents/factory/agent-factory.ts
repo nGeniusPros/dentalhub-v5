@@ -1,8 +1,8 @@
-import { DentalAgentType, AgentConfig } from '../types/agent-types';
-import { BaseAgent } from '../agents/base-agent';
-import { DataRetrievalAgent } from '../agents/data-retrieval-agent';
-import { ProfitabilityAppointmentAgent } from '../agents/profitability-appointment-agent';
-import { HeadBrainConsultant } from '../agents/head-brain-consultant';
+import { DentalAgentType, AgentConfig } from "../types/agent-types";
+import { BaseAgent } from "../agents/base-agent";
+import { DataRetrievalAgent } from "../agents/data-retrieval-agent";
+import { ProfitabilityAppointmentAgent } from "../agents/profitability-appointment-agent";
+import { HeadBrainConsultant } from "../agents/head-brain-consultant";
 
 export class AgentFactory {
   private static instance: AgentFactory;
@@ -23,22 +23,22 @@ export class AgentFactory {
 
   private initializeConfigs() {
     // Initialize configurations from environment variables
-    this.configs.set('DATA_RETRIEVAL', {
+    this.configs.set("DATA_RETRIEVAL", {
       id: import.meta.env.VITE_OPENAI_DATA_RETRIEVAL_ID,
       apiKey: import.meta.env.VITE_OPENAI_DATA_RETRIEVAL_API_KEY,
-      rateLimit: { rpm: 60, tpm: 150000 }
+      rateLimit: { rpm: 60, tpm: 150000 },
     });
 
-    this.configs.set('PROFITABILITY_APPOINTMENT', {
+    this.configs.set("PROFITABILITY_APPOINTMENT", {
       id: import.meta.env.VITE_OPENAI_PROFITABILITY_APPOINTMENT_ID,
       apiKey: import.meta.env.VITE_OPENAI_PROFITABILITY_APPOINTMENT_API_KEY,
-      rateLimit: { rpm: 60, tpm: 150000 }
+      rateLimit: { rpm: 60, tpm: 150000 },
     });
 
-    this.configs.set('BRAIN_CONSULTANT', {
+    this.configs.set("BRAIN_CONSULTANT", {
       id: import.meta.env.VITE_OPENAI_BRAIN_CONSULTANT_ID,
       apiKey: import.meta.env.VITE_OPENAI_BRAIN_CONSULTANT_API_KEY,
-      rateLimit: { rpm: 60, tpm: 150000 }
+      rateLimit: { rpm: 60, tpm: 150000 },
     });
 
     // Add other agent configs as needed
@@ -46,21 +46,28 @@ export class AgentFactory {
 
   private initializeAgents() {
     // Initialize with specific agent implementations
-    const dataRetrievalConfig = this.configs.get('DATA_RETRIEVAL');
+    const dataRetrievalConfig = this.configs.get("DATA_RETRIEVAL");
     if (dataRetrievalConfig) {
-      this.agents.set('DATA_RETRIEVAL', new DataRetrievalAgent(dataRetrievalConfig));
+      this.agents.set(
+        "DATA_RETRIEVAL",
+        new DataRetrievalAgent(dataRetrievalConfig),
+      );
     }
 
-    const profitabilityConfig = this.configs.get('PROFITABILITY_APPOINTMENT');
+    const profitabilityConfig = this.configs.get("PROFITABILITY_APPOINTMENT");
     if (profitabilityConfig) {
-      this.agents.set('PROFITABILITY_APPOINTMENT', 
-        new ProfitabilityAppointmentAgent(profitabilityConfig));
+      this.agents.set(
+        "PROFITABILITY_APPOINTMENT",
+        new ProfitabilityAppointmentAgent(profitabilityConfig),
+      );
     }
 
-    const brainConsultantConfig = this.configs.get('BRAIN_CONSULTANT');
+    const brainConsultantConfig = this.configs.get("BRAIN_CONSULTANT");
     if (brainConsultantConfig) {
-      this.agents.set('BRAIN_CONSULTANT', 
-        new HeadBrainConsultant(brainConsultantConfig));
+      this.agents.set(
+        "BRAIN_CONSULTANT",
+        new HeadBrainConsultant(brainConsultantConfig),
+      );
     }
 
     // Add other agent initializations

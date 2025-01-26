@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import StatsCard from '../../../../../components/dashboard/StatsCard';
+import React from "react";
+import { motion } from "framer-motion";
+import StatsCard from "../../../../../components/dashboard/StatsCard";
 
 export const EmailCampaignStats = () => {
   return (

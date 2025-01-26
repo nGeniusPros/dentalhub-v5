@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
 
 interface ImageUploaderProps {
   onUpload: (image: { url: string; alt: string }) => void;
@@ -10,7 +10,7 @@ interface ImageUploaderProps {
 export const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [altText, setAltText] = useState('');
+  const [altText, setAltText] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,10 +34,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload }) => {
       // For now, just use the preview URL
       onUpload({
         url: preview,
-        alt: altText || selectedFile.name
+        alt: altText || selectedFile.name,
       });
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error("Error uploading image:", error);
     } finally {
       setUploading(false);
     }
@@ -55,7 +55,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload }) => {
       <div className="space-y-6">
         <div
           className={`border-2 border-dashed rounded-lg p-8 ${
-            preview ? 'border-primary' : 'border-gray-200'
+            preview ? "border-primary" : "border-gray-200"
           }`}
         >
           {preview ? (
@@ -84,7 +84,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload }) => {
               </p>
               <Button
                 variant="outline"
-                onClick={() => document.getElementById('image-upload')?.click()}
+                onClick={() => document.getElementById("image-upload")?.click()}
               >
                 Browse Files
               </Button>
@@ -120,22 +120,19 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload }) => {
                 onClick={() => {
                   setSelectedFile(null);
                   setPreview(null);
-                  setAltText('');
+                  setAltText("");
                 }}
               >
                 Cancel
               </Button>
-              <Button
-                onClick={handleUpload}
-                disabled={uploading}
-              >
+              <Button onClick={handleUpload} disabled={uploading}>
                 {uploading ? (
                   <>
                     <Icons.Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Uploading...
                   </>
                 ) : (
-                  'Insert Image'
+                  "Insert Image"
                 )}
               </Button>
             </div>

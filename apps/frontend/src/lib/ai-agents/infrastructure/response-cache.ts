@@ -1,4 +1,4 @@
-import { AIResponse } from '../types/agent-types';
+import { AIResponse } from "../types/agent-types";
 
 interface CachedItem<T> {
   data: T;
@@ -34,18 +34,22 @@ export class ResponseCache {
     return cached.data as T;
   }
 
-  async set<T>(key: string, data: T, ttl: number = this.DEFAULT_TTL): Promise<void> {
+  async set<T>(
+    key: string,
+    data: T,
+    ttl: number = this.DEFAULT_TTL,
+  ): Promise<void> {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
   }
 
   async getOrCompute<T>(
     key: string,
     compute: () => Promise<T>,
-    ttl: number = this.DEFAULT_TTL
+    ttl: number = this.DEFAULT_TTL,
   ): Promise<T> {
     const cached = await this.get<T>(key);
     if (cached !== null) {

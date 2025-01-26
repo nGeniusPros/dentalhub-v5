@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import type { Vendor } from '../types/vendor';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import type { Vendor } from "../types/vendor";
 
 interface VendorFormProps {
   vendor?: Vendor;
@@ -10,31 +10,35 @@ interface VendorFormProps {
   onCancel: () => void;
 }
 
-export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCancel }) => {
+export const VendorForm: React.FC<VendorFormProps> = ({
+  vendor,
+  onSubmit,
+  onCancel,
+}) => {
   const [formData, setFormData] = React.useState<Partial<Vendor>>(
     vendor || {
-      name: '',
-      category: 'Insurance',
-      contactName: '',
-      email: '',
-      phone: '',
-      website: '',
-      accountNumber: '',
+      name: "",
+      category: "Insurance",
+      contactName: "",
+      email: "",
+      phone: "",
+      website: "",
+      accountNumber: "",
       notes: [],
       labFees: [],
       credentials: {
-        username: '',
-        password: ''
-      }
-    }
+        username: "",
+        password: "",
+      },
+    },
   );
 
   const [showFeeUpload, setShowFeeUpload] = React.useState(false);
   const [newFee, setNewFee] = React.useState({
-    code: '',
-    description: '',
+    code: "",
+    description: "",
     fee: 0,
-    effectiveDate: new Date().toISOString().split('T')[0]
+    effectiveDate: new Date().toISOString().split("T")[0],
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -46,13 +50,16 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
     if (newFee.code && newFee.description && newFee.fee) {
       setFormData({
         ...formData,
-        labFees: [...(formData.labFees || []), { ...newFee, id: Date.now().toString() }]
+        labFees: [
+          ...(formData.labFees || []),
+          { ...newFee, id: Date.now().toString() },
+        ],
       });
       setNewFee({
-        code: '',
-        description: '',
+        code: "",
+        description: "",
         fee: 0,
-        effectiveDate: new Date().toISOString().split('T')[0]
+        effectiveDate: new Date().toISOString().split("T")[0],
       });
     }
   };
@@ -63,20 +70,21 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
       const reader = new FileReader();
       reader.onload = (event) => {
         const csvData = event.target?.result as string;
-        const rows = csvData.split('\n').slice(1); // Skip header row
-        const newFees = rows.map(row => {
-          const [code, description, fee, effectiveDate] = row.split(',');
+        const rows = csvData.split("\n").slice(1); // Skip header row
+        const newFees = rows.map((row) => {
+          const [code, description, fee, effectiveDate] = row.split(",");
           return {
             id: Date.now().toString() + Math.random(),
             code: code.trim(),
             description: description.trim(),
             fee: parseFloat(fee),
-            effectiveDate: effectiveDate.trim() || new Date().toISOString().split('T')[0]
+            effectiveDate:
+              effectiveDate.trim() || new Date().toISOString().split("T")[0],
           };
         });
         setFormData({
           ...formData,
-          labFees: [...(formData.labFees || []), ...newFees]
+          labFees: [...(formData.labFees || []), ...newFees],
         });
       };
       reader.readAsText(file);
@@ -105,7 +113,9 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
           </label>
           <select
             value={formData.category}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, category: e.target.value })
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             required
           >
@@ -125,7 +135,9 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
           <input
             type="text"
             value={formData.contactName}
-            onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, contactName: e.target.value })
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             required
           />
@@ -138,7 +150,9 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
           <input
             type="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             required
           />
@@ -151,7 +165,9 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
           <input
             type="tel"
             value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, phone: e.target.value })
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             required
           />
@@ -164,7 +180,9 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
           <input
             type="url"
             value={formData.website}
-            onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, website: e.target.value })
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             placeholder="https://"
           />
@@ -177,7 +195,9 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
           <input
             type="text"
             value={formData.accountNumber}
-            onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, accountNumber: e.target.value })
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg"
           />
         </div>
@@ -193,10 +213,15 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
               <input
                 type="text"
                 value={formData.credentials?.username}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  credentials: { ...formData.credentials, username: e.target.value }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    credentials: {
+                      ...formData.credentials,
+                      username: e.target.value,
+                    },
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               />
             </div>
@@ -207,10 +232,15 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
               <input
                 type="password"
                 value={formData.credentials?.password}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  credentials: { ...formData.credentials, password: e.target.value }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    credentials: {
+                      ...formData.credentials,
+                      password: e.target.value,
+                    },
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               />
             </div>
@@ -218,7 +248,7 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
         </div>
 
         {/* Lab Fees Section - Only show for Laboratory category */}
-        {formData.category === 'Laboratory' && (
+        {formData.category === "Laboratory" && (
           <div className="col-span-2 border-t border-gray-200 pt-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium">Lab Fees</h3>
@@ -254,21 +284,27 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
               <input
                 type="text"
                 value={newFee.description}
-                onChange={(e) => setNewFee({ ...newFee, description: e.target.value })}
+                onChange={(e) =>
+                  setNewFee({ ...newFee, description: e.target.value })
+                }
                 placeholder="Description"
                 className="px-3 py-2 border border-gray-200 rounded-lg"
               />
               <input
                 type="number"
                 value={newFee.fee}
-                onChange={(e) => setNewFee({ ...newFee, fee: parseFloat(e.target.value) })}
+                onChange={(e) =>
+                  setNewFee({ ...newFee, fee: parseFloat(e.target.value) })
+                }
                 placeholder="Fee"
                 className="px-3 py-2 border border-gray-200 rounded-lg"
               />
               <input
                 type="date"
                 value={newFee.effectiveDate}
-                onChange={(e) => setNewFee({ ...newFee, effectiveDate: e.target.value })}
+                onChange={(e) =>
+                  setNewFee({ ...newFee, effectiveDate: e.target.value })
+                }
                 className="px-3 py-2 border border-gray-200 rounded-lg"
               />
             </div>
@@ -284,15 +320,21 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
                   <div>{fee.description}</div>
                   <div>${fee.fee.toFixed(2)}</div>
                   <div className="flex items-center justify-between">
-                    <span>{new Date(fee.effectiveDate).toLocaleDateString()}</span>
+                    <span>
+                      {new Date(fee.effectiveDate).toLocaleDateString()}
+                    </span>
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => setFormData({
-                        ...formData,
-                        labFees: formData.labFees?.filter((_, i) => i !== index)
-                      })}
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          labFees: formData.labFees?.filter(
+                            (_, i) => i !== index,
+                          ),
+                        })
+                      }
                       className="text-red-500 hover:text-red-700"
                     >
                       <Icons.Trash2 className="w-4 h-4" />
@@ -306,9 +348,12 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
             {showFeeUpload && (
               <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                 <div className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full">
-                  <h3 className="text-lg font-medium mb-4">Import Fee Schedule</h3>
+                  <h3 className="text-lg font-medium mb-4">
+                    Import Fee Schedule
+                  </h3>
                   <p className="text-sm text-gray-500 mb-4">
-                    Upload a CSV file with columns: code, description, fee, effectiveDate
+                    Upload a CSV file with columns: code, description, fee,
+                    effectiveDate
                   </p>
                   <div className="space-y-4">
                     <input
@@ -343,11 +388,13 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
         <div className="col-span-2 border-t border-gray-200 pt-6">
           <h3 className="text-lg font-medium mb-4">Notes</h3>
           <textarea
-            value={formData.notes?.join('\n')}
-            onChange={(e) => setFormData({
-              ...formData,
-              notes: e.target.value.split('\n').filter(note => note.trim())
-            })}
+            value={formData.notes?.join("\n")}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                notes: e.target.value.split("\n").filter((note) => note.trim()),
+              })
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             rows={4}
             placeholder="Enter notes (one per line)..."
@@ -355,19 +402,19 @@ export const VendorForm: React.FC<VendorFormProps> = ({ vendor, onSubmit, onCanc
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             onClick={onCancel}
             className="px-6"
           >
             Cancel
           </Button>
-          <Button 
+          <Button
             type="submit"
             className="px-6 bg-gradient-to-r from-navy via-purple to-turquoise text-white"
           >
-            {vendor ? 'Update' : 'Add'} Contact
+            {vendor ? "Update" : "Add"} Contact
           </Button>
         </div>
       </div>

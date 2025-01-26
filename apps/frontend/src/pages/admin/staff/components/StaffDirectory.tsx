@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { cn } from '../../../../lib/utils';
-import { ViewProfileModal } from './staff/ViewProfileModal';
-import { EditStaffModal } from './staff/EditStaffModal';
-import { DeleteConfirmationModal } from './staff/DeleteConfirmationModal';
-import { AddStaffModal } from './staff/AddStaffModal';
-import { useNotifications } from '../../../../contexts/NotificationContext';
-import { ExportDialog } from './ExportDialog';
-import { exportToCSV, exportToExcel, exportToPDF } from '../../../../lib/utils/export';
-import { StaffHRAccess } from './staff/StaffHRAccess';
-import supabase from '../../../../lib/supabase/client';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { cn } from "../../../../lib/utils";
+import { ViewProfileModal } from "./staff/ViewProfileModal";
+import { EditStaffModal } from "./staff/EditStaffModal";
+import { DeleteConfirmationModal } from "./staff/DeleteConfirmationModal";
+import { AddStaffModal } from "./staff/AddStaffModal";
+import { useNotifications } from "../../../../contexts/NotificationContext";
+import { ExportDialog } from "./ExportDialog";
+import {
+  exportToCSV,
+  exportToExcel,
+  exportToPDF,
+} from "../../../../lib/utils/export";
+import { StaffHRAccess } from "./staff/StaffHRAccess";
+import supabase from "../../../../lib/supabase/client";
 
 export const StaffDirectory = () => {
   const [staff, setStaff] = useState<any[]>([]);
@@ -30,24 +34,26 @@ export const StaffDirectory = () => {
     const fetchStaff = async () => {
       try {
         const { data, error } = await supabase
-          .from('staff_profiles')
-          .select(`
+          .from("staff_profiles")
+          .select(
+            `
             *,
             user:auth.users!user_id(
               id,
               email,
               raw_user_meta_data
             )
-          `)
-          .order('created_at', { ascending: false });
+          `,
+          )
+          .order("created_at", { ascending: false });
 
         if (error) {
-          console.error('Error fetching staff:', error);
+          console.error("Error fetching staff:", error);
         } else {
           setStaff(data);
         }
       } catch (error) {
-        console.error('Error fetching staff:', error);
+        console.error("Error fetching staff:", error);
       }
     };
 
@@ -55,39 +61,41 @@ export const StaffDirectory = () => {
   }, [supabase]);
 
   const handleEditStaff = (updatedStaff: any) => {
-    setStaff(staff.map(member => 
-      member.user.email === updatedStaff.user.email ? updatedStaff : member
-    ));
-    
+    setStaff(
+      staff.map((member) =>
+        member.user.email === updatedStaff.user.email ? updatedStaff : member,
+      ),
+    );
+
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'message',
-        title: 'Staff Member Updated',
+        type: "message",
+        title: "Staff Member Updated",
         message: `${updatedStaff.user.raw_user_meta_data.full_name}'s information has been updated`,
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium'
-      }
+        priority: "medium",
+      },
     });
   };
 
   const handleDeleteStaff = (staffEmail: string) => {
-    const staffMember = staff.find(s => s.user.email === staffEmail);
-    setStaff(staff.filter(member => member.user.email !== staffEmail));
-    
+    const staffMember = staff.find((s) => s.user.email === staffEmail);
+    setStaff(staff.filter((member) => member.user.email !== staffEmail));
+
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'alert',
-        title: 'Staff Member Removed',
+        type: "alert",
+        title: "Staff Member Removed",
         message: `${staffMember?.user.raw_user_meta_data.full_name} has been removed from the directory`,
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'high'
-      }
+        priority: "high",
+      },
     });
   };
 
@@ -105,39 +113,41 @@ export const StaffDirectory = () => {
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
             {React.createElement((Icons as any).Download, {
-              className: "w-4 h-4 mr-2"
+              className: "w-4 h-4 mr-2",
             })}
-            <span onClick={() => setShowExportDialog(true)}>Export Directory</span>
+            <span onClick={() => setShowExportDialog(true)}>
+              Export Directory
+            </span>
           </Button>
           <Button size="sm" onClick={() => setShowAddEmployee(true)}>
             {React.createElement((Icons as any).UserPlus, {
-              className: "w-4 h-4 mr-2"
+              className: "w-4 h-4 mr-2",
             })}
             Add Employee
           </Button>
         </div>
       </div>
-      
+
       <ExportDialog
         isOpen={showExportDialog}
         onClose={() => setShowExportDialog(false)}
         onExport={(format, options) => {
-          const exportData = staff.map(member => ({
+          const exportData = staff.map((member) => ({
             name: member.user.raw_user_meta_data.full_name,
             role: member.role,
             department: member.specialization,
             email: member.user.email,
             phone: member.contact_info?.phone,
             status: member.status,
-            startDate: member.hire_date
+            startDate: member.hire_date,
           }));
 
-          if (format === 'csv') {
-            exportToCSV(exportData, 'staff-directory');
-          } else if (format === 'excel') {
-            exportToExcel(exportData, 'staff-directory');
-          } else if (format === 'pdf') {
-            exportToPDF(exportData, 'staff-directory');
+          if (format === "csv") {
+            exportToCSV(exportData, "staff-directory");
+          } else if (format === "excel") {
+            exportToExcel(exportData, "staff-directory");
+          } else if (format === "pdf") {
+            exportToPDF(exportData, "staff-directory");
           }
         }}
       />
@@ -149,18 +159,24 @@ export const StaffDirectory = () => {
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                   {React.createElement((Icons as any).User, {
-                    className: "w-6 h-6 text-primary"
+                    className: "w-6 h-6 text-primary",
                   })}
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{member.user.raw_user_meta_data.full_name}</p>
+                  <p className="font-medium text-gray-900">
+                    {member.user.raw_user_meta_data.full_name}
+                  </p>
                   <p className="text-sm text-gray-500">{member.role}</p>
                 </div>
               </div>
-              <span className={cn(
-                "px-2 py-1 text-xs font-medium rounded-full",
-                member.status === 'active' ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-              )}>
+              <span
+                className={cn(
+                  "px-2 py-1 text-xs font-medium rounded-full",
+                  member.status === "active"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-gray-100 text-gray-800",
+                )}
+              >
                 {member.status}
               </span>
             </div>
@@ -181,56 +197,56 @@ export const StaffDirectory = () => {
             </div>
 
             <div className="mt-4 flex gap-2">
-              <Button 
-                size="sm" 
-                variant="outline" 
+              <Button
+                size="sm"
+                variant="outline"
                 onClick={() => {
                   setSelectedStaff(member);
                   setShowHRAccess(true);
                 }}
               >
                 {React.createElement((Icons as any).FileText, {
-                  className: "w-4 h-4 mr-2"
+                  className: "w-4 h-4 mr-2",
                 })}
                 HR Files
               </Button>
-              <Button 
-                size="sm" 
-                variant="outline" 
+              <Button
+                size="sm"
+                variant="outline"
                 onClick={() => {
                   setSelectedStaff(member);
                   setShowViewProfile(true);
                 }}
               >
                 {React.createElement((Icons as any).FileText, {
-                  className: "w-4 h-4 mr-2"
+                  className: "w-4 h-4 mr-2",
                 })}
                 View Profile
               </Button>
-              <Button 
-                size="sm" 
-                variant="outline" 
+              <Button
+                size="sm"
+                variant="outline"
                 onClick={() => {
                   setSelectedStaff(member);
                   setShowEditStaff(true);
                 }}
               >
                 {React.createElement((Icons as any).Edit2, {
-                  className: "w-4 h-4 mr-2"
+                  className: "w-4 h-4 mr-2",
                 })}
                 Edit
               </Button>
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="text-red-600 hover:text-red-700" 
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-red-600 hover:text-red-700"
                 onClick={() => {
                   setSelectedStaff(member);
                   setShowDeleteConfirm(true);
                 }}
               >
                 {React.createElement((Icons as any).Trash2, {
-                  className: "w-4 h-4 mr-2"
+                  className: "w-4 h-4 mr-2",
                 })}
                 Remove
               </Button>
@@ -238,7 +254,7 @@ export const StaffDirectory = () => {
           </div>
         ))}
       </div>
-      
+
       <ViewProfileModal
         isOpen={showViewProfile}
         onClose={() => {
@@ -247,7 +263,7 @@ export const StaffDirectory = () => {
         }}
         staff={selectedStaff}
       />
-      
+
       <EditStaffModal
         isOpen={showEditStaff}
         onClose={() => {
@@ -257,7 +273,7 @@ export const StaffDirectory = () => {
         onSave={handleEditStaff}
         staff={selectedStaff}
       />
-      
+
       <DeleteConfirmationModal
         isOpen={showDeleteConfirm}
         onClose={() => {
@@ -267,7 +283,7 @@ export const StaffDirectory = () => {
         onConfirm={() => handleDeleteStaff(selectedStaff?.user.email)}
         staffName={selectedStaff?.user.raw_user_meta_data.full_name}
       />
-      
+
       {/* Add Staff/Employee Modal - Used for both buttons */}
       <AddStaffModal
         isOpen={showAddStaff || showAddEmployee}
@@ -277,25 +293,25 @@ export const StaffDirectory = () => {
         }}
         onAdd={(staffMember) => {
           setStaff([...staff, { id: Date.now().toString(), ...staffMember }]);
-          
+
           notifyDispatch({
-            type: 'ADD_NOTIFICATION',
+            type: "ADD_NOTIFICATION",
             payload: {
               id: Date.now().toString(),
-              type: 'message',
-              title: 'New Staff Member Added',
+              type: "message",
+              title: "New Staff Member Added",
               message: `${staffMember.name} has been added as ${staffMember.role}`,
               timestamp: new Date().toISOString(),
               read: false,
-              priority: 'medium'
-            }
+              priority: "medium",
+            },
           });
-          
+
           setShowAddStaff(false);
           setShowAddEmployee(false);
         }}
       />
-      
+
       <StaffHRAccess
         isOpen={showHRAccess}
         staffId={selectedStaff?.id}

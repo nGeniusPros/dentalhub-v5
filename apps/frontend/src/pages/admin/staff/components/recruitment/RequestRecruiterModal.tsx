@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
 
 interface RequestRecruiterModalProps {
   isOpen: boolean;
@@ -12,15 +12,15 @@ interface RequestRecruiterModalProps {
 export const RequestRecruiterModal: React.FC<RequestRecruiterModalProps> = ({
   isOpen,
   onClose,
-  onSubmit
+  onSubmit,
 }) => {
   const [formData, setFormData] = useState({
-    positionType: '',
-    urgency: 'normal',
-    preferredDate: '',
-    preferredTime: '',
-    notes: '',
-    contactMethod: 'video'
+    positionType: "",
+    urgency: "normal",
+    preferredDate: "",
+    preferredTime: "",
+    notes: "",
+    contactMethod: "video",
   });
 
   if (!isOpen) return null;
@@ -41,8 +41,12 @@ export const RequestRecruiterModal: React.FC<RequestRecruiterModalProps> = ({
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-semibold">Schedule Recruiter Consultation</h2>
-              <p className="text-sm text-gray-500">Connect with a professional NGenius recruiter</p>
+              <h2 className="text-xl font-semibold">
+                Schedule Recruiter Consultation
+              </h2>
+              <p className="text-sm text-gray-500">
+                Connect with a professional NGenius recruiter
+              </p>
             </div>
             <Button variant="ghost" size="sm" onClick={onClose}>
               <Icons.X className="w-5 h-5" />
@@ -57,7 +61,9 @@ export const RequestRecruiterModal: React.FC<RequestRecruiterModalProps> = ({
             </label>
             <select
               value={formData.positionType}
-              onChange={(e) => setFormData({ ...formData, positionType: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, positionType: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               required
             >
@@ -77,7 +83,9 @@ export const RequestRecruiterModal: React.FC<RequestRecruiterModalProps> = ({
             </label>
             <select
               value={formData.urgency}
-              onChange={(e) => setFormData({ ...formData, urgency: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, urgency: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               required
             >
@@ -95,7 +103,9 @@ export const RequestRecruiterModal: React.FC<RequestRecruiterModalProps> = ({
               <input
                 type="date"
                 value={formData.preferredDate}
-                onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, preferredDate: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -107,7 +117,9 @@ export const RequestRecruiterModal: React.FC<RequestRecruiterModalProps> = ({
               <input
                 type="time"
                 value={formData.preferredTime}
-                onChange={(e) => setFormData({ ...formData, preferredTime: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, preferredTime: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -120,7 +132,9 @@ export const RequestRecruiterModal: React.FC<RequestRecruiterModalProps> = ({
             </label>
             <select
               value={formData.contactMethod}
-              onChange={(e) => setFormData({ ...formData, contactMethod: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, contactMethod: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               required
             >
@@ -136,7 +150,9 @@ export const RequestRecruiterModal: React.FC<RequestRecruiterModalProps> = ({
             </label>
             <textarea
               value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, notes: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               rows={4}
               placeholder="Any specific requirements or questions..."
@@ -147,9 +163,7 @@ export const RequestRecruiterModal: React.FC<RequestRecruiterModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Schedule Consultation
-            </Button>
+            <Button type="submit">Schedule Consultation</Button>
           </div>
         </form>
       </motion.div>

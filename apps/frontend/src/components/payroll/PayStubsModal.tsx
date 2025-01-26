@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { formatCurrency } from '../../lib/utils/currency';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { formatCurrency } from "../../lib/utils/currency";
 
 interface PayStubsModalProps {
   isOpen: boolean;
@@ -17,26 +17,26 @@ export const PayStubsModal: React.FC<PayStubsModalProps> = ({
   onClose,
   employeeId,
   employeeName,
-  onDownload
+  onDownload,
 }) => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isLoading, setIsLoading] = useState(false);
 
   const payStubs = [
     {
-      id: '1',
-      payPeriod: 'Mar 1-15, 2024',
+      id: "1",
+      payPeriod: "Mar 1-15, 2024",
       grossPay: 2500,
       netPay: 1875,
-      status: 'available'
+      status: "available",
     },
     {
-      id: '2',
-      payPeriod: 'Feb 15-28, 2024',
+      id: "2",
+      payPeriod: "Feb 15-28, 2024",
       grossPay: 2500,
       netPay: 1875,
-      status: 'available'
-    }
+      status: "available",
+    },
   ];
 
   if (!isOpen) return null;

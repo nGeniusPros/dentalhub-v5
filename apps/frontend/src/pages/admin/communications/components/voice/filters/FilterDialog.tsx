@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../../components/ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../../components/ui/button";
 
 interface FilterDialogProps {
   open: boolean;
@@ -12,12 +12,12 @@ interface FilterDialogProps {
 export const FilterDialog: React.FC<FilterDialogProps> = ({
   open,
   onClose,
-  onApply
+  onApply,
 }) => {
   const [filters, setFilters] = React.useState({
     outcome: [] as string[],
-    duration: 'all',
-    status: [] as string[]
+    duration: "all",
+    status: [] as string[],
   });
 
   if (!open) return null;
@@ -43,23 +43,30 @@ export const FilterDialog: React.FC<FilterDialogProps> = ({
 
         <div className="space-y-6">
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Call Outcome</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">
+              Call Outcome
+            </h3>
             <div className="space-y-2">
-              {['Appointment Scheduled', 'Call Back Later', 'Not Interested', 'Voicemail'].map((outcome) => (
+              {[
+                "Appointment Scheduled",
+                "Call Back Later",
+                "Not Interested",
+                "Voicemail",
+              ].map((outcome) => (
                 <label key={outcome} className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     checked={filters.outcome.includes(outcome)}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setFilters(prev => ({
+                        setFilters((prev) => ({
                           ...prev,
-                          outcome: [...prev.outcome, outcome]
+                          outcome: [...prev.outcome, outcome],
                         }));
                       } else {
-                        setFilters(prev => ({
+                        setFilters((prev) => ({
                           ...prev,
-                          outcome: prev.outcome.filter(o => o !== outcome)
+                          outcome: prev.outcome.filter((o) => o !== outcome),
                         }));
                       }
                     }}
@@ -75,7 +82,9 @@ export const FilterDialog: React.FC<FilterDialogProps> = ({
             <h3 className="text-sm font-medium text-gray-700 mb-2">Duration</h3>
             <select
               value={filters.duration}
-              onChange={(e) => setFilters(prev => ({ ...prev, duration: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, duration: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
             >
               <option value="all">All Time</option>
@@ -89,21 +98,21 @@ export const FilterDialog: React.FC<FilterDialogProps> = ({
           <div>
             <h3 className="text-sm font-medium text-gray-700 mb-2">Status</h3>
             <div className="space-y-2">
-              {['Completed', 'Failed', 'Answered'].map((status) => (
+              {["Completed", "Failed", "Answered"].map((status) => (
                 <label key={status} className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     checked={filters.status.includes(status)}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setFilters(prev => ({
+                        setFilters((prev) => ({
                           ...prev,
-                          status: [...prev.status, status]
+                          status: [...prev.status, status],
                         }));
                       } else {
-                        setFilters(prev => ({
+                        setFilters((prev) => ({
                           ...prev,
-                          status: prev.status.filter(s => s !== status)
+                          status: prev.status.filter((s) => s !== status),
                         }));
                       }
                     }}
@@ -116,10 +125,10 @@ export const FilterDialog: React.FC<FilterDialogProps> = ({
           </div>
 
           <div className="flex justify-end gap-3 pt-4">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => {
-                setFilters({ outcome: [], duration: 'all', status: [] });
+                setFilters({ outcome: [], duration: "all", status: [] });
               }}
             >
               Reset
@@ -127,9 +136,7 @@ export const FilterDialog: React.FC<FilterDialogProps> = ({
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button onClick={handleApply}>
-              Apply Filters
-            </Button>
+            <Button onClick={handleApply}>Apply Filters</Button>
           </div>
         </div>
       </motion.div>

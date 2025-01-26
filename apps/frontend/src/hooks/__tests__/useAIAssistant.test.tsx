@@ -1,10 +1,10 @@
-import { renderHook, act } from '@testing-library/react';
-import { useAIAssistant } from '../useAIAssistant';
-import { aiApiService } from '../../services/ai-api-service';
-import { AiProvider } from '../ai-agents/providers/ai-context-provider';
+import { renderHook, act } from "@testing-library/react";
+import { useAIAssistant } from "../useAIAssistant";
+import { aiApiService } from "../../services/ai-api-service";
+import { AiProvider } from "../ai-agents/providers/ai-context-provider";
 
 // Mock the AI API service
-vi.mock('../../services/ai-api-service', () => ({
+vi.mock("../../services/ai-api-service", () => ({
   aiApiService: {
     createThread: vi.fn(),
     addMessageToThread: vi.fn(),
@@ -12,12 +12,12 @@ vi.mock('../../services/ai-api-service', () => ({
   },
 }));
 
-describe('useAIAssistant', () => {
-  const mockAssistantId = 'asst_123';
-  const mockThreadId = 'thread_123';
+describe("useAIAssistant", () => {
+  const mockAssistantId = "asst_123";
+  const mockThreadId = "thread_123";
   const mockMessages = [
-    { role: 'user', content: 'Hello' },
-    { role: 'assistant', content: 'Hi there!' },
+    { role: "user", content: "Hello" },
+    { role: "assistant", content: "Hi there!" },
   ];
 
   beforeEach(() => {
@@ -28,14 +28,14 @@ describe('useAIAssistant', () => {
     <AiProvider>{children}</AiProvider>
   );
 
-  it('should initialize thread successfully', async () => {
+  it("should initialize thread successfully", async () => {
     (aiApiService.createThread as jest.Mock).mockResolvedValueOnce({
       threadId: mockThreadId,
     });
 
     const { result } = renderHook(
       () => useAIAssistant({ assistantId: mockAssistantId }),
-      { wrapper }
+      { wrapper },
     );
 
     await act(async () => {
@@ -47,23 +47,25 @@ describe('useAIAssistant', () => {
     expect(result.current.error).toBe(null);
   });
 
-  it('should send message and get response successfully', async () => {
+  it("should send message and get response successfully", async () => {
     (aiApiService.createThread as jest.Mock).mockResolvedValueOnce({
       threadId: mockThreadId,
     });
     (aiApiService.addMessageToThread as jest.Mock).mockResolvedValueOnce({
-      role: 'user',
-      content: 'Hello',
+      role: "user",
+      content: "Hello",
     });
-    (aiApiService.runAssistant as jest.Mock).mockResolvedValueOnce(mockMessages);
+    (aiApiService.runAssistant as jest.Mock).mockResolvedValueOnce(
+      mockMessages,
+    );
 
     const { result } = renderHook(
       () => useAIAssistant({ assistantId: mockAssistantId }),
-      { wrapper }
+      { wrapper },
     );
 
     await act(async () => {
-      await result.current.sendMessage('Hello');
+      await result.current.sendMessage("Hello");
     });
 
     expect(result.current.messages).toEqual(mockMessages);
@@ -71,15 +73,15 @@ describe('useAIAssistant', () => {
     expect(result.current.error).toBe(null);
   });
 
-  it('should handle errors gracefully', async () => {
-    const mockError = new Error('API Error');
+  it("should handle errors gracefully", async () => {
+    const mockError = new Error("API Error");
     const onError = vi.fn();
 
     (aiApiService.createThread as jest.Mock).mockRejectedValueOnce(mockError);
 
     const { result } = renderHook(
       () => useAIAssistant({ assistantId: mockAssistantId, onError }),
-      { wrapper }
+      { wrapper },
     );
 
     await act(async () => {
@@ -95,14 +97,14 @@ describe('useAIAssistant', () => {
     expect(onError).toHaveBeenCalledWith(mockError);
   });
 
-  it('should reset thread successfully', async () => {
+  it("should reset thread successfully", async () => {
     (aiApiService.createThread as jest.Mock)
       .mockResolvedValueOnce({ threadId: mockThreadId })
-      .mockResolvedValueOnce({ threadId: 'new_thread_123' });
+      .mockResolvedValueOnce({ threadId: "new_thread_123" });
 
     const { result } = renderHook(
       () => useAIAssistant({ assistantId: mockAssistantId }),
-      { wrapper }
+      { wrapper },
     );
 
     // Initialize first thread
@@ -115,7 +117,7 @@ describe('useAIAssistant', () => {
       await result.current.resetThread();
     });
 
-    expect(result.current.threadId).toBe('new_thread_123');
+    expect(result.current.threadId).toBe("new_thread_123");
     expect(result.current.messages).toEqual([]);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBe(null);

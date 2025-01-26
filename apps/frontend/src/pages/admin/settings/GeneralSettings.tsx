@@ -1,32 +1,37 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
-import { useSettings } from '../../../contexts/SettingsContext';
-import { SecuritySettings } from './components/SecuritySettings';
-import { IntegrationsSettings } from './components/IntegrationsSettings';
-import { UserPermissions } from './components/UserPermissions';
-import { FeatureSettings } from './components/FeatureSettings';
-import { TargetAudienceSettings } from './components/TargetAudienceSettings';
-import { BrandingSettings } from './components/BrandingSettings';
-import { BackOfficePermissions } from './components/BackOfficePermissions';
-import { PatientPermissions } from './components/PatientPermissions';
-import { NotificationToggle } from './components/NotificationToggle';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../components/ui/button";
+import { useSettings } from "../../../contexts/SettingsContext";
+import { SecuritySettings } from "./components/SecuritySettings";
+import { IntegrationsSettings } from "./components/IntegrationsSettings";
+import { UserPermissions } from "./components/UserPermissions";
+import { FeatureSettings } from "./components/FeatureSettings";
+import { TargetAudienceSettings } from "./components/TargetAudienceSettings";
+import { BrandingSettings } from "./components/BrandingSettings";
+import { BackOfficePermissions } from "./components/BackOfficePermissions";
+import { PatientPermissions } from "./components/PatientPermissions";
+import { NotificationToggle } from "./components/NotificationToggle";
 
 const GeneralSettings = () => {
   const { state, updateSettings } = useSettings();
   const { settings, loading } = state;
 
-  const handleNotificationUpdate = (key: keyof Settings['notifications'], value: boolean) => {
+  const handleNotificationUpdate = (
+    key: keyof Settings["notifications"],
+    value: boolean,
+  ) => {
     updateSettings({
       notifications: {
         ...settings.notifications,
-        [key]: value
-      }
+        [key]: value,
+      },
     });
   };
 
-  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -34,20 +39,22 @@ const GeneralSettings = () => {
         updateSettings({
           branding: {
             ...settings.branding,
-            logo: reader.result as string
-          }
+            logo: reader.result as string,
+          },
         });
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleGeneralSettingsUpdate = (updates: Partial<typeof settings.general>) => {
+  const handleGeneralSettingsUpdate = (
+    updates: Partial<typeof settings.general>,
+  ) => {
     updateSettings({
       general: {
         ...settings.general,
-        ...updates
-      }
+        ...updates,
+      },
     });
   };
 
@@ -58,7 +65,9 @@ const GeneralSettings = () => {
           <h1 className="text-2xl font-bold bg-gradient-to-r from-navy via-purple to-turquoise text-transparent bg-clip-text">
             General Settings
           </h1>
-          <p className="text-gray-600">Configure your practice settings and preferences</p>
+          <p className="text-gray-600">
+            Configure your practice settings and preferences
+          </p>
         </div>
         <Button className="bg-gradient-to-r from-navy via-purple to-turquoise text-white">
           Save Changes
@@ -80,7 +89,9 @@ const GeneralSettings = () => {
             <input
               type="text"
               value={settings.general.practiceName}
-              onChange={(e) => handleGeneralSettingsUpdate({ practiceName: e.target.value })}
+              onChange={(e) =>
+                handleGeneralSettingsUpdate({ practiceName: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
@@ -91,7 +102,9 @@ const GeneralSettings = () => {
             <input
               type="text"
               value={settings.general.address}
-              onChange={(e) => handleGeneralSettingsUpdate({ address: e.target.value })}
+              onChange={(e) =>
+                handleGeneralSettingsUpdate({ address: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
@@ -102,7 +115,9 @@ const GeneralSettings = () => {
             <input
               type="text"
               value={settings.general.phone}
-              onChange={(e) => handleGeneralSettingsUpdate({ phone: e.target.value })}
+              onChange={(e) =>
+                handleGeneralSettingsUpdate({ phone: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
@@ -113,7 +128,9 @@ const GeneralSettings = () => {
             <input
               type="email"
               value={settings.general.email}
-              onChange={(e) => handleGeneralSettingsUpdate({ email: e.target.value })}
+              onChange={(e) =>
+                handleGeneralSettingsUpdate({ email: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
@@ -171,7 +188,9 @@ const GeneralSettings = () => {
             </label>
             <select
               value={settings.general.timezone}
-              onChange={(e) => handleGeneralSettingsUpdate({ timezone: e.target.value })}
+              onChange={(e) =>
+                handleGeneralSettingsUpdate({ timezone: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="America/New_York">Eastern Time (ET)</option>
@@ -186,7 +205,9 @@ const GeneralSettings = () => {
             </label>
             <select
               value={settings.general.dateFormat}
-              onChange={(e) => handleGeneralSettingsUpdate({ dateFormat: e.target.value })}
+              onChange={(e) =>
+                handleGeneralSettingsUpdate({ dateFormat: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="MM/DD/YYYY">MM/DD/YYYY</option>
@@ -200,7 +221,9 @@ const GeneralSettings = () => {
             </label>
             <select
               value={settings.general.currency}
-              onChange={(e) => handleGeneralSettingsUpdate({ currency: e.target.value })}
+              onChange={(e) =>
+                handleGeneralSettingsUpdate({ currency: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="USD">USD ($)</option>
@@ -220,15 +243,14 @@ const GeneralSettings = () => {
 
       {/* User Permissions */}
       <UserPermissions />
-      
+
       {/* Back Office Permissions */}
       <BackOfficePermissions />
-      
+
       {/* Patient Portal Permissions */}
       <PatientPermissions />
       {/* Feature Management */}
       <FeatureSettings />
-
     </div>
   );
 };

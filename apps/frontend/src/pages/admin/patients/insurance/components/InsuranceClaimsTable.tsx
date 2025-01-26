@@ -1,9 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { formatCurrency } from '../../../../lib/utils/currency';
-import { formatDate } from '../../../../lib/utils/date';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { formatCurrency } from "../../../../lib/utils/currency";
+import { formatDate } from "../../../../lib/utils/date";
 
 export const InsuranceClaimsTable = ({ claims }: any) => {
   return (
@@ -35,12 +35,24 @@ export const InsuranceClaimsTable = ({ claims }: any) => {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Claim ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Patient</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Claim ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Patient
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Date
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Amount
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Status
+              </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -48,17 +60,29 @@ export const InsuranceClaimsTable = ({ claims }: any) => {
               <tr key={claim.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 text-sm text-gray-900">{claim.id}</td>
                 <td className="px-6 py-4">
-                  <div className="text-sm font-medium text-gray-900">{claim.patientName}</div>
-                  <div className="text-sm text-gray-500">{claim.insuranceProvider}</div>
+                  <div className="text-sm font-medium text-gray-900">
+                    {claim.patientName}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {claim.insuranceProvider}
+                  </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500">{formatDate(claim.date)}</td>
-                <td className="px-6 py-4 text-sm text-gray-900">{formatCurrency(claim.amount)}</td>
+                <td className="px-6 py-4 text-sm text-gray-500">
+                  {formatDate(claim.date)}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900">
+                  {formatCurrency(claim.amount)}
+                </td>
                 <td className="px-6 py-4">
-                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                    claim.status === 'Paid' ? 'bg-green-100 text-green-800' :
-                    claim.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
+                  <span
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${
+                      claim.status === "Paid"
+                        ? "bg-green-100 text-green-800"
+                        : claim.status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
+                    }`}
+                  >
                     {claim.status}
                   </span>
                 </td>

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Sikka API request/response schemas
 export const SikkaVerifyRequestSchema = z.object({
@@ -10,18 +10,18 @@ export const SikkaVerifyRequestSchema = z.object({
     first_name: z.string(),
     last_name: z.string(),
     date_of_birth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    member_id: z.string()
-  })
+    member_id: z.string(),
+  }),
 });
 
 export type SikkaVerifyRequest = z.infer<typeof SikkaVerifyRequestSchema>;
 
 export class SikkaClient {
-  private static BASE_URL = 'https://api.sikkasoft.com/v1';
-  
+  private static BASE_URL = "https://api.sikkasoft.com/v1";
+
   constructor(private apiKey: string) {
     if (!apiKey) {
-      throw new Error('Sikka API key is required');
+      throw new Error("Sikka API key is required");
     }
   }
 
@@ -36,20 +36,20 @@ export class SikkaClient {
     const validatedPayload = SikkaVerifyRequestSchema.parse(payload);
 
     const response = await fetch(`${SikkaClient.BASE_URL}/insurance/verify`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.apiKey}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.apiKey}`,
       },
-      body: JSON.stringify(validatedPayload)
+      body: JSON.stringify(validatedPayload),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
       throw new Error(
         `Sikka API Error: ${response.statusText}${
-          errorData ? ` - ${JSON.stringify(errorData)}` : ''
-        }`
+          errorData ? ` - ${JSON.stringify(errorData)}` : ""
+        }`,
       );
     }
 
@@ -66,9 +66,9 @@ export class SikkaClient {
       `${SikkaClient.BASE_URL}/insurance/providers/${providerId}`,
       {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`
-        }
-      }
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+      },
     );
 
     if (!response.ok) {
@@ -86,12 +86,12 @@ export class SikkaClient {
   async submitClaim(claim: unknown) {
     // TODO: Add claim schema validation
     const response = await fetch(`${SikkaClient.BASE_URL}/insurance/claims`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.apiKey}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.apiKey}`,
       },
-      body: JSON.stringify(claim)
+      body: JSON.stringify(claim),
     });
 
     if (!response.ok) {

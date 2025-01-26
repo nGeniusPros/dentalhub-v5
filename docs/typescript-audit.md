@@ -3,6 +3,7 @@
 ## Critical Issues Found
 
 ### 1. Excessive `any` Type Usage
+
 - Found over 300 instances of `any` type usage across the codebase
 - Major hotspots:
   - API routes (`apps/api/src/routes/`)
@@ -13,6 +14,7 @@
 ### 2. Priority Action Items
 
 #### 2.1 Type Definition Improvements
+
 1. Create proper type definitions for API responses and requests
 2. Replace generic `any` types in service layer with proper interfaces
 3. Implement strict type checking for webhook handlers
@@ -21,6 +23,7 @@
 #### 2.2 Critical Areas for Immediate Action
 
 ##### API Routes
+
 ```typescript
 // Current (apps/api/src/routes/webhooks.ts)
 router.post('/retell', validateWebhookSignature, asyncHandler(async (req: any, res: Response) => {
@@ -37,6 +40,7 @@ router.post('/retell', validateWebhookSignature, asyncHandler(async (req: Reques
 ```
 
 ##### Service Layer
+
 ```typescript
 // Current (apps/api/src/services/sikkaAiIntegration.ts)
 interface SikkaIntegrationData {
@@ -57,6 +61,7 @@ interface SikkaIntegrationData {
 ### 3. Implementation Plan
 
 #### Phase 1: Foundation (Week 1)
+
 1. Create `/packages/types` package for shared type definitions
 2. Set up strict TypeScript configuration
    ```json
@@ -72,11 +77,13 @@ interface SikkaIntegrationData {
 3. Implement core type definitions for common entities
 
 #### Phase 2: Service Layer (Week 2)
+
 1. Refactor service layer to use proper types
 2. Create proper error types and handlers
 3. Implement request/response type definitions
 
 #### Phase 3: API Layer (Week 3)
+
 1. Type all route handlers properly
 2. Implement request validation with proper types
 3. Add response type definitions
@@ -84,6 +91,7 @@ interface SikkaIntegrationData {
 ### 4. TypeScript Best Practices to Implement
 
 1. Use TypeScript's utility types:
+
 ```typescript
 type Nullable<T> = T | null;
 type Required<T> = {
@@ -92,6 +100,7 @@ type Required<T> = {
 ```
 
 2. Implement proper error handling:
+
 ```typescript
 interface ApiError extends Error {
   code: string;
@@ -100,13 +109,11 @@ interface ApiError extends Error {
 ```
 
 3. Use type guards for runtime type checking:
+
 ```typescript
 function isPatientData(data: unknown): data is PatientData {
   return (
-    typeof data === 'object' &&
-    data !== null &&
-    'id' in data &&
-    'name' in data
+    typeof data === "object" && data !== null && "id" in data && "name" in data
   );
 }
 ```
@@ -114,11 +121,13 @@ function isPatientData(data: unknown): data is PatientData {
 ### 5. Monitoring and Maintenance
 
 1. Set up TypeScript metrics monitoring:
+
    - Type coverage percentage
    - Number of `any` types
    - Build time warnings/errors
 
 2. Regular type audits:
+
    ```powershell
    # Run type checking
    pnpm exec tsc --noEmit --strict

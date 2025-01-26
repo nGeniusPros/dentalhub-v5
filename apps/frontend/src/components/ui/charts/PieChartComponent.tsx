@@ -1,6 +1,6 @@
-import React from 'react';
-import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
-import { BaseChart } from './BaseChart';
+import React from "react";
+import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import { BaseChart } from "./BaseChart";
 
 interface PieChartProps {
   data: Array<{
@@ -40,10 +40,10 @@ export const PieChartComponent: React.FC<PieChartProps> = ({
         </Pie>
         <Tooltip
           contentStyle={{
-            backgroundColor: '#fff',
-            border: 'none',
-            borderRadius: '0.5rem',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            backgroundColor: "#fff",
+            border: "none",
+            borderRadius: "0.5rem",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
           }}
         />
         <Legend />

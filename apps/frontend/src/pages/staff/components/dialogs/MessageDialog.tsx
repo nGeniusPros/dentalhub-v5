@@ -1,10 +1,15 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 interface MessageDialogProps {
   isOpen: boolean;
@@ -15,13 +20,17 @@ interface MessageDialogProps {
   } | null;
 }
 
-export const MessageDialog: React.FC<MessageDialogProps> = ({ isOpen, onClose, patient }) => {
-  const [message, setMessage] = React.useState('');
+export const MessageDialog: React.FC<MessageDialogProps> = ({
+  isOpen,
+  onClose,
+  patient,
+}) => {
+  const [message, setMessage] = React.useState("");
 
   const handleSend = () => {
     if (!message.trim() || !patient) return;
     // TODO: Implement message sending logic
-    setMessage('');
+    setMessage("");
     onClose();
   };
 

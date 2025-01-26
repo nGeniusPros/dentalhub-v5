@@ -1,6 +1,6 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types';
-import { createClient } from '@dentalhub/database';
+import { SupabaseClient } from "@supabase/supabase-js";
+import { Database } from "../types/database.types";
+import { createClient } from "@dentalhub/database";
 
 export class SupabaseService {
   private supabase: SupabaseClient<Database>;
@@ -54,7 +54,7 @@ export class SupabaseService {
       },
       delete: async () => {
         return await this.supabase.from(table).delete();
-      }
+      },
     };
   }
 

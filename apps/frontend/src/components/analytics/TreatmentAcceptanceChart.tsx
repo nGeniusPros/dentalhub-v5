@@ -1,8 +1,15 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Button } from '../ui/button';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { Button } from "../ui/button";
+import * as Icons from "lucide-react";
 
 interface TreatmentAcceptanceChartProps {
   data: Array<{
@@ -12,7 +19,9 @@ interface TreatmentAcceptanceChartProps {
   }>;
 }
 
-export const TreatmentAcceptanceChart: React.FC<TreatmentAcceptanceChartProps> = ({ data }) => {
+export const TreatmentAcceptanceChart: React.FC<
+  TreatmentAcceptanceChartProps
+> = ({ data }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

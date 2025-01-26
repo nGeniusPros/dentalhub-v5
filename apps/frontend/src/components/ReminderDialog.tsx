@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from './ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "./ui/button";
 
 interface ReminderDialogProps {
   isOpen: boolean;
@@ -21,13 +21,13 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({
   isOpen,
   onClose,
   onSend,
-  recipient
+  recipient,
 }) => {
   const [reminder, setReminder] = useState({
-    method: 'sms',
-    message: '',
+    method: "sms",
+    message: "",
     sendNow: true,
-    scheduledTime: ''
+    scheduledTime: "",
   });
 
   if (!isOpen) return null;
@@ -64,7 +64,9 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({
             </label>
             <select
               value={reminder.method}
-              onChange={(e) => setReminder(prev => ({ ...prev, method: e.target.value }))}
+              onChange={(e) =>
+                setReminder((prev) => ({ ...prev, method: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
             >
               <option value="sms">SMS</option>
@@ -79,7 +81,9 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({
             </label>
             <textarea
               value={reminder.message}
-              onChange={(e) => setReminder(prev => ({ ...prev, message: e.target.value }))}
+              onChange={(e) =>
+                setReminder((prev) => ({ ...prev, message: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
               rows={4}
               placeholder={`Hi ${recipient.name}, this is a reminder about your upcoming appointment...`}
@@ -92,7 +96,9 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({
               <input
                 type="radio"
                 checked={reminder.sendNow}
-                onChange={() => setReminder(prev => ({ ...prev, sendNow: true }))}
+                onChange={() =>
+                  setReminder((prev) => ({ ...prev, sendNow: true }))
+                }
                 className="rounded border-gray-300"
               />
               <span className="text-sm">Send Now</span>
@@ -101,7 +107,9 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({
               <input
                 type="radio"
                 checked={!reminder.sendNow}
-                onChange={() => setReminder(prev => ({ ...prev, sendNow: false }))}
+                onChange={() =>
+                  setReminder((prev) => ({ ...prev, sendNow: false }))
+                }
                 className="rounded border-gray-300"
               />
               <span className="text-sm">Schedule for Later</span>
@@ -116,7 +124,12 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({
               <input
                 type="datetime-local"
                 value={reminder.scheduledTime}
-                onChange={(e) => setReminder(prev => ({ ...prev, scheduledTime: e.target.value }))}
+                onChange={(e) =>
+                  setReminder((prev) => ({
+                    ...prev,
+                    scheduledTime: e.target.value,
+                  }))
+                }
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -127,9 +140,7 @@ export const ReminderDialog: React.FC<ReminderDialogProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Send Reminder
-            </Button>
+            <Button type="submit">Send Reminder</Button>
           </div>
         </form>
       </motion.div>

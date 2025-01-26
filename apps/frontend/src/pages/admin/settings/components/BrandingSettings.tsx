@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { ColorManagement } from './ColorManagement';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { ColorManagement } from "./ColorManagement";
 
 interface BrandingConfig {
   mission: string;
@@ -39,51 +39,50 @@ interface BrandingConfig {
 
 export const BrandingSettings = () => {
   const [branding, setBranding] = useState<BrandingConfig>({
-    mission: "To revolutionize dental care through innovative technology and compassionate service.",
-    vision: "To be the leading provider of modern, patient-centered dental care solutions.",
+    mission:
+      "To revolutionize dental care through innovative technology and compassionate service.",
+    vision:
+      "To be the leading provider of modern, patient-centered dental care solutions.",
     values: [
       "Innovation",
       "Compassion",
       "Excellence",
       "Integrity",
-      "Patient-First"
+      "Patient-First",
     ],
     tone: {
       primary: "Professional yet approachable",
-      secondary: [
-        "Confident",
-        "Empathetic",
-        "Educational",
-        "Trustworthy"
-      ]
+      secondary: ["Confident", "Empathetic", "Educational", "Trustworthy"],
     },
     targetAudience: {
       demographics: {
         ageRange: ["25-45", "46-65"],
         income: ["Middle income", "Upper-middle income"],
         location: ["Urban", "Suburban"],
-        education: ["College educated", "Professional degree"]
+        education: ["College educated", "Professional degree"],
       },
       psychographics: {
         interests: ["Health-conscious", "Technology-savvy", "Quality-focused"],
         lifestyle: ["Busy professionals", "Family-oriented", "Health-focused"],
-        values: ["Preventive care", "Quality service", "Modern solutions"]
-      }
+        values: ["Preventive care", "Quality service", "Modern solutions"],
+      },
     },
     brandGuidelines: {
-      logoUsage: "Logo should always maintain clear space and never be altered in color or proportion",
+      logoUsage:
+        "Logo should always maintain clear space and never be altered in color or proportion",
       typography: {
         primary: "Montserrat",
         secondary: "Open Sans",
-        body: "Inter"
+        body: "Inter",
       },
       imageStyle: "Clean, modern, and professional with a warm, welcoming feel",
-      voiceAndTone: "Professional yet approachable, focusing on education and patient comfort"
-    }
+      voiceAndTone:
+        "Professional yet approachable, focusing on education and patient comfort",
+    },
   });
 
   const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string>('');
+  const [logoPreview, setLogoPreview] = useState<string>("");
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -98,9 +97,9 @@ export const BrandingSettings = () => {
   };
 
   const updateValues = (values: string[]) => {
-    setBranding(prev => ({
+    setBranding((prev) => ({
       ...prev,
-      values
+      values,
     }));
   };
 
@@ -113,7 +112,7 @@ export const BrandingSettings = () => {
       {/* Brand Identity */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
         <h2 className="text-lg font-semibold mb-6">Brand Identity</h2>
-        
+
         <div className="space-y-6">
           {/* Logo Management */}
           <div className="mb-6">
@@ -135,7 +134,9 @@ export const BrandingSettings = () => {
               <div>
                 <Button
                   variant="outline"
-                  onClick={() => document.getElementById('logo-upload')?.click()}
+                  onClick={() =>
+                    document.getElementById("logo-upload")?.click()
+                  }
                 >
                   <Icons.Upload className="w-4 h-4 mr-2" />
                   Upload Logo
@@ -162,7 +163,9 @@ export const BrandingSettings = () => {
               </label>
               <textarea
                 value={branding.mission}
-                onChange={(e) => setBranding(prev => ({ ...prev, mission: e.target.value }))}
+                onChange={(e) =>
+                  setBranding((prev) => ({ ...prev, mission: e.target.value }))
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 rows={3}
               />
@@ -173,7 +176,9 @@ export const BrandingSettings = () => {
               </label>
               <textarea
                 value={branding.vision}
-                onChange={(e) => setBranding(prev => ({ ...prev, vision: e.target.value }))}
+                onChange={(e) =>
+                  setBranding((prev) => ({ ...prev, vision: e.target.value }))
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 rows={3}
               />
@@ -193,7 +198,11 @@ export const BrandingSettings = () => {
                 >
                   <span>{value}</span>
                   <button
-                    onClick={() => updateValues(branding.values.filter((_, i) => i !== index))}
+                    onClick={() =>
+                      updateValues(
+                        branding.values.filter((_, i) => i !== index),
+                      )
+                    }
                     className="text-gray-500 hover:text-red-500"
                   >
                     <Icons.X className="w-4 h-4" />
@@ -204,7 +213,7 @@ export const BrandingSettings = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  const newValue = prompt('Enter new core value');
+                  const newValue = prompt("Enter new core value");
                   if (newValue) {
                     updateValues([...branding.values, newValue]);
                   }
@@ -224,7 +233,7 @@ export const BrandingSettings = () => {
       {/* Target Audience */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
         <h2 className="text-lg font-semibold mb-6">Target Audience</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Demographics */}
           <div>
@@ -235,14 +244,16 @@ export const BrandingSettings = () => {
                   Age Range
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {branding.targetAudience.demographics.ageRange.map((range, index) => (
-                    <div
-                      key={index}
-                      className="px-3 py-1 bg-gray-100 rounded-full text-sm"
-                    >
-                      {range}
-                    </div>
-                  ))}
+                  {branding.targetAudience.demographics.ageRange.map(
+                    (range, index) => (
+                      <div
+                        key={index}
+                        className="px-3 py-1 bg-gray-100 rounded-full text-sm"
+                      >
+                        {range}
+                      </div>
+                    ),
+                  )}
                 </div>
               </div>
               <div>
@@ -250,14 +261,16 @@ export const BrandingSettings = () => {
                   Income Level
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {branding.targetAudience.demographics.income.map((income, index) => (
-                    <div
-                      key={index}
-                      className="px-3 py-1 bg-gray-100 rounded-full text-sm"
-                    >
-                      {income}
-                    </div>
-                  ))}
+                  {branding.targetAudience.demographics.income.map(
+                    (income, index) => (
+                      <div
+                        key={index}
+                        className="px-3 py-1 bg-gray-100 rounded-full text-sm"
+                      >
+                        {income}
+                      </div>
+                    ),
+                  )}
                 </div>
               </div>
             </div>
@@ -272,14 +285,16 @@ export const BrandingSettings = () => {
                   Interests
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {branding.targetAudience.psychographics.interests.map((interest, index) => (
-                    <div
-                      key={index}
-                      className="px-3 py-1 bg-gray-100 rounded-full text-sm"
-                    >
-                      {interest}
-                    </div>
-                  ))}
+                  {branding.targetAudience.psychographics.interests.map(
+                    (interest, index) => (
+                      <div
+                        key={index}
+                        className="px-3 py-1 bg-gray-100 rounded-full text-sm"
+                      >
+                        {interest}
+                      </div>
+                    ),
+                  )}
                 </div>
               </div>
               <div>
@@ -287,14 +302,16 @@ export const BrandingSettings = () => {
                   Lifestyle
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {branding.targetAudience.psychographics.lifestyle.map((style, index) => (
-                    <div
-                      key={index}
-                      className="px-3 py-1 bg-gray-100 rounded-full text-sm"
-                    >
-                      {style}
-                    </div>
-                  ))}
+                  {branding.targetAudience.psychographics.lifestyle.map(
+                    (style, index) => (
+                      <div
+                        key={index}
+                        className="px-3 py-1 bg-gray-100 rounded-full text-sm"
+                      >
+                        {style}
+                      </div>
+                    ),
+                  )}
                 </div>
               </div>
             </div>
@@ -305,7 +322,7 @@ export const BrandingSettings = () => {
       {/* Voice & Tone */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
         <h2 className="text-lg font-semibold mb-6">Voice & Tone</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -314,10 +331,12 @@ export const BrandingSettings = () => {
             <input
               type="text"
               value={branding.tone.primary}
-              onChange={(e) => setBranding(prev => ({
-                ...prev,
-                tone: { ...prev.tone, primary: e.target.value }
-              }))}
+              onChange={(e) =>
+                setBranding((prev) => ({
+                  ...prev,
+                  tone: { ...prev.tone, primary: e.target.value },
+                }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
@@ -342,7 +361,7 @@ export const BrandingSettings = () => {
       {/* Typography */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
         <h2 className="text-lg font-semibold mb-6">Typography</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -351,16 +370,18 @@ export const BrandingSettings = () => {
             <input
               type="text"
               value={branding.brandGuidelines.typography.primary}
-              onChange={(e) => setBranding(prev => ({
-                ...prev,
-                brandGuidelines: {
-                  ...prev.brandGuidelines,
-                  typography: {
-                    ...prev.brandGuidelines.typography,
-                    primary: e.target.value
-                  }
-                }
-              }))}
+              onChange={(e) =>
+                setBranding((prev) => ({
+                  ...prev,
+                  brandGuidelines: {
+                    ...prev.brandGuidelines,
+                    typography: {
+                      ...prev.brandGuidelines.typography,
+                      primary: e.target.value,
+                    },
+                  },
+                }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
@@ -371,16 +392,18 @@ export const BrandingSettings = () => {
             <input
               type="text"
               value={branding.brandGuidelines.typography.secondary}
-              onChange={(e) => setBranding(prev => ({
-                ...prev,
-                brandGuidelines: {
-                  ...prev.brandGuidelines,
-                  typography: {
-                    ...prev.brandGuidelines.typography,
-                    secondary: e.target.value
-                  }
-                }
-              }))}
+              onChange={(e) =>
+                setBranding((prev) => ({
+                  ...prev,
+                  brandGuidelines: {
+                    ...prev.brandGuidelines,
+                    typography: {
+                      ...prev.brandGuidelines.typography,
+                      secondary: e.target.value,
+                    },
+                  },
+                }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
@@ -391,16 +414,18 @@ export const BrandingSettings = () => {
             <input
               type="text"
               value={branding.brandGuidelines.typography.body}
-              onChange={(e) => setBranding(prev => ({
-                ...prev,
-                brandGuidelines: {
-                  ...prev.brandGuidelines,
-                  typography: {
-                    ...prev.brandGuidelines.typography,
-                    body: e.target.value
-                  }
-                }
-              }))}
+              onChange={(e) =>
+                setBranding((prev) => ({
+                  ...prev,
+                  brandGuidelines: {
+                    ...prev.brandGuidelines,
+                    typography: {
+                      ...prev.brandGuidelines.typography,
+                      body: e.target.value,
+                    },
+                  },
+                }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>

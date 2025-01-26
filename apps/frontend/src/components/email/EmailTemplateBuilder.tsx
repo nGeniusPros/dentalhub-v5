@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { cn } from '../../lib/utils';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { cn } from "../../lib/utils";
 
 interface Block {
   id: string;
-  type: 'text' | 'image' | 'button' | 'spacer' | 'divider' | 'social' | 'variable';
+  type:
+    | "text"
+    | "image"
+    | "button"
+    | "spacer"
+    | "divider"
+    | "social"
+    | "variable";
   content: any;
 }
 
@@ -17,7 +24,7 @@ interface EmailTemplateBuilderProps {
 
 export const EmailTemplateBuilder: React.FC<EmailTemplateBuilderProps> = ({
   content,
-  onChange
+  onChange,
 }) => {
   const [selectedBlock, setSelectedBlock] = useState<string | null>(null);
   const [draggedBlock, setDraggedBlock] = useState<Block | null>(null);
@@ -40,31 +47,35 @@ export const EmailTemplateBuilder: React.FC<EmailTemplateBuilderProps> = ({
   };
 
   const handleBlockEdit = (id: string, updates: Partial<Block>) => {
-    const newContent = content.map(block => 
-      block.id === id ? { ...block, ...updates } : block
+    const newContent = content.map((block) =>
+      block.id === id ? { ...block, ...updates } : block,
     );
     onChange(newContent);
   };
 
   const handleBlockDelete = (id: string) => {
-    const newContent = content.filter(block => block.id !== id);
+    const newContent = content.filter((block) => block.id !== id);
     onChange(newContent);
   };
 
   const renderBlock = (block: Block) => {
     switch (block.type) {
-      case 'text':
+      case "text":
         return (
           <div className="prose max-w-none">
             <div
               contentEditable
               dangerouslySetInnerHTML={{ __html: block.content }}
-              onBlur={(e) => handleBlockEdit(block.id, { content: e.currentTarget.innerHTML })}
+              onBlur={(e) =>
+                handleBlockEdit(block.id, {
+                  content: e.currentTarget.innerHTML,
+                })
+              }
               className="outline-none"
             />
           </div>
         );
-      case 'image':
+      case "image":
         return (
           <div className="relative">
             <img
@@ -82,35 +93,44 @@ export const EmailTemplateBuilder: React.FC<EmailTemplateBuilderProps> = ({
             </div>
           </div>
         );
-      case 'button':
+      case "button":
         return (
           <div className="text-center">
             <button
               className={cn(
                 "px-6 py-3 rounded-lg font-medium",
-                block.content.style === 'primary' && "bg-primary text-white",
-                block.content.style === 'secondary' && "bg-gray-100 text-gray-900",
-                block.content.style === 'outline' && "border-2 border-primary text-primary"
+                block.content.style === "primary" && "bg-primary text-white",
+                block.content.style === "secondary" &&
+                  "bg-gray-100 text-gray-900",
+                block.content.style === "outline" &&
+                  "border-2 border-primary text-primary",
               )}
             >
               {block.content.text}
             </button>
           </div>
         );
-      case 'spacer':
+      case "spacer":
         return (
-          <div style={{ height: block.content.height }} className="bg-gray-50" />
+          <div
+            style={{ height: block.content.height }}
+            className="bg-gray-50"
+          />
         );
-      case 'divider':
+      case "divider":
         return (
-          <hr className={cn(
-            "my-4",
-            block.content.style === 'solid' && "border-gray-200",
-            block.content.style === 'dashed' && "border-dashed border-gray-200",
-            block.content.style === 'dotted' && "border-dotted border-gray-200"
-          )} />
+          <hr
+            className={cn(
+              "my-4",
+              block.content.style === "solid" && "border-gray-200",
+              block.content.style === "dashed" &&
+                "border-dashed border-gray-200",
+              block.content.style === "dotted" &&
+                "border-dotted border-gray-200",
+            )}
+          />
         );
-      case 'social':
+      case "social":
         return (
           <div className="flex justify-center gap-4">
             {block.content.networks.map((network: string) => (
@@ -119,13 +139,13 @@ export const EmailTemplateBuilder: React.FC<EmailTemplateBuilderProps> = ({
                 className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
               >
                 {React.createElement(Icons[network as keyof typeof Icons], {
-                  className: "w-5 h-5"
+                  className: "w-5 h-5",
                 })}
               </button>
             ))}
           </div>
         );
-      case 'variable':
+      case "variable":
         return (
           <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded">
             {block.content.name}
@@ -147,7 +167,7 @@ export const EmailTemplateBuilder: React.FC<EmailTemplateBuilderProps> = ({
                 layoutId={block.id}
                 className={cn(
                   "relative p-4 rounded-lg border-2 border-transparent",
-                  selectedBlock === block.id && "border-primary"
+                  selectedBlock === block.id && "border-primary",
                 )}
                 onClick={() => setSelectedBlock(block.id)}
                 onDragOver={handleDragOver}
@@ -162,8 +182,8 @@ export const EmailTemplateBuilder: React.FC<EmailTemplateBuilderProps> = ({
                     <Button size="sm" variant="ghost">
                       <Icons.ArrowDown className="w-4 h-4" />
                     </Button>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="ghost"
                       onClick={() => handleBlockDelete(block.id)}
                     >

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
-import { useNotifications } from '../../../contexts/NotificationContext';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../components/ui/button";
+import { useNotifications } from "../../../contexts/NotificationContext";
 
 interface Appointment {
   id: string;
@@ -10,7 +10,7 @@ interface Appointment {
   time: string;
   duration: number;
   type: string;
-  status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
+  status: "scheduled" | "in-progress" | "completed" | "cancelled";
 }
 
 export const ScheduleControl: React.FC = () => {
@@ -19,34 +19,34 @@ export const ScheduleControl: React.FC = () => {
 
   const [appointments] = useState<Appointment[]>([
     {
-      id: '1',
-      patientName: 'John Smith',
-      time: '09:00',
+      id: "1",
+      patientName: "John Smith",
+      time: "09:00",
       duration: 30,
-      type: 'Check-up',
-      status: 'scheduled',
+      type: "Check-up",
+      status: "scheduled",
     },
     {
-      id: '2',
-      patientName: 'Sarah Johnson',
-      time: '10:00',
+      id: "2",
+      patientName: "Sarah Johnson",
+      time: "10:00",
       duration: 60,
-      type: 'Cleaning',
-      status: 'in-progress',
+      type: "Cleaning",
+      status: "in-progress",
     },
   ]);
 
   const handleAddAppointment = () => {
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'info',
-        title: 'New Appointment',
-        message: 'Opening appointment scheduler...',
+        type: "info",
+        title: "New Appointment",
+        message: "Opening appointment scheduler...",
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium',
+        priority: "medium",
       },
     });
   };
@@ -55,7 +55,9 @@ export const ScheduleControl: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Schedule Control</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Schedule Control
+          </h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             Manage appointments and schedules
           </p>
@@ -74,7 +76,10 @@ export const ScheduleControl: React.FC = () => {
               <Icons.ChevronLeft className="h-5 w-5" />
             </button>
             <span className="font-semibold">
-              {selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+              {selectedDate.toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
+              })}
             </span>
             <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
               <Icons.ChevronRight className="h-5 w-5" />
@@ -88,10 +93,10 @@ export const ScheduleControl: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
             <div className="p-4 border-b dark:border-gray-700">
               <h2 className="text-lg font-semibold">
-                {selectedDate.toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  month: 'long',
-                  day: 'numeric',
+                {selectedDate.toLocaleDateString("en-US", {
+                  weekday: "long",
+                  month: "long",
+                  day: "numeric",
                 })}
               </h2>
             </div>
@@ -115,16 +120,17 @@ export const ScheduleControl: React.FC = () => {
                     <div className="flex items-center space-x-2">
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          appointment.status === 'scheduled'
-                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100'
-                            : appointment.status === 'in-progress'
-                            ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100'
-                            : appointment.status === 'completed'
-                            ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
-                            : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
+                          appointment.status === "scheduled"
+                            ? "bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100"
+                            : appointment.status === "in-progress"
+                              ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100"
+                              : appointment.status === "completed"
+                                ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
+                                : "bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100"
                         }`}
                       >
-                        {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+                        {appointment.status.charAt(0).toUpperCase() +
+                          appointment.status.slice(1)}
                       </span>
                       <Button variant="ghost" size="sm">
                         <Icons.MoreVertical className="h-4 w-4" />

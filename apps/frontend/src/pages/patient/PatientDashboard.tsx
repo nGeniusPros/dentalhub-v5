@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Link } from '@/components/ui/link';
-import { cn } from '@/lib/utils';
-import { supabase } from '@/lib/supabase/client';
-import { syncManager } from '@/lib/utils/sync';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Link } from "@/components/ui/link";
+import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase/client";
+import { syncManager } from "@/lib/utils/sync";
+import { Button } from "@/components/ui/button";
 
 interface PatientInfo {
   id: string;
@@ -32,36 +32,39 @@ export const PatientDashboard: React.FC = () => {
 
   const quickActions: QuickAction[] = [
     {
-      label: 'Book Appointment',
-      icon: 'Calendar',
-      path: '/patient/appointments/book'
+      label: "Book Appointment",
+      icon: "Calendar",
+      path: "/patient/appointments/book",
     },
     {
-      label: 'View Records',
-      icon: 'FileText',
-      path: '/patient/records'
+      label: "View Records",
+      icon: "FileText",
+      path: "/patient/records",
     },
     {
-      label: 'Billing',
-      icon: 'CreditCard',
-      path: '/patient/billing'
+      label: "Billing",
+      icon: "CreditCard",
+      path: "/patient/billing",
     },
     {
-      label: 'Messages',
-      icon: 'MessageSquare',
-      path: '/patient/messages'
-    }
+      label: "Messages",
+      icon: "MessageSquare",
+      path: "/patient/messages",
+    },
   ];
 
   useEffect(() => {
     const fetchPatientInfo = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('No user found');
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) throw new Error("No user found");
 
         const { data, error } = await supabase
-          .from('patients')
-          .select(`
+          .from("patients")
+          .select(
+            `
             id,
             first_name,
             last_name,
@@ -72,14 +75,15 @@ export const PatientDashboard: React.FC = () => {
               type,
               status
             )
-          `)
-          .eq('user_id', user.id)
+          `,
+          )
+          .eq("user_id", user.id)
           .single();
 
         if (error) throw error;
         setPatientInfo(data);
       } catch (error) {
-        console.error('Error fetching patient info:', error);
+        console.error("Error fetching patient info:", error);
       } finally {
         setIsLoading(false);
       }
@@ -121,8 +125,8 @@ export const PatientDashboard: React.FC = () => {
               key={action.label}
               href={action.path}
               className={cn(
-                'flex items-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg',
-                'hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+                "flex items-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg",
+                "hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors",
               )}
             >
               <Icon className="h-6 w-6 text-primary mr-3" />
@@ -146,7 +150,9 @@ export const PatientDashboard: React.FC = () => {
                 <div>
                   <p className="font-medium">{appointment.type}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-300">
-                    {new Date(appointment.appointment_date).toLocaleDateString()}
+                    {new Date(
+                      appointment.appointment_date,
+                    ).toLocaleDateString()}
                   </p>
                 </div>
               </div>

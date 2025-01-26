@@ -2,16 +2,19 @@ export const edgeFunctionsService = {
   invoke: async (functionName: string, data: any) => {
     try {
       const response = await fetch(`/api/edge-functions/${functionName}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `Failed to invoke edge function: ${functionName}`);
+        throw new Error(
+          errorData.message ||
+            `Failed to invoke edge function: ${functionName}`,
+        );
       }
 
       return await response.json();

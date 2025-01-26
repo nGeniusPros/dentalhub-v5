@@ -1,57 +1,57 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import StatsCard from '@/components/dashboard/StatsCard';
-import { StaffDirectory } from './components/StaffDirectory'; 
-import { PerformanceTab } from './components/staff/PerformanceTab';
-import { ScheduleTab } from './components/staff/ScheduleTab';
-import { PayrollTab } from './components/staff/PayrollTab';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "@/components/ui/button";
+import StatsCard from "@/components/dashboard/StatsCard";
+import { StaffDirectory } from "./components/StaffDirectory";
+import { PerformanceTab } from "./components/staff/PerformanceTab";
+import { ScheduleTab } from "./components/staff/ScheduleTab";
+import { PayrollTab } from "./components/staff/PayrollTab";
 
 export const AdminStaff: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('directory');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState("directory");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const stats = [
     {
-      title: 'Total Staff',
-      value: '24',
-      trend: '+2',
-      trendDirection: 'up',
-      icon: Icons.Users
+      title: "Total Staff",
+      value: "24",
+      trend: "+2",
+      trendDirection: "up",
+      icon: Icons.Users,
     },
     {
-      title: 'Active Today',
-      value: '18',
-      trend: '75%',
-      trendDirection: 'up',
-      icon: Icons.UserCheck
+      title: "Active Today",
+      value: "18",
+      trend: "75%",
+      trendDirection: "up",
+      icon: Icons.UserCheck,
     },
     {
-      title: 'Avg Performance',
-      value: '92%',
-      trend: '+5%',
-      trendDirection: 'up',
-      icon: Icons.TrendingUp
+      title: "Avg Performance",
+      value: "92%",
+      trend: "+5%",
+      trendDirection: "up",
+      icon: Icons.TrendingUp,
     },
     {
-      title: 'Training Hours',
-      value: '120',
-      trend: '+12',
-      trendDirection: 'up',
-      icon: Icons.GraduationCap
-    }
+      title: "Training Hours",
+      value: "120",
+      trend: "+12",
+      trendDirection: "up",
+      icon: Icons.GraduationCap,
+    },
   ];
 
   const renderTab = () => {
     switch (activeTab) {
-      case 'directory':
+      case "directory":
         return <StaffDirectory searchQuery={searchQuery} />;
-      case 'performance':
+      case "performance":
         return <PerformanceTab />;
-      case 'schedule':
+      case "schedule":
         return <ScheduleTab />;
-      case 'payroll':
+      case "payroll":
         return <PayrollTab />;
       default:
         return <StaffDirectory searchQuery={searchQuery} />;
@@ -67,8 +67,12 @@ export const AdminStaff: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Staff Management</h1>
-          <p className="text-gray-500 dark:text-gray-400">Manage your dental practice staff</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Staff Management
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400">
+            Manage your dental practice staff
+          </p>
         </div>
         <Button>
           <Icons.Plus className="h-4 w-4 mr-2" />
@@ -87,29 +91,29 @@ export const AdminStaff: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div className="flex space-x-4">
           <Button
-            variant={activeTab === 'directory' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('directory')}
+            variant={activeTab === "directory" ? "default" : "outline"}
+            onClick={() => setActiveTab("directory")}
           >
             <Icons.Users className="h-4 w-4 mr-2" />
             Directory
           </Button>
           <Button
-            variant={activeTab === 'performance' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('performance')}
+            variant={activeTab === "performance" ? "default" : "outline"}
+            onClick={() => setActiveTab("performance")}
           >
             <Icons.TrendingUp className="h-4 w-4 mr-2" />
             Performance
           </Button>
           <Button
-            variant={activeTab === 'schedule' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('schedule')}
+            variant={activeTab === "schedule" ? "default" : "outline"}
+            onClick={() => setActiveTab("schedule")}
           >
             <Icons.Calendar className="h-4 w-4 mr-2" />
             Schedule
           </Button>
           <Button
-            variant={activeTab === 'payroll' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('payroll')}
+            variant={activeTab === "payroll" ? "default" : "outline"}
+            onClick={() => setActiveTab("payroll")}
           >
             <Icons.DollarSign className="h-4 w-4 mr-2" />
             Payroll

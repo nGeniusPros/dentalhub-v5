@@ -8,14 +8,17 @@ export interface Database {
           staff_id: string;
           date: string;
           time: string;
-          status: 'scheduled' | 'confirmed' | 'cancelled' | 'completed';
+          status: "scheduled" | "confirmed" | "cancelled" | "completed";
           type: string;
           notes?: string;
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['appointments']['Row'], 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Database['public']['Tables']['appointments']['Insert']>;
+        Insert: Omit<
+          Database["public"]["Tables"]["appointments"]["Row"],
+          "id" | "created_at" | "updated_at"
+        >;
+        Update: Partial<Database["public"]["Tables"]["appointments"]["Insert"]>;
       };
       patient_records: {
         Row: {
@@ -28,8 +31,13 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['patient_records']['Row'], 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Database['public']['Tables']['patient_records']['Insert']>;
+        Insert: Omit<
+          Database["public"]["Tables"]["patient_records"]["Row"],
+          "id" | "created_at" | "updated_at"
+        >;
+        Update: Partial<
+          Database["public"]["Tables"]["patient_records"]["Insert"]
+        >;
       };
       staff_schedules: {
         Row: {
@@ -47,8 +55,13 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['staff_schedules']['Row'], 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Database['public']['Tables']['staff_schedules']['Insert']>;
+        Insert: Omit<
+          Database["public"]["Tables"]["staff_schedules"]["Row"],
+          "id" | "created_at" | "updated_at"
+        >;
+        Update: Partial<
+          Database["public"]["Tables"]["staff_schedules"]["Insert"]
+        >;
       };
       messages: {
         Row: {
@@ -60,14 +73,17 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['messages']['Row'], 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Database['public']['Tables']['messages']['Insert']>;
+        Insert: Omit<
+          Database["public"]["Tables"]["messages"]["Row"],
+          "id" | "created_at" | "updated_at"
+        >;
+        Update: Partial<Database["public"]["Tables"]["messages"]["Insert"]>;
       };
       notifications: {
         Row: {
           id: string;
           user_id: string;
-          type: 'appointment' | 'message' | 'system' | 'reminder';
+          type: "appointment" | "message" | "system" | "reminder";
           title: string;
           content: string;
           read: boolean;
@@ -75,8 +91,13 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['notifications']['Row'], 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Database['public']['Tables']['notifications']['Insert']>;
+        Insert: Omit<
+          Database["public"]["Tables"]["notifications"]["Row"],
+          "id" | "created_at" | "updated_at"
+        >;
+        Update: Partial<
+          Database["public"]["Tables"]["notifications"]["Insert"]
+        >;
       };
     };
     Views: {
@@ -92,8 +113,10 @@ export interface Database {
 }
 
 // Helper types for the specialized hooks
-export type Appointment = Database['public']['Tables']['appointments']['Row'];
-export type PatientRecord = Database['public']['Tables']['patient_records']['Row'];
-export type StaffSchedule = Database['public']['Tables']['staff_schedules']['Row'];
-export type Message = Database['public']['Tables']['messages']['Row'];
-export type Notification = Database['public']['Tables']['notifications']['Row'];
+export type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
+export type PatientRecord =
+  Database["public"]["Tables"]["patient_records"]["Row"];
+export type StaffSchedule =
+  Database["public"]["Tables"]["staff_schedules"]["Row"];
+export type Message = Database["public"]["Tables"]["messages"]["Row"];
+export type Notification = Database["public"]["Tables"]["notifications"]["Row"];

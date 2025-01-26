@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import type { Integration } from '../types';
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import type { Integration } from "../types";
 
 interface IntegrationModalProps {
   integration: Integration;
@@ -13,7 +13,7 @@ interface IntegrationModalProps {
 export const IntegrationModal: React.FC<IntegrationModalProps> = ({
   integration,
   isOpen,
-  onClose
+  onClose,
 }) => {
   if (!isOpen) return null;
 
@@ -41,7 +41,9 @@ export const IntegrationModal: React.FC<IntegrationModalProps> = ({
                   )}
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{integration.name}</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {integration.name}
+                  </h2>
                   <div className="flex items-center gap-2">
                     <div className="flex items-center">
                       {[...Array(5)].map((_, i) => (
@@ -49,8 +51,8 @@ export const IntegrationModal: React.FC<IntegrationModalProps> = ({
                           key={i}
                           className={`w-4 h-4 ${
                             i < Math.floor(integration.rating)
-                              ? 'text-yellow-400 fill-current'
-                              : 'text-gray-300'
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300"
                           }`}
                         />
                       ))}
@@ -72,7 +74,9 @@ export const IntegrationModal: React.FC<IntegrationModalProps> = ({
 
           <div className="p-6">
             <div className="prose max-w-none">
-              <h3 className="text-lg font-semibold mb-2">About {integration.name}</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                About {integration.name}
+              </h3>
               <p className="text-gray-600 mb-6">{integration.description}</p>
 
               <h3 className="text-lg font-semibold mb-2">Key Features</h3>
@@ -87,19 +91,29 @@ export const IntegrationModal: React.FC<IntegrationModalProps> = ({
 
               <h3 className="text-lg font-semibold mb-2">Pricing</h3>
               <div className="bg-gray-50 p-4 rounded-lg mb-6">
-                <p className="text-gray-900 font-medium">{integration.pricing}</p>
-                <p className="text-sm text-gray-500">Contact sales for enterprise pricing</p>
+                <p className="text-gray-900 font-medium">
+                  {integration.pricing}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Contact sales for enterprise pricing
+                </p>
               </div>
 
-              <h3 className="text-lg font-semibold mb-2">Integration Process</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                Integration Process
+              </h3>
               <div className="space-y-4 mb-6">
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center flex-shrink-0">
                     1
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Install the Integration</p>
-                    <p className="text-gray-600">Click the Install button to begin setup</p>
+                    <p className="font-medium text-gray-900">
+                      Install the Integration
+                    </p>
+                    <p className="text-gray-600">
+                      Click the Install button to begin setup
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -107,8 +121,12 @@ export const IntegrationModal: React.FC<IntegrationModalProps> = ({
                     2
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Configure Settings</p>
-                    <p className="text-gray-600">Set up your preferences and connect your accounts</p>
+                    <p className="font-medium text-gray-900">
+                      Configure Settings
+                    </p>
+                    <p className="text-gray-600">
+                      Set up your preferences and connect your accounts
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -117,16 +135,16 @@ export const IntegrationModal: React.FC<IntegrationModalProps> = ({
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">Go Live</p>
-                    <p className="text-gray-600">Start using the integrated features in your practice</p>
+                    <p className="text-gray-600">
+                      Start using the integrated features in your practice
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="flex gap-3 mt-8">
-              <Button className="flex-1">
-                Start Free Trial
-              </Button>
+              <Button className="flex-1">Start Free Trial</Button>
               <Button variant="outline" className="flex-1">
                 <Icons.Phone className="w-4 h-4 mr-2" />
                 Contact Sales

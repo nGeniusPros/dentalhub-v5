@@ -1,16 +1,19 @@
 # Docker Security Guidelines
 
 ## Overview
+
 This document outlines security measures implemented in our Docker configuration and provides guidelines for secure deployment and operation.
 
 ## Security Measures Implemented
 
 ### 1. Build Context Security
+
 - Strict `.dockerignore` to prevent sensitive files from being included
 - Multi-stage builds to minimize attack surface
 - No secrets in image layers
 
 ### 2. Container Security
+
 - Non-root user (nodejs:nodejs)
 - Read-only filesystem where possible
 - Dropped unnecessary capabilities
@@ -20,6 +23,7 @@ This document outlines security measures implemented in our Docker configuration
 - Security updates in base image
 
 ### 3. Dependencies Security
+
 - Frozen lockfile (`--frozen-lockfile`)
 - Security audits during build
 - Minimal production dependencies
@@ -28,6 +32,7 @@ This document outlines security measures implemented in our Docker configuration
 ## Secret Management
 
 ### Development
+
 ```bash
 # DO NOT store sensitive data in:
 - Dockerfile
@@ -42,6 +47,7 @@ This document outlines security measures implemented in our Docker configuration
 ```
 
 ### Production
+
 ```bash
 # Use secure secret management:
 1. Docker secrets
@@ -55,11 +61,13 @@ This document outlines security measures implemented in our Docker configuration
 ## Environment Variables
 
 ### Development
+
 - Use `.env` files locally (never commit to git)
 - Use docker-compose.dev.yml for non-sensitive configs
 - Keep sensitive data in local secrets
 
 ### Production
+
 - Use runtime environment injection
 - Use orchestration platform secrets
 - Never hardcode sensitive data
@@ -68,6 +76,7 @@ This document outlines security measures implemented in our Docker configuration
 ## Deployment Checklist
 
 ### Pre-Deployment
+
 - [ ] All sensitive data removed from Docker context
 - [ ] Security updates applied in base image
 - [ ] Dependencies audited
@@ -78,6 +87,7 @@ This document outlines security measures implemented in our Docker configuration
 - [ ] Network security configured
 
 ### Post-Deployment
+
 - [ ] Health checks passing
 - [ ] Resource usage within limits
 - [ ] Logs properly captured
@@ -88,6 +98,7 @@ This document outlines security measures implemented in our Docker configuration
 ## Monitoring Setup
 
 ### Health Monitoring
+
 ```bash
 # Health check endpoints
 - API: http://localhost:3000/health
@@ -100,18 +111,20 @@ This document outlines security measures implemented in our Docker configuration
 ```
 
 ### Resource Monitoring
+
 ```yaml
 # Resource limits configured
 resources:
   limits:
-    cpus: '1'
+    cpus: "1"
     memory: 1G
   reservations:
-    cpus: '0.5'
+    cpus: "0.5"
     memory: 512M
 ```
 
 ### Logging
+
 ```yaml
 logging:
   driver: "json-file"
@@ -123,6 +136,7 @@ logging:
 ## Security Best Practices
 
 ### 1. Image Security
+
 - Use specific versions for base images
 - Regular security updates
 - Minimal base images
@@ -130,6 +144,7 @@ logging:
 - Scan images for vulnerabilities
 
 ### 2. Runtime Security
+
 - Non-root user
 - Read-only filesystem
 - Drop capabilities
@@ -138,6 +153,7 @@ logging:
 - Health monitoring
 
 ### 3. Secret Management
+
 - Use environment variables
 - Implement Docker secrets
 - External secret management
@@ -145,6 +161,7 @@ logging:
 - Audit secret access
 
 ### 4. Network Security
+
 - Internal networks for services
 - Port exposure minimal
 - TLS for communication
@@ -154,6 +171,7 @@ logging:
 ## Development Guidelines
 
 ### Local Development
+
 ```bash
 # Start development environment
 docker compose -f docker-compose.dev.yml up
@@ -166,6 +184,7 @@ docker compose -f docker-compose.dev.yml logs -f
 ```
 
 ### Production Deployment
+
 ```bash
 # Start production environment
 docker compose -f docker-compose.prod.yml up -d
@@ -182,6 +201,7 @@ docker compose -f docker-compose.prod.yml logs -f
 ## Security Updates
 
 ### Regular Maintenance
+
 1. Update base images monthly
 2. Audit dependencies weekly
 3. Rotate secrets quarterly
@@ -189,6 +209,7 @@ docker compose -f docker-compose.prod.yml logs -f
 5. Update security documentation
 
 ### Emergency Updates
+
 1. Critical vulnerability patches
 2. Security incident response
 3. Immediate secret rotation

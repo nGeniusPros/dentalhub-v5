@@ -1,8 +1,8 @@
 export interface DocumentGenerationConfig {
   template: string;
-  outputFormat: 'pdf' | 'docx';
-  paperSize?: 'A4' | 'Letter' | 'Legal';
-  orientation?: 'portrait' | 'landscape';
+  outputFormat: "pdf" | "docx";
+  paperSize?: "A4" | "Letter" | "Legal";
+  orientation?: "portrait" | "landscape";
   margins?: {
     top: number;
     right: number;
@@ -12,7 +12,7 @@ export interface DocumentGenerationConfig {
 }
 
 export interface DocumentData {
-  type: 'invoice' | 'receipt' | 'treatment_plan' | 'prescription' | 'referral';
+  type: "invoice" | "receipt" | "treatment_plan" | "prescription" | "referral";
   templateId: string;
   data: Record<string, any>;
   metadata?: {
@@ -59,13 +59,13 @@ export interface DocumentGenerationResult {
 export interface DocumentStorageOptions {
   bucket: string;
   path: string;
-  acl?: 'private' | 'public-read';
+  acl?: "private" | "public-read";
   metadata?: Record<string, string>;
   expiresIn?: number;
 }
 
 export interface DocumentGenerationOptions {
-  priority?: 'high' | 'normal' | 'low';
+  priority?: "high" | "normal" | "low";
   webhook?: {
     url: string;
     secret: string;

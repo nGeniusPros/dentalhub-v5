@@ -26,21 +26,21 @@ export const PROFITABILITY_METRICS = {
   revenue: {
     minPerHour: 300,
     targetPerHour: 350,
-    unit: 'USD'
+    unit: "USD",
   },
   schedule: {
     utilization: {
       target: 85,
-      unit: 'percent'
+      unit: "percent",
     },
     density: {
       min: 80,
       target: 90,
-      unit: 'percent'
-    }
+      unit: "percent",
+    },
   },
   cancellation: {
     maxRate: 15,
-    unit: 'percent'
-  }
+    unit: "percent",
+  },
 };

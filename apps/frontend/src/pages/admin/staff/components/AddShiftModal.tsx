@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
 
 interface AddShiftModalProps {
   isOpen: boolean;
@@ -12,15 +12,15 @@ interface AddShiftModalProps {
 export const AddShiftModal: React.FC<AddShiftModalProps> = ({
   isOpen,
   onClose,
-  onAdd
+  onAdd,
 }) => {
   const [shift, setShift] = useState({
-    employeeName: '',
-    role: '',
-    startTime: '',
-    endTime: '',
-    date: '',
-    status: 'scheduled'
+    employeeName: "",
+    role: "",
+    startTime: "",
+    endTime: "",
+    date: "",
+    status: "scheduled",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -55,7 +55,9 @@ export const AddShiftModal: React.FC<AddShiftModalProps> = ({
             <input
               type="text"
               value={shift.employeeName}
-              onChange={(e) => setShift({ ...shift, employeeName: e.target.value })}
+              onChange={(e) =>
+                setShift({ ...shift, employeeName: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               required
             />
@@ -82,7 +84,9 @@ export const AddShiftModal: React.FC<AddShiftModalProps> = ({
               <input
                 type="time"
                 value={shift.startTime}
-                onChange={(e) => setShift({ ...shift, startTime: e.target.value })}
+                onChange={(e) =>
+                  setShift({ ...shift, startTime: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -94,7 +98,9 @@ export const AddShiftModal: React.FC<AddShiftModalProps> = ({
               <input
                 type="time"
                 value={shift.endTime}
-                onChange={(e) => setShift({ ...shift, endTime: e.target.value })}
+                onChange={(e) =>
+                  setShift({ ...shift, endTime: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -118,9 +124,7 @@ export const AddShiftModal: React.FC<AddShiftModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Add Shift
-            </Button>
+            <Button type="submit">Add Shift</Button>
           </div>
         </form>
       </motion.div>

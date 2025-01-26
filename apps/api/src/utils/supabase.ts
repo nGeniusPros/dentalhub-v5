@@ -1,13 +1,13 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   throw new Error(
-    'Missing Supabase configuration in environment variables:\n' +
-    `- SUPABASE_URL: ${supabaseUrl ? 'set' : 'missing'}\n` +
-    `- SUPABASE_SERVICE_ROLE_KEY: ${supabaseKey ? 'set' : 'missing'}`
+    "Missing Supabase configuration in environment variables:\n" +
+      `- SUPABASE_URL: ${supabaseUrl ? "set" : "missing"}\n` +
+      `- SUPABASE_SERVICE_ROLE_KEY: ${supabaseKey ? "set" : "missing"}`,
   );
 }
 

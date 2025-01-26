@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from "axios";
 import {
   SikkaConfig,
   RequestOptions,
@@ -8,19 +8,24 @@ import {
   AppointmentParams,
   PatientParams,
   TreatmentPlanParams,
-  InsuranceCompanyParams
-} from './types';
-import { handleSikkaError } from './error';
-import { sikkaConfig, CACHE_TTL, TIMEOUT_OPTIONS, PAGINATION_DEFAULTS } from './config';
-import { 
-  prepareRequestParams, 
-  getCacheTTL, 
+  InsuranceCompanyParams,
+} from "./types";
+import { handleSikkaError } from "./error";
+import {
+  sikkaConfig,
+  CACHE_TTL,
+  TIMEOUT_OPTIONS,
+  PAGINATION_DEFAULTS,
+} from "./config";
+import {
+  prepareRequestParams,
+  getCacheTTL,
   getRequestTimeout,
   generateCacheKey,
-  validateRequestParams 
-} from './utils';
-import CacheManager from '../../utils/cache';
-import SikkaTokenService from './token-service';
+  validateRequestParams,
+} from "./utils";
+import CacheManager from "../../utils/cache";
+import SikkaTokenService from "./token-service";
 
 // Sikka API Cache Configuration
 const sikkaApiCache = new CacheManager({});
@@ -36,7 +41,7 @@ const tokenManager = new SikkaTokenService({
 const sikkaApi: AxiosInstance = axios.create({
   baseURL: sikkaConfig.baseUrl,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   timeout: TIMEOUT_OPTIONS.timeout,
 });
@@ -44,16 +49,16 @@ const sikkaApi: AxiosInstance = axios.create({
 // Add token interceptor
 sikkaApi.interceptors.request.use(async (config) => {
   const token = await tokenManager.getAccessToken();
-  config.headers['Authorization'] = `Bearer ${token}`;
-  config.headers['X-Practice-ID'] = sikkaConfig.practiceId;
-  config.headers['Accept'] = 'application/json';
+  config.headers["Authorization"] = `Bearer ${token}`;
+  config.headers["X-Practice-ID"] = sikkaConfig.practiceId;
+  config.headers["Accept"] = "application/json";
   return config;
 });
 
 // Add retry interceptor
 sikkaApi.interceptors.response.use(
-  response => response,
-  async error => {
+  (response) => response,
+  async (error) => {
     // If token is expired, it will be refreshed by tokenManager on next request
     if (error.response?.status === 401) {
       const originalRequest = error.config;
@@ -76,13 +81,13 @@ sikkaApi.interceptors.response.use(
       if (originalRequest._retry < 3) {
         originalRequest._retry++;
         const delay = 500 * Math.pow(2, originalRequest._retry - 1);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
         return sikkaApi(originalRequest);
       }
     }
 
     throw error;
-  }
+  },
 );
 
 /**
@@ -92,28 +97,32 @@ async function makeRequest<T>(
   endpoint: string,
   params: Record<string, any> = {},
   options: RequestOptions = {},
-  requiredFields: string[] = []
+  requiredFields: string[] = [],
 ): Promise<T> {
   // Validate parameters
   validateRequestParams(params, requiredFields);
-  
+
   // Prepare request parameters
   const requestParams = prepareRequestParams(params, options);
-  
+
   // Generate cache key
   const cacheKey = generateCacheKey(endpoint, requestParams);
-  
-  return sikkaApiCache.get(cacheKey, async () => {
-    try {
-      const response = await sikkaApi.get(endpoint, {
-        params: requestParams,
-        timeout: getRequestTimeout(options)
-      });
-      return response.data;
-    } catch (error) {
-      throw handleSikkaError(error);
-    }
-  }, getCacheTTL(options));
+
+  return sikkaApiCache.get(
+    cacheKey,
+    async () => {
+      try {
+        const response = await sikkaApi.get(endpoint, {
+          params: requestParams,
+          timeout: getRequestTimeout(options),
+        });
+        return response.data;
+      } catch (error) {
+        throw handleSikkaError(error);
+      }
+    },
+    getCacheTTL(options),
+  );
 }
 
 /**
@@ -130,7 +139,7 @@ export async function verifyInsurance(data: {
   const cacheKey = `verifyInsurance-${JSON.stringify(data)}`;
   return sikkaApiCache.get(cacheKey, async () => {
     try {
-      const response = await sikkaApi.post('/insurance/verify', {
+      const response = await sikkaApi.post("/insurance/verify", {
         practice_id: sikkaConfig.practiceId,
         patient_id: data.patientId,
         carrier_id: data.insuranceInfo.carrierId,
@@ -160,7 +169,7 @@ export async function checkEligibility(data: {
   const cacheKey = `checkEligibility-${JSON.stringify(data)}`;
   return sikkaApiCache.get(cacheKey, async () => {
     try {
-      const response = await sikkaApi.post('/eligibility/check', {
+      const response = await sikkaApi.post("/eligibility/check", {
         practice_id: sikkaConfig.practiceId,
         patient_id: data.patientId,
         service_date: data.serviceDate,
@@ -190,7 +199,7 @@ export async function verifyBenefits(data: {
   const cacheKey = `verifyBenefits-${JSON.stringify(data)}`;
   return sikkaApiCache.get(cacheKey, async () => {
     try {
-      const response = await sikkaApi.post('/benefits/verify', {
+      const response = await sikkaApi.post("/benefits/verify", {
         practice_id: sikkaConfig.practiceId,
         patient_id: data.patientId,
         procedure_codes: data.procedureCodes,
@@ -227,7 +236,7 @@ export async function processClaim(data: {
   };
 }) {
   try {
-    const response = await sikkaApi.post('/claims/submit', {
+    const response = await sikkaApi.post("/claims/submit", {
       practice_id: sikkaConfig.practiceId,
       patient_id: data.patientId,
       service_date: data.claimDetails.serviceDate,
@@ -251,22 +260,22 @@ export async function processClaim(data: {
  * Get dental practice information
  */
 export async function getPracticeInfo(
-  params: PracticeParams = {}, 
-  options: RequestOptions = {}
+  params: PracticeParams = {},
+  options: RequestOptions = {},
 ) {
-  return makeRequest('/practices', params, options, ['practice_id']);
+  return makeRequest("/practices", params, options, ["practice_id"]);
 }
 
 /**
  * Get dental appointments
  */
 export async function getAppointments(
-  params: AppointmentParams = {}, 
-  options: RequestOptions = {}
+  params: AppointmentParams = {},
+  options: RequestOptions = {},
 ) {
-  return makeRequest('/appointments', params, {
+  return makeRequest("/appointments", params, {
     ...options,
-    limit: options.limit || PAGINATION_DEFAULTS.defaultLimit
+    limit: options.limit || PAGINATION_DEFAULTS.defaultLimit,
   });
 }
 
@@ -274,22 +283,22 @@ export async function getAppointments(
  * Get available appointment slots
  */
 export async function getAvailableSlots(
-  params: AppointmentParams = {}, 
-  options: RequestOptions = {}
+  params: AppointmentParams = {},
+  options: RequestOptions = {},
 ) {
-  return makeRequest('/appointments_available_slots', params, options);
+  return makeRequest("/appointments_available_slots", params, options);
 }
 
 /**
  * Get patient information with enhanced search capabilities
  */
 export async function getPatients(
-  params: PatientParams = {}, 
-  options: RequestOptions = {}
+  params: PatientParams = {},
+  options: RequestOptions = {},
 ) {
-  return makeRequest('/patients', params, {
+  return makeRequest("/patients", params, {
     ...options,
-    limit: options.limit || PAGINATION_DEFAULTS.defaultLimit
+    limit: options.limit || PAGINATION_DEFAULTS.defaultLimit,
   });
 }
 
@@ -297,12 +306,12 @@ export async function getPatients(
  * Get dental-specific patient information
  */
 export async function getDentalPatients(
-  params: PatientParams = {}, 
-  options: RequestOptions = {}
+  params: PatientParams = {},
+  options: RequestOptions = {},
 ) {
-  return makeRequest('/patients/dental_patients', params, {
+  return makeRequest("/patients/dental_patients", params, {
     ...options,
-    limit: options.limit || PAGINATION_DEFAULTS.defaultLimit
+    limit: options.limit || PAGINATION_DEFAULTS.defaultLimit,
   });
 }
 
@@ -312,12 +321,13 @@ export async function getDentalPatients(
 export async function getPatientTreatmentHistory(
   patientId: string,
   params: DateRangeParams = {},
-  options: RequestOptions = {}
+  options: RequestOptions = {},
 ) {
-  return makeRequest('/patient_treatment_history', 
+  return makeRequest(
+    "/patient_treatment_history",
     { ...params, patient_id: patientId },
     options,
-    ['patient_id']
+    ["patient_id"],
   );
 }
 
@@ -326,11 +336,11 @@ export async function getPatientTreatmentHistory(
  */
 export async function getTreatmentPlans(
   params: TreatmentPlanParams = {},
-  options: RequestOptions = {}
+  options: RequestOptions = {},
 ) {
-  return makeRequest('/treatment_plans', params, {
+  return makeRequest("/treatment_plans", params, {
     ...options,
-    limit: options.limit || PAGINATION_DEFAULTS.defaultLimit
+    limit: options.limit || PAGINATION_DEFAULTS.defaultLimit,
   });
 }
 
@@ -338,24 +348,28 @@ export async function getTreatmentPlans(
  * Get dental insurance companies
  */
 export async function getInsuranceCompanies(
-  params: InsuranceCompanyParams = {}, 
-  options: RequestOptions = {}
+  params: InsuranceCompanyParams = {},
+  options: RequestOptions = {},
 ) {
-  return makeRequest('/insurance_companies', params, options);
+  return makeRequest("/insurance_companies", params, options);
 }
 
 /**
  * Get dental insurance coverage details
  */
 export async function getInsurancePlanCoverage(
-  insuranceCompanyId: string, 
-  practiceId?: string, 
-  options: RequestOptions = {}
+  insuranceCompanyId: string,
+  practiceId?: string,
+  options: RequestOptions = {},
 ) {
-  return makeRequest('/insurance_plan_coverage', {
-    insurance_company_id: insuranceCompanyId,
-    practice_id: practiceId
-  }, options);
+  return makeRequest(
+    "/insurance_plan_coverage",
+    {
+      insurance_company_id: insuranceCompanyId,
+      practice_id: practiceId,
+    },
+    options,
+  );
 }
 
 /**

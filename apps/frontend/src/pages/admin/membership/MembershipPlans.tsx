@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
-import StatsCard from '../../../components/dashboard/StatsCard';
-import { useNotifications } from '../../../contexts/NotificationContext';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../components/ui/button";
+import StatsCard from "../../../components/dashboard/StatsCard";
+import { useNotifications } from "../../../contexts/NotificationContext";
 
 interface MembershipPlan {
   id: string;
@@ -16,58 +16,66 @@ interface MembershipPlan {
 }
 
 export const MembershipPlans: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const { dispatch: notifyDispatch } = useNotifications();
 
   const [plans, setPlans] = useState<MembershipPlan[]>([
     {
-      id: '1',
-      name: 'Basic Plan',
-      description: 'Essential dental care coverage',
+      id: "1",
+      name: "Basic Plan",
+      description: "Essential dental care coverage",
       price: 29.99,
-      features: ['Regular checkups', 'Basic cleanings', 'X-rays'],
-      duration: 'monthly',
+      features: ["Regular checkups", "Basic cleanings", "X-rays"],
+      duration: "monthly",
       active: true,
     },
     {
-      id: '2',
-      name: 'Premium Plan',
-      description: 'Comprehensive dental care coverage',
+      id: "2",
+      name: "Premium Plan",
+      description: "Comprehensive dental care coverage",
       price: 49.99,
-      features: ['Regular checkups', 'Deep cleanings', 'X-rays', 'Fillings', 'Emergency care'],
-      duration: 'monthly',
+      features: [
+        "Regular checkups",
+        "Deep cleanings",
+        "X-rays",
+        "Fillings",
+        "Emergency care",
+      ],
+      duration: "monthly",
       active: true,
     },
   ]);
 
   const stats = [
     {
-      title: 'Total Plans',
+      title: "Total Plans",
       value: plans.length,
       icon: <Icons.Layers className="h-4 w-4" />,
-      trend: 'up',
-      trendValue: '12%',
+      trend: "up",
+      trendValue: "12%",
     },
     {
-      title: 'Active Members',
+      title: "Active Members",
       value: 234,
       icon: <Icons.Users className="h-4 w-4" />,
-      trend: 'up',
-      trendValue: '8%',
+      trend: "up",
+      trendValue: "8%",
     },
     {
-      title: 'Monthly Revenue',
-      value: '$12,450',
+      title: "Monthly Revenue",
+      value: "$12,450",
       icon: <Icons.DollarSign className="h-4 w-4" />,
-      trend: 'up',
-      trendValue: '23%',
+      trend: "up",
+      trendValue: "23%",
     },
   ];
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Membership Plans</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Membership Plans
+        </h1>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
           Manage and monitor your practice's membership plans
         </p>
@@ -88,15 +96,15 @@ export const MembershipPlans: React.FC = () => {
             onClick={() => {
               // Handle adding new plan
               notifyDispatch({
-                type: 'ADD_NOTIFICATION',
+                type: "ADD_NOTIFICATION",
                 payload: {
                   id: Date.now().toString(),
-                  type: 'info',
-                  title: 'New Plan',
-                  message: 'Creating new membership plan...',
+                  type: "info",
+                  title: "New Plan",
+                  message: "Creating new membership plan...",
                   timestamp: new Date().toISOString(),
                   read: false,
-                  priority: 'medium',
+                  priority: "medium",
                 },
               });
             }}
@@ -117,7 +125,9 @@ export const MembershipPlans: React.FC = () => {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-lg font-semibold">{plan.name}</h3>
-                  <p className="text-gray-600 dark:text-gray-400">{plan.description}</p>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {plan.description}
+                  </p>
                 </div>
                 <div className="flex items-center">
                   <Button variant="ghost" size="sm">
@@ -128,10 +138,12 @@ export const MembershipPlans: React.FC = () => {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="mb-4">
                 <span className="text-2xl font-bold">${plan.price}</span>
-                <span className="text-gray-600 dark:text-gray-400">/{plan.duration}</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  /{plan.duration}
+                </span>
               </div>
 
               <ul className="space-y-2">
@@ -146,10 +158,10 @@ export const MembershipPlans: React.FC = () => {
               <div className="mt-4 pt-4 border-t dark:border-gray-700">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    Status: {plan.active ? 'Active' : 'Inactive'}
+                    Status: {plan.active ? "Active" : "Inactive"}
                   </span>
                   <Button variant="outline" size="sm">
-                    {plan.active ? 'Deactivate' : 'Activate'}
+                    {plan.active ? "Deactivate" : "Activate"}
                   </Button>
                 </div>
               </div>

@@ -6,14 +6,14 @@ export interface SikkaVerifyInsuranceRequest {
     firstName: string;
     lastName: string;
     dateOfBirth: string;
-    gender?: 'M' | 'F' | 'O';
-    relationship?: 'self' | 'spouse' | 'child' | 'other';
+    gender?: "M" | "F" | "O";
+    relationship?: "self" | "spouse" | "child" | "other";
   };
   subscriberInfo?: {
     firstName: string;
     lastName: string;
     dateOfBirth: string;
-    gender?: 'M' | 'F' | 'O';
+    gender?: "M" | "F" | "O";
   };
 }
 
@@ -32,7 +32,7 @@ export interface SikkaVerifyBenefitsRequest {
   insuranceId: string;
   patientId: string;
   benefitYear?: string;
-  serviceTypes?: Array<'preventive' | 'basic' | 'major' | 'orthodontic'>;
+  serviceTypes?: Array<"preventive" | "basic" | "major" | "orthodontic">;
 }
 
 export interface SikkaProcessClaimRequest {
@@ -42,7 +42,7 @@ export interface SikkaProcessClaimRequest {
   claimInfo: {
     serviceDate: string;
     placeOfService: string;
-    claimType: 'primary' | 'secondary' | 'tertiary';
+    claimType: "primary" | "secondary" | "tertiary";
     procedures: Array<{
       code: string;
       description: string;
@@ -81,12 +81,12 @@ export interface SikkaTreatmentPlanRequest {
   diagnosis: Array<{
     code: string;
     description: string;
-    severity: 'mild' | 'moderate' | 'severe';
+    severity: "mild" | "moderate" | "severe";
   }>;
   procedures: Array<{
     code: string;
     description: string;
-    priority: 'high' | 'medium' | 'low';
+    priority: "high" | "medium" | "low";
     estimatedCost: number;
     tooth?: string;
     surface?: string;
@@ -122,6 +122,6 @@ export interface SikkaPreAuthorizationRequest {
     content: string;
     filename: string;
   }>;
-  urgency?: 'routine' | 'urgent' | 'emergency';
+  urgency?: "routine" | "urgent" | "emergency";
   notes?: string;
 }

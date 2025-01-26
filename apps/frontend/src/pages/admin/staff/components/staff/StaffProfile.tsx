@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import type { Employee } from '../../../../../types/employee';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import type { Employee } from "../../../../../types/employee";
 
 interface StaffProfileProps {
   employee: Employee;
@@ -13,12 +13,12 @@ interface StaffProfileProps {
 export const StaffProfile: React.FC<StaffProfileProps> = ({
   employee,
   onEdit,
-  onClose
+  onClose,
 }) => {
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
     }).format(amount);
   };
 
@@ -35,7 +35,9 @@ export const StaffProfile: React.FC<StaffProfileProps> = ({
               <Icons.User className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold">{employee.personalInfo.name}</h2>
+              <h2 className="text-2xl font-bold">
+                {employee.personalInfo.name}
+              </h2>
               <p className="text-gray-500">{employee.employmentDetails.role}</p>
             </div>
           </div>
@@ -57,11 +59,15 @@ export const StaffProfile: React.FC<StaffProfileProps> = ({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm text-gray-500">Date of Birth</label>
-                <p className="font-medium">{employee.personalInfo.dateOfBirth}</p>
+                <p className="font-medium">
+                  {employee.personalInfo.dateOfBirth}
+                </p>
               </div>
               <div>
                 <label className="text-sm text-gray-500">SSN</label>
-                <p className="font-medium">XXX-XX-{employee.personalInfo.ssn.slice(-4)}</p>
+                <p className="font-medium">
+                  XXX-XX-{employee.personalInfo.ssn.slice(-4)}
+                </p>
               </div>
               <div>
                 <label className="text-sm text-gray-500">Email</label>
@@ -84,27 +90,45 @@ export const StaffProfile: React.FC<StaffProfileProps> = ({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm text-gray-500">Department</label>
-                <p className="font-medium">{employee.employmentDetails.department}</p>
+                <p className="font-medium">
+                  {employee.employmentDetails.department}
+                </p>
               </div>
               <div>
                 <label className="text-sm text-gray-500">Start Date</label>
-                <p className="font-medium">{employee.employmentDetails.startDate}</p>
+                <p className="font-medium">
+                  {employee.employmentDetails.startDate}
+                </p>
               </div>
               <div>
                 <label className="text-sm text-gray-500">Current Pay</label>
-                <p className="font-medium">{formatCurrency(employee.employmentDetails.compensation.currentPay)}</p>
+                <p className="font-medium">
+                  {formatCurrency(
+                    employee.employmentDetails.compensation.currentPay,
+                  )}
+                </p>
               </div>
               <div>
                 <label className="text-sm text-gray-500">Pay Frequency</label>
-                <p className="font-medium capitalize">{employee.employmentDetails.compensation.payFrequency}</p>
+                <p className="font-medium capitalize">
+                  {employee.employmentDetails.compensation.payFrequency}
+                </p>
               </div>
               <div>
                 <label className="text-sm text-gray-500">Last Raise Date</label>
-                <p className="font-medium">{employee.employmentDetails.compensation.lastRaiseDate || 'N/A'}</p>
+                <p className="font-medium">
+                  {employee.employmentDetails.compensation.lastRaiseDate ||
+                    "N/A"}
+                </p>
               </div>
               <div>
-                <label className="text-sm text-gray-500">Next Review Date</label>
-                <p className="font-medium">{employee.employmentDetails.compensation.nextReviewDate || 'N/A'}</p>
+                <label className="text-sm text-gray-500">
+                  Next Review Date
+                </label>
+                <p className="font-medium">
+                  {employee.employmentDetails.compensation.nextReviewDate ||
+                    "N/A"}
+                </p>
               </div>
             </div>
           </section>
@@ -119,7 +143,9 @@ export const StaffProfile: React.FC<StaffProfileProps> = ({
               </div>
               <div>
                 <label className="text-sm text-gray-500">Relationship</label>
-                <p className="font-medium">{employee.emergencyContact.relationship}</p>
+                <p className="font-medium">
+                  {employee.emergencyContact.relationship}
+                </p>
               </div>
               <div>
                 <label className="text-sm text-gray-500">Phone</label>
@@ -127,12 +153,16 @@ export const StaffProfile: React.FC<StaffProfileProps> = ({
               </div>
               <div>
                 <label className="text-sm text-gray-500">Email</label>
-                <p className="font-medium">{employee.emergencyContact.email || 'N/A'}</p>
+                <p className="font-medium">
+                  {employee.emergencyContact.email || "N/A"}
+                </p>
               </div>
               {employee.emergencyContact.address && (
                 <div className="col-span-2">
                   <label className="text-sm text-gray-500">Address</label>
-                  <p className="font-medium">{employee.emergencyContact.address}</p>
+                  <p className="font-medium">
+                    {employee.emergencyContact.address}
+                  </p>
                 </div>
               )}
             </div>
@@ -149,20 +179,29 @@ export const StaffProfile: React.FC<StaffProfileProps> = ({
             </div>
             <div className="space-y-4">
               {employee.documents.map((doc) => (
-                <div key={doc.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div
+                  key={doc.id}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <Icons.FileText className="w-5 h-5 text-primary" />
                     <div>
                       <p className="font-medium">{doc.name}</p>
-                      <p className="text-sm text-gray-500">Uploaded: {doc.uploadDate}</p>
+                      <p className="text-sm text-gray-500">
+                        Uploaded: {doc.uploadDate}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      doc.status === 'valid' ? 'bg-green-100 text-green-800' :
-                      doc.status === 'expired' ? 'bg-red-100 text-red-800' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        doc.status === "valid"
+                          ? "bg-green-100 text-green-800"
+                          : doc.status === "expired"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
                       {doc.status}
                     </span>
                     <Button variant="ghost" size="sm">

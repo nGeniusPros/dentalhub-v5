@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import type { EmailProvider } from '../../types/email';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import type { EmailProvider } from "../../types/email";
 
 interface EmailProviderDropdownProps {
   providers: EmailProvider[];
@@ -13,12 +13,13 @@ interface EmailProviderDropdownProps {
 export const EmailProviderDropdown: React.FC<EmailProviderDropdownProps> = ({
   providers,
   selectedProvider,
-  onConnect
+  onConnect,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showConnectModal, setShowConnectModal] = useState(false);
-  const [selectedForConnect, setSelectedForConnect] = useState<EmailProvider | null>(null);
-  const [apiKey, setApiKey] = useState('');
+  const [selectedForConnect, setSelectedForConnect] =
+    useState<EmailProvider | null>(null);
+  const [apiKey, setApiKey] = useState("");
 
   const handleProviderSelect = (provider: EmailProvider) => {
     setSelectedForConnect(provider);
@@ -30,7 +31,7 @@ export const EmailProviderDropdown: React.FC<EmailProviderDropdownProps> = ({
     if (selectedForConnect && apiKey) {
       onConnect(selectedForConnect, apiKey);
       setShowConnectModal(false);
-      setApiKey('');
+      setApiKey("");
     }
   };
 
@@ -42,7 +43,7 @@ export const EmailProviderDropdown: React.FC<EmailProviderDropdownProps> = ({
         className="flex items-center gap-2"
       >
         <Icons.Mail className="w-4 h-4" />
-        {selectedProvider ? selectedProvider.name : 'Select Provider'}
+        {selectedProvider ? selectedProvider.name : "Select Provider"}
         <Icons.ChevronDown className="w-4 h-4" />
       </Button>
 
@@ -60,9 +61,12 @@ export const EmailProviderDropdown: React.FC<EmailProviderDropdownProps> = ({
                 onClick={() => handleProviderSelect(provider)}
                 className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3"
               >
-                {React.createElement(Icons[provider.icon as keyof typeof Icons], {
-                  className: "w-5 h-5 text-gray-500"
-                })}
+                {React.createElement(
+                  Icons[provider.icon as keyof typeof Icons],
+                  {
+                    className: "w-5 h-5 text-gray-500",
+                  },
+                )}
                 <span>{provider.name}</span>
                 {provider.connected && (
                   <Icons.Check className="w-4 h-4 text-green-500 ml-auto" />

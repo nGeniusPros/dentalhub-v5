@@ -12,13 +12,13 @@ export interface Employee {
     role: string;
     department: string;
     startDate: string;
-    status: 'active' | 'inactive' | 'on-leave';
+    status: "active" | "inactive" | "on-leave";
     compensation: {
       startingPay: number;
       currentPay: number;
       lastRaiseDate?: string;
       nextReviewDate?: string;
-      payFrequency: 'weekly' | 'bi-weekly' | 'monthly';
+      payFrequency: "weekly" | "bi-weekly" | "monthly";
     };
   };
   emergencyContact: {
@@ -38,12 +38,18 @@ export interface Employee {
 
 export interface EmployeeDocument {
   id: string;
-  type: 'identification' | 'certification' | 'tax' | 'insurance' | 'review' | 'other';
+  type:
+    | "identification"
+    | "certification"
+    | "tax"
+    | "insurance"
+    | "review"
+    | "other";
   name: string;
   fileUrl: string;
   uploadDate: string;
   expirationDate?: string;
-  status: 'valid' | 'expired' | 'pending';
+  status: "valid" | "expired" | "pending";
   required: boolean;
 }
 

@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../ui/button';
-import { useTheme } from '../../../hooks/use-theme';
-import { cn } from '../../../lib/utils';
-import { adminNavItems, staffNavItems, patientNavItems } from './navigation-items';
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../ui/button";
+import { useTheme } from "../../../hooks/use-theme";
+import { cn } from "../../../lib/utils";
+import {
+  adminNavItems,
+  staffNavItems,
+  patientNavItems,
+} from "./navigation-items";
 
 interface SidebarProps {
   role?: "admin" | "staff" | "patient";
@@ -17,11 +21,12 @@ export const Sidebar = ({ role = "staff" }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const navItems = role === "admin" 
-    ? adminNavItems 
-    : role === "staff" 
-    ? staffNavItems 
-    : patientNavItems;
+  const navItems =
+    role === "admin"
+      ? adminNavItems
+      : role === "staff"
+        ? staffNavItems
+        : patientNavItems;
 
   return (
     <motion.div
@@ -33,7 +38,7 @@ export const Sidebar = ({ role = "staff" }: SidebarProps) => {
         "dark:from-gray-800 dark:via-gray-800/95 dark:to-gray-800/90",
         "border-r border-gray-200/50 dark:border-gray-700/30",
         "backdrop-blur-xl shadow-lg shadow-gray-200/50 dark:shadow-none",
-        collapsed ? "w-[60px]" : "w-[240px]"
+        collapsed ? "w-[60px]" : "w-[240px]",
       )}
     >
       {/* Logo Section */}
@@ -41,13 +46,13 @@ export const Sidebar = ({ role = "staff" }: SidebarProps) => {
         {!collapsed && (
           <div className="flex items-center gap-3">
             <motion.div
-              animate={{ 
+              animate={{
                 rotate: 360,
               }}
-              transition={{ 
+              transition={{
                 duration: 20,
                 repeat: Infinity,
-                ease: "linear"
+                ease: "linear",
               }}
               className="w-8 h-8"
             >
@@ -95,14 +100,18 @@ export const Sidebar = ({ role = "staff" }: SidebarProps) => {
                       isActive
                         ? "bg-primary/10 text-primary hover:bg-primary/15"
                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50",
-                      "hover:translate-x-1"
+                      "hover:translate-x-1",
                     )}
                     onClick={() => navigate(item.path)}
                   >
-                    <Icon className={cn(
-                      "h-4 w-4 transition-colors",
-                      isActive ? "text-primary" : "text-gray-500 dark:text-gray-400"
-                    )} />
+                    <Icon
+                      className={cn(
+                        "h-4 w-4 transition-colors",
+                        isActive
+                          ? "text-primary"
+                          : "text-gray-500 dark:text-gray-400",
+                      )}
+                    />
                     {!collapsed && <span>{item.label}</span>}
                   </Button>
                 );

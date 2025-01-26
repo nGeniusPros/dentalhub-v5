@@ -7,7 +7,7 @@ export interface DocumentData {
 
 export interface DocumentGenerationOptions {
   config?: {
-    outputFormat?: 'pdf' | 'docx';
+    outputFormat?: "pdf" | "docx";
     template?: string;
   };
   storage?: DocumentStorageOptions;

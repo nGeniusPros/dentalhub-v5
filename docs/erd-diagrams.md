@@ -9,7 +9,7 @@ erDiagram
     patients ||--o{ treatment_plans : "has"
     auth.users ||--o{ patient_documents : "uploaded_by"
     auth.users ||--o{ treatment_plans : "created_by"
-    
+
     patients {
         UUID id
         string first_name
@@ -20,7 +20,7 @@ erDiagram
         string address
         text medical_history
     }
-    
+
     family_relationships {
         UUID id
         UUID patient_id
@@ -29,7 +29,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     patient_documents {
         UUID id
         UUID patient_id
@@ -40,7 +40,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     treatment_plans {
         UUID id
         UUID patient_id
@@ -54,7 +54,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     auth.users {
         UUID id
         string email
@@ -80,11 +80,11 @@ erDiagram
     relationship_type {
         string value
     }
-    
+
     document_type {
         string value
     }
-    
+
     treatment_status {
         string value
     }
@@ -106,7 +106,7 @@ erDiagram
     } ||--o{ family_relationships : "has"
     patients ||--o{ patient_documents : "has"
     patients ||--o{ treatment_plans : "has"
-    
+
     family_relationships {
         UUID id
         UUID patient_id
@@ -115,7 +115,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     } }|--|| patients : "references"
-    
+
     patient_documents {
         UUID id
         UUID patient_id
@@ -126,7 +126,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     } }|--|| patients : "references"
-    
+
     treatment_plans {
         UUID id
         UUID patient_id
@@ -140,10 +140,11 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     } }|--|| patients : "references"
-    
+
     auth.users {
         UUID id
         string email
         string role
     } ||--o{ patient_documents : "uploaded_by"
     auth.users ||--o{ treatment_plans : "created_by"
+```

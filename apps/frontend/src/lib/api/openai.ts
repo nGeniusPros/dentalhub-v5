@@ -1,27 +1,29 @@
-import OpenAI from 'openai';
-import { AIConsultantPrompt } from '../types/ai';
+import OpenAI from "openai";
+import { AIConsultantPrompt } from "../types/ai";
 
 // Create a mock response generator for development
 const generateMockResponse = (prompt: AIConsultantPrompt) => {
   const responses = [
     {
-      insight: "Based on your current metrics, there's an opportunity to improve treatment acceptance rates through enhanced patient education and communication.",
+      insight:
+        "Based on your current metrics, there's an opportunity to improve treatment acceptance rates through enhanced patient education and communication.",
       recommendations: [
         "Implement visual treatment planning tools",
         "Develop patient education materials",
-        "Train staff on communication techniques"
-      ]
+        "Train staff on communication techniques",
+      ],
     },
     {
-      insight: "Your appointment fill rate indicates potential scheduling optimization opportunities.",
+      insight:
+        "Your appointment fill rate indicates potential scheduling optimization opportunities.",
       recommendations: [
         "Review scheduling templates",
         "Implement automated reminders",
-        "Develop a cancellation recovery strategy"
-      ]
-    }
+        "Develop a cancellation recovery strategy",
+      ],
+    },
   ];
-  
+
   return responses[Math.floor(Math.random() * responses.length)];
 };
 
@@ -36,7 +38,7 @@ export const generateAIResponse = async (prompt: AIConsultantPrompt) => {
   try {
     const openai = new OpenAI({
       apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-      dangerouslyAllowBrowser: true // Note: In production, use backend
+      dangerouslyAllowBrowser: true, // Note: In production, use backend
     });
 
     const completion = await openai.chat.completions.create({
@@ -52,20 +54,20 @@ export const generateAIResponse = async (prompt: AIConsultantPrompt) => {
             - Marketing and patient acquisition
             
             Provide concise, actionable insights based on the practice data and metrics.
-            Focus on practical recommendations that can be implemented.`
+            Focus on practical recommendations that can be implemented.`,
         },
         {
           role: "user",
-          content: formatPrompt(prompt)
-        }
+          content: formatPrompt(prompt),
+        },
       ],
       temperature: 0.7,
-      max_tokens: 500
+      max_tokens: 500,
     });
 
     return completion.choices[0].message.content;
   } catch (error) {
-    console.error('Error generating AI response:', error);
+    console.error("Error generating AI response:", error);
     // Fallback to mock response in case of error
     return JSON.stringify(generateMockResponse(prompt));
   }

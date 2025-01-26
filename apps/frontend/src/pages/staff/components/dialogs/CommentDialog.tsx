@@ -1,10 +1,15 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 interface CommentDialogProps {
   isOpen: boolean;
@@ -15,14 +20,18 @@ interface CommentDialogProps {
   } | null;
 }
 
-export const CommentDialog: React.FC<CommentDialogProps> = ({ isOpen, onClose, patient }) => {
-  const [comment, setComment] = React.useState('');
+export const CommentDialog: React.FC<CommentDialogProps> = ({
+  isOpen,
+  onClose,
+  patient,
+}) => {
+  const [comment, setComment] = React.useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!comment.trim() || !patient) return;
     // TODO: Implement comment submission logic
-    setComment('');
+    setComment("");
     onClose();
   };
 

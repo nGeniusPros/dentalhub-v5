@@ -1,11 +1,11 @@
-import axios from 'axios';
+import axios from "axios";
 
 // API Configuration
 const API_CONFIG = {
-  baseURL: '/api',  // Use relative URL to work with Vite proxy
-  timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000', 10),
+  baseURL: "/api", // Use relative URL to work with Vite proxy
+  timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || "30000", 10),
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 };
 
@@ -19,9 +19,9 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.error('API Request Error:', error);
+    console.error("API Request Error:", error);
     return Promise.reject(error);
-  }
+  },
 );
 
 // Add response interceptor for error handling
@@ -31,17 +31,17 @@ apiClient.interceptors.response.use(
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
-      console.error('API Error Response:', {
+      console.error("API Error Response:", {
         status: error.response.status,
         data: error.response.data,
       });
     } else if (error.request) {
       // The request was made but no response was received
-      console.error('API No Response:', error.request);
+      console.error("API No Response:", error.request);
     } else {
       // Something happened in setting up the request that triggered an Error
-      console.error('API Error:', error.message);
+      console.error("API Error:", error.message);
     }
     return Promise.reject(error);
-  }
+  },
 );

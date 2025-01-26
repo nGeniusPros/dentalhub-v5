@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
 
 interface CanvaIntegrationProps {
   onDesignImport: (designHtml: string) => void;
 }
 
 export const CanvaIntegration: React.FC<CanvaIntegrationProps> = ({
-  onDesignImport
+  onDesignImport,
 }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
 
   const handleConnect = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,12 +23,12 @@ export const CanvaIntegration: React.FC<CanvaIntegrationProps> = ({
 
   const handleImportDesign = async () => {
     // In production, this would open Canva's design picker
-    window.open('https://www.canva.com/your-designs', '_blank');
+    window.open("https://www.canva.com/your-designs", "_blank");
   };
 
   const handleExportToCanva = async () => {
     // In production, this would export the current design to Canva
-    window.open('https://www.canva.com/create/email-headers', '_blank');
+    window.open("https://www.canva.com/create/email-headers", "_blank");
   };
 
   return (
@@ -94,7 +94,12 @@ export const CanvaIntegration: React.FC<CanvaIntegrationProps> = ({
                   <input
                     type="email"
                     value={credentials.email}
-                    onChange={(e) => setCredentials(prev => ({ ...prev, email: e.target.value }))}
+                    onChange={(e) =>
+                      setCredentials((prev) => ({
+                        ...prev,
+                        email: e.target.value,
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     required
                   />
@@ -107,7 +112,12 @@ export const CanvaIntegration: React.FC<CanvaIntegrationProps> = ({
                   <input
                     type="password"
                     value={credentials.password}
-                    onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                    onChange={(e) =>
+                      setCredentials((prev) => ({
+                        ...prev,
+                        password: e.target.value,
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     required
                   />
@@ -121,9 +131,7 @@ export const CanvaIntegration: React.FC<CanvaIntegrationProps> = ({
                   >
                     Cancel
                   </Button>
-                  <Button type="submit">
-                    Connect
-                  </Button>
+                  <Button type="submit">Connect</Button>
                 </div>
               </form>
 

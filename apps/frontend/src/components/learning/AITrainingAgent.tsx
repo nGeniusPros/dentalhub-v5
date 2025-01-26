@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { cn } from '../../lib/utils';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { cn } from "../../lib/utils";
 
 interface AITrainingAgentProps {
   name: string;
@@ -17,24 +17,25 @@ export const AITrainingAgent: React.FC<AITrainingAgentProps> = ({
   role,
   avatar,
   specialties = [],
-  onMessage
+  onMessage,
 }) => {
   const [isActive, setIsActive] = useState(false);
-  const [currentMessage, setCurrentMessage] = useState('');
+  const [currentMessage, setCurrentMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
   const messages = [
     "Need help with your training? I'm here to assist!",
     "Let's review your progress and set some goals.",
     "I can help explain complex topics in simple terms.",
-    "Want to practice some scenarios together?"
+    "Want to practice some scenarios together?",
   ];
 
   useEffect(() => {
     if (isActive) {
       const interval = setInterval(() => {
         setIsTyping(true);
-        const newMessage = messages[Math.floor(Math.random() * messages.length)];
+        const newMessage =
+          messages[Math.floor(Math.random() * messages.length)];
         let i = 0;
         const typing = setInterval(() => {
           setCurrentMessage(newMessage.substring(0, i));
@@ -95,12 +96,15 @@ export const AITrainingAgent: React.FC<AITrainingAgentProps> = ({
                 </div>
               )}
 
-              <div className={cn(
-                "p-3 bg-gray-50 rounded-lg",
-                isTyping && "animate-pulse"
-              )}>
+              <div
+                className={cn(
+                  "p-3 bg-gray-50 rounded-lg",
+                  isTyping && "animate-pulse",
+                )}
+              >
                 <p className="text-sm">
-                  {currentMessage || "Hi! How can I help you with your learning today?"}
+                  {currentMessage ||
+                    "Hi! How can I help you with your learning today?"}
                   {isTyping && <span className="animate-pulse">|</span>}
                 </p>
               </div>
@@ -110,7 +114,7 @@ export const AITrainingAgent: React.FC<AITrainingAgentProps> = ({
               <Button
                 variant="outline"
                 className="flex-1"
-                onClick={() => onMessage?.('start_training')}
+                onClick={() => onMessage?.("start_training")}
               >
                 <Icons.Play className="w-4 h-4 mr-2" />
                 Start Training
@@ -118,7 +122,7 @@ export const AITrainingAgent: React.FC<AITrainingAgentProps> = ({
               <Button
                 variant="outline"
                 className="flex-1"
-                onClick={() => onMessage?.('ask_question')}
+                onClick={() => onMessage?.("ask_question")}
               >
                 <Icons.HelpCircle className="w-4 h-4 mr-2" />
                 Ask Question

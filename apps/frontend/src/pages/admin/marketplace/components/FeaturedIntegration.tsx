@@ -1,14 +1,16 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import type { Integration } from '../types';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import type { Integration } from "../types";
 
 interface FeaturedIntegrationProps {
   integration: Integration;
 }
 
-export const FeaturedIntegration: React.FC<FeaturedIntegrationProps> = ({ integration }) => {
+export const FeaturedIntegration: React.FC<FeaturedIntegrationProps> = ({
+  integration,
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -36,21 +38,27 @@ export const FeaturedIntegration: React.FC<FeaturedIntegrationProps> = ({ integr
                   Featured
                 </span>
               </div>
-              <p className="text-lg text-white/80 mb-4">{integration.description}</p>
+              <p className="text-lg text-white/80 mb-4">
+                {integration.description}
+              </p>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   <Icons.Star className="w-5 h-5 text-yellow-400 fill-current" />
                   <span className="font-medium">{integration.rating}</span>
                 </div>
                 <span className="text-white/60">|</span>
-                <span className="text-white/80">{integration.reviews} reviews</span>
+                <span className="text-white/80">
+                  {integration.reviews} reviews
+                </span>
                 <span className="text-white/60">|</span>
                 <span className="text-white/80">{integration.pricing}</span>
               </div>
             </div>
           </div>
           <div className="flex flex-col items-end">
-            <span className="text-lg font-semibold mb-1">{integration.pricing}</span>
+            <span className="text-lg font-semibold mb-1">
+              {integration.pricing}
+            </span>
             <Button className="bg-white text-navy hover:bg-white/90">
               Start Free Trial
             </Button>
@@ -72,9 +80,10 @@ export const FeaturedIntegration: React.FC<FeaturedIntegrationProps> = ({ integr
         <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Why Choose Weave?</h3>
           <p className="text-white/80">
-            Weave unifies your practice's phone system, patient communication, and payments 
-            into one powerful platform. Streamline operations, boost patient engagement, 
-            and grow your practice with smart automation and integrated tools.
+            Weave unifies your practice's phone system, patient communication,
+            and payments into one powerful platform. Streamline operations,
+            boost patient engagement, and grow your practice with smart
+            automation and integrated tools.
           </p>
         </div>
       </div>

@@ -1,6 +1,17 @@
-import axios from 'axios';
-import { TokenResponse, TokenInfo, TokenMetrics, TokenStatus, SikkaConfig } from './types';
-import { SikkaAuthenticationError, SikkaTimeoutError, SikkaRateLimitError, handleSikkaError } from './error';
+import axios from "axios";
+import {
+  TokenResponse,
+  TokenInfo,
+  TokenMetrics,
+  TokenStatus,
+  SikkaConfig,
+} from "./types";
+import {
+  SikkaAuthenticationError,
+  SikkaTimeoutError,
+  SikkaRateLimitError,
+  handleSikkaError,
+} from "./error";
 
 interface TokenServiceInfo {
   requestKey: string;
@@ -26,10 +37,10 @@ export default class SikkaTokenService {
     rateLimitHits: 0,
     totalRefreshes: 0,
     failedRefreshes: 0,
-    averageRefreshTime: 0
+    averageRefreshTime: 0,
   };
   private refreshTimer: NodeJS.Timeout | null = null;
-  
+
   private readonly MAX_REFRESH_ATTEMPTS: number;
   private readonly REFRESH_COOLDOWN = 1000; // 1 second
   private readonly TOKEN_REFRESH_THRESHOLD: number; // minutes
@@ -44,12 +55,12 @@ export default class SikkaTokenService {
   public async getAccessToken(): Promise<string> {
     // Check if token is revoked
     if (this.currentToken?.isRevoked) {
-      throw new SikkaAuthenticationError('Token has been revoked');
+      throw new SikkaAuthenticationError("Token has been revoked");
     }
 
     // Check if token needs refresh
     if (this.shouldRefreshToken()) {
-      return this.refreshToken().then(token => token.requestKey);
+      return this.refreshToken().then((token) => token.requestKey);
     }
 
     // If token is valid, return it immediately
@@ -88,8 +99,8 @@ export default class SikkaTokenService {
 
     if (this.refreshAttempts >= this.MAX_REFRESH_ATTEMPTS) {
       const error = new SikkaAuthenticationError(
-        'Maximum token refresh attempts exceeded',
-        { attempts: this.refreshAttempts }
+        "Maximum token refresh attempts exceeded",
+        { attempts: this.refreshAttempts },
       );
       this.metrics.failedRefreshes++;
       this.rejectQueue(error);
@@ -99,14 +110,15 @@ export default class SikkaTokenService {
     try {
       this.refreshPromise = this.performTokenRefresh();
       const tokenInfo = await this.refreshPromise;
-      
+
       // Update metrics
       this.metrics.totalRefreshes++;
       this.metrics.lastRefreshTime = new Date();
-      this.metrics.averageRefreshTime = 
-        (this.metrics.averageRefreshTime * (this.metrics.totalRefreshes - 1) + 
-        (Date.now() - startTime)) / this.metrics.totalRefreshes;
-      
+      this.metrics.averageRefreshTime =
+        (this.metrics.averageRefreshTime * (this.metrics.totalRefreshes - 1) +
+          (Date.now() - startTime)) /
+        this.metrics.totalRefreshes;
+
       this.currentToken = tokenInfo;
       this.refreshAttempts = 0;
       this.scheduleTokenRefresh();
@@ -115,16 +127,17 @@ export default class SikkaTokenService {
     } catch (error) {
       this.refreshAttempts++;
       this.metrics.refreshAttempts++;
-      
+
       if (error instanceof SikkaRateLimitError) {
         this.metrics.rateLimitHits++;
         await this.handleRateLimit();
         return this.refreshToken();
       }
-      
+
       if (this.refreshAttempts < this.MAX_REFRESH_ATTEMPTS) {
-        const delay = this.REFRESH_COOLDOWN * Math.pow(2, this.refreshAttempts - 1);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        const delay =
+          this.REFRESH_COOLDOWN * Math.pow(2, this.refreshAttempts - 1);
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
       throw error;
     } finally {
@@ -139,13 +152,16 @@ export default class SikkaTokenService {
         isExpired: true,
         isRevoked: false,
         expiresIn: 0,
-        metrics: { ...this.metrics }
+        metrics: { ...this.metrics },
       };
     }
 
     const now = new Date();
-    const expiresIn = Math.max(0, 
-      Math.floor((this.currentToken.expiresAt.getTime() - now.getTime()) / (60 * 1000))
+    const expiresIn = Math.max(
+      0,
+      Math.floor(
+        (this.currentToken.expiresAt.getTime() - now.getTime()) / (60 * 1000),
+      ),
     );
 
     return {
@@ -153,7 +169,7 @@ export default class SikkaTokenService {
       isExpired: expiresIn <= 0,
       isRevoked: !!this.currentToken.isRevoked,
       expiresIn,
-      metrics: { ...this.metrics }
+      metrics: { ...this.metrics },
     };
   }
 
@@ -164,7 +180,7 @@ export default class SikkaTokenService {
         app_key: this.config.appKey,
         practice_id: this.config.practiceId,
         master_customer_id: this.config.masterCustomerId,
-        practice_key: this.config.practiceKey
+        practice_key: this.config.practiceKey,
       };
 
       const response = await axios.post<TokenResponse>(
@@ -172,10 +188,10 @@ export default class SikkaTokenService {
         requestData,
         {
           headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        }
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       let expiresInMinutes = 60;
@@ -186,14 +202,14 @@ export default class SikkaTokenService {
         }
       }
 
-      const scope = response.data.scope ? response.data.scope.split(' ') : [];
+      const scope = response.data.scope ? response.data.scope.split(" ") : [];
 
       return {
         requestKey: response.data.request_key,
         refreshKey: response.data.refresh_key,
         expiresAt: new Date(Date.now() + expiresInMinutes * 60 * 1000),
         scope: scope,
-        isRevoked: false
+        isRevoked: false,
       };
     } catch (error) {
       throw handleSikkaError(error);
@@ -206,9 +222,9 @@ export default class SikkaTokenService {
     }
 
     const now = new Date();
-    const minutesUntilExpiration = 
+    const minutesUntilExpiration =
       (this.currentToken.expiresAt.getTime() - now.getTime()) / (60 * 1000);
-    
+
     return minutesUntilExpiration <= this.TOKEN_REFRESH_THRESHOLD;
   }
 
@@ -223,30 +239,30 @@ export default class SikkaTokenService {
 
     const now = new Date();
     const refreshTime = new Date(
-      this.currentToken.expiresAt.getTime() - 
-      (this.TOKEN_REFRESH_THRESHOLD * 60 * 1000)
+      this.currentToken.expiresAt.getTime() -
+        this.TOKEN_REFRESH_THRESHOLD * 60 * 1000,
     );
-    
+
     const delay = Math.max(0, refreshTime.getTime() - now.getTime());
-    
+
     this.refreshTimer = setTimeout(() => {
-      this.refreshToken().catch(error => {
-        console.error('Scheduled token refresh failed:', error);
+      this.refreshToken().catch((error) => {
+        console.error("Scheduled token refresh failed:", error);
       });
     }, delay);
   }
 
   private async handleRateLimit(): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, this.RATE_LIMIT_DELAY));
+    await new Promise((resolve) => setTimeout(resolve, this.RATE_LIMIT_DELAY));
   }
 
   private resolveQueue(token: string): void {
-    this.requestQueue.forEach(request => request.resolve(token));
+    this.requestQueue.forEach((request) => request.resolve(token));
     this.requestQueue = [];
   }
 
   private rejectQueue(error: any): void {
-    this.requestQueue.forEach(request => request.reject(error));
+    this.requestQueue.forEach((request) => request.reject(error));
     this.requestQueue = [];
   }
 

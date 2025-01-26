@@ -1,12 +1,28 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { formatCurrency } from '../lib/utils/currency';
-import { dashboardService } from '../services/dashboard';
-import { Button } from '../components/ui/button';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { formatCurrency } from "../lib/utils/currency";
+import { dashboardService } from "../services/dashboard";
+import { Button } from "../components/ui/button";
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
 
 interface DashboardStats {
   appointments: {
@@ -37,31 +53,63 @@ const Dashboard = () => {
   const { user } = useAuth();
 
   if (!user) {
-    navigate('/login');
+    navigate("/login");
     return null;
   }
 
-  const role = user.user_metadata?.role || 'user';
+  const role = user.user_metadata?.role || "user";
 
   const dashboardItems = {
     admin: [
-      { title: 'Staff Management', icon: Icons.Users, path: '/admin/staff' },
-      { title: 'Patient Records', icon: Icons.FileText, path: '/admin/patients' },
-      { title: 'Appointments', icon: Icons.Calendar, path: '/admin/appointments' },
-      { title: 'Analytics', icon: Icons.BarChart2, path: '/admin/analytics' },
-      { title: 'Settings', icon: Icons.Settings, path: '/admin/settings' },
+      { title: "Staff Management", icon: Icons.Users, path: "/admin/staff" },
+      {
+        title: "Patient Records",
+        icon: Icons.FileText,
+        path: "/admin/patients",
+      },
+      {
+        title: "Appointments",
+        icon: Icons.Calendar,
+        path: "/admin/appointments",
+      },
+      { title: "Analytics", icon: Icons.BarChart2, path: "/admin/analytics" },
+      { title: "Settings", icon: Icons.Settings, path: "/admin/settings" },
     ],
     staff: [
-      { title: 'My Schedule', icon: Icons.Calendar, path: '/staff/schedule' },
-      { title: 'Patient Records', icon: Icons.FileText, path: '/staff/patients' },
-      { title: 'Treatment Plans', icon: Icons.ClipboardList, path: '/staff/treatments' },
-      { title: 'Messages', icon: Icons.MessageSquare, path: '/staff/messages' },
+      { title: "My Schedule", icon: Icons.Calendar, path: "/staff/schedule" },
+      {
+        title: "Patient Records",
+        icon: Icons.FileText,
+        path: "/staff/patients",
+      },
+      {
+        title: "Treatment Plans",
+        icon: Icons.ClipboardList,
+        path: "/staff/treatments",
+      },
+      { title: "Messages", icon: Icons.MessageSquare, path: "/staff/messages" },
     ],
     patient: [
-      { title: 'My Appointments', icon: Icons.Calendar, path: '/patient/appointments' },
-      { title: 'Medical History', icon: Icons.FileText, path: '/patient/history' },
-      { title: 'Treatment Plans', icon: Icons.ClipboardList, path: '/patient/treatments' },
-      { title: 'Messages', icon: Icons.MessageSquare, path: '/patient/messages' },
+      {
+        title: "My Appointments",
+        icon: Icons.Calendar,
+        path: "/patient/appointments",
+      },
+      {
+        title: "Medical History",
+        icon: Icons.FileText,
+        path: "/patient/history",
+      },
+      {
+        title: "Treatment Plans",
+        icon: Icons.ClipboardList,
+        path: "/patient/treatments",
+      },
+      {
+        title: "Messages",
+        icon: Icons.MessageSquare,
+        path: "/patient/messages",
+      },
     ],
   };
 
@@ -73,10 +121,10 @@ const Dashboard = () => {
 
   const checkServerStatus = async () => {
     try {
-      const response = await fetch('http://localhost:5173/');
+      const response = await fetch("http://localhost:5173/");
       return response.ok;
     } catch (err) {
-      console.error('Server is not running:', err);
+      console.error("Server is not running:", err);
       return false;
     }
   };
@@ -87,7 +135,7 @@ const Dashboard = () => {
       setError(null);
       const serverRunning = await checkServerStatus();
       if (!serverRunning) {
-        setError('Server is not reachable. Please check the server status.');
+        setError("Server is not reachable. Please check the server status.");
         setLoading(false);
         return;
       }
@@ -95,7 +143,7 @@ const Dashboard = () => {
         const data = await dashboardService.getStats();
         setStats(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
       }
@@ -114,7 +162,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1B2B85]/5 to-white p-8">
       <div className="max-w-7xl mx-auto">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-3xl font-bold mb-8 bg-gradient-to-r from-[#1B2B85] to-[#40E0D0] text-transparent bg-clip-text"
@@ -137,8 +185,12 @@ const Dashboard = () => {
                   <item.icon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900">{item.title}</h2>
-                  <p className="text-sm text-gray-500">Manage your {item.title.toLowerCase()}</p>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    {item.title}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    Manage your {item.title.toLowerCase()}
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -147,29 +199,55 @@ const Dashboard = () => {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-          {stats && [
-            { label: 'Monthly Revenue', value: formatCurrency(stats.revenue.total), change: '+8%', icon: 'DollarSign' },
-            { label: 'Active Patients', value: stats.patients.active, change: '+12%', icon: 'Users' },
-            { label: 'Treatment Acceptance', value: '78%', change: '+5%', icon: 'CheckCircle' },
-            { label: 'Patient Satisfaction', value: '4.9', change: '+0.2', icon: 'Star' }
-          ].map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white p-6 rounded-xl shadow-lg border border-gray-200"
-            >
-              <div className="flex items-center justify-between mb-2">
-                {React.createElement((Icons as any)[stat.icon as keyof typeof Icons], {
-                  className: "w-5 h-5 text-primary"
-                })}
-                <span className="text-sm text-green-600 font-medium">{stat.change}</span>
-              </div>
-              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              <p className="text-sm text-gray-500">{stat.label}</p>
-            </motion.div>
-          ))}
+          {stats &&
+            [
+              {
+                label: "Monthly Revenue",
+                value: formatCurrency(stats.revenue.total),
+                change: "+8%",
+                icon: "DollarSign",
+              },
+              {
+                label: "Active Patients",
+                value: stats.patients.active,
+                change: "+12%",
+                icon: "Users",
+              },
+              {
+                label: "Treatment Acceptance",
+                value: "78%",
+                change: "+5%",
+                icon: "CheckCircle",
+              },
+              {
+                label: "Patient Satisfaction",
+                value: "4.9",
+                change: "+0.2",
+                icon: "Star",
+              },
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white p-6 rounded-xl shadow-lg border border-gray-200"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  {React.createElement(
+                    (Icons as any)[stat.icon as keyof typeof Icons],
+                    {
+                      className: "w-5 h-5 text-primary",
+                    },
+                  )}
+                  <span className="text-sm text-green-600 font-medium">
+                    {stat.change}
+                  </span>
+                </div>
+                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-sm text-gray-500">{stat.label}</p>
+              </motion.div>
+            ))}
         </div>
 
         {/* Revenue Analytics */}
@@ -184,18 +262,38 @@ const Dashboard = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={[]}>
                   <defs>
-                    <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#4BC5BD" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="#4BC5BD" stopOpacity={0}/>
+                    <linearGradient
+                      id="revenueGradient"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="5%" stopColor="#4BC5BD" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="#4BC5BD" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="rgba(203, 213, 225, 0.3)"
+                  />
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Area type="monotone" dataKey="revenue" stroke="#4BC5BD" fillOpacity={1} fill="url(#revenueGradient)" />
-                  <Line type="monotone" dataKey="profit" stroke="#6B4C9A" strokeWidth={2} />
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#4BC5BD"
+                    fillOpacity={1}
+                    fill="url(#revenueGradient)"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="profit"
+                    stroke="#6B4C9A"
+                    strokeWidth={2}
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -206,7 +304,9 @@ const Dashboard = () => {
             animate={{ opacity: 1, y: 0 }}
             className="bg-white p-6 rounded-xl shadow-lg border border-gray-200"
           >
-            <h3 className="text-lg font-semibold mb-4">Treatment Distribution</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              Treatment Distribution
+            </h3>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -240,13 +340,26 @@ const Dashboard = () => {
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={[]}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="rgba(203, 213, 225, 0.3)"
+                  />
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="newPatients" stroke="#4BC5BD" strokeWidth={2} />
-                  <Line type="monotone" dataKey="retentionRate" stroke="#6B4C9A" strokeWidth={2} />
+                  <Line
+                    type="monotone"
+                    dataKey="newPatients"
+                    stroke="#4BC5BD"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="retentionRate"
+                    stroke="#6B4C9A"
+                    strokeWidth={2}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -261,14 +374,27 @@ const Dashboard = () => {
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={[]}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="rgba(203, 213, 225, 0.3)"
+                  />
                   <XAxis dataKey="name" />
                   <YAxis yAxisId="left" orientation="left" stroke="#4BC5BD" />
                   <YAxis yAxisId="right" orientation="right" stroke="#6B4C9A" />
                   <Tooltip />
                   <Legend />
-                  <Bar yAxisId="left" dataKey="patients" fill="#4BC5BD" radius={[4, 4, 0, 0]} />
-                  <Bar yAxisId="right" dataKey="efficiency" fill="#6B4C9A" radius={[4, 4, 0, 0]} />
+                  <Bar
+                    yAxisId="left"
+                    dataKey="patients"
+                    fill="#4BC5BD"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    yAxisId="right"
+                    dataKey="efficiency"
+                    fill="#6B4C9A"
+                    radius={[4, 4, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>

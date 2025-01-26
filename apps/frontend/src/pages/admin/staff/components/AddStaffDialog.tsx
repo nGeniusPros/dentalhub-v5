@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
 
 interface AddStaffDialogProps {
   isOpen: boolean;
@@ -12,21 +12,21 @@ interface AddStaffDialogProps {
 export const AddStaffDialog: React.FC<AddStaffDialogProps> = ({
   isOpen,
   onClose,
-  onAdd
+  onAdd,
 }) => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    role: '',
-    department: '',
-    email: '',
-    phone: '',
-    startDate: '',
-    status: 'active',
+    firstName: "",
+    lastName: "",
+    role: "",
+    department: "",
+    email: "",
+    phone: "",
+    startDate: "",
+    status: "active",
     credentials: {
-      username: '',
-      password: ''
-    }
+      username: "",
+      password: "",
+    },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -62,7 +62,9 @@ export const AddStaffDialog: React.FC<AddStaffDialogProps> = ({
               <input
                 type="text"
                 value={formData.firstName}
-                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, firstName: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -75,7 +77,9 @@ export const AddStaffDialog: React.FC<AddStaffDialogProps> = ({
               <input
                 type="text"
                 value={formData.lastName}
-                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, lastName: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -87,7 +91,9 @@ export const AddStaffDialog: React.FC<AddStaffDialogProps> = ({
               </label>
               <select
                 value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, role: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -106,7 +112,9 @@ export const AddStaffDialog: React.FC<AddStaffDialogProps> = ({
               </label>
               <select
                 value={formData.department}
-                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, department: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -124,7 +132,9 @@ export const AddStaffDialog: React.FC<AddStaffDialogProps> = ({
               <input
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -137,7 +147,9 @@ export const AddStaffDialog: React.FC<AddStaffDialogProps> = ({
               <input
                 type="tel"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -150,7 +162,9 @@ export const AddStaffDialog: React.FC<AddStaffDialogProps> = ({
               <input
                 type="date"
                 value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, startDate: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -167,10 +181,15 @@ export const AddStaffDialog: React.FC<AddStaffDialogProps> = ({
                 <input
                   type="text"
                   value={formData.credentials.username}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    credentials: { ...formData.credentials, username: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      credentials: {
+                        ...formData.credentials,
+                        username: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -183,10 +202,15 @@ export const AddStaffDialog: React.FC<AddStaffDialogProps> = ({
                 <input
                   type="password"
                   value={formData.credentials.password}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    credentials: { ...formData.credentials, password: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      credentials: {
+                        ...formData.credentials,
+                        password: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -198,9 +222,7 @@ export const AddStaffDialog: React.FC<AddStaffDialogProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Add Staff Member
-            </Button>
+            <Button type="submit">Add Staff Member</Button>
           </div>
         </form>
       </motion.div>

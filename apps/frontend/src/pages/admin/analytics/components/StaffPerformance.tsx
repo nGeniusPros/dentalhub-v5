@@ -1,37 +1,37 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
 
 export const StaffPerformance = () => {
   const staffMetrics = [
     {
-      name: 'Dr. Emily Parker',
-      role: 'Lead Dentist',
+      name: "Dr. Emily Parker",
+      role: "Lead Dentist",
       metrics: {
         patients: 45,
         satisfaction: 98,
-        revenue: 52000
-      }
+        revenue: 52000,
+      },
     },
     {
-      name: 'Dr. Michael Chen',
-      role: 'Dentist',
+      name: "Dr. Michael Chen",
+      role: "Dentist",
       metrics: {
         patients: 38,
         satisfaction: 96,
-        revenue: 45000
-      }
+        revenue: 45000,
+      },
     },
     {
-      name: 'Sarah Johnson',
-      role: 'Hygienist',
+      name: "Sarah Johnson",
+      role: "Hygienist",
       metrics: {
         patients: 42,
         satisfaction: 97,
-        revenue: 28000
-      }
-    }
+        revenue: 28000,
+      },
+    },
   ];
 
   return (
@@ -42,7 +42,9 @@ export const StaffPerformance = () => {
     >
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Staff Performance</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Staff Performance
+          </h2>
           <p className="text-sm text-gray-500">Monthly staff metrics</p>
         </div>
         <Button variant="outline" size="sm">
@@ -68,15 +70,21 @@ export const StaffPerformance = () => {
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Patients</p>
-                <p className="font-medium text-gray-900">{staff.metrics.patients}</p>
+                <p className="font-medium text-gray-900">
+                  {staff.metrics.patients}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Satisfaction</p>
-                <p className="font-medium text-gray-900">{staff.metrics.satisfaction}%</p>
+                <p className="font-medium text-gray-900">
+                  {staff.metrics.satisfaction}%
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Revenue</p>
-                <p className="font-medium text-gray-900">${staff.metrics.revenue.toLocaleString()}</p>
+                <p className="font-medium text-gray-900">
+                  ${staff.metrics.revenue.toLocaleString()}
+                </p>
               </div>
             </div>
           </div>

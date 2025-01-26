@@ -1,53 +1,53 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
-import { useLearning } from '../../../contexts/LearningContext';
-import { LearningStats } from './components/LearningStats';
-import { CourseGrid } from './components/CourseGrid';
-import { LeaderboardSection } from './components/LeaderboardSection';
-import { ChallengesSection } from './components/ChallengesSection';
-import { AchievementsSection } from './components/AchievementsSection';
-import { LearningPathProgress } from './components/LearningPathProgress';
-import { RewardsSection } from './components/RewardsSection';
-import { AssignmentList } from './components/AssignmentList';
-import { CertificationList } from './components/CertificationList';
-import { BadgeList } from './components/BadgeList';
-import { AITrainingAgent } from '../../../components/learning/AITrainingAgent';
-import { AITutorAvatar } from '../../../components/learning/AITutorAvatar';
-import { useNotifications } from '../../../contexts/NotificationContext';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../components/ui/button";
+import { useLearning } from "../../../contexts/LearningContext";
+import { LearningStats } from "./components/LearningStats";
+import { CourseGrid } from "./components/CourseGrid";
+import { LeaderboardSection } from "./components/LeaderboardSection";
+import { ChallengesSection } from "./components/ChallengesSection";
+import { AchievementsSection } from "./components/AchievementsSection";
+import { LearningPathProgress } from "./components/LearningPathProgress";
+import { RewardsSection } from "./components/RewardsSection";
+import { AssignmentList } from "./components/AssignmentList";
+import { CertificationList } from "./components/CertificationList";
+import { BadgeList } from "./components/BadgeList";
+import { AITrainingAgent } from "../../../components/learning/AITrainingAgent";
+import { AITutorAvatar } from "../../../components/learning/AITutorAvatar";
+import { useNotifications } from "../../../contexts/NotificationContext";
 
 const LearningDashboard = () => {
-  const [activeTab, setActiveTab] = React.useState('overview');
+  const [activeTab, setActiveTab] = React.useState("overview");
   const { dispatch: notifyDispatch } = useNotifications();
 
   const handleAIMessage = (message: string) => {
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'message',
-        title: 'AI Assistant',
-        message: 'Your AI training assistant is ready to help!',
+        type: "message",
+        title: "AI Assistant",
+        message: "Your AI training assistant is ready to help!",
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium'
-      }
+        priority: "medium",
+      },
     });
   };
 
   const handleStartCourse = (courseId: string) => {
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'message',
-        title: 'Course Started',
-        message: 'You have started a new course. Good luck!',
+        type: "message",
+        title: "Course Started",
+        message: "You have started a new course. Good luck!",
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium'
-      }
+        priority: "medium",
+      },
     });
   };
 
@@ -61,14 +61,11 @@ const LearningDashboard = () => {
           <p className="text-gray-600">Grow your skills and earn rewards</p>
         </div>
         <div className="flex gap-3">
-          <Button 
-            variant="outline"
-            onClick={() => setActiveTab('rewards')}
-          >
+          <Button variant="outline" onClick={() => setActiveTab("rewards")}>
             <Icons.Trophy className="w-4 h-4 mr-2" />
             View Rewards
           </Button>
-          <Button onClick={() => setActiveTab('courses')}>
+          <Button onClick={() => setActiveTab("courses")}>
             <Icons.GraduationCap className="w-4 h-4 mr-2" />
             Start Learning
           </Button>
@@ -78,21 +75,21 @@ const LearningDashboard = () => {
       {/* Navigation Tabs */}
       <div className="flex gap-2 border-b border-gray-200">
         {[
-          { id: 'overview', label: 'Overview', icon: 'LayoutDashboard' },
-          { id: 'courses', label: 'Courses', icon: 'BookOpen' },
-          { id: 'assignments', label: 'Assignments', icon: 'ClipboardList' },
-          { id: 'certifications', label: 'Certifications', icon: 'Award' },
-          { id: 'badges', label: 'Badges', icon: 'Shield' },
-          { id: 'rewards', label: 'Rewards', icon: 'Gift' }
+          { id: "overview", label: "Overview", icon: "LayoutDashboard" },
+          { id: "courses", label: "Courses", icon: "BookOpen" },
+          { id: "assignments", label: "Assignments", icon: "ClipboardList" },
+          { id: "certifications", label: "Certifications", icon: "Award" },
+          { id: "badges", label: "Badges", icon: "Shield" },
+          { id: "rewards", label: "Rewards", icon: "Gift" },
         ].map((tab) => (
           <Button
             key={tab.id}
-            variant={activeTab === tab.id ? 'default' : 'ghost'}
+            variant={activeTab === tab.id ? "default" : "ghost"}
             onClick={() => setActiveTab(tab.id)}
             className="relative py-2 -mb-px"
           >
             {React.createElement(Icons[tab.icon as keyof typeof Icons], {
-              className: "w-4 h-4 mr-2"
+              className: "w-4 h-4 mr-2",
             })}
             {tab.label}
           </Button>
@@ -101,7 +98,7 @@ const LearningDashboard = () => {
 
       <LearningStats />
 
-      {activeTab === 'overview' && (
+      {activeTab === "overview" && (
         <div className="grid grid-cols-12 gap-6">
           {/* Main Content */}
           <div className="col-span-8 space-y-6">
@@ -118,37 +115,29 @@ const LearningDashboard = () => {
         </div>
       )}
 
-      {activeTab === 'courses' && (
+      {activeTab === "courses" && (
         <CourseGrid onStartCourse={handleStartCourse} />
       )}
 
-      {activeTab === 'assignments' && (
-        <AssignmentList />
-      )}
+      {activeTab === "assignments" && <AssignmentList />}
 
-      {activeTab === 'certifications' && (
-        <CertificationList />
-      )}
+      {activeTab === "certifications" && <CertificationList />}
 
-      {activeTab === 'badges' && (
-        <BadgeList />
-      )}
+      {activeTab === "badges" && <BadgeList />}
 
-      {activeTab === 'rewards' && (
-        <RewardsSection />
-      )}
+      {activeTab === "rewards" && <RewardsSection />}
 
       {/* AI Training Assistants */}
       <AITrainingAgent
         name="Alex"
         role="Training Assistant"
-        specialties={['HIPAA', 'Clinical Procedures', 'Patient Care']}
+        specialties={["HIPAA", "Clinical Procedures", "Patient Care"]}
         onMessage={handleAIMessage}
       />
-      
+
       <AITutorAvatar
         name="Dr. Sarah"
-        expertise={['Dental Procedures', 'Best Practices', 'Compliance']}
+        expertise={["Dental Procedures", "Best Practices", "Compliance"]}
         onInteract={handleAIMessage}
       />
     </div>

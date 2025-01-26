@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../../components/ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../../components/ui/button";
 
 interface DetailsDialogProps {
   open: boolean;
@@ -12,19 +12,19 @@ interface DetailsDialogProps {
 export const DetailsDialog: React.FC<DetailsDialogProps> = ({
   open,
   onClose,
-  data
+  data,
 }) => {
   if (!open) return null;
 
   const handleExport = () => {
     const csvContent = [
-      Object.keys(data[0]).join(','),
-      ...data.map(row => Object.values(row).join(','))
-    ].join('\n');
+      Object.keys(data[0]).join(","),
+      ...data.map((row) => Object.values(row).join(",")),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `campaign-details-${new Date().toISOString()}.csv`;
     document.body.appendChild(a);

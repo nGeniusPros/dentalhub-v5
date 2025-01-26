@@ -1,35 +1,35 @@
-import React, { useState } from 'react';
-import { Button } from '../ui/button';
-import * as Icons from 'lucide-react';
-import { PayrollModal } from './PayrollModal';
-import { useNotifications } from '../../contexts/NotificationContext';
+import React, { useState } from "react";
+import { Button } from "../ui/button";
+import * as Icons from "lucide-react";
+import { PayrollModal } from "./PayrollModal";
+import { useNotifications } from "../../contexts/NotificationContext";
 
 interface RunPayrollButtonProps {
-  variant?: 'default' | 'outline' | 'ghost';
-  size?: 'default' | 'sm' | 'lg';
+  variant?: "default" | "outline" | "ghost";
+  size?: "default" | "sm" | "lg";
   className?: string;
 }
 
 export const RunPayrollButton: React.FC<RunPayrollButtonProps> = ({
-  variant = 'default',
-  size = 'default',
-  className
+  variant = "default",
+  size = "default",
+  className,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const { dispatch: notifyDispatch } = useNotifications();
 
   const handleRunPayroll = (payrollData: any) => {
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'message',
-        title: 'Payroll Processing',
-        message: 'Payroll has been submitted for processing',
+        type: "message",
+        title: "Payroll Processing",
+        message: "Payroll has been submitted for processing",
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'high'
-      }
+        priority: "high",
+      },
     });
     setShowModal(false);
   };

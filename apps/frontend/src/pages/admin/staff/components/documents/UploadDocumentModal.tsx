@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
-import { useNotifications } from '../../../../../contexts/NotificationContext';
+import React, { useState, useRef } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
+import { useNotifications } from "../../../../../contexts/NotificationContext";
 
 interface UploadDocumentModalProps {
   isOpen: boolean;
@@ -14,12 +14,14 @@ interface UploadDocumentModalProps {
 export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   isOpen,
   onClose,
-  onUpload
+  onUpload,
 }) => {
   const [files, setFiles] = useState<File[]>([]);
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>(
+    {},
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { dispatch: notifyDispatch } = useNotifications();
 
@@ -38,7 +40,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragging(false);
-    
+
     const droppedFiles = Array.from(e.dataTransfer.files);
     handleFiles(droppedFiles);
   };
@@ -50,59 +52,59 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
 
   const handleFiles = (newFiles: File[]) => {
     // Validate file types
-    const validFiles = newFiles.filter(file => {
+    const validFiles = newFiles.filter((file) => {
       const validTypes = [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'image/jpeg',
-        'image/png'
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "image/jpeg",
+        "image/png",
       ];
-      
+
       if (!validTypes.includes(file.type)) {
         notifyDispatch({
-          type: 'ADD_NOTIFICATION',
+          type: "ADD_NOTIFICATION",
           payload: {
             id: Date.now().toString(),
-            type: 'alert',
-            title: 'Invalid File Type',
+            type: "alert",
+            title: "Invalid File Type",
             message: `${file.name} is not a supported file type.`,
             timestamp: new Date().toISOString(),
             read: false,
-            priority: 'medium'
-          }
+            priority: "medium",
+          },
         });
         return false;
       }
-      
+
       // Check file size (10MB limit)
       if (file.size > 10 * 1024 * 1024) {
         notifyDispatch({
-          type: 'ADD_NOTIFICATION',
+          type: "ADD_NOTIFICATION",
           payload: {
             id: Date.now().toString(),
-            type: 'alert',
-            title: 'File Too Large',
+            type: "alert",
+            title: "File Too Large",
             message: `${file.name} exceeds the 10MB size limit.`,
             timestamp: new Date().toISOString(),
             read: false,
-            priority: 'medium'
-          }
+            priority: "medium",
+          },
         });
         return false;
       }
-      
+
       return true;
     });
 
-    setFiles(prev => [...prev, ...validFiles]);
+    setFiles((prev) => [...prev, ...validFiles]);
   };
 
   const removeFile = (index: number) => {
-    setFiles(prev => prev.filter((_, i) => i !== index));
-    setUploadProgress(prev => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+    setUploadProgress((prev) => {
       const newProgress = { ...prev };
       delete newProgress[index];
       return newProgress;
@@ -118,14 +120,14 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
       // Simulate file upload with progress
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        
+
         // Simulate upload progress
         for (let progress = 0; progress <= 100; progress += 10) {
-          setUploadProgress(prev => ({
+          setUploadProgress((prev) => ({
             ...prev,
-            [i]: progress
+            [i]: progress,
           }));
-          await new Promise(resolve => setTimeout(resolve, 200));
+          await new Promise((resolve) => setTimeout(resolve, 200));
         }
       }
 
@@ -133,29 +135,29 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
       onClose();
 
       notifyDispatch({
-        type: 'ADD_NOTIFICATION',
+        type: "ADD_NOTIFICATION",
         payload: {
           id: Date.now().toString(),
-          type: 'message',
-          title: 'Upload Complete',
-          message: `Successfully uploaded ${files.length} file${files.length === 1 ? '' : 's'}.`,
+          type: "message",
+          title: "Upload Complete",
+          message: `Successfully uploaded ${files.length} file${files.length === 1 ? "" : "s"}.`,
           timestamp: new Date().toISOString(),
           read: false,
-          priority: 'medium'
-        }
+          priority: "medium",
+        },
       });
     } catch (error) {
       notifyDispatch({
-        type: 'ADD_NOTIFICATION',
+        type: "ADD_NOTIFICATION",
         payload: {
           id: Date.now().toString(),
-          type: 'alert',
-          title: 'Upload Failed',
-          message: 'An error occurred while uploading files.',
+          type: "alert",
+          title: "Upload Failed",
+          message: "An error occurred while uploading files.",
           timestamp: new Date().toISOString(),
           read: false,
-          priority: 'high'
-        }
+          priority: "high",
+        },
       });
     } finally {
       setUploading(false);
@@ -185,7 +187,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
             className={cn(
               "border-2 border-dashed rounded-lg p-8 text-center transition-colors",
               dragging ? "border-primary bg-primary/5" : "border-gray-200",
-              "hover:border-primary hover:bg-primary/5"
+              "hover:border-primary hover:bg-primary/5",
             )}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -214,27 +216,44 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
           {/* File List */}
           {files.length > 0 && (
             <div className="space-y-2">
-              <h3 className="text-sm font-medium text-gray-700">Selected Files:</h3>
+              <h3 className="text-sm font-medium text-gray-700">
+                Selected Files:
+              </h3>
               {files.map((file, index) => (
                 <div
                   key={index}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "p-2 rounded-lg",
-                      file.type.includes('pdf') && "bg-red-100 text-red-600",
-                      file.type.includes('word') && "bg-blue-100 text-blue-600",
-                      file.type.includes('excel') && "bg-green-100 text-green-600",
-                      file.type.includes('image') && "bg-purple-100 text-purple-600"
-                    )}>
-                      {file.type.includes('pdf') && <Icons.FileText className="w-4 h-4" />}
-                      {file.type.includes('word') && <Icons.FileText className="w-4 h-4" />}
-                      {file.type.includes('excel') && <Icons.FileSpreadsheet className="w-4 h-4" />}
-                      {file.type.includes('image') && <Icons.Image className="w-4 h-4" />}
+                    <div
+                      className={cn(
+                        "p-2 rounded-lg",
+                        file.type.includes("pdf") && "bg-red-100 text-red-600",
+                        file.type.includes("word") &&
+                          "bg-blue-100 text-blue-600",
+                        file.type.includes("excel") &&
+                          "bg-green-100 text-green-600",
+                        file.type.includes("image") &&
+                          "bg-purple-100 text-purple-600",
+                      )}
+                    >
+                      {file.type.includes("pdf") && (
+                        <Icons.FileText className="w-4 h-4" />
+                      )}
+                      {file.type.includes("word") && (
+                        <Icons.FileText className="w-4 h-4" />
+                      )}
+                      {file.type.includes("excel") && (
+                        <Icons.FileSpreadsheet className="w-4 h-4" />
+                      )}
+                      {file.type.includes("image") && (
+                        <Icons.Image className="w-4 h-4" />
+                      )}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{file.name}</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {file.name}
+                      </p>
                       <p className="text-xs text-gray-500">
                         {(file.size / 1024 / 1024).toFixed(2)} MB
                       </p>
@@ -283,7 +302,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
             ) : (
               <>
                 <Icons.Upload className="w-4 h-4 mr-2" />
-                Upload {files.length} {files.length === 1 ? 'File' : 'Files'}
+                Upload {files.length} {files.length === 1 ? "File" : "Files"}
               </>
             )}
           </Button>

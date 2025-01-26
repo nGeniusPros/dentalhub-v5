@@ -1,5 +1,5 @@
 export interface AssistantTool {
-  type: 'code_interpreter' | 'retrieval' | 'function';
+  type: "code_interpreter" | "retrieval" | "function";
   function?: {
     name: string;
     description: string;
@@ -9,7 +9,7 @@ export interface AssistantTool {
 
 export interface DentalAssistantConfig {
   name: string;
-  model: 'gpt-4-1106-preview' | 'gpt-3.5-turbo-1106';
+  model: "gpt-4-1106-preview" | "gpt-3.5-turbo-1106";
   instructions: string;
   tools: AssistantTool[];
   file_ids?: string[];
@@ -17,7 +17,7 @@ export interface DentalAssistantConfig {
 }
 
 export interface AssistantMessage {
-  role: 'assistant' | 'user' | 'system';
+  role: "assistant" | "user" | "system";
   content: string;
   file_ids?: string[];
   metadata?: Record<string, string>;
@@ -25,7 +25,7 @@ export interface AssistantMessage {
 
 export interface AssistantRun {
   id: string;
-  status: 'queued' | 'in_progress' | 'completed' | 'failed' | 'cancelled';
+  status: "queued" | "in_progress" | "completed" | "failed" | "cancelled";
   thread_id: string;
   assistant_id: string;
   started_at?: number;
@@ -39,5 +39,5 @@ export interface AssistantRun {
 export interface AssistantError {
   code: string;
   message: string;
-  type: 'invalid_request_error' | 'api_error' | 'rate_limit_error';
+  type: "invalid_request_error" | "api_error" | "rate_limit_error";
 }

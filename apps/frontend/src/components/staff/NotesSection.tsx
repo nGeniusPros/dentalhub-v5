@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
 
 interface Note {
   id: string;
@@ -13,34 +13,34 @@ interface Note {
 
 interface NotesSectionProps {
   notes: Note[];
-  onAddNote: (note: Omit<Note, 'id' | 'date'>) => void;
+  onAddNote: (note: Omit<Note, "id" | "date">) => void;
   onDeleteNote: (id: string) => void;
 }
 
 export const NotesSection: React.FC<NotesSectionProps> = ({
   notes,
   onAddNote,
-  onDeleteNote
+  onDeleteNote,
 }) => {
   const [newNote, setNewNote] = useState({
-    content: '',
-    category: 'general',
-    author: ''
+    content: "",
+    category: "general",
+    author: "",
   });
 
   const categories = [
-    'general',
-    'performance',
-    'training',
-    'disciplinary',
-    'achievements',
-    'personal'
+    "general",
+    "performance",
+    "training",
+    "disciplinary",
+    "achievements",
+    "personal",
   ];
 
   return (
     <div className="border-t border-gray-200 pt-6">
       <h3 className="text-lg font-medium mb-4">Staff Notes</h3>
-      
+
       <div className="space-y-4">
         {/* Add New Note */}
         <div className="p-4 bg-gray-50 rounded-lg">
@@ -51,7 +51,9 @@ export const NotesSection: React.FC<NotesSectionProps> = ({
               </label>
               <select
                 value={newNote.category}
-                onChange={(e) => setNewNote({ ...newNote, category: e.target.value })}
+                onChange={(e) =>
+                  setNewNote({ ...newNote, category: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               >
                 {categories.map((category) => (
@@ -68,20 +70,24 @@ export const NotesSection: React.FC<NotesSectionProps> = ({
               <input
                 type="text"
                 value={newNote.author}
-                onChange={(e) => setNewNote({ ...newNote, author: e.target.value })}
+                onChange={(e) =>
+                  setNewNote({ ...newNote, author: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 placeholder="Your name"
               />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
               Note Content
             </label>
             <textarea
               value={newNote.content}
-              onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
+              onChange={(e) =>
+                setNewNote({ ...newNote, content: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               rows={3}
               placeholder="Enter note content..."
@@ -94,7 +100,7 @@ export const NotesSection: React.FC<NotesSectionProps> = ({
               onClick={() => {
                 if (newNote.content && newNote.author) {
                   onAddNote(newNote);
-                  setNewNote({ content: '', category: 'general', author: '' });
+                  setNewNote({ content: "", category: "general", author: "" });
                 }
               }}
               disabled={!newNote.content || !newNote.author}
@@ -132,7 +138,9 @@ export const NotesSection: React.FC<NotesSectionProps> = ({
                   <Icons.Trash2 className="w-4 h-4" />
                 </Button>
               </div>
-              <p className="text-gray-700 whitespace-pre-wrap">{note.content}</p>
+              <p className="text-gray-700 whitespace-pre-wrap">
+                {note.content}
+              </p>
             </motion.div>
           ))}
         </div>

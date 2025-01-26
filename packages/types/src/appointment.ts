@@ -1,20 +1,20 @@
-import { ISO8601String, UUID, Timestamps } from './common.js';
+import { ISO8601String, UUID, Timestamps } from "./common.js";
 
-export type AppointmentStatus = 
-  | 'scheduled'
-  | 'confirmed'
-  | 'in-progress'
-  | 'completed'
-  | 'cancelled'
-  | 'no-show';
+export type AppointmentStatus =
+  | "scheduled"
+  | "confirmed"
+  | "in-progress"
+  | "completed"
+  | "cancelled"
+  | "no-show";
 
 export type AppointmentType =
-  | 'initial'
-  | 'follow-up'
-  | 'cleaning'
-  | 'procedure'
-  | 'emergency'
-  | 'consultation';
+  | "initial"
+  | "follow-up"
+  | "cleaning"
+  | "procedure"
+  | "emergency"
+  | "consultation";
 
 export interface AppointmentProcedure {
   code: string;
@@ -37,9 +37,9 @@ export interface Appointment extends Timestamps {
   notes?: string;
   cancellationReason?: string;
   reminders: Array<{
-    type: 'email' | 'sms' | 'phone';
+    type: "email" | "sms" | "phone";
     scheduledFor: ISO8601String;
-    status: 'pending' | 'sent' | 'failed';
+    status: "pending" | "sent" | "failed";
   }>;
 }
 

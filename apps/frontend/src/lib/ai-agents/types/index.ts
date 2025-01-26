@@ -1,4 +1,4 @@
-import { ChatMessage } from '@google/generative-ai';
+import { ChatMessage } from "@google/generative-ai";
 
 export interface PracticeMetrics {
   monthlyRevenue: number;
@@ -22,7 +22,7 @@ export interface AIResponse {
   metadata?: {
     metrics?: Record<string, any>;
     recommendations?: string[];
-    priority?: 'high' | 'medium' | 'low';
+    priority?: "high" | "medium" | "low";
     nextSteps?: string[];
     category?: string;
   };
@@ -37,19 +37,19 @@ export interface Agent {
   contextRequirements: (keyof PracticeMetrics)[];
 }
 
-export type AgentCategory = 
-  | 'Revenue'
-  | 'Patient Care'
-  | 'Operations'
-  | 'Staff & Training'
-  | 'Lab Management'
-  | 'Compliance'
-  | 'Marketing'
-  | 'Analytics'
-  | 'Core'
-  | 'Financial'
-  | 'Clinical'
-  | 'Growth';
+export type AgentCategory =
+  | "Revenue"
+  | "Patient Care"
+  | "Operations"
+  | "Staff & Training"
+  | "Lab Management"
+  | "Compliance"
+  | "Marketing"
+  | "Analytics"
+  | "Core"
+  | "Financial"
+  | "Clinical"
+  | "Growth";
 
 export interface GenerationOptions {
   temperature?: number;
@@ -59,7 +59,7 @@ export interface GenerationOptions {
 }
 
 export interface AIMessage {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: number;
   agentId?: string;
@@ -154,9 +154,9 @@ export interface AgentGridState {
 }
 
 // Animation Types
-export type AnimationDirection = 'up' | 'down' | 'left' | 'right';
-export type AnimationType = 'fade' | 'slide' | 'scale' | 'spring';
-export type EaseType = 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+export type AnimationDirection = "up" | "down" | "left" | "right";
+export type AnimationType = "fade" | "slide" | "scale" | "spring";
+export type EaseType = "linear" | "ease-in" | "ease-out" | "ease-in-out";
 
 export interface AnimationConfig {
   type: AnimationType;

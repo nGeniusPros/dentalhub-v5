@@ -1,33 +1,33 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
 
 export const SMSCampaignList = () => {
   const [campaigns, setCampaigns] = useState([
     {
-      id: '1',
-      name: 'Appointment Reminders',
-      status: 'active',
-      audience: 'All Patients',
+      id: "1",
+      name: "Appointment Reminders",
+      status: "active",
+      audience: "All Patients",
       sent: 1234,
       delivered: 1200,
       opened: 980,
-      lastSent: '2024-03-01'
+      lastSent: "2024-03-01",
     },
     {
-      id: '2',
-      name: 'Treatment Follow-ups',
-      status: 'scheduled',
-      audience: 'Recent Patients',
+      id: "2",
+      name: "Treatment Follow-ups",
+      status: "scheduled",
+      audience: "Recent Patients",
       sent: 456,
       delivered: 450,
       opened: 380,
-      lastSent: '2024-02-28'
-    }
+      lastSent: "2024-02-28",
+    },
   ]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [showActionsMenu, setShowActionsMenu] = useState<string | null>(null);
 
@@ -41,38 +41,40 @@ export const SMSCampaignList = () => {
   };
 
   const handleEdit = (campaignId: string) => {
-    console.log('Editing campaign:', campaignId);
+    console.log("Editing campaign:", campaignId);
   };
 
   const handleDuplicate = (campaignId: string) => {
-    const campaign = campaigns.find(c => c.id === campaignId);
+    const campaign = campaigns.find((c) => c.id === campaignId);
     if (campaign) {
       const newCampaign = {
         ...campaign,
         id: Date.now().toString(),
         name: `${campaign.name} (Copy)`,
-        status: 'scheduled' as const
+        status: "scheduled" as const,
       };
       setCampaigns([...campaigns, newCampaign]);
     }
   };
 
   const handleDelete = (campaignId: string) => {
-    if (window.confirm('Are you sure you want to delete this campaign?')) {
-      setCampaigns(campaigns.filter(c => c.id !== campaignId));
+    if (window.confirm("Are you sure you want to delete this campaign?")) {
+      setCampaigns(campaigns.filter((c) => c.id !== campaignId));
     }
   };
 
   const handleToggleStatus = (campaignId: string) => {
-    setCampaigns(campaigns.map(campaign => {
-      if (campaign.id === campaignId) {
-        return {
-          ...campaign,
-          status: campaign.status === 'active' ? 'scheduled' : 'active'
-        };
-      }
-      return campaign;
-    }));
+    setCampaigns(
+      campaigns.map((campaign) => {
+        if (campaign.id === campaignId) {
+          return {
+            ...campaign,
+            status: campaign.status === "active" ? "scheduled" : "active",
+          };
+        }
+        return campaign;
+      }),
+    );
   };
 
   return (
@@ -102,50 +104,75 @@ export const SMSCampaignList = () => {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Campaign</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Audience</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Performance</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Sent</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Campaign
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Audience
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Performance
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Last Sent
+              </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {campaigns.map((campaign) => (
               <tr key={campaign.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
-                  <div className="text-sm font-medium text-gray-900">{campaign.name}</div>
+                  <div className="text-sm font-medium text-gray-900">
+                    {campaign.name}
+                  </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className={cn(
-                    "px-2 py-1 text-xs font-medium rounded-full",
-                    campaign.status === 'active'
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-yellow-100 text-yellow-800'
-                  )}>
+                  <span
+                    className={cn(
+                      "px-2 py-1 text-xs font-medium rounded-full",
+                      campaign.status === "active"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800",
+                    )}
+                  >
                     {campaign.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500">{campaign.audience}</td>
+                <td className="px-6 py-4 text-sm text-gray-500">
+                  {campaign.audience}
+                </td>
                 <td className="px-6 py-4">
                   <div className="text-sm text-gray-900">
                     Sent: {campaign.sent} | Delivered: {campaign.delivered}
                   </div>
                   <div className="text-sm text-gray-500">
-                    Open Rate: {((campaign.opened / campaign.delivered) * 100).toFixed(1)}%
+                    Open Rate:{" "}
+                    {((campaign.opened / campaign.delivered) * 100).toFixed(1)}%
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500">{campaign.lastSent}</td>
+                <td className="px-6 py-4 text-sm text-gray-500">
+                  {campaign.lastSent}
+                </td>
                 <td className="px-6 py-4 text-right">
                   <div className="relative">
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
-                      onClick={() => setShowActionsMenu(showActionsMenu === campaign.id ? null : campaign.id)}
+                      onClick={() =>
+                        setShowActionsMenu(
+                          showActionsMenu === campaign.id ? null : campaign.id,
+                        )
+                      }
                     >
                       <Icons.MoreHorizontal className="w-4 h-4" />
                     </Button>
-                    
+
                     {showActionsMenu === campaign.id && (
                       <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
                         <button
@@ -166,7 +193,7 @@ export const SMSCampaignList = () => {
                           className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50"
                           onClick={() => handleToggleStatus(campaign.id)}
                         >
-                          {campaign.status === 'active' ? (
+                          {campaign.status === "active" ? (
                             <>
                               <Icons.Pause className="w-4 h-4 inline-block mr-2" />
                               Pause

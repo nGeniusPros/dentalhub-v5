@@ -1,13 +1,18 @@
-import { SyncConfig } from './types';
+import { SyncConfig } from "./types";
 
-function validateConfig(config: Partial<SyncConfig>): asserts config is SyncConfig {
-  const required: (keyof SyncConfig)[] = ['calendarProvider', 'contactsProvider'];
-  const missing = required.filter(key => !config[key]);
+function validateConfig(
+  config: Partial<SyncConfig>,
+): asserts config is SyncConfig {
+  const required: (keyof SyncConfig)[] = [
+    "calendarProvider",
+    "contactsProvider",
+  ];
+  const missing = required.filter((key) => !config[key]);
 
   if (missing.length > 0) {
     throw new Error(
-      `Missing required sync configuration: ${missing.join(', ')}. ` +
-      'Please ensure all required environment variables are set.'
+      `Missing required sync configuration: ${missing.join(", ")}. ` +
+        "Please ensure all required environment variables are set.",
     );
   }
 }
@@ -51,42 +56,42 @@ export const RETRY_OPTIONS = {
 // Timeout configuration
 export const TIMEOUT_OPTIONS = {
   request: 30000, // 30 seconds
-  connect: 5000,  // 5 seconds
+  connect: 5000, // 5 seconds
 };
 
 // Rate limiting configuration
 export const RATE_LIMIT = {
   windowMs: 60 * 1000, // 1 minute
-  maxRequests: 100,    // max 100 requests per minute
+  maxRequests: 100, // max 100 requests per minute
 };
 
 // Sync configuration
 export const SYNC_CONFIG = {
   calendar: {
     defaultSyncInterval: 15, // 15 minutes
-    maxSyncInterval: 1440,   // 24 hours
-    minSyncInterval: 5,      // 5 minutes
-    defaultTimeZone: 'UTC',
+    maxSyncInterval: 1440, // 24 hours
+    minSyncInterval: 5, // 5 minutes
+    defaultTimeZone: "UTC",
     maxEventsPerSync: 1000,
-    maxHistoryDays: 90,      // 3 months
+    maxHistoryDays: 90, // 3 months
   },
   contacts: {
-    defaultSyncInterval: 60,  // 1 hour
-    maxSyncInterval: 1440,   // 24 hours
-    minSyncInterval: 15,     // 15 minutes
+    defaultSyncInterval: 60, // 1 hour
+    maxSyncInterval: 1440, // 24 hours
+    minSyncInterval: 15, // 15 minutes
     maxContactsPerSync: 1000,
-    maxHistoryDays: 90,      // 3 months
+    maxHistoryDays: 90, // 3 months
   },
 };
 
 // Cache configuration
 export const CACHE_CONFIG = {
   calendar: {
-    ttl: 5 * 60 * 1000,     // 5 minutes
+    ttl: 5 * 60 * 1000, // 5 minutes
     maxSize: 1000,
   },
   contacts: {
-    ttl: 15 * 60 * 1000,    // 15 minutes
+    ttl: 15 * 60 * 1000, // 15 minutes
     maxSize: 1000,
   },
 };

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
-import { useNotifications } from '../../../contexts/NotificationContext';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../components/ui/button";
+import { useNotifications } from "../../../contexts/NotificationContext";
 
 interface Patient {
   id: string;
@@ -10,46 +10,46 @@ interface Patient {
   age: number;
   lastVisit: string;
   nextAppointment: string | null;
-  status: 'active' | 'inactive';
-  insuranceStatus: 'verified' | 'pending' | 'expired';
+  status: "active" | "inactive";
+  insuranceStatus: "verified" | "pending" | "expired";
 }
 
 export const PatientManagement: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState("all");
   const { dispatch: notifyDispatch } = useNotifications();
 
   const [patients] = useState<Patient[]>([
     {
-      id: '1',
-      name: 'John Smith',
+      id: "1",
+      name: "John Smith",
       age: 45,
-      lastVisit: '2025-01-15',
-      nextAppointment: '2025-02-15',
-      status: 'active',
-      insuranceStatus: 'verified',
+      lastVisit: "2025-01-15",
+      nextAppointment: "2025-02-15",
+      status: "active",
+      insuranceStatus: "verified",
     },
     {
-      id: '2',
-      name: 'Sarah Johnson',
+      id: "2",
+      name: "Sarah Johnson",
       age: 32,
-      lastVisit: '2025-01-10',
+      lastVisit: "2025-01-10",
       nextAppointment: null,
-      status: 'active',
-      insuranceStatus: 'pending',
+      status: "active",
+      insuranceStatus: "pending",
     },
   ]);
 
   const handleAddPatient = () => {
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'info',
-        title: 'Add Patient',
-        message: 'Opening new patient form...',
+        type: "info",
+        title: "Add Patient",
+        message: "Opening new patient form...",
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium',
+        priority: "medium",
       },
     });
   };
@@ -58,7 +58,9 @@ export const PatientManagement: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Patient Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Patient Management
+          </h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             View and manage patient information
           </p>
@@ -73,18 +75,18 @@ export const PatientManagement: React.FC = () => {
       <div className="mb-6">
         <div className="flex space-x-4">
           {[
-            { id: 'all', label: 'All Patients' },
-            { id: 'active', label: 'Active' },
-            { id: 'pending', label: 'Pending Review' },
-            { id: 'inactive', label: 'Inactive' },
+            { id: "all", label: "All Patients" },
+            { id: "active", label: "Active" },
+            { id: "pending", label: "Pending Review" },
+            { id: "inactive", label: "Inactive" },
           ].map(({ id, label }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
               className={`px-4 py-2 rounded-md ${
                 activeTab === id
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'
+                  ? "bg-primary text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
               }`}
             >
               {label}
@@ -146,19 +148,20 @@ export const PatientManagement: React.FC = () => {
                     {patient.lastVisit}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {patient.nextAppointment || 'Not Scheduled'}
+                    {patient.nextAppointment || "Not Scheduled"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        patient.insuranceStatus === 'verified'
-                          ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
-                          : patient.insuranceStatus === 'pending'
-                          ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100'
-                          : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
+                        patient.insuranceStatus === "verified"
+                          ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
+                          : patient.insuranceStatus === "pending"
+                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100"
+                            : "bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100"
                       }`}
                     >
-                      {patient.insuranceStatus.charAt(0).toUpperCase() + patient.insuranceStatus.slice(1)}
+                      {patient.insuranceStatus.charAt(0).toUpperCase() +
+                        patient.insuranceStatus.slice(1)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

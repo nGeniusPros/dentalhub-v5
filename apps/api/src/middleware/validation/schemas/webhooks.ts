@@ -1,11 +1,11 @@
-import { z } from 'zod';
-import { ISO8601String } from '@dentalhub/types';
+import { z } from "zod";
+import { ISO8601String } from "@dentalhub/types";
 
 // Common Types
 const iso8601Schema = z.string().refine((value) => {
   const date = new Date(value);
   return !isNaN(date.getTime());
-}, 'Invalid ISO 8601 date string');
+}, "Invalid ISO 8601 date string");
 
 // Retell Schemas
 const retellBaseSchema = z.object({
@@ -15,7 +15,7 @@ const retellBaseSchema = z.object({
 });
 
 const retellCallStartedSchema = retellBaseSchema.extend({
-  eventType: z.literal('call.started'),
+  eventType: z.literal("call.started"),
   data: z.object({
     agentId: z.string(),
     customerId: z.string().optional(),
@@ -25,7 +25,7 @@ const retellCallStartedSchema = retellBaseSchema.extend({
 });
 
 const retellCallEndedSchema = retellBaseSchema.extend({
-  eventType: z.literal('call.ended'),
+  eventType: z.literal("call.ended"),
   data: z.object({
     duration: z.number(),
     endTime: iso8601Schema,
@@ -35,11 +35,11 @@ const retellCallEndedSchema = retellBaseSchema.extend({
 });
 
 const retellTranscriptionSchema = retellBaseSchema.extend({
-  eventType: z.literal('call.transcription'),
+  eventType: z.literal("call.transcription"),
   data: z.object({
     text: z.string(),
     speakerId: z.string(),
-    speakerType: z.enum(['agent', 'customer']),
+    speakerType: z.enum(["agent", "customer"]),
     startTime: iso8601Schema,
     endTime: iso8601Schema,
     metadata: z.record(z.unknown()).optional(),
@@ -47,7 +47,7 @@ const retellTranscriptionSchema = retellBaseSchema.extend({
 });
 
 const retellRecordingSchema = retellBaseSchema.extend({
-  eventType: z.literal('call.recording'),
+  eventType: z.literal("call.recording"),
   data: z.object({
     url: z.string().url(),
     duration: z.number(),
@@ -56,7 +56,7 @@ const retellRecordingSchema = retellBaseSchema.extend({
   }),
 });
 
-export const retellWebhookSchema = z.discriminatedUnion('eventType', [
+export const retellWebhookSchema = z.discriminatedUnion("eventType", [
   retellCallStartedSchema,
   retellCallEndedSchema,
   retellTranscriptionSchema,
@@ -72,11 +72,11 @@ const sikkaBaseSchema = z.object({
 });
 
 const sikkaEligibilityVerifiedSchema = sikkaBaseSchema.extend({
-  eventType: z.literal('eligibility.verified'),
+  eventType: z.literal("eligibility.verified"),
   data: z.object({
     patientId: z.string(),
     insuranceId: z.string(),
-    status: z.enum(['active', 'inactive', 'pending']),
+    status: z.enum(["active", "inactive", "pending"]),
     verificationDate: iso8601Schema,
     coverage: z.object({
       planType: z.string(),
@@ -91,18 +91,24 @@ const sikkaEligibilityVerifiedSchema = sikkaBaseSchema.extend({
           usedBenefit: z.number(),
           waitingPeriod: z.number().optional(),
           limitations: z.array(z.string()).optional(),
-        })
+        }),
       ),
     }),
   }),
 });
 
 const sikkaClaimStatusSchema = sikkaBaseSchema.extend({
-  eventType: z.literal('claim.status_update'),
+  eventType: z.literal("claim.status_update"),
   data: z.object({
     claimId: z.string(),
     patientId: z.string(),
-    status: z.enum(['submitted', 'in_process', 'approved', 'denied', 'partial']),
+    status: z.enum([
+      "submitted",
+      "in_process",
+      "approved",
+      "denied",
+      "partial",
+    ]),
     updateDate: iso8601Schema,
     paymentAmount: z.number().optional(),
     denialReason: z.string().optional(),
@@ -118,11 +124,17 @@ const sikkaClaimStatusSchema = sikkaBaseSchema.extend({
 });
 
 const sikkaPreAuthStatusSchema = sikkaBaseSchema.extend({
-  eventType: z.literal('preauth.status_update'),
+  eventType: z.literal("preauth.status_update"),
   data: z.object({
     preAuthId: z.string(),
     patientId: z.string(),
-    status: z.enum(['submitted', 'in_review', 'approved', 'denied', 'additional_info_needed']),
+    status: z.enum([
+      "submitted",
+      "in_review",
+      "approved",
+      "denied",
+      "additional_info_needed",
+    ]),
     updateDate: iso8601Schema,
     approvedProcedures: z
       .array(
@@ -132,7 +144,7 @@ const sikkaPreAuthStatusSchema = sikkaBaseSchema.extend({
           alternateProcedure: z.string().optional(),
           validityPeriod: z.number().optional(),
           notes: z.string().optional(),
-        })
+        }),
       )
       .optional(),
     denialReason: z.string().optional(),
@@ -141,7 +153,7 @@ const sikkaPreAuthStatusSchema = sikkaBaseSchema.extend({
 });
 
 const sikkaBenefitsUpdateSchema = sikkaBaseSchema.extend({
-  eventType: z.literal('benefits.update'),
+  eventType: z.literal("benefits.update"),
   data: z.object({
     patientId: z.string(),
     insuranceId: z.string(),
@@ -153,12 +165,12 @@ const sikkaBenefitsUpdateSchema = sikkaBaseSchema.extend({
         oldValue: z.unknown(),
         newValue: z.unknown(),
         effectiveDate: iso8601Schema,
-      })
+      }),
     ),
   }),
 });
 
-export const sikkaWebhookSchema = z.discriminatedUnion('eventType', [
+export const sikkaWebhookSchema = z.discriminatedUnion("eventType", [
   sikkaEligibilityVerifiedSchema,
   sikkaClaimStatusSchema,
   sikkaPreAuthStatusSchema,
@@ -174,7 +186,7 @@ const openaiBaseSchema = z.object({
 });
 
 const openaiCompletionSchema = openaiBaseSchema.extend({
-  eventType: z.literal('completion.finished'),
+  eventType: z.literal("completion.finished"),
   data: z.object({
     completionId: z.string(),
     requestId: z.string(),
@@ -183,8 +195,8 @@ const openaiCompletionSchema = openaiBaseSchema.extend({
       z.object({
         text: z.string(),
         index: z.number(),
-        finishReason: z.enum(['stop', 'length', 'content_filter']),
-      })
+        finishReason: z.enum(["stop", "length", "content_filter"]),
+      }),
     ),
     usage: z.object({
       promptTokens: z.number(),
@@ -195,7 +207,7 @@ const openaiCompletionSchema = openaiBaseSchema.extend({
 });
 
 const openaiErrorSchema = openaiBaseSchema.extend({
-  eventType: z.literal('error'),
+  eventType: z.literal("error"),
   data: z.object({
     error: z.object({
       code: z.string(),
@@ -208,7 +220,7 @@ const openaiErrorSchema = openaiBaseSchema.extend({
 });
 
 const openaiModerationSchema = openaiBaseSchema.extend({
-  eventType: z.literal('moderation.flagged'),
+  eventType: z.literal("moderation.flagged"),
   data: z.object({
     requestId: z.string(),
     results: z.array(
@@ -216,12 +228,12 @@ const openaiModerationSchema = openaiBaseSchema.extend({
         flagged: z.boolean(),
         categories: z.record(z.boolean()),
         categoryScores: z.record(z.number()),
-      })
+      }),
     ),
   }),
 });
 
-export const openaiWebhookSchema = z.discriminatedUnion('eventType', [
+export const openaiWebhookSchema = z.discriminatedUnion("eventType", [
   openaiCompletionSchema,
   openaiErrorSchema,
   openaiModerationSchema,

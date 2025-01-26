@@ -1,5 +1,10 @@
-import { SupabaseClient, Session, User, AuthError } from '@supabase/supabase-js';
-import { Database } from '../types/database.types';
+import {
+  SupabaseClient,
+  Session,
+  User,
+  AuthError,
+} from "@supabase/supabase-js";
+import { Database } from "../types/database.types";
 
 interface AuthResponse {
   user: User | null;
@@ -33,38 +38,45 @@ export class AuthService {
       return {
         user: data.user,
         accessToken: data.session?.access_token,
-        refreshToken: data.session?.refresh_token
+        refreshToken: data.session?.refresh_token,
       };
     } catch (error) {
       return { user: null, error: error as Error };
     }
   }
 
-  async getCurrentUser(accessToken: string): Promise<{ user: UserProfile | null; error?: Error }> {
+  async getCurrentUser(
+    accessToken: string,
+  ): Promise<{ user: UserProfile | null; error?: Error }> {
     try {
-      const { data: { user }, error } = await this.supabase.auth.getUser(accessToken);
+      const {
+        data: { user },
+        error,
+      } = await this.supabase.auth.getUser(accessToken);
 
       if (error || !user) {
-        return { user: null, error: error || new Error('User not found') };
+        return { user: null, error: error || new Error("User not found") };
       }
 
       // Return basic user info even if profile fetch fails
       const userProfile: UserProfile = {
         id: user.id,
-        email: user.email || '',
+        email: user.email || "",
         user_metadata: user.user_metadata || {},
         created_at: user.created_at,
-        updated_at: user.updated_at || user.created_at
+        updated_at: user.updated_at || user.created_at,
       };
 
       return { user: userProfile };
     } catch (error) {
-      console.error('Error in getCurrentUser:', error);
+      console.error("Error in getCurrentUser:", error);
       return { user: null, error: error as Error };
     }
   }
 
-  async updateCurrentUser(user_metadata: any): Promise<{ user: UserProfile | null; error?: Error }> {
+  async updateCurrentUser(
+    user_metadata: any,
+  ): Promise<{ user: UserProfile | null; error?: Error }> {
     try {
       const { data: user, error } = await this.supabase.auth.getUser();
 
@@ -73,9 +85,9 @@ export class AuthService {
       }
 
       const { data: profile, error: profileError } = await this.supabase
-        .from('users')
+        .from("users")
         .update({ user_metadata })
-        .eq('id', user.user?.id)
+        .eq("id", user.user?.id)
         .select()
         .single();
 
@@ -89,7 +101,9 @@ export class AuthService {
     }
   }
 
-  async refreshSession(refreshToken: string): Promise<{ session: Session | null; error?: AuthError }> {
+  async refreshSession(
+    refreshToken: string,
+  ): Promise<{ session: Session | null; error?: AuthError }> {
     try {
       const { data, error } = await this.supabase.auth.refreshSession({
         refresh_token: refreshToken,

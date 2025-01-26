@@ -1,7 +1,7 @@
-import { AIResponse, AgentConfig } from '../types/agent-types';
-import { AgentError } from '../types/errors';
-import { RequestManager } from '../infrastructure/request-manager';
-import { ResponseCache } from '../infrastructure/response-cache';
+import { AIResponse, AgentConfig } from "../types/agent-types";
+import { AgentError } from "../types/errors";
+import { RequestManager } from "../infrastructure/request-manager";
+import { ResponseCache } from "../infrastructure/response-cache";
 
 interface ProcedureCodeMetadata {
   utilizationRates: Record<string, number>;
@@ -22,47 +22,53 @@ export class ProcedureCodeAgent {
     try {
       const utilization = await this.analyzeCodeUtilization(query);
       const compliance = await this.getComplianceReport();
-      const revenue = await this.getRevenueOpportunities(utilization, compliance);
+      const revenue = await this.getRevenueOpportunities(
+        utilization,
+        compliance,
+      );
 
       const metadata: ProcedureCodeMetadata = {
         utilizationRates: utilization.rates,
         complianceScores: compliance.scores,
-        revenuePotential: revenue.potential
+        revenuePotential: revenue.potential,
       };
 
       return {
         content: this.formatAnalysis(utilization, compliance, revenue),
         metadata,
-        confidence: this.calculateConfidence(compliance.reliability)
+        confidence: this.calculateConfidence(compliance.reliability),
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to process procedure code query',
-        'PROCEDURE_CODE',
-        'PROCESSING_ERROR',
+        "Failed to process procedure code query",
+        "PROCEDURE_CODE",
+        "PROCESSING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   private async analyzeCodeUtilization(query: string) {
-    return this.requestManager.executeWithRateLimit('PROCEDURE_CODE', async () => {
-      // Implementation using OpenAI Assistant ID: asst_sMo8hyf9UhA5PPQGlY4FGKau
-      return {
-        rates: {},
-        patterns: [],
-        recommendations: [],
-        reliability: 0
-      };
-    });
+    return this.requestManager.executeWithRateLimit(
+      "PROCEDURE_CODE",
+      async () => {
+        // Implementation using OpenAI Assistant ID: asst_sMo8hyf9UhA5PPQGlY4FGKau
+        return {
+          rates: {},
+          patterns: [],
+          recommendations: [],
+          reliability: 0,
+        };
+      },
+    );
   }
 
   private async getComplianceReport() {
     return {
       scores: {},
       issues: [],
-      reliability: 0
+      reliability: 0,
     };
   }
 
@@ -70,12 +76,16 @@ export class ProcedureCodeAgent {
     return {
       potential: {},
       gaps: [],
-      strategies: []
+      strategies: [],
     };
   }
 
-  private formatAnalysis(utilization: any, compliance: any, revenue: any): string {
-    return '';
+  private formatAnalysis(
+    utilization: any,
+    compliance: any,
+    revenue: any,
+  ): string {
+    return "";
   }
 
   private calculateConfidence(reliability: number): number {

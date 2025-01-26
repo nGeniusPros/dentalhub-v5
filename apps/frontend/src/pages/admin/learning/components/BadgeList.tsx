@@ -1,41 +1,41 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { BadgeCard } from './BadgeCard';
-import { Button } from '../../../../components/ui/button';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { BadgeCard } from "./BadgeCard";
+import { Button } from "../../../../components/ui/button";
+import * as Icons from "lucide-react";
 
 export const BadgeList = () => {
   const badges = [
     {
-      id: '1',
-      name: 'HIPAA Expert',
-      description: 'Complete all HIPAA compliance courses',
-      icon: 'Shield',
-      color: 'primary',
+      id: "1",
+      name: "HIPAA Expert",
+      description: "Complete all HIPAA compliance courses",
+      icon: "Shield",
+      color: "primary",
       progress: 75,
       unlocked: false,
-      points: 500
+      points: 500,
     },
     {
-      id: '2',
-      name: 'Team Player',
-      description: 'Participate in 5 team challenges',
-      icon: 'Users',
-      color: 'purple',
+      id: "2",
+      name: "Team Player",
+      description: "Participate in 5 team challenges",
+      icon: "Users",
+      color: "purple",
       unlocked: true,
-      unlockedAt: '2024-02-15',
-      points: 250
+      unlockedAt: "2024-02-15",
+      points: 250,
     },
     {
-      id: '3',
-      name: 'Fast Learner',
-      description: 'Complete 10 courses in one month',
-      icon: 'Zap',
-      color: 'yellow',
+      id: "3",
+      name: "Fast Learner",
+      description: "Complete 10 courses in one month",
+      icon: "Zap",
+      color: "yellow",
       progress: 60,
       unlocked: false,
-      points: 750
-    }
+      points: 750,
+    },
   ];
 
   return (

@@ -1,7 +1,7 @@
-import { useState, useCallback, useEffect } from 'react';
-import { supabaseService } from '../services/supabase';
-import type { User } from '../types';
-import { convertSupabaseUser } from '../lib/utils';
+import { useState, useCallback, useEffect } from "react";
+import { supabaseService } from "../services/supabase";
+import type { User } from "../types";
+import { convertSupabaseUser } from "../lib/utils";
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -24,7 +24,10 @@ export const useAuth = () => {
     setLoading(true);
     setError(null);
     try {
-      const { data, error } = await supabaseService.auth.signInWithPassword(email, password);
+      const { data, error } = await supabaseService.auth.signInWithPassword(
+        email,
+        password,
+      );
       if (error) {
         throw new Error(error.message);
       }
@@ -33,7 +36,7 @@ export const useAuth = () => {
       }
       return data.user as User;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
       throw err;
     } finally {
       setLoading(false);

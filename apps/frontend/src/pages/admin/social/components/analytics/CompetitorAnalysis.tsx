@@ -1,17 +1,26 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Button } from '../../../../../components/ui/button';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { Button } from "../../../../../components/ui/button";
+import * as Icons from "lucide-react";
 
 export const CompetitorAnalysis = () => {
   const data = [
-    { month: 'Jan', you: 2500, competitor1: 2200, competitor2: 1800 },
-    { month: 'Feb', you: 2800, competitor1: 2300, competitor2: 1900 },
-    { month: 'Mar', you: 3200, competitor1: 2500, competitor2: 2100 },
-    { month: 'Apr', you: 3500, competitor1: 2700, competitor2: 2300 },
-    { month: 'May', you: 3800, competitor1: 2900, competitor2: 2500 },
-    { month: 'Jun', you: 4200, competitor1: 3100, competitor2: 2700 }
+    { month: "Jan", you: 2500, competitor1: 2200, competitor2: 1800 },
+    { month: "Feb", you: 2800, competitor1: 2300, competitor2: 1900 },
+    { month: "Mar", you: 3200, competitor1: 2500, competitor2: 2100 },
+    { month: "Apr", you: 3500, competitor1: 2700, competitor2: 2300 },
+    { month: "May", you: 3800, competitor1: 2900, competitor2: 2500 },
+    { month: "Jun", you: 4200, competitor1: 3100, competitor2: 2700 },
   ];
 
   return (
@@ -34,7 +43,10 @@ export const CompetitorAnalysis = () => {
       <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="rgba(203, 213, 225, 0.3)"
+            />
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip />
@@ -44,21 +56,21 @@ export const CompetitorAnalysis = () => {
               dataKey="you"
               stroke="#4BC5BD"
               strokeWidth={2}
-              dot={{ fill: '#4BC5BD', strokeWidth: 2, r: 4 }}
+              dot={{ fill: "#4BC5BD", strokeWidth: 2, r: 4 }}
             />
             <Line
               type="monotone"
               dataKey="competitor1"
               stroke="#6B4C9A"
               strokeWidth={2}
-              dot={{ fill: '#6B4C9A', strokeWidth: 2, r: 4 }}
+              dot={{ fill: "#6B4C9A", strokeWidth: 2, r: 4 }}
             />
             <Line
               type="monotone"
               dataKey="competitor2"
               stroke="#C5A572"
               strokeWidth={2}
-              dot={{ fill: '#C5A572', strokeWidth: 2, r: 4 }}
+              dot={{ fill: "#C5A572", strokeWidth: 2, r: 4 }}
             />
           </LineChart>
         </ResponsiveContainer>

@@ -1,17 +1,21 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types';
-import axios from 'axios';
-import { SIKKA_API_URL, SIKKA_API_KEY, SIKKA_PRACTICE_ID } from '../integrations/sikka/config';
-import { MonitoringService, logger } from './monitoring';
-import { ErrorCode } from '../types/errors';
-import type { PatientSearchCriteria } from '../types/patient';
+import { SupabaseClient } from "@supabase/supabase-js";
+import { Database } from "../types/database.types";
+import axios from "axios";
+import {
+  SIKKA_API_URL,
+  SIKKA_API_KEY,
+  SIKKA_PRACTICE_ID,
+} from "../integrations/sikka/config";
+import { MonitoringService, logger } from "./monitoring";
+import { ErrorCode } from "../types/errors";
+import type { PatientSearchCriteria } from "../types/patient";
 
 export class PatientService {
   protected supabase: SupabaseClient<Database>;
   protected sikkaApi = axios.create({
     baseURL: SIKKA_API_URL,
     headers: {
-      'x-api-key': SIKKA_API_KEY,
+      "x-api-key": SIKKA_API_KEY,
     },
   });
 
@@ -29,7 +33,7 @@ export class PatientService {
     medicalHistory?: string;
   }) {
     const { data, error } = await this.supabase
-      .from('patients')
+      .from("patients")
       .insert({
         first_name: input.firstName,
         last_name: input.lastName,
@@ -37,7 +41,7 @@ export class PatientService {
         phone: input.phone,
         date_of_birth: input.dateOfBirth,
         address: input.address,
-        medical_history: input.medicalHistory
+        medical_history: input.medicalHistory,
       })
       .select()
       .single();
@@ -47,25 +51,28 @@ export class PatientService {
 
   async getPatient(id: string) {
     const { data, error } = await this.supabase
-      .from('patients')
-      .select('*')
-      .eq('id', id)
+      .from("patients")
+      .select("*")
+      .eq("id", id)
       .single();
 
     return { data, error };
   }
 
-  async updatePatient(id: string, input: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    phone?: string;
-    dateOfBirth?: string;
-    address?: string;
-    medicalHistory?: string;
-  }) {
+  async updatePatient(
+    id: string,
+    input: {
+      firstName?: string;
+      lastName?: string;
+      email?: string;
+      phone?: string;
+      dateOfBirth?: string;
+      address?: string;
+      medicalHistory?: string;
+    },
+  ) {
     const { data, error } = await this.supabase
-      .from('patients')
+      .from("patients")
       .update({
         first_name: input.firstName,
         last_name: input.lastName,
@@ -73,9 +80,9 @@ export class PatientService {
         phone: input.phone,
         date_of_birth: input.dateOfBirth,
         address: input.address,
-        medical_history: input.medicalHistory
+        medical_history: input.medicalHistory,
       })
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -84,32 +91,37 @@ export class PatientService {
 
   async deletePatient(id: string) {
     const { error } = await this.supabase
-      .from('patients')
+      .from("patients")
       .delete()
-      .eq('id', id);
+      .eq("id", id);
 
     return { error };
   }
 
   async getPatientFamilyMembers(patientId: string) {
     const { data, error } = await this.supabase
-      .from('patient_relationships')
-      .select(`
+      .from("patient_relationships")
+      .select(
+        `
         *,
         related_patient:patients(*)
-      `)
-      .eq('patient_id', patientId);
+      `,
+      )
+      .eq("patient_id", patientId);
 
     return { data, error };
   }
 
-  async addFamilyMember(patientId: string, input: { related_patient_id: string; relationship_type: string }) {
+  async addFamilyMember(
+    patientId: string,
+    input: { related_patient_id: string; relationship_type: string },
+  ) {
     const { data, error } = await this.supabase
-      .from('patient_relationships')
+      .from("patient_relationships")
       .insert({
         patient_id: patientId,
         related_patient_id: input.related_patient_id,
-        relationship_type: input.relationship_type
+        relationship_type: input.relationship_type,
       })
       .select()
       .single();
@@ -117,11 +129,15 @@ export class PatientService {
     return { data, error };
   }
 
-  async uploadPatientDocument(patientId: string, file: File, type: string, description: string) {
+  async uploadPatientDocument(
+    patientId: string,
+    file: File,
+    type: string,
+    description: string,
+  ) {
     // Upload file to storage
-    const { data: fileData, error: fileError } = await this.supabase
-      .storage
-      .from('patient-documents')
+    const { data: fileData, error: fileError } = await this.supabase.storage
+      .from("patient-documents")
       .upload(`${patientId}/${file.name}`, file);
 
     if (fileError) {
@@ -130,12 +146,12 @@ export class PatientService {
 
     // Create document record
     const { data, error } = await this.supabase
-      .from('patient_documents')
+      .from("patient_documents")
       .insert({
         patient_id: patientId,
         file_path: fileData.path,
         type,
-        description
+        description,
       })
       .select()
       .single();
@@ -144,29 +160,26 @@ export class PatientService {
   }
 
   async searchPatients(criteria: PatientSearchCriteria) {
-    let query = this.supabase
-      .from('patients')
-      .select('*')
-      .limit(100);
+    let query = this.supabase.from("patients").select("*").limit(100);
 
     if (criteria.firstName) {
-      query = query.ilike('first_name', `%${criteria.firstName}%`);
+      query = query.ilike("first_name", `%${criteria.firstName}%`);
     }
-    
+
     if (criteria.lastName) {
-      query = query.ilike('last_name', `%${criteria.lastName}%`);
+      query = query.ilike("last_name", `%${criteria.lastName}%`);
     }
 
     if (criteria.dateOfBirth) {
-      query = query.eq('date_of_birth', criteria.dateOfBirth);
+      query = query.eq("date_of_birth", criteria.dateOfBirth);
     }
 
     if (criteria.phoneNumber) {
-      query = query.ilike('phone', `%${criteria.phoneNumber}%`);
+      query = query.ilike("phone", `%${criteria.phoneNumber}%`);
     }
 
     if (criteria.email) {
-      query = query.ilike('email', `%${criteria.email}%`);
+      query = query.ilike("email", `%${criteria.email}%`);
     }
 
     const { data, error } = await query;
@@ -180,33 +193,36 @@ export class PatientService {
 
   async getPatientDocuments(patientId: string) {
     const { data, error } = await this.supabase
-      .from('patient_documents')
-      .select('*')
-      .eq('patient_id', patientId);
+      .from("patient_documents")
+      .select("*")
+      .eq("patient_id", patientId);
 
     return { data, error };
   }
 
   async updatePatientMedicalHistory(patientId: string, medicalHistory: string) {
     const { data, error } = await this.supabase
-      .from('patients')
+      .from("patients")
       .update({ medical_history: medicalHistory })
-      .eq('id', patientId)
+      .eq("id", patientId)
       .select()
       .single();
 
     return { data, error };
   }
 
-  async createTreatmentPlan(patientId: string, input: {
-    title: string;
-    description: string;
-    procedures: any[];
-    estimated_cost: number;
-    duration: string;
-  }) {
+  async createTreatmentPlan(
+    patientId: string,
+    input: {
+      title: string;
+      description: string;
+      procedures: any[];
+      estimated_cost: number;
+      duration: string;
+    },
+  ) {
     const { data, error } = await this.supabase
-      .from('treatment_plans')
+      .from("treatment_plans")
       .insert({
         patient_id: patientId,
         title: input.title,
@@ -214,7 +230,7 @@ export class PatientService {
         procedures: input.procedures,
         estimated_cost: input.estimated_cost,
         duration: input.duration,
-        status: 'pending'
+        status: "pending",
       })
       .select()
       .single();
@@ -224,23 +240,25 @@ export class PatientService {
 
   async getPatientTreatmentPlans(patientId: string) {
     const { data, error } = await this.supabase
-      .from('treatment_plans')
-      .select('*')
-      .eq('patient_id', patientId);
+      .from("treatment_plans")
+      .select("*")
+      .eq("patient_id", patientId);
 
     return { data, error };
   }
 
   async syncPatientsFromSikka() {
     try {
-      const response = await this.sikkaApi.get(`/practices/${SIKKA_PRACTICE_ID}/patients`);
+      const response = await this.sikkaApi.get(
+        `/practices/${SIKKA_PRACTICE_ID}/patients`,
+      );
       const sikkaPatients = response.data;
 
       if (!sikkaPatients || !Array.isArray(sikkaPatients)) {
         await MonitoringService.logError(
-          new Error('Invalid Sikka patient data'),
+          new Error("Invalid Sikka patient data"),
           ErrorCode.VALIDATION_ERROR,
-          { sikkaPatients }
+          { sikkaPatients },
         );
         return;
       }
@@ -250,9 +268,9 @@ export class PatientService {
 
       for (const sikkaPatient of sikkaPatients) {
         const { data: existingPatient } = await this.supabase
-          .from('patients')
-          .select('id')
-          .eq('id', sikkaPatient.patient_id)
+          .from("patients")
+          .select("id")
+          .eq("id", sikkaPatient.patient_id)
           .single();
 
         if (existingPatient) {
@@ -263,7 +281,7 @@ export class PatientService {
             email: sikkaPatient.email,
             phone: sikkaPatient.phone,
             dateOfBirth: sikkaPatient.date_of_birth,
-            address: sikkaPatient.address
+            address: sikkaPatient.address,
           });
           updatedCount++;
         } else {
@@ -274,18 +292,20 @@ export class PatientService {
             email: sikkaPatient.email,
             phone: sikkaPatient.phone,
             dateOfBirth: sikkaPatient.date_of_birth,
-            address: sikkaPatient.address
+            address: sikkaPatient.address,
           });
           createdCount++;
         }
       }
 
-      logger.info(`Synced patients from Sikka: ${createdCount} created, ${updatedCount} updated`);
+      logger.info(
+        `Synced patients from Sikka: ${createdCount} created, ${updatedCount} updated`,
+      );
     } catch (error) {
       await MonitoringService.logError(
         error as Error,
         ErrorCode.EXTERNAL_API_ERROR,
-        { service: 'Sikka' }
+        { service: "Sikka" },
       );
       throw error;
     }

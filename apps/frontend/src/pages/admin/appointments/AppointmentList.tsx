@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import AppointmentCard from './AppointmentCard.js';
-import type { SikkaAppointment } from '@/types/appointments';
+import { useState } from "react";
+import AppointmentCard from "./AppointmentCard.js";
+import type { SikkaAppointment } from "@/types/appointments";
 
 interface AppointmentListProps {
   appointments: SikkaAppointment[];
@@ -9,9 +9,10 @@ interface AppointmentListProps {
 
 const AppointmentList: React.FC<AppointmentListProps> = ({
   appointments,
-  onAppointmentClick
+  onAppointmentClick,
 }) => {
-  const [selectedAppointment, setSelectedAppointment] = useState<SikkaAppointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<SikkaAppointment | null>(null);
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

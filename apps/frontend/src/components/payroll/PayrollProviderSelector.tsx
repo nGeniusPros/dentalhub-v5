@@ -1,47 +1,46 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { cn } from '../../lib/utils';
-import type { PayrollProvider } from './types';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { cn } from "../../lib/utils";
+import type { PayrollProvider } from "./types";
 
 interface PayrollProviderSelectorProps {
   selectedProvider: PayrollProvider | null;
   onSelect: (provider: PayrollProvider) => void;
 }
 
-export const PayrollProviderSelector: React.FC<PayrollProviderSelectorProps> = ({
-  selectedProvider,
-  onSelect
-}) => {
+export const PayrollProviderSelector: React.FC<
+  PayrollProviderSelectorProps
+> = ({ selectedProvider, onSelect }) => {
   const providers: PayrollProvider[] = [
     {
-      id: 'quickbooks',
-      name: 'QuickBooks Payroll',
-      icon: 'DollarSign',
-      description: 'Full-service payroll with automatic tax filing',
-      connected: true
+      id: "quickbooks",
+      name: "QuickBooks Payroll",
+      icon: "DollarSign",
+      description: "Full-service payroll with automatic tax filing",
+      connected: true,
     },
     {
-      id: 'paychex',
-      name: 'Paychex',
-      icon: 'Briefcase',
-      description: 'Comprehensive payroll and HR solutions',
-      connected: true
+      id: "paychex",
+      name: "Paychex",
+      icon: "Briefcase",
+      description: "Comprehensive payroll and HR solutions",
+      connected: true,
     },
     {
-      id: 'adp',
-      name: 'ADP',
-      icon: 'Building',
-      description: 'Enterprise payroll and workforce management',
-      connected: false
+      id: "adp",
+      name: "ADP",
+      icon: "Building",
+      description: "Enterprise payroll and workforce management",
+      connected: false,
     },
     {
-      id: 'gusto',
-      name: 'Gusto',
-      icon: 'Users',
-      description: 'Modern payroll, benefits, and HR platform',
-      connected: false
-    }
+      id: "gusto",
+      name: "Gusto",
+      icon: "Users",
+      description: "Modern payroll, benefits, and HR platform",
+      connected: false,
+    },
   ];
 
   return (
@@ -57,20 +56,25 @@ export const PayrollProviderSelector: React.FC<PayrollProviderSelectorProps> = (
               "p-6 rounded-xl border-2 text-left transition-colors",
               selectedProvider?.id === provider.id
                 ? "border-primary bg-primary/5"
-                : "border-gray-200 hover:border-primary/50"
+                : "border-gray-200 hover:border-primary/50",
             )}
           >
             <div className="flex items-center gap-4">
-              <div className={cn(
-                "p-3 rounded-lg",
-                provider.connected ? "bg-primary/10" : "bg-gray-100"
-              )}>
-                {React.createElement(Icons[provider.icon as keyof typeof Icons], {
-                  className: cn(
-                    "w-6 h-6",
-                    provider.connected ? "text-primary" : "text-gray-400"
-                  )
-                })}
+              <div
+                className={cn(
+                  "p-3 rounded-lg",
+                  provider.connected ? "bg-primary/10" : "bg-gray-100",
+                )}
+              >
+                {React.createElement(
+                  Icons[provider.icon as keyof typeof Icons],
+                  {
+                    className: cn(
+                      "w-6 h-6",
+                      provider.connected ? "text-primary" : "text-gray-400",
+                    ),
+                  },
+                )}
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -85,7 +89,9 @@ export const PayrollProviderSelector: React.FC<PayrollProviderSelectorProps> = (
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-500 mt-1">{provider.description}</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {provider.description}
+                </p>
               </div>
             </div>
           </motion.button>

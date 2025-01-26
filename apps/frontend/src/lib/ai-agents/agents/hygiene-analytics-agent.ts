@@ -1,7 +1,7 @@
-import { AIResponse, AgentConfig } from '../types/agent-types';
-import { AgentError } from '../types/errors';
-import { RequestManager } from '../infrastructure/request-manager';
-import { ResponseCache } from '../infrastructure/response-cache';
+import { AIResponse, AgentConfig } from "../types/agent-types";
+import { AgentError } from "../types/errors";
+import { RequestManager } from "../infrastructure/request-manager";
+import { ResponseCache } from "../infrastructure/response-cache";
 
 interface HygieneMetadata {
   productionRates: Record<string, number>;
@@ -27,42 +27,45 @@ export class HygieneAnalyticsAgent {
       const metadata: HygieneMetadata = {
         productionRates: productivity.rates,
         recareEffectiveness: recare.effectiveness,
-        qualityScores: perio.scores
+        qualityScores: perio.scores,
       };
 
       return {
         content: this.formatAnalysis(perio, recare, productivity),
         metadata,
-        confidence: this.calculateConfidence(perio.reliability)
+        confidence: this.calculateConfidence(perio.reliability),
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to process hygiene analytics query',
-        'HYGIENE_ANALYTICS',
-        'PROCESSING_ERROR',
+        "Failed to process hygiene analytics query",
+        "HYGIENE_ANALYTICS",
+        "PROCESSING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   private async analyzePerioProgram(query: string) {
-    return this.requestManager.executeWithRateLimit('HYGIENE_ANALYTICS', async () => {
-      // Implementation using OpenAI Assistant ID: asst_EulVe3UB5MlXNxa5VdbjpNog
-      return {
-        scores: {},
-        trends: [],
-        recommendations: [],
-        reliability: 0
-      };
-    });
+    return this.requestManager.executeWithRateLimit(
+      "HYGIENE_ANALYTICS",
+      async () => {
+        // Implementation using OpenAI Assistant ID: asst_EulVe3UB5MlXNxa5VdbjpNog
+        return {
+          scores: {},
+          trends: [],
+          recommendations: [],
+          reliability: 0,
+        };
+      },
+    );
   }
 
   private async getRecareProgramAnalysis() {
     return {
       effectiveness: {},
       retention: [],
-      opportunities: []
+      opportunities: [],
     };
   }
 
@@ -70,12 +73,12 @@ export class HygieneAnalyticsAgent {
     return {
       rates: {},
       metrics: [],
-      improvements: []
+      improvements: [],
     };
   }
 
   private formatAnalysis(perio: any, recare: any, productivity: any): string {
-    return '';
+    return "";
   }
 
   private calculateConfidence(reliability: number): number {

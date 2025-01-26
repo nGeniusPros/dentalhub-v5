@@ -391,4 +391,4 @@ export const AddCourseModal: React.FC<AddCourseModalProps> = ({
     </div>
   );
 };
-```
+```;

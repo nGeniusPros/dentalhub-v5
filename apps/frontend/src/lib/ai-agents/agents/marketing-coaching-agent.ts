@@ -1,7 +1,7 @@
-import { AIResponse, AgentConfig } from '../types/agent-types';
-import { AgentError } from '../types/errors';
-import { RequestManager } from '../infrastructure/request-manager';
-import { ResponseCache } from '../infrastructure/response-cache';
+import { AIResponse, AgentConfig } from "../types/agent-types";
+import { AgentError } from "../types/errors";
+import { RequestManager } from "../infrastructure/request-manager";
+import { ResponseCache } from "../infrastructure/response-cache";
 
 interface MarketingCoachingMetadata {
   marketingCampaignMetrics: Record<string, number>;
@@ -24,42 +24,48 @@ export class MarketingCoachingAgent {
     try {
       const performance = await this.analyzeMarketingPerformance(query);
       const strategy = await this.developAcquisitionStrategy(performance);
-      const engagement = await this.measureBrandEngagement(performance, strategy);
+      const engagement = await this.measureBrandEngagement(
+        performance,
+        strategy,
+      );
 
       const metadata: MarketingCoachingMetadata = {
         marketingCampaignMetrics: performance.metrics,
         patientAcquisitionCosts: strategy.costs,
         brandEngagementRates: engagement.rates,
         marketingROI: performance.roi,
-        conversionMetrics: strategy.conversions
+        conversionMetrics: strategy.conversions,
       };
 
       return {
         content: this.formatAnalysis(performance, strategy, engagement),
         metadata,
-        confidence: this.calculateConfidence(performance.reliability)
+        confidence: this.calculateConfidence(performance.reliability),
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to process marketing coaching query',
-        'MARKETING_COACHING',
-        'PROCESSING_ERROR',
+        "Failed to process marketing coaching query",
+        "MARKETING_COACHING",
+        "PROCESSING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   private async analyzeMarketingPerformance(query: string) {
-    return this.requestManager.executeWithRateLimit('MARKETING_COACHING', async () => {
-      // Implementation using OpenAI Assistant ID: asst_WfFT0pbsadR3I8PrSy6lH6fB
-      return {
-        metrics: {},
-        roi: {},
-        recommendations: [],
-        reliability: 0
-      };
-    });
+    return this.requestManager.executeWithRateLimit(
+      "MARKETING_COACHING",
+      async () => {
+        // Implementation using OpenAI Assistant ID: asst_WfFT0pbsadR3I8PrSy6lH6fB
+        return {
+          metrics: {},
+          roi: {},
+          recommendations: [],
+          reliability: 0,
+        };
+      },
+    );
   }
 
   private async developAcquisitionStrategy(performance: any) {
@@ -67,7 +73,7 @@ export class MarketingCoachingAgent {
       costs: {},
       conversions: {},
       channels: [],
-      timeline: []
+      timeline: [],
     };
   }
 
@@ -75,12 +81,16 @@ export class MarketingCoachingAgent {
     return {
       rates: {},
       touchpoints: [],
-      sentiment: []
+      sentiment: [],
     };
   }
 
-  private formatAnalysis(performance: any, strategy: any, engagement: any): string {
-    return '';
+  private formatAnalysis(
+    performance: any,
+    strategy: any,
+    engagement: any,
+  ): string {
+    return "";
   }
 
   private calculateConfidence(reliability: number): number {

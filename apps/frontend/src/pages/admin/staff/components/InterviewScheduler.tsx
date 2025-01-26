@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
 
 interface InterviewSchedulerProps {
   isOpen: boolean;
@@ -19,15 +19,15 @@ export const InterviewScheduler: React.FC<InterviewSchedulerProps> = ({
   isOpen,
   onClose,
   onSchedule,
-  candidate
+  candidate,
 }) => {
   const [details, setDetails] = useState({
-    date: '',
-    time: '',
+    date: "",
+    time: "",
     duration: 60,
-    type: 'in-person',
+    type: "in-person",
     interviewers: [] as string[],
-    notes: ''
+    notes: "",
   });
 
   if (!isOpen) return null;
@@ -43,7 +43,9 @@ export const InterviewScheduler: React.FC<InterviewSchedulerProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold">Schedule Interview</h2>
-              {candidate?.name && <p className="text-sm text-gray-500">with {candidate.name}</p>}
+              {candidate?.name && (
+                <p className="text-sm text-gray-500">with {candidate.name}</p>
+              )}
             </div>
             <Button variant="ghost" size="sm" onClick={onClose}>
               <Icons.X className="w-5 h-5" />
@@ -60,9 +62,11 @@ export const InterviewScheduler: React.FC<InterviewSchedulerProps> = ({
               <input
                 type="date"
                 value={details.date}
-                onChange={(e) => setDetails(prev => ({ ...prev, date: e.target.value }))}
+                onChange={(e) =>
+                  setDetails((prev) => ({ ...prev, date: e.target.value }))
+                }
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg"
-                min={new Date().toISOString().split('T')[0]}
+                min={new Date().toISOString().split("T")[0]}
                 required
               />
             </div>
@@ -73,7 +77,9 @@ export const InterviewScheduler: React.FC<InterviewSchedulerProps> = ({
               <input
                 type="time"
                 value={details.time}
-                onChange={(e) => setDetails(prev => ({ ...prev, time: e.target.value }))}
+                onChange={(e) =>
+                  setDetails((prev) => ({ ...prev, time: e.target.value }))
+                }
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -86,7 +92,12 @@ export const InterviewScheduler: React.FC<InterviewSchedulerProps> = ({
             </label>
             <select
               value={details.duration}
-              onChange={(e) => setDetails(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
+              onChange={(e) =>
+                setDetails((prev) => ({
+                  ...prev,
+                  duration: parseInt(e.target.value),
+                }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
             >
               <option value={30}>30 minutes</option>
@@ -102,7 +113,9 @@ export const InterviewScheduler: React.FC<InterviewSchedulerProps> = ({
             </label>
             <select
               value={details.type}
-              onChange={(e) => setDetails(prev => ({ ...prev, type: e.target.value }))}
+              onChange={(e) =>
+                setDetails((prev) => ({ ...prev, type: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
             >
               <option value="in-person">In Person</option>
@@ -116,29 +129,33 @@ export const InterviewScheduler: React.FC<InterviewSchedulerProps> = ({
               Interviewers
             </label>
             <div className="space-y-2">
-              {['Dr. Sarah Wilson', 'Dr. Michael Chen', 'Emily Parker'].map((interviewer) => (
-                <label key={interviewer} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={details.interviewers.includes(interviewer)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setDetails(prev => ({
-                          ...prev,
-                          interviewers: [...prev.interviewers, interviewer]
-                        }));
-                      } else {
-                        setDetails(prev => ({
-                          ...prev,
-                          interviewers: prev.interviewers.filter(i => i !== interviewer)
-                        }));
-                      }
-                    }}
-                    className="rounded border-gray-300"
-                  />
-                  <span className="text-sm">{interviewer}</span>
-                </label>
-              ))}
+              {["Dr. Sarah Wilson", "Dr. Michael Chen", "Emily Parker"].map(
+                (interviewer) => (
+                  <label key={interviewer} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={details.interviewers.includes(interviewer)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setDetails((prev) => ({
+                            ...prev,
+                            interviewers: [...prev.interviewers, interviewer],
+                          }));
+                        } else {
+                          setDetails((prev) => ({
+                            ...prev,
+                            interviewers: prev.interviewers.filter(
+                              (i) => i !== interviewer,
+                            ),
+                          }));
+                        }
+                      }}
+                      className="rounded border-gray-300"
+                    />
+                    <span className="text-sm">{interviewer}</span>
+                  </label>
+                ),
+              )}
             </div>
           </div>
 
@@ -148,7 +165,9 @@ export const InterviewScheduler: React.FC<InterviewSchedulerProps> = ({
             </label>
             <textarea
               value={details.notes}
-              onChange={(e) => setDetails(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={(e) =>
+                setDetails((prev) => ({ ...prev, notes: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
               rows={3}
               placeholder="Add any special instructions or notes..."

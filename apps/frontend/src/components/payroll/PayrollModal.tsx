@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { PayrollProviderSelector } from './PayrollProviderSelector';
-import { PayrollSummary } from './PayrollSummary';
-import { TimesheetSummary } from './TimesheetSummary';
-import { useNotifications } from '../../contexts/NotificationContext';
-import type { PayrollProvider, PayrollData } from './types';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { PayrollProviderSelector } from "./PayrollProviderSelector";
+import { PayrollSummary } from "./PayrollSummary";
+import { TimesheetSummary } from "./TimesheetSummary";
+import { useNotifications } from "../../contexts/NotificationContext";
+import type { PayrollProvider, PayrollData } from "./types";
 
 interface PayrollModalProps {
   isOpen: boolean;
@@ -17,16 +17,17 @@ interface PayrollModalProps {
 export const PayrollModal: React.FC<PayrollModalProps> = ({
   isOpen,
   onClose,
-  onSubmit
+  onSubmit,
 }) => {
   const [step, setStep] = useState(1);
-  const [selectedProvider, setSelectedProvider] = useState<PayrollProvider | null>(null);
+  const [selectedProvider, setSelectedProvider] =
+    useState<PayrollProvider | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [payrollData, setPayrollData] = useState<PayrollData>({
     provider: null,
     payPeriod: {
-      startDate: '',
-      endDate: ''
+      startDate: "",
+      endDate: "",
     },
     timesheets: [],
     summary: {
@@ -35,8 +36,8 @@ export const PayrollModal: React.FC<PayrollModalProps> = ({
       overtimeHours: 0,
       totalGrossPay: 0,
       totalDeductions: 0,
-      totalNetPay: 0
-    }
+      totalNetPay: 0,
+    },
   });
 
   const { dispatch: notifyDispatch } = useNotifications();
@@ -52,25 +53,25 @@ export const PayrollModal: React.FC<PayrollModalProps> = ({
     try {
       // In production, this would make API calls to the selected provider
       // For now, simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       // Mock data
       setPayrollData({
         provider: selectedProvider,
         payPeriod: {
-          startDate: '2024-03-01',
-          endDate: '2024-03-15'
+          startDate: "2024-03-01",
+          endDate: "2024-03-15",
         },
         timesheets: [
           {
-            employeeId: '1',
-            name: 'Dr. Sarah Wilson',
+            employeeId: "1",
+            name: "Dr. Sarah Wilson",
             regularHours: 80,
             overtimeHours: 5,
             ptoHours: 0,
             grossPay: 5000,
             deductions: 1200,
-            netPay: 3800
+            netPay: 3800,
           },
           // Add more employees...
         ],
@@ -80,21 +81,21 @@ export const PayrollModal: React.FC<PayrollModalProps> = ({
           overtimeHours: 5,
           totalGrossPay: 5000,
           totalDeductions: 1200,
-          totalNetPay: 3800
-        }
+          totalNetPay: 3800,
+        },
       });
     } catch (error) {
       notifyDispatch({
-        type: 'ADD_NOTIFICATION',
+        type: "ADD_NOTIFICATION",
         payload: {
           id: Date.now().toString(),
-          type: 'alert',
-          title: 'Error Fetching Payroll Data',
-          message: 'Failed to fetch payroll data. Please try again.',
+          type: "alert",
+          title: "Error Fetching Payroll Data",
+          message: "Failed to fetch payroll data. Please try again.",
           timestamp: new Date().toISOString(),
           read: false,
-          priority: 'high'
-        }
+          priority: "high",
+        },
       });
     } finally {
       setIsLoading(false);
@@ -121,24 +122,28 @@ export const PayrollModal: React.FC<PayrollModalProps> = ({
           {/* Progress Steps */}
           <div className="flex justify-between mt-6">
             {[
-              { num: 1, label: 'Select Provider' },
-              { num: 2, label: 'Review Timesheets' },
-              { num: 3, label: 'Confirm & Submit' }
+              { num: 1, label: "Select Provider" },
+              { num: 2, label: "Review Timesheets" },
+              { num: 3, label: "Confirm & Submit" },
             ].map(({ num, label }) => (
               <div key={num} className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  step >= num ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'
-                }`}>
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    step >= num
+                      ? "bg-primary text-white"
+                      : "bg-gray-100 text-gray-400"
+                  }`}
+                >
                   {num}
                 </div>
-                <span className={`ml-2 ${
-                  step >= num ? 'text-gray-900' : 'text-gray-400'
-                }`}>
+                <span
+                  className={`ml-2 ${
+                    step >= num ? "text-gray-900" : "text-gray-400"
+                  }`}
+                >
                   {label}
                 </span>
-                {num < 3 && (
-                  <div className="w-12 h-0.5 mx-2 bg-gray-200" />
-                )}
+                {num < 3 && <div className="w-12 h-0.5 mx-2 bg-gray-200" />}
               </div>
             ))}
           </div>
@@ -171,10 +176,7 @@ export const PayrollModal: React.FC<PayrollModalProps> = ({
         <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6">
           <div className="flex justify-between">
             {step > 1 && (
-              <Button
-                variant="outline"
-                onClick={() => setStep(step - 1)}
-              >
+              <Button variant="outline" onClick={() => setStep(step - 1)}>
                 <Icons.ArrowLeft className="w-4 h-4 mr-2" />
                 Back
               </Button>

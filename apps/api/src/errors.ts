@@ -1,11 +1,11 @@
 export enum ErrorCode {
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  NOT_FOUND = 'NOT_FOUND',
-  INTERNAL_ERROR = 'INTERNAL_ERROR',
-  CONFIGURATION_ERROR = 'CONFIGURATION_ERROR',
-  EXTERNAL_SERVICE_ERROR = 'EXTERNAL_SERVICE_ERROR',
-  UNAUTHORIZED = 'UNAUTHORIZED',
-  INFRASTRUCTURE_ERROR = 'INFRASTRUCTURE_ERROR',
+  VALIDATION_ERROR = "VALIDATION_ERROR",
+  NOT_FOUND = "NOT_FOUND",
+  INTERNAL_ERROR = "INTERNAL_ERROR",
+  CONFIGURATION_ERROR = "CONFIGURATION_ERROR",
+  EXTERNAL_SERVICE_ERROR = "EXTERNAL_SERVICE_ERROR",
+  UNAUTHORIZED = "UNAUTHORIZED",
+  INFRASTRUCTURE_ERROR = "INFRASTRUCTURE_ERROR",
 }
 
 export abstract class DentalError extends Error {
@@ -25,7 +25,7 @@ export abstract class DentalError extends Error {
       status: this.statusCode,
       code: this.code,
       details: this.details,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -38,12 +38,12 @@ export class InfrastructureError extends DentalError {
   constructor(
     public operation: string,
     public originalError: unknown,
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ) {
     super(`Infrastructure failure during ${operation}`);
     this.details = {
       ...details,
-      originalError: this.safeSerializeError(originalError)
+      originalError: this.safeSerializeError(originalError),
     };
   }
 

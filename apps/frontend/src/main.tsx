@@ -1,15 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import { Provider } from 'jotai';
-import { TooltipProvider } from '@radix-ui/react-tooltip';
-import App from './App';
-import './index.css';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { Provider } from "jotai";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import App from "./App";
+import "./index.css";
 
 // Get root element
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById("root");
 if (!rootElement) {
-  throw new Error('Root element not found');
+  throw new Error("Root element not found");
 }
 
 // Create root
@@ -25,5 +25,5 @@ root.render(
         </TooltipProvider>
       </Provider>
     </BrowserRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

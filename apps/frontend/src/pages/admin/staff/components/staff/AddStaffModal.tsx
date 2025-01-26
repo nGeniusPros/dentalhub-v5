@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { useNotifications } from '../../../../../contexts/NotificationContext';
-import { BonusStructureSection } from '../../../../../components/staff/BonusStructureSection';
-import { NotesSection } from '../../../../../components/staff/NotesSection';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { useNotifications } from "../../../../../contexts/NotificationContext";
+import { BonusStructureSection } from "../../../../../components/staff/BonusStructureSection";
+import { NotesSection } from "../../../../../components/staff/NotesSection";
 
 interface AddStaffModalProps {
   isOpen: boolean;
@@ -16,51 +16,51 @@ interface AddStaffModalProps {
 export const AddStaffModal: React.FC<AddStaffModalProps> = ({
   isOpen,
   onClose,
-  onAdd
+  onAdd,
 }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    role: '',
+    name: "",
+    role: "",
     address: {
-      street: '',
-      city: '',
-      state: '',
-      zip: ''
+      street: "",
+      city: "",
+      state: "",
+      zip: "",
     },
-    department: '',
-    email: '',
-    phone: '',
-    ssn: '',
-    rdaLicense: '',
-    rdaExpiration: '',
-    startDate: '',
-    terminationDate: '',
+    department: "",
+    email: "",
+    phone: "",
+    ssn: "",
+    rdaLicense: "",
+    rdaExpiration: "",
+    startDate: "",
+    terminationDate: "",
     payrollInfo: {
-      salary: '',
-      payFrequency: 'bi-weekly',
-      lastReviewDate: '',
-      nextReviewDate: ''
+      salary: "",
+      payFrequency: "bi-weekly",
+      lastReviewDate: "",
+      nextReviewDate: "",
     },
     training: {
       completedCourses: [],
       requiredCourses: [],
-      certifications: []
+      certifications: [],
     },
-    status: 'active',
+    status: "active",
     credentials: {
-      username: '',
-      password: ''
+      username: "",
+      password: "",
     },
     bonusStructure: {
       enrolled: false,
-      type: 'production',
-      frequency: 'monthly',
+      type: "production",
+      frequency: "monthly",
       targets: [],
       customPayoutDates: [],
-      notes: ''
+      notes: "",
     },
-    notes: []
+    notes: [],
   });
 
   const { dispatch: notifyDispatch } = useNotifications();
@@ -69,19 +69,19 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Create welcome notification for new staff member
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'message',
-        title: 'Welcome New Staff Member',
+        type: "message",
+        title: "Welcome New Staff Member",
         message: `${formData.name} has joined the team as ${formData.role}`,
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium'
-      }
+        priority: "medium",
+      },
     });
 
     onAdd(formData);
@@ -90,16 +90,14 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <motion.div
-        className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
-      >
+      <motion.div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">Add New Staff Member</h2>
             <div className="flex items-center gap-2">
-              <Button 
+              <Button
                 variant="outline"
-                onClick={() => navigate('/admin-dashboard/hr/staff/new')}
+                onClick={() => navigate("/admin-dashboard/hr/staff/new")}
               >
                 <Icons.Maximize2 className="w-4 h-4 mr-2" />
                 Open Full Page
@@ -121,7 +119,9 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -133,7 +133,9 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                 </label>
                 <select
                   value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, role: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 >
@@ -152,7 +154,9 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                 </label>
                 <select
                   value={formData.department}
-                  onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, department: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 >
@@ -170,7 +174,9 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -183,7 +189,9 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                 <input
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -196,14 +204,16 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                 <input
                   type="password"
                   value={formData.ssn}
-                  onChange={(e) => setFormData({ ...formData, ssn: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, ssn: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   placeholder="XXX-XX-XXXX"
                   required
                 />
               </div>
 
-              {formData.role === 'Dental Assistant' && (
+              {formData.role === "Dental Assistant" && (
                 <>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -212,7 +222,9 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                     <input
                       type="text"
                       value={formData.rdaLicense}
-                      onChange={(e) => setFormData({ ...formData, rdaLicense: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, rdaLicense: e.target.value })
+                      }
                       className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                       required
                     />
@@ -224,7 +236,12 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                     <input
                       type="date"
                       value={formData.rdaExpiration}
-                      onChange={(e) => setFormData({ ...formData, rdaExpiration: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          rdaExpiration: e.target.value,
+                        })
+                      }
                       className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                       required
                     />
@@ -239,7 +256,9 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                 <input
                   type="date"
                   value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, startDate: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   required
                 />
@@ -257,10 +276,15 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                   <input
                     type="text"
                     value={formData.address.street}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      address: { ...formData.address, street: e.target.value }
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        address: {
+                          ...formData.address,
+                          street: e.target.value,
+                        },
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     required
                   />
@@ -272,10 +296,12 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                   <input
                     type="text"
                     value={formData.address.city}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      address: { ...formData.address, city: e.target.value }
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        address: { ...formData.address, city: e.target.value },
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     required
                   />
@@ -287,10 +313,12 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                   <input
                     type="text"
                     value={formData.address.state}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      address: { ...formData.address, state: e.target.value }
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        address: { ...formData.address, state: e.target.value },
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     required
                   />
@@ -302,10 +330,12 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                   <input
                     type="text"
                     value={formData.address.zip}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      address: { ...formData.address, zip: e.target.value }
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        address: { ...formData.address, zip: e.target.value },
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     required
                   />
@@ -324,10 +354,15 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                   <input
                     type="text"
                     value={formData.payrollInfo.salary}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      payrollInfo: { ...formData.payrollInfo, salary: e.target.value }
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        payrollInfo: {
+                          ...formData.payrollInfo,
+                          salary: e.target.value,
+                        },
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     required
                   />
@@ -338,10 +373,15 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                   </label>
                   <select
                     value={formData.payrollInfo.payFrequency}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      payrollInfo: { ...formData.payrollInfo, payFrequency: e.target.value }
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        payrollInfo: {
+                          ...formData.payrollInfo,
+                          payFrequency: e.target.value,
+                        },
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     required
                   >
@@ -357,10 +397,15 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                   <input
                     type="date"
                     value={formData.payrollInfo.lastReviewDate}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      payrollInfo: { ...formData.payrollInfo, lastReviewDate: e.target.value }
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        payrollInfo: {
+                          ...formData.payrollInfo,
+                          lastReviewDate: e.target.value,
+                        },
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
@@ -371,10 +416,15 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                   <input
                     type="date"
                     value={formData.payrollInfo.nextReviewDate}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      payrollInfo: { ...formData.payrollInfo, nextReviewDate: e.target.value }
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        payrollInfo: {
+                          ...formData.payrollInfo,
+                          nextReviewDate: e.target.value,
+                        },
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
@@ -383,7 +433,9 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
 
             {/* Training Information */}
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-medium mb-4">Training & Certifications</h3>
+              <h3 className="text-lg font-medium mb-4">
+                Training & Certifications
+              </h3>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -396,9 +448,7 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                       multiple
                       accept=".pdf,.doc,.docx"
                     />
-                    <Button type="button">
-                      Upload
-                    </Button>
+                    <Button type="button">Upload</Button>
                   </div>
                 </div>
               </div>
@@ -406,7 +456,9 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
 
             {/* Termination Information */}
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-medium mb-4">Termination Information</h3>
+              <h3 className="text-lg font-medium mb-4">
+                Termination Information
+              </h3>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Termination Date
@@ -414,10 +466,12 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                 <input
                   type="date"
                   value={formData.terminationDate}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    terminationDate: e.target.value
-                  })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      terminationDate: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 />
               </div>
@@ -433,10 +487,15 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                   <input
                     type="text"
                     value={formData.credentials.username}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      credentials: { ...formData.credentials, username: e.target.value }
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        credentials: {
+                          ...formData.credentials,
+                          username: e.target.value,
+                        },
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     required
                   />
@@ -449,10 +508,15 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                   <input
                     type="password"
                     value={formData.credentials.password}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      credentials: { ...formData.credentials, password: e.target.value }
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        credentials: {
+                          ...formData.credentials,
+                          password: e.target.value,
+                        },
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     required
                   />
@@ -463,10 +527,12 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
             {/* Bonus Structure */}
             <BonusStructureSection
               value={formData.bonusStructure}
-              onChange={(bonusStructure) => setFormData({
-                ...formData,
-                bonusStructure
-              })}
+              onChange={(bonusStructure) =>
+                setFormData({
+                  ...formData,
+                  bonusStructure,
+                })
+              }
             />
 
             {/* Staff Notes */}
@@ -476,17 +542,17 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                 const newNote = {
                   ...note,
                   id: Date.now().toString(),
-                  date: new Date().toISOString()
+                  date: new Date().toISOString(),
                 };
                 setFormData({
                   ...formData,
-                  notes: [...formData.notes, newNote]
+                  notes: [...formData.notes, newNote],
                 });
               }}
               onDeleteNote={(id) => {
                 setFormData({
                   ...formData,
-                  notes: formData.notes.filter(note => note.id !== id)
+                  notes: formData.notes.filter((note) => note.id !== id),
                 });
               }}
             />
@@ -495,9 +561,7 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
-              <Button type="submit">
-                Add Staff Member
-              </Button>
+              <Button type="submit">Add Staff Member</Button>
             </div>
           </form>
         </div>

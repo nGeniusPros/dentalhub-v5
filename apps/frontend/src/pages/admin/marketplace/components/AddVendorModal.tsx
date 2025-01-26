@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import type { Category } from '../types';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import type { Category } from "../types";
 
 interface AddVendorModalProps {
   isOpen: boolean;
@@ -11,17 +11,22 @@ interface AddVendorModalProps {
   onAddVendor: (vendor: any) => void;
 }
 
-export function AddVendorModal({ isOpen, onClose, categories, onAddVendor }: AddVendorModalProps) {
+export function AddVendorModal({
+  isOpen,
+  onClose,
+  categories,
+  onAddVendor,
+}: AddVendorModalProps) {
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    category: '',
-    subcategory: '',
-    website: '',
-    location: '',
-    contactName: '',
-    contactEmail: '',
-    contactPhone: ''
+    name: "",
+    description: "",
+    category: "",
+    subcategory: "",
+    website: "",
+    location: "",
+    contactName: "",
+    contactEmail: "",
+    contactPhone: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -43,7 +48,9 @@ export function AddVendorModal({ isOpen, onClose, categories, onAddVendor }: Add
         >
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">Add New Vendor</h2>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Add New Vendor
+              </h2>
               <button
                 onClick={onClose}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -63,7 +70,9 @@ export function AddVendorModal({ isOpen, onClose, categories, onAddVendor }: Add
                   type="text"
                   required
                   value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, name: e.target.value }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
               </div>
@@ -75,35 +84,51 @@ export function AddVendorModal({ isOpen, onClose, categories, onAddVendor }: Add
                 <select
                   required
                   value={formData.category}
-                  onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      category: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 >
                   <option value="">Select Category</option>
-                  {categories.map(category => (
-                    <option key={category.id} value={category.id}>{category.name}</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
                   ))}
                 </select>
               </div>
 
-              {formData.category && categories.find(c => c.id === formData.category)?.subcategories && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Subcategory
-                  </label>
-                  <select
-                    value={formData.subcategory}
-                    onChange={(e) => setFormData(prev => ({ ...prev, subcategory: e.target.value }))}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                  >
-                    <option value="">Select Subcategory</option>
-                    {categories
-                      .find(c => c.id === formData.category)
-                      ?.subcategories?.map(sub => (
-                        <option key={sub.id} value={sub.id}>{sub.name}</option>
-                      ))}
-                  </select>
-                </div>
-              )}
+              {formData.category &&
+                categories.find((c) => c.id === formData.category)
+                  ?.subcategories && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Subcategory
+                    </label>
+                    <select
+                      value={formData.subcategory}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          subcategory: e.target.value,
+                        }))
+                      }
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                    >
+                      <option value="">Select Subcategory</option>
+                      {categories
+                        .find((c) => c.id === formData.category)
+                        ?.subcategories?.map((sub) => (
+                          <option key={sub.id} value={sub.id}>
+                            {sub.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                )}
 
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -112,7 +137,12 @@ export function AddVendorModal({ isOpen, onClose, categories, onAddVendor }: Add
                 <textarea
                   required
                   value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   rows={3}
                 />
@@ -125,7 +155,12 @@ export function AddVendorModal({ isOpen, onClose, categories, onAddVendor }: Add
                 <input
                   type="url"
                   value={formData.website}
-                  onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      website: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
               </div>
@@ -137,7 +172,12 @@ export function AddVendorModal({ isOpen, onClose, categories, onAddVendor }: Add
                 <input
                   type="text"
                   value={formData.location}
-                  onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      location: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
               </div>
@@ -149,7 +189,12 @@ export function AddVendorModal({ isOpen, onClose, categories, onAddVendor }: Add
                 <input
                   type="text"
                   value={formData.contactName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, contactName: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      contactName: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
               </div>
@@ -161,7 +206,12 @@ export function AddVendorModal({ isOpen, onClose, categories, onAddVendor }: Add
                 <input
                   type="email"
                   value={formData.contactEmail}
-                  onChange={(e) => setFormData(prev => ({ ...prev, contactEmail: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      contactEmail: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
               </div>
@@ -173,7 +223,12 @@ export function AddVendorModal({ isOpen, onClose, categories, onAddVendor }: Add
                 <input
                   type="tel"
                   value={formData.contactPhone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, contactPhone: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      contactPhone: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
               </div>
@@ -183,9 +238,7 @@ export function AddVendorModal({ isOpen, onClose, categories, onAddVendor }: Add
               <Button variant="outline" type="button" onClick={onClose}>
                 Cancel
               </Button>
-              <Button type="submit">
-                Add Vendor
-              </Button>
+              <Button type="submit">Add Vendor</Button>
             </div>
           </form>
         </motion.div>

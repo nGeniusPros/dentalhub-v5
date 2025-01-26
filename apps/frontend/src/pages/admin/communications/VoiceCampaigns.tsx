@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface VoiceCampaign {
   id: string;
   name: string;
   script: string;
-  status: 'draft' | 'scheduled' | 'completed';
+  status: "draft" | "scheduled" | "completed";
   recipients: number;
   answerRate?: number;
   duration?: string;
@@ -19,41 +19,45 @@ interface VoiceCampaign {
 }
 
 export const VoiceCampaigns: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const campaigns: VoiceCampaign[] = [
     {
-      id: '1',
-      name: 'Appointment Confirmations',
-      script: 'Hello, this is NGenius Dental reminding you of your appointment tomorrow. Press 1 to confirm, 2 to reschedule.',
-      status: 'completed',
+      id: "1",
+      name: "Appointment Confirmations",
+      script:
+        "Hello, this is NGenius Dental reminding you of your appointment tomorrow. Press 1 to confirm, 2 to reschedule.",
+      status: "completed",
       recipients: 75,
       answerRate: 82.5,
-      duration: '2m 15s',
-      completedDate: '2025-01-22'
+      duration: "2m 15s",
+      completedDate: "2025-01-22",
     },
     {
-      id: '2',
-      name: 'Patient Satisfaction Survey',
-      script: 'We value your feedback. Please rate your recent visit from 1-5, with 5 being excellent.',
-      status: 'scheduled',
+      id: "2",
+      name: "Patient Satisfaction Survey",
+      script:
+        "We value your feedback. Please rate your recent visit from 1-5, with 5 being excellent.",
+      status: "scheduled",
       recipients: 120,
-      scheduledDate: '2025-01-24'
+      scheduledDate: "2025-01-24",
     },
     {
-      id: '3',
-      name: 'Service Announcement',
-      script: 'Introducing our new extended hours and weekend appointments. Press 1 to learn more.',
-      status: 'draft',
-      recipients: 0
-    }
+      id: "3",
+      name: "Service Announcement",
+      script:
+        "Introducing our new extended hours and weekend appointments. Press 1 to learn more.",
+      status: "draft",
+      recipients: 0,
+    },
   ];
 
-  const filteredCampaigns = campaigns.filter(campaign => 
-    (activeTab === 'all' || campaign.status === activeTab) &&
-    (campaign.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-     campaign.script.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredCampaigns = campaigns.filter(
+    (campaign) =>
+      (activeTab === "all" || campaign.status === activeTab) &&
+      (campaign.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        campaign.script.toLowerCase().includes(searchQuery.toLowerCase())),
   );
 
   return (
@@ -65,8 +69,12 @@ export const VoiceCampaigns: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Voice Campaigns</h1>
-          <p className="text-gray-500 dark:text-gray-400">Create and manage voice campaigns</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Voice Campaigns
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400">
+            Create and manage voice campaigns
+          </p>
         </div>
         <Button>
           <Icons.Plus className="h-4 w-4 mr-2" />
@@ -83,7 +91,9 @@ export const VoiceCampaigns: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">1,234</div>
-            <p className="text-xs text-muted-foreground">+0.8% from last month</p>
+            <p className="text-xs text-muted-foreground">
+              +0.8% from last month
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -93,7 +103,9 @@ export const VoiceCampaigns: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">82.3%</div>
-            <p className="text-xs text-muted-foreground">+1.2% from last month</p>
+            <p className="text-xs text-muted-foreground">
+              +1.2% from last month
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -103,14 +115,20 @@ export const VoiceCampaigns: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">1m 45s</div>
-            <p className="text-xs text-muted-foreground">-0.3m from last month</p>
+            <p className="text-xs text-muted-foreground">
+              -0.3m from last month
+            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full sm:w-auto"
+        >
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="draft">Drafts</TabsTrigger>
@@ -141,16 +159,25 @@ export const VoiceCampaigns: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-medium text-gray-900 dark:text-white">{campaign.name}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{campaign.script}</p>
+                <h3 className="font-medium text-gray-900 dark:text-white">
+                  {campaign.name}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {campaign.script}
+                </p>
               </div>
               <div className="flex items-center space-x-2">
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  campaign.status === 'completed' ? 'bg-green-100 text-green-800' :
-                  campaign.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                <span
+                  className={`px-2 py-1 text-xs rounded-full ${
+                    campaign.status === "completed"
+                      ? "bg-green-100 text-green-800"
+                      : campaign.status === "scheduled"
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {campaign.status.charAt(0).toUpperCase() +
+                    campaign.status.slice(1)}
                 </span>
                 <Button variant="ghost" size="sm">
                   <Icons.MoreVertical className="h-4 w-4" />

@@ -1,7 +1,7 @@
-import { AIResponse, AgentConfig } from '../types/agent-types';
-import { AgentError } from '../types/errors';
-import { RequestManager } from '../infrastructure/request-manager';
-import { ResponseCache } from '../infrastructure/response-cache';
+import { AIResponse, AgentConfig } from "../types/agent-types";
+import { AgentError } from "../types/errors";
+import { RequestManager } from "../infrastructure/request-manager";
+import { ResponseCache } from "../infrastructure/response-cache";
 
 interface TrainingMetadata {
   trainingCompletionRates: Record<string, number>;
@@ -27,42 +27,45 @@ export class StaffTrainingAgent {
       const metadata: TrainingMetadata = {
         trainingCompletionRates: needs.rates,
         competencyScores: competency.scores,
-        performanceMetrics: performance.metrics
+        performanceMetrics: performance.metrics,
       };
 
       return {
         content: this.formatAnalysis(needs, competency, performance),
         metadata,
-        confidence: this.calculateConfidence(needs.reliability)
+        confidence: this.calculateConfidence(needs.reliability),
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to process staff training query',
-        'STAFF_TRAINING',
-        'PROCESSING_ERROR',
+        "Failed to process staff training query",
+        "STAFF_TRAINING",
+        "PROCESSING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   private async analyzeTrainingNeeds(query: string) {
-    return this.requestManager.executeWithRateLimit('STAFF_TRAINING', async () => {
-      // Implementation using OpenAI Assistant ID: asst_HAPJlxZHDWBkpPUHwP6jaWtE
-      return {
-        rates: {},
-        gaps: [],
-        recommendations: [],
-        reliability: 0
-      };
-    });
+    return this.requestManager.executeWithRateLimit(
+      "STAFF_TRAINING",
+      async () => {
+        // Implementation using OpenAI Assistant ID: asst_HAPJlxZHDWBkpPUHwP6jaWtE
+        return {
+          rates: {},
+          gaps: [],
+          recommendations: [],
+          reliability: 0,
+        };
+      },
+    );
   }
 
   private async getCompetencyAnalysis() {
     return {
       scores: {},
       areas: [],
-      improvements: []
+      improvements: [],
     };
   }
 
@@ -70,12 +73,16 @@ export class StaffTrainingAgent {
     return {
       metrics: {},
       trends: [],
-      goals: []
+      goals: [],
     };
   }
 
-  private formatAnalysis(needs: any, competency: any, performance: any): string {
-    return '';
+  private formatAnalysis(
+    needs: any,
+    competency: any,
+    performance: any,
+  ): string {
+    return "";
   }
 
   private calculateConfidence(reliability: number): number {

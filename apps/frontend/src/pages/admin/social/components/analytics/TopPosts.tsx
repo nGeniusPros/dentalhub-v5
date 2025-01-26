@@ -1,31 +1,32 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
 
 export const TopPosts = () => {
   const posts = [
     {
-      platform: 'instagram',
-      content: 'Check out our latest smile makeover! 😁✨ #SmileTransformation',
+      platform: "instagram",
+      content: "Check out our latest smile makeover! 😁✨ #SmileTransformation",
       engagement: 1250,
       reach: 5000,
-      date: '2024-03-10'
+      date: "2024-03-10",
     },
     {
-      platform: 'facebook',
-      content: 'New state-of-the-art equipment has arrived! 🦷 #DentalTechnology',
+      platform: "facebook",
+      content:
+        "New state-of-the-art equipment has arrived! 🦷 #DentalTechnology",
       engagement: 980,
       reach: 4200,
-      date: '2024-03-09'
+      date: "2024-03-09",
     },
     {
-      platform: 'twitter',
-      content: '5 Tips for maintaining your oral health between visits! 🦷✨',
+      platform: "twitter",
+      content: "5 Tips for maintaining your oral health between visits! 🦷✨",
       engagement: 750,
       reach: 3500,
-      date: '2024-03-08'
-    }
+      date: "2024-03-08",
+    },
   ];
 
   return (
@@ -50,9 +51,15 @@ export const TopPosts = () => {
           <div key={index} className="p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
-                {post.platform === 'instagram' && <Icons.Instagram className="w-5 h-5 text-pink-500" />}
-                {post.platform === 'facebook' && <Icons.Facebook className="w-5 h-5 text-blue-600" />}
-                {post.platform === 'twitter' && <Icons.Twitter className="w-5 h-5 text-blue-400" />}
+                {post.platform === "instagram" && (
+                  <Icons.Instagram className="w-5 h-5 text-pink-500" />
+                )}
+                {post.platform === "facebook" && (
+                  <Icons.Facebook className="w-5 h-5 text-blue-600" />
+                )}
+                {post.platform === "twitter" && (
+                  <Icons.Twitter className="w-5 h-5 text-blue-400" />
+                )}
                 <span className="text-sm text-gray-500">{post.date}</span>
               </div>
               <Button variant="ghost" size="sm">

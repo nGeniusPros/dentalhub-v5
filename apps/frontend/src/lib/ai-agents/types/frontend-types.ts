@@ -1,4 +1,4 @@
-import { DentalAgentType } from './agent-types';
+import { DentalAgentType } from "./agent-types";
 
 export interface PracticeMetrics {
   monthlyRevenue: number;
@@ -13,7 +13,7 @@ export interface PracticeMetrics {
 }
 
 export interface AIMessage {
-  role: 'user' | 'assistant' | 'agent';
+  role: "user" | "assistant" | "agent";
   content: string;
   metadata?: {
     agentId?: DentalAgentType;
@@ -35,5 +35,5 @@ export interface GenerationOptions {
   temperature?: number;
   maxTokens?: number;
   agents?: DentalAgentType[];
-  priority?: 'speed' | 'accuracy';
+  priority?: "speed" | "accuracy";
 }

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
 
 interface ExportReportDialogProps {
   isOpen: boolean;
@@ -12,13 +12,13 @@ interface ExportReportDialogProps {
 export const ExportReportDialog: React.FC<ExportReportDialogProps> = ({
   isOpen,
   onClose,
-  onExport
+  onExport,
 }) => {
-  const [format, setFormat] = useState('pdf');
+  const [format, setFormat] = useState("pdf");
   const [options, setOptions] = useState({
     includeCharts: true,
     includeTables: true,
-    dateRange: 'all'
+    dateRange: "all",
   });
 
   if (!isOpen) return null;
@@ -64,10 +64,12 @@ export const ExportReportDialog: React.FC<ExportReportDialogProps> = ({
                 <input
                   type="checkbox"
                   checked={options.includeCharts}
-                  onChange={(e) => setOptions(prev => ({
-                    ...prev,
-                    includeCharts: e.target.checked
-                  }))}
+                  onChange={(e) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      includeCharts: e.target.checked,
+                    }))
+                  }
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm">Charts and Graphs</span>
@@ -76,10 +78,12 @@ export const ExportReportDialog: React.FC<ExportReportDialogProps> = ({
                 <input
                   type="checkbox"
                   checked={options.includeTables}
-                  onChange={(e) => setOptions(prev => ({
-                    ...prev,
-                    includeTables: e.target.checked
-                  }))}
+                  onChange={(e) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      includeTables: e.target.checked,
+                    }))
+                  }
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm">Data Tables</span>
@@ -93,10 +97,12 @@ export const ExportReportDialog: React.FC<ExportReportDialogProps> = ({
             </label>
             <select
               value={options.dateRange}
-              onChange={(e) => setOptions(prev => ({
-                ...prev,
-                dateRange: e.target.value
-              }))}
+              onChange={(e) =>
+                setOptions((prev) => ({
+                  ...prev,
+                  dateRange: e.target.value,
+                }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
             >
               <option value="all">All Time</option>

@@ -1,8 +1,17 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Button } from '../ui/button';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { Button } from "../ui/button";
+import * as Icons from "lucide-react";
 
 interface MembershipAnalyticsProps {
   data: any[];
@@ -25,7 +34,10 @@ export const MembershipAnalytics = ({ data }: MembershipAnalyticsProps) => {
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="rgba(203, 213, 225, 0.3)"
+            />
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip />

@@ -1,31 +1,33 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
 
 export const StaffChat = () => {
   const [selectedChat, setSelectedChat] = useState<string | null>(null);
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<Array<{
-    id: string;
-    sender: string;
-    content: string;
-    timestamp: string;
-  }>>([]);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<
+    Array<{
+      id: string;
+      sender: string;
+      content: string;
+      timestamp: string;
+    }>
+  >([]);
 
   const handleSend = () => {
     if (!message.trim()) return;
-    
+
     setMessages([
       ...messages,
       {
         id: Date.now().toString(),
-        sender: 'me',
+        sender: "me",
         content: message,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     ]);
-    setMessage('');
+    setMessage("");
   };
 
   return (
@@ -38,13 +40,13 @@ export const StaffChat = () => {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'} mb-4`}
+            className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"} mb-4`}
           >
-            <div className={`max-w-[80%] p-3 rounded-lg ${
-              msg.sender === 'me' 
-                ? 'bg-primary text-white' 
-                : 'bg-gray-100'
-            }`}>
+            <div
+              className={`max-w-[80%] p-3 rounded-lg ${
+                msg.sender === "me" ? "bg-primary text-white" : "bg-gray-100"
+              }`}
+            >
               <p className="text-sm">{msg.content}</p>
               <span className="text-xs opacity-70">
                 {new Date(msg.timestamp).toLocaleTimeString()}

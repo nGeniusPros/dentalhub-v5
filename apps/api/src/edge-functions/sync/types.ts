@@ -1,6 +1,6 @@
 export interface SyncConfig {
-  calendarProvider: 'google' | 'microsoft' | 'ical';
-  contactsProvider: 'google' | 'microsoft' | 'vcard';
+  calendarProvider: "google" | "microsoft" | "ical";
+  contactsProvider: "google" | "microsoft" | "vcard";
   calendarApiKey?: string;
   contactsApiKey?: string;
   calendarId?: string;
@@ -8,7 +8,7 @@ export interface SyncConfig {
 }
 
 export interface CalendarSyncOptions {
-  syncDirection: 'one-way' | 'two-way';
+  syncDirection: "one-way" | "two-way";
   syncInterval: number; // in minutes
   timeZone?: string;
   eventFilters?: {
@@ -19,7 +19,7 @@ export interface CalendarSyncOptions {
 }
 
 export interface ContactsSyncOptions {
-  syncDirection: 'one-way' | 'two-way';
+  syncDirection: "one-way" | "two-way";
   syncInterval: number; // in minutes
   contactFilters?: {
     groups?: string[];
@@ -28,7 +28,7 @@ export interface ContactsSyncOptions {
 }
 
 export interface SyncData {
-  type: 'calendar' | 'contacts';
+  type: "calendar" | "contacts";
   options: CalendarSyncOptions | ContactsSyncOptions;
   metadata?: {
     patientId?: string;
@@ -54,13 +54,13 @@ export interface SyncError {
 export interface SyncStorageOptions {
   bucket: string;
   path: string;
-  acl?: 'private' | 'public-read';
+  acl?: "private" | "public-read";
   metadata?: Record<string, string>;
   expiresIn?: number;
 }
 
 export interface SyncOptions {
-  priority?: 'high' | 'normal' | 'low';
+  priority?: "high" | "normal" | "low";
   webhook?: {
     url: string;
     secret: string;

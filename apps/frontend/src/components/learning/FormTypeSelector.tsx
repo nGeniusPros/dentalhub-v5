@@ -65,4 +65,4 @@ export const FormTypeSelector: React.FC<FormTypeSelectorProps> = ({
     </div>
   );
 };
-```
+```;

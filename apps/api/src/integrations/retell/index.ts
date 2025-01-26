@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 import {
   initiateCall,
   getCallStatus,
@@ -7,22 +7,22 @@ import {
   cancelCall,
   updateCallPriority,
   processWebhookEvent,
-  getRecordingUrl
-} from './service';
+  getRecordingUrl,
+} from "./service";
 import {
   validateVoiceCallRequest,
   validateWebhook,
   validateWebhookEvent,
-  typeGuards
-} from './validators';
-import { handleRetellError, handleWebhookError } from './error';
-import { handleError } from '../../utils/errorHandler';
-import { Router } from 'express';
+  typeGuards,
+} from "./validators";
+import { handleRetellError, handleWebhookError } from "./error";
+import { handleError } from "../../utils/errorHandler";
+import { Router } from "express";
 
 const router: Router = express.Router();
 
 // Initiate a voice call
-router.post('/calls', validateVoiceCallRequest, async (req, res) => {
+router.post("/calls", validateVoiceCallRequest, async (req, res) => {
   try {
     const result = await initiateCall(req.body);
     res.json(result);
@@ -32,7 +32,7 @@ router.post('/calls', validateVoiceCallRequest, async (req, res) => {
 });
 
 // Get call status
-router.get('/calls/:callId', async (req, res) => {
+router.get("/calls/:callId", async (req, res) => {
   try {
     const result = await getCallStatus(req.params.callId);
     res.json(result);
@@ -42,7 +42,7 @@ router.get('/calls/:callId', async (req, res) => {
 });
 
 // Get call transcription
-router.get('/calls/:callId/transcription', async (req, res) => {
+router.get("/calls/:callId/transcription", async (req, res) => {
   try {
     const result = await getTranscription(req.params.callId);
     res.json(result);
@@ -52,7 +52,7 @@ router.get('/calls/:callId/transcription', async (req, res) => {
 });
 
 // Get call analysis
-router.get('/calls/:callId/analysis', async (req, res) => {
+router.get("/calls/:callId/analysis", async (req, res) => {
   try {
     const result = await getAnalysis(req.params.callId);
     res.json(result);
@@ -62,7 +62,7 @@ router.get('/calls/:callId/analysis', async (req, res) => {
 });
 
 // Cancel a call
-router.post('/calls/:callId/cancel', async (req, res) => {
+router.post("/calls/:callId/cancel", async (req, res) => {
   try {
     await cancelCall(req.params.callId);
     res.status(204).send();
@@ -72,9 +72,12 @@ router.post('/calls/:callId/cancel', async (req, res) => {
 });
 
 // Update call priority
-router.patch('/calls/:callId', async (req, res) => {
+router.patch("/calls/:callId", async (req, res) => {
   try {
-    const result = await updateCallPriority(req.params.callId, req.body.priority);
+    const result = await updateCallPriority(
+      req.params.callId,
+      req.body.priority,
+    );
     res.json(result);
   } catch (error) {
     handleError(error, res);
@@ -82,7 +85,7 @@ router.patch('/calls/:callId', async (req, res) => {
 });
 
 // Get call recording URL
-router.get('/calls/:callId/recording', async (req, res) => {
+router.get("/calls/:callId/recording", async (req, res) => {
   try {
     const result = await getRecordingUrl(req.params.callId);
     res.json({ url: result });
@@ -92,17 +95,20 @@ router.get('/calls/:callId/recording', async (req, res) => {
 });
 
 // Webhook endpoint
-router.post('/webhook', validateWebhook, async (req, res) => {
+router.post("/webhook", validateWebhook, async (req, res) => {
   try {
     if (!typeGuards.isWebhookEvent(req.body)) {
       return res.status(400).json({
         error: {
-          code: 'INVALID_WEBHOOK_EVENT',
-          message: 'Invalid webhook event format',
-        }
+          code: "INVALID_WEBHOOK_EVENT",
+          message: "Invalid webhook event format",
+        },
       });
     }
-    await processWebhookEvent(req.body, req.headers['x-retell-signature'] as string);
+    await processWebhookEvent(
+      req.body,
+      req.headers["x-retell-signature"] as string,
+    );
     res.status(204).send();
   } catch (error) {
     const webhookError = handleWebhookError(error);

@@ -1,6 +1,6 @@
-import { BaseAgent } from './base-agent';
-import { RequestManager } from './request-manager';
-import { PracticeMetrics } from './types/frontend-types';
+import { BaseAgent } from "./base-agent";
+import { RequestManager } from "./request-manager";
+import { PracticeMetrics } from "./types/frontend-types";
 
 export interface DataRetrievalResponse {
   data: any;
@@ -12,7 +12,7 @@ export class DataRetrievalAgent extends BaseAgent {
   private metrics: PracticeMetrics;
 
   constructor(metrics: PracticeMetrics) {
-    super('data-retrieval');
+    super("data-retrieval");
     this.requestManager = RequestManager.getInstance();
     this.metrics = metrics;
   }
@@ -25,44 +25,47 @@ export class DataRetrievalAgent extends BaseAgent {
           metrics: this.metrics,
           insights: [
             {
-              type: 'revenue',
+              type: "revenue",
               value: this.metrics.monthlyRevenue,
-              trend: 'increasing',
-              recommendation: 'Current revenue trends are positive'
+              trend: "increasing",
+              recommendation: "Current revenue trends are positive",
             },
             {
-              type: 'patients',
+              type: "patients",
               value: this.metrics.patientCount,
-              trend: 'stable',
-              recommendation: 'Patient retention is healthy'
+              trend: "stable",
+              recommendation: "Patient retention is healthy",
             },
             {
-              type: 'appointments',
+              type: "appointments",
               value: this.metrics.appointmentRate,
-              trend: 'needs-improvement',
-              recommendation: 'Consider optimizing appointment scheduling'
-            }
-          ]
-        }
+              trend: "needs-improvement",
+              recommendation: "Consider optimizing appointment scheduling",
+            },
+          ],
+        },
       };
     } catch (error) {
-      console.error('Data retrieval failed:', error);
+      console.error("Data retrieval failed:", error);
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Data retrieval failed'
+        error: error instanceof Error ? error.message : "Data retrieval failed",
       };
     }
   }
 
   async getHistoricalData(): Promise<DataRetrievalResponse> {
     try {
-      const response = await this.requestManager.get('/dashboard/stats');
+      const response = await this.requestManager.get("/dashboard/stats");
       return { data: response };
     } catch (error) {
-      console.error('Historical data retrieval failed:', error);
+      console.error("Historical data retrieval failed:", error);
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Historical data retrieval failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Historical data retrieval failed",
       };
     }
   }

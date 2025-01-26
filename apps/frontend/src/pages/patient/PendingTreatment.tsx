@@ -1,29 +1,29 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
 
 const PendingTreatment = () => {
   const treatments = [
     {
       id: 1,
-      type: 'Root Canal',
-      tooth: '16',
-      priority: 'High',
-      estimatedCost: 1200.00,
-      insuranceCoverage: 800.00,
-      recommendedDate: '2024-04-15',
-      status: 'Pending Approval'
+      type: "Root Canal",
+      tooth: "16",
+      priority: "High",
+      estimatedCost: 1200.0,
+      insuranceCoverage: 800.0,
+      recommendedDate: "2024-04-15",
+      status: "Pending Approval",
     },
     {
       id: 2,
-      type: 'Crown',
-      tooth: '17',
-      priority: 'Medium',
-      estimatedCost: 950.00,
-      insuranceCoverage: 600.00,
-      recommendedDate: '2024-05-01',
-      status: 'Scheduled'
-    }
+      type: "Crown",
+      tooth: "17",
+      priority: "Medium",
+      estimatedCost: 950.0,
+      insuranceCoverage: 600.0,
+      recommendedDate: "2024-05-01",
+      status: "Scheduled",
+    },
   ];
 
   return (
@@ -53,11 +53,13 @@ const PendingTreatment = () => {
                   <p className="text-gray-500">Tooth #{treatment.tooth}</p>
                 </div>
               </div>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                treatment.priority === 'High' 
-                  ? 'bg-red-100 text-red-800'
-                  : 'bg-yellow-100 text-yellow-800'
-              }`}>
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  treatment.priority === "High"
+                    ? "bg-red-100 text-red-800"
+                    : "bg-yellow-100 text-yellow-800"
+                }`}
+              >
                 {treatment.priority} Priority
               </span>
             </div>
@@ -65,16 +67,23 @@ const PendingTreatment = () => {
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
                 <p className="text-sm text-gray-500">Estimated Cost</p>
-                <p className="font-medium">${treatment.estimatedCost.toFixed(2)}</p>
+                <p className="font-medium">
+                  ${treatment.estimatedCost.toFixed(2)}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Insurance Coverage</p>
-                <p className="font-medium">${treatment.insuranceCoverage.toFixed(2)}</p>
+                <p className="font-medium">
+                  ${treatment.insuranceCoverage.toFixed(2)}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Your Cost</p>
                 <p className="font-medium">
-                  ${(treatment.estimatedCost - treatment.insuranceCoverage).toFixed(2)}
+                  $
+                  {(
+                    treatment.estimatedCost - treatment.insuranceCoverage
+                  ).toFixed(2)}
                 </p>
               </div>
               <div>

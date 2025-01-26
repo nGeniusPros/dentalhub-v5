@@ -1,16 +1,16 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../components/ui/button";
 
 export const TreatmentAnalytics = () => {
   // TODO: Connect this component to the backend API to fetch treatment analytics
   const treatments = [
-    { name: 'Cleanings', count: 245, revenue: 61250, growth: '+8%' },
-    { name: 'Fillings', count: 180, revenue: 72000, growth: '+5%' },
-    { name: 'Root Canals', count: 45, revenue: 67500, growth: '+3%' },
-    { name: 'Crowns', count: 65, revenue: 130000, growth: '+12%' }
-		];
+    { name: "Cleanings", count: 245, revenue: 61250, growth: "+8%" },
+    { name: "Fillings", count: 180, revenue: 72000, growth: "+5%" },
+    { name: "Root Canals", count: 45, revenue: 67500, growth: "+3%" },
+    { name: "Crowns", count: 65, revenue: 130000, growth: "+12%" },
+  ];
 
   return (
     <motion.div
@@ -20,14 +20,18 @@ export const TreatmentAnalytics = () => {
     >
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Treatment Analytics</h2>
-          <p className="text-sm text-gray-500">Treatment performance and revenue</p>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Treatment Analytics
+          </h2>
+          <p className="text-sm text-gray-500">
+            Treatment performance and revenue
+          </p>
         </div>
         <Button variant="outline" size="sm">
           <Icons.FileText className="w-4 h-4 mr-2" />
           View Report
         </Button>
-						</div>
+      </div>
 
       <div className="space-y-4">
         {treatments.map((treatment, index) => (
@@ -46,17 +50,24 @@ export const TreatmentAnalytics = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Revenue</p>
-                <p className="font-medium text-gray-900">${treatment.revenue.toLocaleString()}</p>
+                <p className="font-medium text-gray-900">
+                  ${treatment.revenue.toLocaleString()}
+                </p>
               </div>
             </div>
           </div>
         ))}
-						</div>
+      </div>
 
       <div className="mt-6">
-        <h3 className="text-sm font-medium text-gray-900 mb-3">Treatment Success Rate</h3>
+        <h3 className="text-sm font-medium text-gray-900 mb-3">
+          Treatment Success Rate
+        </h3>
         <div className="h-2 bg-gray-100 rounded-full">
-          <div className="h-full bg-green-500 rounded-full" style={{ width: '94%' }} />
+          <div
+            className="h-full bg-green-500 rounded-full"
+            style={{ width: "94%" }}
+          />
         </div>
         <div className="flex justify-between mt-2">
           <span className="text-sm text-gray-500">Overall Success Rate</span>
@@ -64,5 +75,5 @@ export const TreatmentAnalytics = () => {
         </div>
       </div>
     </motion.div>
-		);
+  );
 };

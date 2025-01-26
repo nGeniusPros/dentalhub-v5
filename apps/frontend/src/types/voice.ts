@@ -3,7 +3,7 @@ export interface RetellAgent {
   name: string;
   phoneNumber: string;
   llmId: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   priority: number;
   capabilities: string[];
 }
@@ -18,13 +18,13 @@ export interface AgentStats {
 }
 
 export interface CampaignAgentSettings {
-  agentId?: string;  // specific agent or auto-select
-  priority: 'high' | 'normal' | 'low';
+  agentId?: string; // specific agent or auto-select
+  priority: "high" | "normal" | "low";
   fallbackAgent?: string;
 }
 
 export interface AgentDisplay extends RetellAgent {
-  callCount: number;   // Total calls handled
+  callCount: number; // Total calls handled
   avgCallDuration: number;
   successRate: number;
 }
@@ -39,9 +39,9 @@ export interface AgentAvailability {
 export interface VoiceCampaign {
   id: string;
   name: string;
-  status: 'active' | 'paused' | 'completed' | 'failed';
+  status: "active" | "paused" | "completed" | "failed";
   agentId: string;
-  priority: 'high' | 'normal' | 'low';
+  priority: "high" | "normal" | "low";
   totalCalls: number;
   completedCalls: number;
   successRate: number;
@@ -53,7 +53,7 @@ export interface VoiceCampaign {
 export interface CampaignSchedule {
   startTime: string;
   endTime: string;
-  daysOfWeek: number[];  // 0-6, where 0 is Sunday
+  daysOfWeek: number[]; // 0-6, where 0 is Sunday
   timezone: string;
 }
 

@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { cn } from '../../../../lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { cn } from "../../../../lib/utils";
 
 interface ResourceFiltersProps {
   selectedFilters: string[];
@@ -11,18 +11,18 @@ interface ResourceFiltersProps {
 
 export const ResourceFilters: React.FC<ResourceFiltersProps> = ({
   selectedFilters,
-  onFilterChange
+  onFilterChange,
 }) => {
   const filters = [
-    { id: 'required', label: 'Required', icon: 'AlertCircle' },
-    { id: 'new', label: 'New', icon: 'Star' },
-    { id: 'updated', label: 'Recently Updated', icon: 'RefreshCw' },
-    { id: 'expiring', label: 'Expiring Soon', icon: 'Clock' }
+    { id: "required", label: "Required", icon: "AlertCircle" },
+    { id: "new", label: "New", icon: "Star" },
+    { id: "updated", label: "Recently Updated", icon: "RefreshCw" },
+    { id: "expiring", label: "Expiring Soon", icon: "Clock" },
   ];
 
   const toggleFilter = (filterId: string) => {
     if (selectedFilters.includes(filterId)) {
-      onFilterChange(selectedFilters.filter(id => id !== filterId));
+      onFilterChange(selectedFilters.filter((id) => id !== filterId));
     } else {
       onFilterChange([...selectedFilters, filterId]);
     }
@@ -33,15 +33,15 @@ export const ResourceFilters: React.FC<ResourceFiltersProps> = ({
       {filters.map((filter) => (
         <Button
           key={filter.id}
-          variant={selectedFilters.includes(filter.id) ? 'default' : 'outline'}
+          variant={selectedFilters.includes(filter.id) ? "default" : "outline"}
           onClick={() => toggleFilter(filter.id)}
           className={cn(
             "gap-2",
-            selectedFilters.includes(filter.id) && "bg-primary text-white"
+            selectedFilters.includes(filter.id) && "bg-primary text-white",
           )}
         >
           {React.createElement(Icons[filter.icon as keyof typeof Icons], {
-            className: "w-4 h-4"
+            className: "w-4 h-4",
           })}
           {filter.label}
         </Button>

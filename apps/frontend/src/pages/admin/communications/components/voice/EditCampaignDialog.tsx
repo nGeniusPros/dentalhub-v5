@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import type { Campaign } from './VoiceCampaignList';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import type { Campaign } from "./VoiceCampaignList";
 
 interface EditCampaignDialogProps {
   open: boolean;
@@ -15,9 +15,11 @@ export const EditCampaignDialog: React.FC<EditCampaignDialogProps> = ({
   open,
   campaign,
   onClose,
-  onSave
+  onSave,
 }) => {
-  const [editedCampaign, setEditedCampaign] = useState<Campaign | null>(campaign);
+  const [editedCampaign, setEditedCampaign] = useState<Campaign | null>(
+    campaign,
+  );
 
   if (!open || !campaign || !editedCampaign) return null;
 
@@ -51,7 +53,11 @@ export const EditCampaignDialog: React.FC<EditCampaignDialogProps> = ({
             <input
               type="text"
               value={editedCampaign.name}
-              onChange={(e) => setEditedCampaign(prev => prev ? { ...prev, name: e.target.value } : null)}
+              onChange={(e) =>
+                setEditedCampaign((prev) =>
+                  prev ? { ...prev, name: e.target.value } : null,
+                )
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               required
             />
@@ -63,10 +69,16 @@ export const EditCampaignDialog: React.FC<EditCampaignDialogProps> = ({
             </label>
             <select
               value={editedCampaign.type}
-              onChange={(e) => setEditedCampaign(prev => prev ? { 
-                ...prev, 
-                type: e.target.value as Campaign['type']
-              } : null)}
+              onChange={(e) =>
+                setEditedCampaign((prev) =>
+                  prev
+                    ? {
+                        ...prev,
+                        type: e.target.value as Campaign["type"],
+                      }
+                    : null,
+                )
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             >
               <option value="recall">Recall</option>
@@ -85,10 +97,16 @@ export const EditCampaignDialog: React.FC<EditCampaignDialogProps> = ({
             <input
               type="number"
               value={editedCampaign.targetCount}
-              onChange={(e) => setEditedCampaign(prev => prev ? { 
-                ...prev, 
-                targetCount: parseInt(e.target.value) 
-              } : null)}
+              onChange={(e) =>
+                setEditedCampaign((prev) =>
+                  prev
+                    ? {
+                        ...prev,
+                        targetCount: parseInt(e.target.value),
+                      }
+                    : null,
+                )
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               min={1}
               required
@@ -100,26 +118,48 @@ export const EditCampaignDialog: React.FC<EditCampaignDialogProps> = ({
               <h3 className="font-medium text-gray-900 mb-4">Schedule</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-500 mb-1">Start Date</label>
+                  <label className="block text-sm text-gray-500 mb-1">
+                    Start Date
+                  </label>
                   <input
                     type="date"
                     value={editedCampaign.schedule.startDate}
-                    onChange={(e) => setEditedCampaign(prev => prev ? {
-                      ...prev,
-                      schedule: { ...prev.schedule!, startDate: e.target.value }
-                    } : null)}
+                    onChange={(e) =>
+                      setEditedCampaign((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              schedule: {
+                                ...prev.schedule!,
+                                startDate: e.target.value,
+                              },
+                            }
+                          : null,
+                      )
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-500 mb-1">Start Time</label>
+                  <label className="block text-sm text-gray-500 mb-1">
+                    Start Time
+                  </label>
                   <input
                     type="time"
                     value={editedCampaign.schedule.startTime}
-                    onChange={(e) => setEditedCampaign(prev => prev ? {
-                      ...prev,
-                      schedule: { ...prev.schedule!, startTime: e.target.value }
-                    } : null)}
+                    onChange={(e) =>
+                      setEditedCampaign((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              schedule: {
+                                ...prev.schedule!,
+                                startTime: e.target.value,
+                              },
+                            }
+                          : null,
+                      )
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
@@ -131,9 +171,7 @@ export const EditCampaignDialog: React.FC<EditCampaignDialogProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Save Changes
-            </Button>
+            <Button type="submit">Save Changes</Button>
           </div>
         </form>
       </motion.div>

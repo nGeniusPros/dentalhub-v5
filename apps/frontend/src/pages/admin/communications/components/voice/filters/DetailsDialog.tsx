@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../../components/ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../../components/ui/button";
 
 interface DetailsDialogProps {
   open: boolean;
@@ -16,7 +16,7 @@ interface DetailsDialogProps {
 export const DetailsDialog: React.FC<DetailsDialogProps> = ({
   open,
   onClose,
-  data
+  data,
 }) => {
   if (!open) return null;
 
@@ -28,7 +28,9 @@ export const DetailsDialog: React.FC<DetailsDialogProps> = ({
         className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6"
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold">Campaign Performance Details</h2>
+          <h2 className="text-lg font-semibold">
+            Campaign Performance Details
+          </h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <Icons.X className="w-5 h-5" />
           </Button>
@@ -90,13 +92,15 @@ export const DetailsDialog: React.FC<DetailsDialogProps> = ({
           <Button
             onClick={() => {
               const csvContent = [
-                ['Campaign Type', 'Success Rate', 'Response Rate'].join(','),
-                ...data.map(item => [item.name, item.success, item.response].join(','))
-              ].join('\n');
+                ["Campaign Type", "Success Rate", "Response Rate"].join(","),
+                ...data.map((item) =>
+                  [item.name, item.success, item.response].join(","),
+                ),
+              ].join("\n");
 
-              const blob = new Blob([csvContent], { type: 'text/csv' });
+              const blob = new Blob([csvContent], { type: "text/csv" });
               const url = window.URL.createObjectURL(blob);
-              const a = document.createElement('a');
+              const a = document.createElement("a");
               a.href = url;
               a.download = `campaign-performance-${new Date().toISOString()}.csv`;
               document.body.appendChild(a);

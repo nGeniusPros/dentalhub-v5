@@ -3,15 +3,15 @@ import type {
   SikkaCheckEligibilityResponse,
   SikkaVerifyBenefitsResponse,
   SikkaProcessClaimResponse,
-  SikkaErrorDetails
-} from '@dentalhub/types/sikka';
+  SikkaErrorDetails,
+} from "@dentalhub/types/sikka";
 
 import type {
   RetellCallStatusResponse,
   RetellTranscriptionResponse,
   RetellAnalysisResponse,
-  RetellErrorDetails
-} from '@dentalhub/types/retell';
+  RetellErrorDetails,
+} from "@dentalhub/types/retell";
 
 export type {
   SikkaVerifyInsuranceResponse,
@@ -20,7 +20,7 @@ export type {
   SikkaProcessClaimResponse,
   RetellCallStatusResponse,
   RetellTranscriptionResponse,
-  RetellAnalysisResponse
+  RetellAnalysisResponse,
 };
 
 export interface OpenAICompletionResponse {
@@ -30,7 +30,7 @@ export interface OpenAICompletionResponse {
   model: string;
   choices: Array<{
     message?: {
-      role: 'assistant' | 'user' | 'system';
+      role: "assistant" | "user" | "system";
       content?: string | null;
     };
     text?: string;
@@ -41,7 +41,7 @@ export interface OpenAICompletionResponse {
       top_logprobs: Array<Record<string, number>>;
       text_offset: number[];
     };
-    finish_reason: 'stop' | 'length' | 'content_filter' | null;
+    finish_reason: "stop" | "length" | "content_filter" | null;
   }>;
   usage: {
     prompt_tokens: number;
@@ -60,13 +60,13 @@ export interface ExternalServiceError {
 export class RateLimitError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'RateLimitError';
+    this.name = "RateLimitError";
   }
 }
 
 export class AuthenticationError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'AuthenticationError';
+    this.name = "AuthenticationError";
   }
 }

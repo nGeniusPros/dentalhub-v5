@@ -1,11 +1,23 @@
 export interface Vendor {
   id: string;
   name: string;
-  category: 'Insurance' | 'Laboratory' | 'Supplies' | 'Financial' | 'Utilities' | 'Miscellaneous';
-  labType?: 'Ortho' | 'Removable' | 'Crown & Bridge' | 'Imaging' | 'Implant' | 'All';
+  category:
+    | "Insurance"
+    | "Laboratory"
+    | "Supplies"
+    | "Financial"
+    | "Utilities"
+    | "Miscellaneous";
+  labType?:
+    | "Ortho"
+    | "Removable"
+    | "Crown & Bridge"
+    | "Imaging"
+    | "Implant"
+    | "All";
   accountNumber?: string;
   payorId?: string;
-  networkStatus?: 'in-network' | 'out-of-network';
+  networkStatus?: "in-network" | "out-of-network";
   serviceType?: string;
   contactName: string;
   email: string;
@@ -20,7 +32,7 @@ export interface Vendor {
   accountDetails?: {
     accountNumber?: string;
     routingNumber?: string;
-    accountType?: 'checking' | 'savings' | 'credit';
+    accountType?: "checking" | "savings" | "credit";
   };
 }
 

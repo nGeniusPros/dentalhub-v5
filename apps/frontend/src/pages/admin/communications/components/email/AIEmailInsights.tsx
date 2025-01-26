@@ -1,28 +1,31 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
 
 export const AIEmailInsights = () => {
   const insights = [
     {
-      title: 'Engagement Optimization',
-      description: 'Based on open rates, sending emails between 9-11am shows 25% higher engagement.',
-      icon: 'Zap',
-      action: 'Adjust sending schedule'
+      title: "Engagement Optimization",
+      description:
+        "Based on open rates, sending emails between 9-11am shows 25% higher engagement.",
+      icon: "Zap",
+      action: "Adjust sending schedule",
     },
     {
-      title: 'Content Analysis',
-      description: 'Emails with personalized subject lines have 35% higher open rates.',
-      icon: 'FileText',
-      action: 'Review templates'
+      title: "Content Analysis",
+      description:
+        "Emails with personalized subject lines have 35% higher open rates.",
+      icon: "FileText",
+      action: "Review templates",
     },
     {
-      title: 'Audience Segmentation',
-      description: 'Targeted campaigns show 40% better click-through rates than general broadcasts.',
-      icon: 'Users',
-      action: 'Refine segments'
-    }
+      title: "Audience Segmentation",
+      description:
+        "Targeted campaigns show 40% better click-through rates than general broadcasts.",
+      icon: "Users",
+      action: "Refine segments",
+    },
   ];
 
   return (
@@ -38,18 +41,20 @@ export const AIEmailInsights = () => {
           </div>
           <div>
             <h2 className="text-lg font-semibold">AI-Powered Insights</h2>
-            <p className="text-sm text-gray-500">Real-time recommendations for campaign optimization</p>
+            <p className="text-sm text-gray-500">
+              Real-time recommendations for campaign optimization
+            </p>
           </div>
         </div>
-        <Button 
+        <Button
           variant="outline"
           onClick={() => {
             // Simulate refresh with loading state
-            const button = document.querySelector('#refresh-analysis-btn');
+            const button = document.querySelector("#refresh-analysis-btn");
             if (button) {
-              button.classList.add('animate-spin');
+              button.classList.add("animate-spin");
               setTimeout(() => {
-                button.classList.remove('animate-spin');
+                button.classList.remove("animate-spin");
               }, 1500);
             }
           }}
@@ -70,7 +75,7 @@ export const AIEmailInsights = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               {React.createElement(Icons[insight.icon as keyof typeof Icons], {
-                className: "w-5 h-5 text-primary"
+                className: "w-5 h-5 text-primary",
               })}
               <h3 className="font-medium text-gray-900">{insight.title}</h3>
             </div>

@@ -1,39 +1,39 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
 
 export const StaffPerformance = () => {
   const performanceData = [
     {
-      name: 'Dr. Sarah Wilson',
-      role: 'Lead Dentist',
+      name: "Dr. Sarah Wilson",
+      role: "Lead Dentist",
       metrics: {
         patientSatisfaction: 95,
         productivity: 88,
         attendance: 98,
-        qualityScore: 92
+        qualityScore: 92,
       },
       recentAchievements: [
-        'Completed Advanced Implant Training',
-        'Perfect Patient Satisfaction Score'
-      ]
+        "Completed Advanced Implant Training",
+        "Perfect Patient Satisfaction Score",
+      ],
     },
     {
-      name: 'Dr. Michael Chen',
-      role: 'Dentist',
+      name: "Dr. Michael Chen",
+      role: "Dentist",
       metrics: {
         patientSatisfaction: 92,
         productivity: 85,
         attendance: 95,
-        qualityScore: 90
+        qualityScore: 90,
       },
       recentAchievements: [
-        'Highest Treatment Acceptance Rate',
-        'Excellence in Patient Care Award'
-      ]
-    }
+        "Highest Treatment Acceptance Rate",
+        "Excellence in Patient Care Award",
+      ],
+    },
   ];
 
   return (
@@ -45,7 +45,9 @@ export const StaffPerformance = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-lg font-semibold">Staff Performance</h2>
-          <p className="text-sm text-gray-500">Performance metrics and achievements</p>
+          <p className="text-sm text-gray-500">
+            Performance metrics and achievements
+          </p>
         </div>
         <Button variant="outline">
           <Icons.Download className="w-4 h-4 mr-2" />
@@ -75,35 +77,45 @@ export const StaffPerformance = () => {
               <div>
                 <p className="text-sm text-gray-500">Patient Satisfaction</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-lg font-semibold">{staff.metrics.patientSatisfaction}%</span>
+                  <span className="text-lg font-semibold">
+                    {staff.metrics.patientSatisfaction}%
+                  </span>
                   <Icons.TrendingUp className="w-4 h-4 text-green-500" />
                 </div>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Productivity</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-lg font-semibold">{staff.metrics.productivity}%</span>
+                  <span className="text-lg font-semibold">
+                    {staff.metrics.productivity}%
+                  </span>
                   <Icons.TrendingUp className="w-4 h-4 text-green-500" />
                 </div>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Attendance</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-lg font-semibold">{staff.metrics.attendance}%</span>
+                  <span className="text-lg font-semibold">
+                    {staff.metrics.attendance}%
+                  </span>
                   <Icons.TrendingUp className="w-4 h-4 text-green-500" />
                 </div>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Quality Score</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-lg font-semibold">{staff.metrics.qualityScore}%</span>
+                  <span className="text-lg font-semibold">
+                    {staff.metrics.qualityScore}%
+                  </span>
                   <Icons.TrendingUp className="w-4 h-4 text-green-500" />
                 </div>
               </div>
             </div>
 
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Recent Achievements</h4>
+              <h4 className="text-sm font-medium text-gray-700 mb-2">
+                Recent Achievements
+              </h4>
               <div className="space-y-2">
                 {staff.recentAchievements.map((achievement, i) => (
                   <div key={i} className="flex items-center gap-2">

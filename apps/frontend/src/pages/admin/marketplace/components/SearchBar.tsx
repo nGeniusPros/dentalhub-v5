@@ -1,5 +1,5 @@
-import React from 'react';
-import * as Icons from 'lucide-react';
+import React from "react";
+import * as Icons from "lucide-react";
 
 interface SearchBarProps {
   value: string;

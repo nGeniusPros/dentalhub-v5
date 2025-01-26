@@ -1,13 +1,19 @@
-import { useState, useEffect } from 'react';
-import { supabaseService } from '../services/supabase';
-import type { Campaign } from '../types';
-import type { PostgrestError } from '@supabase/supabase-js';
+import { useState, useEffect } from "react";
+import { supabaseService } from "../services/supabase";
+import type { Campaign } from "../types";
+import type { PostgrestError } from "@supabase/supabase-js";
 
 export interface Campaign {
   id: string;
   name: string;
-  type: 'recall' | 'reactivation' | 'treatment' | 'appointment' | 'event' | 'custom';
-  status: 'active' | 'scheduled' | 'completed' | 'paused';
+  type:
+    | "recall"
+    | "reactivation"
+    | "treatment"
+    | "appointment"
+    | "event"
+    | "custom";
+  status: "active" | "scheduled" | "completed" | "paused";
   targetCount: number;
   completedCalls: number;
   successRate: number;
@@ -34,21 +40,21 @@ export function useCampaigns() {
     try {
       setLoading(true);
       const { data, error } = await supabaseService
-        .from('campaigns')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("campaigns")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       const formattedCampaigns: Campaign[] = data.map((campaign) => ({
         id: campaign.id,
-        name: campaign.name || '',
-        type: campaign.type as Campaign['type'],
-        status: campaign.status as Campaign['status'],
+        name: campaign.name || "",
+        type: campaign.type as Campaign["type"],
+        status: campaign.status as Campaign["status"],
         targetCount: campaign.metrics?.total || 0,
         completedCalls: campaign.metrics?.completed || 0,
         successRate: campaign.metrics?.successRate || 0,
         scheduledDate: campaign.schedule?.scheduled_time,
-        lastRun: campaign.last_run || undefined
+        lastRun: campaign.last_run || undefined,
       }));
       setCampaigns(formattedCampaigns);
     } catch (err) {
@@ -58,13 +64,13 @@ export function useCampaigns() {
     }
   }
 
-  async function updateCampaignStatus(id: string, status: Campaign['status']) {
+  async function updateCampaignStatus(id: string, status: Campaign["status"]) {
     try {
       setLoading(true);
       const { data, error } = await supabaseService
-        .from('campaigns')
+        .from("campaigns")
         .update({ status })
-        .eq('id', id)
+        .eq("id", id)
         .select()
         .single();
 
@@ -83,9 +89,9 @@ export function useCampaigns() {
     try {
       setLoading(true);
       const { error } = await supabaseService
-        .from('campaigns')
+        .from("campaigns")
         .delete()
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) throw error;
       await fetchCampaigns();
@@ -103,6 +109,6 @@ export function useCampaigns() {
     error,
     refetch: fetchCampaigns,
     updateCampaignStatus,
-    deleteCampaign
+    deleteCampaign,
   };
 }

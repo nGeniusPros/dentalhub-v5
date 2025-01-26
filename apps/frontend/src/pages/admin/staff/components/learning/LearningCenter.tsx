@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
 
 interface Course {
   id: string;
@@ -13,53 +13,54 @@ interface Course {
   required: boolean;
   dueDate?: string;
   progress: number;
-  status: 'not-started' | 'in-progress' | 'completed';
+  status: "not-started" | "in-progress" | "completed";
 }
 
 export const LearningCenter = () => {
   const [courses, setCourses] = useState<Course[]>([
     {
-      id: '1',
-      title: 'HIPAA Compliance Training',
-      description: 'Annual required training on HIPAA regulations and compliance',
-      category: 'Compliance',
-      duration: '2 hours',
+      id: "1",
+      title: "HIPAA Compliance Training",
+      description:
+        "Annual required training on HIPAA regulations and compliance",
+      category: "Compliance",
+      duration: "2 hours",
       required: true,
-      dueDate: '2024-04-15',
+      dueDate: "2024-04-15",
       progress: 0,
-      status: 'not-started'
+      status: "not-started",
     },
     {
-      id: '2',
-      title: 'Infection Control Protocols',
-      description: 'Updated protocols for infection control and prevention',
-      category: 'Clinical',
-      duration: '1.5 hours',
+      id: "2",
+      title: "Infection Control Protocols",
+      description: "Updated protocols for infection control and prevention",
+      category: "Clinical",
+      duration: "1.5 hours",
       required: true,
-      dueDate: '2024-03-30',
+      dueDate: "2024-03-30",
       progress: 75,
-      status: 'in-progress'
+      status: "in-progress",
     },
     {
-      id: '3',
-      title: 'Customer Service Excellence',
-      description: 'Best practices for patient interaction and service',
-      category: 'Soft Skills',
-      duration: '3 hours',
+      id: "3",
+      title: "Customer Service Excellence",
+      description: "Best practices for patient interaction and service",
+      category: "Soft Skills",
+      duration: "3 hours",
       required: false,
       progress: 100,
-      status: 'completed'
-    }
+      status: "completed",
+    },
   ]);
 
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   const categories = [
-    { id: 'all', name: 'All Courses' },
-    { id: 'compliance', name: 'Compliance' },
-    { id: 'clinical', name: 'Clinical' },
-    { id: 'soft-skills', name: 'Soft Skills' },
-    { id: 'technical', name: 'Technical' }
+    { id: "all", name: "All Courses" },
+    { id: "compliance", name: "Compliance" },
+    { id: "clinical", name: "Clinical" },
+    { id: "soft-skills", name: "Soft Skills" },
+    { id: "technical", name: "Technical" },
   ];
 
   return (
@@ -71,7 +72,9 @@ export const LearningCenter = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-lg font-semibold">Learning Center</h2>
-          <p className="text-sm text-gray-500">Training and educational resources</p>
+          <p className="text-sm text-gray-500">
+            Training and educational resources
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline">
@@ -90,7 +93,7 @@ export const LearningCenter = () => {
         {categories.map((category) => (
           <Button
             key={category.id}
-            variant={selectedCategory === category.id ? 'default' : 'outline'}
+            variant={selectedCategory === category.id ? "default" : "outline"}
             onClick={() => setSelectedCategory(category.id)}
           >
             {category.name}
@@ -109,12 +112,17 @@ export const LearningCenter = () => {
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className={cn(
-                  "p-2 rounded-lg",
-                  course.category === 'Compliance' && "bg-blue-100 text-blue-600",
-                  course.category === 'Clinical' && "bg-green-100 text-green-600",
-                  course.category === 'Soft Skills' && "bg-purple-100 text-purple-600"
-                )}>
+                <div
+                  className={cn(
+                    "p-2 rounded-lg",
+                    course.category === "Compliance" &&
+                      "bg-blue-100 text-blue-600",
+                    course.category === "Clinical" &&
+                      "bg-green-100 text-green-600",
+                    course.category === "Soft Skills" &&
+                      "bg-purple-100 text-purple-600",
+                  )}
+                >
                   <Icons.BookOpen className="w-5 h-5" />
                 </div>
                 <div>
@@ -150,17 +158,19 @@ export const LearningCenter = () => {
                 <div
                   className={cn(
                     "h-full rounded-full",
-                    course.status === 'completed' && "bg-green-500",
-                    course.status === 'in-progress' && "bg-blue-500",
-                    course.status === 'not-started' && "bg-gray-300"
+                    course.status === "completed" && "bg-green-500",
+                    course.status === "in-progress" && "bg-blue-500",
+                    course.status === "not-started" && "bg-gray-300",
                   )}
                   style={{ width: `${course.progress}%` }}
                 />
               </div>
               <div className="flex justify-between mt-1">
-                <span className="text-xs text-gray-500">{course.progress}% Complete</span>
+                <span className="text-xs text-gray-500">
+                  {course.progress}% Complete
+                </span>
                 <span className="text-xs font-medium capitalize text-gray-700">
-                  {course.status.replace('-', ' ')}
+                  {course.status.replace("-", " ")}
                 </span>
               </div>
             </div>
@@ -169,14 +179,14 @@ export const LearningCenter = () => {
               <Button
                 variant="outline"
                 className="flex-1"
-                disabled={course.status === 'completed'}
+                disabled={course.status === "completed"}
               >
-                {course.status === 'not-started' ? (
+                {course.status === "not-started" ? (
                   <>
                     <Icons.Play className="w-4 h-4 mr-2" />
                     Start Course
                   </>
-                ) : course.status === 'in-progress' ? (
+                ) : course.status === "in-progress" ? (
                   <>
                     <Icons.ArrowRight className="w-4 h-4 mr-2" />
                     Continue

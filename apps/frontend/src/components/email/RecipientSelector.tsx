@@ -1,24 +1,28 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
 
 interface RecipientSelectorProps {
   onSelect: (criteria: any) => void;
 }
 
 export const RecipientSelector: React.FC<RecipientSelectorProps> = ({
-  onSelect
+  onSelect,
 }) => {
-  const [selectionType, setSelectionType] = useState<'all' | 'segment' | 'list'>('all');
-  const [criteria, setCriteria] = useState<Array<{
-    field: string;
-    operator: string;
-    value: string;
-  }>>([]);
+  const [selectionType, setSelectionType] = useState<
+    "all" | "segment" | "list"
+  >("all");
+  const [criteria, setCriteria] = useState<
+    Array<{
+      field: string;
+      operator: string;
+      value: string;
+    }>
+  >([]);
 
   const addCriteria = () => {
-    setCriteria([...criteria, { field: '', operator: '', value: '' }]);
+    setCriteria([...criteria, { field: "", operator: "", value: "" }]);
   };
 
   const removeCriteria = (index: number) => {
@@ -35,33 +39,33 @@ export const RecipientSelector: React.FC<RecipientSelectorProps> = ({
     <div className="space-y-6">
       <div className="flex gap-4">
         <button
-          onClick={() => setSelectionType('all')}
+          onClick={() => setSelectionType("all")}
           className={`flex-1 p-4 rounded-lg border ${
-            selectionType === 'all'
-              ? 'border-primary bg-primary/5'
-              : 'border-gray-200 hover:border-primary/50'
+            selectionType === "all"
+              ? "border-primary bg-primary/5"
+              : "border-gray-200 hover:border-primary/50"
           }`}
         >
           <h3 className="font-medium text-gray-900">All Patients</h3>
           <p className="text-sm text-gray-500">Send to all active patients</p>
         </button>
         <button
-          onClick={() => setSelectionType('segment')}
+          onClick={() => setSelectionType("segment")}
           className={`flex-1 p-4 rounded-lg border ${
-            selectionType === 'segment'
-              ? 'border-primary bg-primary/5'
-              : 'border-gray-200 hover:border-primary/50'
+            selectionType === "segment"
+              ? "border-primary bg-primary/5"
+              : "border-gray-200 hover:border-primary/50"
           }`}
         >
           <h3 className="font-medium text-gray-900">Patient Segment</h3>
           <p className="text-sm text-gray-500">Select based on criteria</p>
         </button>
         <button
-          onClick={() => setSelectionType('list')}
+          onClick={() => setSelectionType("list")}
           className={`flex-1 p-4 rounded-lg border ${
-            selectionType === 'list'
-              ? 'border-primary bg-primary/5'
-              : 'border-gray-200 hover:border-primary/50'
+            selectionType === "list"
+              ? "border-primary bg-primary/5"
+              : "border-gray-200 hover:border-primary/50"
           }`}
         >
           <h3 className="font-medium text-gray-900">Custom List</h3>
@@ -69,7 +73,7 @@ export const RecipientSelector: React.FC<RecipientSelectorProps> = ({
         </button>
       </div>
 
-      {selectionType === 'segment' && (
+      {selectionType === "segment" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-medium text-gray-900">Segment Criteria</h3>
@@ -83,7 +87,7 @@ export const RecipientSelector: React.FC<RecipientSelectorProps> = ({
             <div key={index} className="flex gap-4 items-center">
               <select
                 value={criterion.field}
-                onChange={(e) => updateCriteria(index, 'field', e.target.value)}
+                onChange={(e) => updateCriteria(index, "field", e.target.value)}
                 className="flex-1 px-4 py-2 border border-gray-200 rounded-lg"
               >
                 <option value="">Select field...</option>
@@ -105,7 +109,9 @@ export const RecipientSelector: React.FC<RecipientSelectorProps> = ({
 
               <select
                 value={criterion.operator}
-                onChange={(e) => updateCriteria(index, 'operator', e.target.value)}
+                onChange={(e) =>
+                  updateCriteria(index, "operator", e.target.value)
+                }
                 className="w-40 px-4 py-2 border border-gray-200 rounded-lg"
               >
                 <option value="">Operator...</option>
@@ -119,7 +125,7 @@ export const RecipientSelector: React.FC<RecipientSelectorProps> = ({
               <input
                 type="text"
                 value={criterion.value}
-                onChange={(e) => updateCriteria(index, 'value', e.target.value)}
+                onChange={(e) => updateCriteria(index, "value", e.target.value)}
                 className="flex-1 px-4 py-2 border border-gray-200 rounded-lg"
                 placeholder="Value"
               />
@@ -136,18 +142,17 @@ export const RecipientSelector: React.FC<RecipientSelectorProps> = ({
         </div>
       )}
 
-      {selectionType === 'list' && (
+      {selectionType === "list" && (
         <div className="space-y-4">
           <div className="border-2 border-dashed border-gray-200 rounded-lg p-8">
             <div className="flex flex-col items-center">
               <Icons.Upload className="w-12 h-12 text-gray-400 mb-4" />
               <p className="text-sm text-gray-500 mb-4 text-center">
-                Drag and drop your patient list here, or click to browse.<br />
+                Drag and drop your patient list here, or click to browse.
+                <br />
                 Supported formats: CSV, Excel
               </p>
-              <Button variant="outline">
-                Browse Files
-              </Button>
+              <Button variant="outline">Browse Files</Button>
             </div>
           </div>
         </div>

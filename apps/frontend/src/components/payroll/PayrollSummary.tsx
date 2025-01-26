@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { formatCurrency } from '../../lib/utils/currency';
-import type { PayrollData } from './types';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { formatCurrency } from "../../lib/utils/currency";
+import type { PayrollData } from "./types";
 
 interface PayrollSummaryProps {
   data: PayrollData;
@@ -11,7 +11,7 @@ interface PayrollSummaryProps {
 
 export const PayrollSummary: React.FC<PayrollSummaryProps> = ({
   data,
-  onSubmit
+  onSubmit,
 }) => {
   return (
     <div className="space-y-6">
@@ -97,8 +97,9 @@ export const PayrollSummary: React.FC<PayrollSummaryProps> = ({
           <div>
             <h4 className="font-medium text-blue-900">Ready to Submit</h4>
             <p className="text-sm text-blue-700">
-              Please review the payroll summary carefully before submitting. Once submitted,
-              the payroll will be processed according to your provider's schedule.
+              Please review the payroll summary carefully before submitting.
+              Once submitted, the payroll will be processed according to your
+              provider's schedule.
             </p>
           </div>
         </div>

@@ -1,9 +1,9 @@
-import { Router, Request, Response } from 'express';
-import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types';
-import { asyncHandler } from '../utils/asyncHandler';
-import { Router as ExpressRouter } from 'express';
-import { z } from 'zod';
+import { Router, Request, Response } from "express";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { Database } from "../types/database.types";
+import { asyncHandler } from "../utils/asyncHandler";
+import { Router as ExpressRouter } from "express";
+import { z } from "zod";
 
 const router: ExpressRouter = Router();
 
@@ -51,233 +51,307 @@ const emailWebhookSchema = z.object({
   error_message: z.string().optional(),
 });
 
-const sendEmail = async (recipient_email: string, subject: string, content: string) => {
+const sendEmail = async (
+  recipient_email: string,
+  subject: string,
+  content: string,
+) => {
   // TODO: Implement email provider integration
-  console.log(`Sending email to ${recipient_email} with subject "${subject}" and content "${content}"`);
+  console.log(
+    `Sending email to ${recipient_email} with subject "${subject}" and content "${content}"`,
+  );
   return { success: true, messageId: `msg_${Date.now()}` };
 };
 
 // Send individual email
-router.post('/send', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const validationResult = sendEmailSchema.safeParse(req.body);
-  if (!validationResult.success) {
-    return res.status(400).json({ error: 'Invalid email data' });
-  }
+router.post(
+  "/send",
+  asyncHandler(
+    async (
+      req: Request & { supabase: SupabaseClient<Database> },
+      res: Response,
+    ) => {
+      const validationResult = sendEmailSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ error: "Invalid email data" });
+      }
 
-  const { recipient_id, subject, content, template_id } = validationResult.data;
+      const { recipient_id, subject, content, template_id } =
+        validationResult.data;
 
-  // Get recipient details
-  const { data: recipient, error: recipientError } = await req.supabase
-    .from('patients')
-    .select('email, first_name, last_name')
-    .eq('id', recipient_id)
-    .single();
+      // Get recipient details
+      const { data: recipient, error: recipientError } = await req.supabase
+        .from("patients")
+        .select("email, first_name, last_name")
+        .eq("id", recipient_id)
+        .single();
 
-  if (recipientError) {
-    return res.status(500).json({ error: recipientError.message });
-  }
+      if (recipientError) {
+        return res.status(500).json({ error: recipientError.message });
+      }
 
-  if (!recipient.email) {
-    return res.status(400).json({ error: 'Recipient has no email address' });
-  }
+      if (!recipient.email) {
+        return res
+          .status(400)
+          .json({ error: "Recipient has no email address" });
+      }
 
-  try {
-    // For now, just record the attempt
-    const { data: delivery, error: deliveryError } = await req.supabase
-      .from('campaign_deliveries')
-      .insert({
-        recipient_id,
-        status: 'sent',
-        metadata: {
-          subject,
-          content,
-          template_id,
-          recipient_email: recipient.email
-        },
-        sent_at: new Date().toISOString()
-      })
-      .select()
-      .single();
+      try {
+        // For now, just record the attempt
+        const { data: delivery, error: deliveryError } = await req.supabase
+          .from("campaign_deliveries")
+          .insert({
+            recipient_id,
+            status: "sent",
+            metadata: {
+              subject,
+              content,
+              template_id,
+              recipient_email: recipient.email,
+            },
+            sent_at: new Date().toISOString(),
+          })
+          .select()
+          .single();
 
-    if (deliveryError) {
-      throw deliveryError;
-    }
+        if (deliveryError) {
+          throw deliveryError;
+        }
 
-    const emailResult = await sendEmail(recipient.email, subject, content);
+        const emailResult = await sendEmail(recipient.email, subject, content);
 
-    return res.json({...delivery, emailResult});
-  } catch (error) {
-    return res.status(500).json({ 
-      error: error instanceof Error ? error.message : 'Failed to send email' 
-    });
-  }
-}));
+        return res.json({ ...delivery, emailResult });
+      } catch (error) {
+        return res.status(500).json({
+          error:
+            error instanceof Error ? error.message : "Failed to send email",
+        });
+      }
+    },
+  ),
+);
 
 // Get email templates
-router.get('/templates', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const { data: templates, error } = await req.supabase
-    .from('email_templates')
-    .select('*')
-    .order('created_at', { ascending: false });
+router.get(
+  "/templates",
+  asyncHandler(
+    async (
+      req: Request & { supabase: SupabaseClient<Database> },
+      res: Response,
+    ) => {
+      const { data: templates, error } = await req.supabase
+        .from("email_templates")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
 
-  return res.json(templates);
-}));
+      return res.json(templates);
+    },
+  ),
+);
 
 // Create email template
-router.post('/templates', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const validationResult = createTemplateSchema.safeParse(req.body);
-  if (!validationResult.success) {
-    return res.status(400).json({ error: 'Invalid template data' });
-  }
+router.post(
+  "/templates",
+  asyncHandler(
+    async (
+      req: Request & { supabase: SupabaseClient<Database> },
+      res: Response,
+    ) => {
+      const validationResult = createTemplateSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ error: "Invalid template data" });
+      }
 
-  const { name, subject, content, variables } = validationResult.data;
+      const { name, subject, content, variables } = validationResult.data;
 
-  const { data: template, error } = await req.supabase
-    .from('email_templates')
-    .insert({
-      name,
-      subject,
-      content,
-      variables
-    })
-    .select()
-    .single();
+      const { data: template, error } = await req.supabase
+        .from("email_templates")
+        .insert({
+          name,
+          subject,
+          content,
+          variables,
+        })
+        .select()
+        .single();
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
 
-  return res.status(201).json(template);
-}));
+      return res.status(201).json(template);
+    },
+  ),
+);
 
 // Update email template
-router.put('/templates/:id', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const validationResult = updateTemplateSchema.safeParse(req.body);
-  const idValidationResult = templateIdSchema.safeParse(req.params);
-  if (!validationResult.success) {
-    return res.status(400).json({ error: 'Invalid template data' });
-  }
-  if (!idValidationResult.success) {
-    return res.status(400).json({ error: 'Invalid template ID' });
-  }
+router.put(
+  "/templates/:id",
+  asyncHandler(
+    async (
+      req: Request & { supabase: SupabaseClient<Database> },
+      res: Response,
+    ) => {
+      const validationResult = updateTemplateSchema.safeParse(req.body);
+      const idValidationResult = templateIdSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        return res.status(400).json({ error: "Invalid template data" });
+      }
+      if (!idValidationResult.success) {
+        return res.status(400).json({ error: "Invalid template ID" });
+      }
 
-  const { id } = idValidationResult.data;
-  const { name, subject, content, variables } = validationResult.data;
+      const { id } = idValidationResult.data;
+      const { name, subject, content, variables } = validationResult.data;
 
-  const { data: template, error } = await req.supabase
-    .from('email_templates')
-    .update({
-      name,
-      subject,
-      content,
-      variables
-    })
-    .eq('id', id)
-    .select()
-    .single();
+      const { data: template, error } = await req.supabase
+        .from("email_templates")
+        .update({
+          name,
+          subject,
+          content,
+          variables,
+        })
+        .eq("id", id)
+        .select()
+        .single();
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
 
-  return res.json(template);
-}));
+      return res.json(template);
+    },
+  ),
+);
 
 // Delete email template
-router.delete('/templates/:id', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const validationResult = templateIdSchema.safeParse(req.params);
-  if (!validationResult.success) {
-    return res.status(400).json({ error: 'Invalid template ID' });
-  }
+router.delete(
+  "/templates/:id",
+  asyncHandler(
+    async (
+      req: Request & { supabase: SupabaseClient<Database> },
+      res: Response,
+    ) => {
+      const validationResult = templateIdSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        return res.status(400).json({ error: "Invalid template ID" });
+      }
 
-  const { id } = validationResult.data;
+      const { id } = validationResult.data;
 
-  const { error } = await req.supabase
-    .from('email_templates')
-    .delete()
-    .eq('id', id);
+      const { error } = await req.supabase
+        .from("email_templates")
+        .delete()
+        .eq("id", id);
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
 
-  return res.status(204).send();
-}));
+      return res.status(204).send();
+    },
+  ),
+);
 
 // Track email open
-router.get('/track/open/:delivery_id', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const validationResult = deliveryIdSchema.safeParse(req.params);
-  if (!validationResult.success) {
-    return res.status(400).json({ error: 'Invalid delivery ID' });
-  }
-
-  const { delivery_id } = validationResult.data;
-
-  // Record email open
-  await req.supabase
-    .from('campaign_engagements')
-    .insert({
-      delivery_id,
-      type: 'open',
-      metadata: {
-        user_agent: req.headers['user-agent'],
-        ip: req.ip
+router.get(
+  "/track/open/:delivery_id",
+  asyncHandler(
+    async (
+      req: Request & { supabase: SupabaseClient<Database> },
+      res: Response,
+    ) => {
+      const validationResult = deliveryIdSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        return res.status(400).json({ error: "Invalid delivery ID" });
       }
-    });
 
-  // Return tracking pixel
-  res.setHeader('Content-Type', 'image/gif');
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.send(Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64'));
-}));
+      const { delivery_id } = validationResult.data;
+
+      // Record email open
+      await req.supabase.from("campaign_engagements").insert({
+        delivery_id,
+        type: "open",
+        metadata: {
+          user_agent: req.headers["user-agent"],
+          ip: req.ip,
+        },
+      });
+
+      // Return tracking pixel
+      res.setHeader("Content-Type", "image/gif");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.send(
+        Buffer.from(
+          "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+          "base64",
+        ),
+      );
+    },
+  ),
+);
 
 // Track email click
-router.get('/track/click/:delivery_id', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const validationResult = deliveryIdSchema.safeParse(req.params);
-  const clickValidationResult = trackClickSchema.safeParse(req.query);
-  if (!validationResult.success) {
-    return res.status(400).json({ error: 'Invalid delivery ID' });
-  }
-  if (!clickValidationResult.success) {
-    return res.status(400).json({ error: 'Invalid click data' });
-  }
-
-  const { delivery_id } = validationResult.data;
-  const { url } = clickValidationResult.data;
-
-  // Record email click
-  await req.supabase
-    .from('campaign_engagements')
-    .insert({
-      delivery_id,
-      type: 'click',
-      metadata: {
-        url,
-        user_agent: req.headers['user-agent'],
-        ip: req.ip
+router.get(
+  "/track/click/:delivery_id",
+  asyncHandler(
+    async (
+      req: Request & { supabase: SupabaseClient<Database> },
+      res: Response,
+    ) => {
+      const validationResult = deliveryIdSchema.safeParse(req.params);
+      const clickValidationResult = trackClickSchema.safeParse(req.query);
+      if (!validationResult.success) {
+        return res.status(400).json({ error: "Invalid delivery ID" });
       }
-    });
+      if (!clickValidationResult.success) {
+        return res.status(400).json({ error: "Invalid click data" });
+      }
 
-  // Redirect to original URL
-  res.redirect(url);
-}));
+      const { delivery_id } = validationResult.data;
+      const { url } = clickValidationResult.data;
+
+      // Record email click
+      await req.supabase.from("campaign_engagements").insert({
+        delivery_id,
+        type: "click",
+        metadata: {
+          url,
+          user_agent: req.headers["user-agent"],
+          ip: req.ip,
+        },
+      });
+
+      // Redirect to original URL
+      res.redirect(url);
+    },
+  ),
+);
 
 // Get email analytics
-router.get('/analytics', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const validationResult = emailAnalyticsSchema.safeParse(req.query);
-  if (!validationResult.success) {
-    return res.status(400).json({ error: 'Invalid analytics parameters' });
-  }
+router.get(
+  "/analytics",
+  asyncHandler(
+    async (
+      req: Request & { supabase: SupabaseClient<Database> },
+      res: Response,
+    ) => {
+      const validationResult = emailAnalyticsSchema.safeParse(req.query);
+      if (!validationResult.success) {
+        return res.status(400).json({ error: "Invalid analytics parameters" });
+      }
 
-  const { start_date, end_date } = validationResult.data;
+      const { start_date, end_date } = validationResult.data;
 
-  const { data: analytics, error } = await req.supabase
-    .from('campaign_analytics')
-    .select(`
+      const { data: analytics, error } = await req.supabase
+        .from("campaign_analytics")
+        .select(
+          `
       id,
       timestamp,
       metrics,
@@ -286,65 +360,78 @@ router.get('/analytics', asyncHandler(async (req: Request & { supabase: Supabase
         name,
         type
       )
-    `)
-    .eq('campaigns.type', 'email')
-    .gte('timestamp', start_date)
-    .lte('timestamp', end_date)
-    .order('timestamp', { ascending: true });
+    `,
+        )
+        .eq("campaigns.type", "email")
+        .gte("timestamp", start_date)
+        .lte("timestamp", end_date)
+        .order("timestamp", { ascending: true });
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
 
-  return res.json(analytics);
-}));
+      return res.json(analytics);
+    },
+  ),
+);
 
 // Handle email webhook
-router.post('/webhook', asyncHandler(async (req: Request & { supabase: SupabaseClient<Database> }, res: Response) => {
-  const validationResult = emailWebhookSchema.safeParse(req.body);
-  if (!validationResult.success) {
-    return res.status(400).json({ error: 'Invalid webhook data' });
-  }
+router.post(
+  "/webhook",
+  asyncHandler(
+    async (
+      req: Request & { supabase: SupabaseClient<Database> },
+      res: Response,
+    ) => {
+      const validationResult = emailWebhookSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ error: "Invalid webhook data" });
+      }
 
-  const { provider_message_id, status, error_message } = validationResult.data;
+      const { provider_message_id, status, error_message } =
+        validationResult.data;
 
-  // Update delivery status
-  const { data: delivery, error } = await req.supabase
-    .from('campaign_deliveries')
-    .update({
-      status,
-      error_message,
-      delivered_at: status === 'delivered' ? new Date().toISOString() : null,
-      failed_at: status === 'failed' ? new Date().toISOString() : null
-    })
-    .eq('provider_message_id', provider_message_id)
-    .select()
-    .single();
+      // Update delivery status
+      const { data: delivery, error } = await req.supabase
+        .from("campaign_deliveries")
+        .update({
+          status,
+          error_message,
+          delivered_at:
+            status === "delivered" ? new Date().toISOString() : null,
+          failed_at: status === "failed" ? new Date().toISOString() : null,
+        })
+        .eq("provider_message_id", provider_message_id)
+        .select()
+        .single();
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
 
-  // Update campaign metrics
-  if (delivery) {
-    const { data: campaign, error: campaignError } = await req.supabase
-      .from('campaigns')
-      .select('metrics')
-      .eq('id', delivery.campaign_id)
-      .single();
+      // Update campaign metrics
+      if (delivery) {
+        const { data: campaign, error: campaignError } = await req.supabase
+          .from("campaigns")
+          .select("metrics")
+          .eq("id", delivery.campaign_id)
+          .single();
 
-    if (!campaignError && campaign) {
-      const metrics = campaign.metrics;
-      metrics[status] = (metrics[status] || 0) + 1;
+        if (!campaignError && campaign) {
+          const metrics = campaign.metrics;
+          metrics[status] = (metrics[status] || 0) + 1;
 
-      await req.supabase
-        .from('campaigns')
-        .update({ metrics })
-        .eq('id', delivery.campaign_id);
-    }
-  }
+          await req.supabase
+            .from("campaigns")
+            .update({ metrics })
+            .eq("id", delivery.campaign_id);
+        }
+      }
 
-  return res.json({ success: true });
-}));
+      return res.json({ success: true });
+    },
+  ),
+);
 
 export default router;

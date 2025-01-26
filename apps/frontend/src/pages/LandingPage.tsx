@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import * as Icons from "lucide-react";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const LandingPage = () => {
             transition={{
               duration: 20 + i * 2,
               repeat: Infinity,
-              ease: "linear"
+              ease: "linear",
             }}
           >
             <div className="w-full h-full bg-navy rounded-full opacity-[0.03]" />
@@ -45,11 +45,11 @@ const LandingPage = () => {
           transition={{
             duration: 8,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
           style={{
-            top: '-30%',
-            right: '-20%',
+            top: "-30%",
+            right: "-20%",
           }}
         />
         <motion.div
@@ -61,11 +61,11 @@ const LandingPage = () => {
           transition={{
             duration: 6,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
           style={{
-            bottom: '-20%',
-            left: '-10%',
+            bottom: "-20%",
+            left: "-10%",
           }}
         />
       </div>
@@ -86,7 +86,7 @@ const LandingPage = () => {
                   transition={{
                     duration: 20,
                     repeat: Infinity,
-                    ease: "linear"
+                    ease: "linear",
                   }}
                 >
                   <Icons.Atom className="w-full h-full text-navy" />
@@ -120,7 +120,7 @@ const LandingPage = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/login/patient')}
+                onClick={() => navigate("/login/patient")}
                 className="px-6 py-3 bg-gradient-to-r from-navy via-purple to-turquoise text-white rounded-lg shadow-lg hover:shadow-xl transition-all font-semibold"
               >
                 Request Appointment
@@ -145,7 +145,7 @@ const LandingPage = () => {
           </p>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -154,25 +154,38 @@ const LandingPage = () => {
           {[
             {
               title: "Patient Portal",
-              description: "Access your appointments, records, and treatment plans",
+              description:
+                "Access your appointments, records, and treatment plans",
               icon: "User",
               path: "/login/patient",
-              features: ["View Appointments", "Medical Records", "Billing History"]
+              features: [
+                "View Appointments",
+                "Medical Records",
+                "Billing History",
+              ],
             },
             {
               title: "Staff Portal",
               description: "Manage patient care and daily operations",
               icon: "Users",
               path: "/login/staff",
-              features: ["Patient Management", "Schedule Control", "Treatment Plans"]
+              features: [
+                "Patient Management",
+                "Schedule Control",
+                "Treatment Plans",
+              ],
             },
             {
               title: "Admin Portal",
               description: "Complete practice management and oversight",
               icon: "Shield",
               path: "/login/admin",
-              features: ["Practice Analytics", "Staff Management", "Financial Reports"]
-            }
+              features: [
+                "Practice Analytics",
+                "Staff Management",
+                "Financial Reports",
+              ],
+            },
           ].map((portal, index) => (
             <motion.div
               key={index}
@@ -182,22 +195,29 @@ const LandingPage = () => {
             >
               {/* Background gradient effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-navy/5 via-purple/5 to-turquoise/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
-              <motion.div 
+
+              <motion.div
                 className="relative w-16 h-16 mx-auto mb-6"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-navy via-purple to-turquoise rounded-xl opacity-80 group-hover:opacity-100 transition-opacity" />
                 <div className="absolute inset-[1px] bg-white rounded-[11px] flex items-center justify-center">
-                  {React.createElement(Icons[portal.icon as keyof typeof Icons], {
-                    className: "w-8 h-8 text-navy"
-                  })}
+                  {React.createElement(
+                    Icons[portal.icon as keyof typeof Icons],
+                    {
+                      className: "w-8 h-8 text-navy",
+                    },
+                  )}
                 </div>
               </motion.div>
 
-              <h3 className="relative text-2xl font-bold mb-3 bg-gradient-to-r from-navy to-purple text-transparent bg-clip-text text-center">{portal.title}</h3>
-              <p className="relative text-gray-600 mb-8 text-center">{portal.description}</p>
+              <h3 className="relative text-2xl font-bold mb-3 bg-gradient-to-r from-navy to-purple text-transparent bg-clip-text text-center">
+                {portal.title}
+              </h3>
+              <p className="relative text-gray-600 mb-8 text-center">
+                {portal.description}
+              </p>
 
               <ul className="relative space-y-2 mb-6">
                 {portal.features.map((feature, i) => (
@@ -205,7 +225,7 @@ const LandingPage = () => {
                     key={i}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 + (i * 0.1) }}
+                    transition={{ delay: 0.3 + i * 0.1 }}
                     className="flex items-center text-gray-600"
                   >
                     <Icons.CheckCircle className="w-4 h-4 mr-2 text-turquoise" />
@@ -224,7 +244,7 @@ const LandingPage = () => {
             </motion.div>
           ))}
         </motion.div>
-        
+
         {/* Additional decorative elements */}
         <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-white/50 to-transparent pointer-events-none" />
         <div className="absolute top-1/4 right-0 w-64 h-64 bg-gradient-radial from-gold/10 to-transparent rounded-full blur-3xl" />

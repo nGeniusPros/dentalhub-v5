@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
-import { useNavigate } from 'react-router-dom';
-import { useNotifications } from '../../../../../contexts/NotificationContext';
-import { AddTrainingModal } from './AddTrainingModal';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
+import { useNavigate } from "react-router-dom";
+import { useNotifications } from "../../../../../contexts/NotificationContext";
+import { AddTrainingModal } from "./AddTrainingModal";
 
 export const TrainingTab = () => {
   const [showAddTraining, setShowAddTraining] = useState(false);
@@ -14,44 +14,44 @@ export const TrainingTab = () => {
 
   const trainingModules = [
     {
-      id: '1',
-      title: 'HIPAA Compliance',
-      description: 'Annual HIPAA compliance training',
-      type: 'compliance',
-      status: 'required',
-      dueDate: '2024-04-15',
+      id: "1",
+      title: "HIPAA Compliance",
+      description: "Annual HIPAA compliance training",
+      type: "compliance",
+      status: "required",
+      dueDate: "2024-04-15",
       progress: 75,
       assignedTo: [
-        { name: 'Dr. Sarah Wilson', completed: true },
-        { name: 'Dr. Michael Chen', completed: false }
-      ]
+        { name: "Dr. Sarah Wilson", completed: true },
+        { name: "Dr. Michael Chen", completed: false },
+      ],
     },
     {
-      id: '2',
-      title: 'Patient Care Excellence',
-      description: 'Advanced patient care techniques',
-      type: 'clinical',
-      status: 'optional',
-      dueDate: '2024-03-30',
+      id: "2",
+      title: "Patient Care Excellence",
+      description: "Advanced patient care techniques",
+      type: "clinical",
+      status: "optional",
+      dueDate: "2024-03-30",
       progress: 50,
       assignedTo: [
-        { name: 'Dr. Sarah Wilson', completed: false },
-        { name: 'Dr. Michael Chen', completed: true }
-      ]
+        { name: "Dr. Sarah Wilson", completed: false },
+        { name: "Dr. Michael Chen", completed: true },
+      ],
     },
     {
-      id: '3',
-      title: 'Emergency Procedures',
-      description: 'Updated emergency response protocols',
-      type: 'safety',
-      status: 'required',
-      dueDate: '2024-03-20',
+      id: "3",
+      title: "Emergency Procedures",
+      description: "Updated emergency response protocols",
+      type: "safety",
+      status: "required",
+      dueDate: "2024-03-20",
       progress: 90,
       assignedTo: [
-        { name: 'Dr. Sarah Wilson', completed: true },
-        { name: 'Dr. Michael Chen', completed: true }
-      ]
-    }
+        { name: "Dr. Sarah Wilson", completed: true },
+        { name: "Dr. Michael Chen", completed: true },
+      ],
+    },
   ];
 
   return (
@@ -59,7 +59,9 @@ export const TrainingTab = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-lg font-semibold">Training Management</h2>
-          <p className="text-sm text-gray-500">Manage staff training and certifications</p>
+          <p className="text-sm text-gray-500">
+            Manage staff training and certifications
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline">
@@ -112,12 +114,14 @@ export const TrainingTab = () => {
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className={cn(
-                  "p-2 rounded-lg",
-                  module.type === 'compliance' && "bg-blue-100 text-blue-600",
-                  module.type === 'clinical' && "bg-green-100 text-green-600",
-                  module.type === 'safety' && "bg-red-100 text-red-600"
-                )}>
+                <div
+                  className={cn(
+                    "p-2 rounded-lg",
+                    module.type === "compliance" && "bg-blue-100 text-blue-600",
+                    module.type === "clinical" && "bg-green-100 text-green-600",
+                    module.type === "safety" && "bg-red-100 text-red-600",
+                  )}
+                >
                   <Icons.BookOpen className="w-5 h-5" />
                 </div>
                 <div>
@@ -125,10 +129,14 @@ export const TrainingTab = () => {
                   <p className="text-sm text-gray-500">{module.description}</p>
                 </div>
               </div>
-              <span className={cn(
-                "px-3 py-1 text-xs font-medium rounded-full",
-                module.status === 'required' ? "bg-red-100 text-red-800" : "bg-gray-100 text-gray-800"
-              )}>
+              <span
+                className={cn(
+                  "px-3 py-1 text-xs font-medium rounded-full",
+                  module.status === "required"
+                    ? "bg-red-100 text-red-800"
+                    : "bg-gray-100 text-gray-800",
+                )}
+              >
                 {module.status}
               </span>
             </div>
@@ -154,7 +162,8 @@ export const TrainingTab = () => {
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="text-gray-500">
-                    {module.assignedTo.filter(a => a.completed).length} of {module.assignedTo.length} completed
+                    {module.assignedTo.filter((a) => a.completed).length} of{" "}
+                    {module.assignedTo.length} completed
                   </span>
                   <div className="flex -space-x-2">
                     {module.assignedTo.map((person, index) => (
@@ -162,7 +171,7 @@ export const TrainingTab = () => {
                         key={index}
                         className={cn(
                           "w-8 h-8 rounded-full border-2 border-white flex items-center justify-center",
-                          person.completed ? "bg-green-100" : "bg-gray-100"
+                          person.completed ? "bg-green-100" : "bg-gray-100",
                         )}
                       >
                         {person.completed ? (
@@ -194,30 +203,30 @@ export const TrainingTab = () => {
           </motion.div>
         ))}
       </div>
-      
+
       <AddTrainingModal
         isOpen={showAddTraining}
         onClose={() => setShowAddTraining(false)}
         onAdd={(training) => {
           // Handle adding new training
-          console.log('New training:', training);
-          
+          console.log("New training:", training);
+
           notifyDispatch({
-            type: 'ADD_NOTIFICATION',
+            type: "ADD_NOTIFICATION",
             payload: {
               id: Date.now().toString(),
-              type: 'message',
-              title: 'Training Added',
+              type: "message",
+              title: "Training Added",
               message: `${training.title} has been added successfully`,
               timestamp: new Date().toISOString(),
               read: false,
-              priority: 'medium'
-            }
+              priority: "medium",
+            },
           });
-          
+
           // Navigate to learning center if specified
           if (training.redirectToLearning) {
-            navigate('/admin-dashboard/learning');
+            navigate("/admin-dashboard/learning");
           }
         }}
       />

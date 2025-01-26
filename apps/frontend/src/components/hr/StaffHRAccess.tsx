@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
 
 interface StaffHRAccessProps {
   staffId: string;
@@ -12,20 +12,20 @@ interface StaffHRAccessProps {
 export const StaffHRAccess: React.FC<StaffHRAccessProps> = ({
   staffId,
   onClose,
-  isOpen
+  isOpen,
 }) => {
   if (!isOpen) return null;
 
   const hrFiles = [
-    { name: 'Employment Contract', type: 'PDF', date: '2024-01-15' },
-    { name: 'W-4 Form', type: 'PDF', date: '2024-01-15' },
-    { name: 'I-9 Form', type: 'PDF', date: '2024-01-15' },
-    { name: 'Direct Deposit Form', type: 'PDF', date: '2024-01-15' },
-    { name: 'Benefits Enrollment', type: 'PDF', date: '2024-01-15' },
-    { name: 'Emergency Contact', type: 'PDF', date: '2024-01-15' },
-    { name: 'Performance Reviews', type: 'Folder', date: '2024-03-01' },
-    { name: 'Certifications', type: 'Folder', date: '2024-02-15' },
-    { name: 'Training Records', type: 'Folder', date: '2024-02-01' }
+    { name: "Employment Contract", type: "PDF", date: "2024-01-15" },
+    { name: "W-4 Form", type: "PDF", date: "2024-01-15" },
+    { name: "I-9 Form", type: "PDF", date: "2024-01-15" },
+    { name: "Direct Deposit Form", type: "PDF", date: "2024-01-15" },
+    { name: "Benefits Enrollment", type: "PDF", date: "2024-01-15" },
+    { name: "Emergency Contact", type: "PDF", date: "2024-01-15" },
+    { name: "Performance Reviews", type: "Folder", date: "2024-03-01" },
+    { name: "Certifications", type: "Folder", date: "2024-02-15" },
+    { name: "Training Records", type: "Folder", date: "2024-02-01" },
   ];
 
   return (
@@ -55,14 +55,16 @@ export const StaffHRAccess: React.FC<StaffHRAccessProps> = ({
                 className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center gap-3 mb-2">
-                  {file.type === 'PDF' ? (
+                  {file.type === "PDF" ? (
                     <Icons.FileText className="w-6 h-6 text-red-500" />
                   ) : (
                     <Icons.Folder className="w-6 h-6 text-yellow-500" />
                   )}
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">{file.name}</p>
-                    <p className="text-sm text-gray-500">Last updated: {file.date}</p>
+                    <p className="text-sm text-gray-500">
+                      Last updated: {file.date}
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-2 mt-2">
@@ -85,8 +87,9 @@ export const StaffHRAccess: React.FC<StaffHRAccessProps> = ({
               <h3 className="font-medium text-blue-900">Access Information</h3>
             </div>
             <p className="text-sm text-blue-800">
-              These files contain sensitive information. All access is logged and monitored.
-              Please ensure compliance with privacy policies when handling these documents.
+              These files contain sensitive information. All access is logged
+              and monitored. Please ensure compliance with privacy policies when
+              handling these documents.
             </p>
           </div>
         </div>

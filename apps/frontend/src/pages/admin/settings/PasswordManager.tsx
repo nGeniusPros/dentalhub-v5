@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../components/ui/button";
 
 interface Password {
   id: string;
@@ -16,23 +16,23 @@ interface Password {
 const PasswordManager = () => {
   const [passwords, setPasswords] = useState<Password[]>([
     {
-      id: '1',
-      title: 'Practice Management System',
-      username: 'admin@practice.com',
-      password: '••••••••••••',
-      url: 'pms.practice.com',
-      category: 'Software',
-      lastUpdated: '2024-03-01'
+      id: "1",
+      title: "Practice Management System",
+      username: "admin@practice.com",
+      password: "••••••••••••",
+      url: "pms.practice.com",
+      category: "Software",
+      lastUpdated: "2024-03-01",
     },
     {
-      id: '2',
-      title: 'Insurance Portal',
-      username: 'practice_admin',
-      password: '••••••••••••',
-      url: 'portal.insurance.com',
-      category: 'Insurance',
-      lastUpdated: '2024-02-15'
-    }
+      id: "2",
+      title: "Insurance Portal",
+      username: "practice_admin",
+      password: "••••••••••••",
+      url: "portal.insurance.com",
+      category: "Insurance",
+      lastUpdated: "2024-02-15",
+    },
   ]);
 
   const [showPassword, setShowPassword] = useState<string | null>(null);
@@ -44,7 +44,9 @@ const PasswordManager = () => {
           <h1 className="text-2xl font-bold bg-gradient-to-r from-navy via-purple to-turquoise text-transparent bg-clip-text">
             Password Manager
           </h1>
-          <p className="text-gray-600">Securely store and manage practice passwords</p>
+          <p className="text-gray-600">
+            Securely store and manage practice passwords
+          </p>
         </div>
         <Button className="bg-gradient-to-r from-navy via-purple to-turquoise text-white">
           <Icons.Plus className="w-4 h-4 mr-2" />
@@ -99,12 +101,14 @@ const PasswordManager = () => {
                 <label className="text-sm text-gray-600">Password</label>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-navy font-mono">
-                    {showPassword === item.id ? item.password : '••••••••••••'}
+                    {showPassword === item.id ? item.password : "••••••••••••"}
                   </span>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setShowPassword(showPassword === item.id ? null : item.id)}
+                    onClick={() =>
+                      setShowPassword(showPassword === item.id ? null : item.id)
+                    }
                   >
                     {showPassword === item.id ? (
                       <Icons.EyeOff className="w-4 h-4 text-gray-400" />

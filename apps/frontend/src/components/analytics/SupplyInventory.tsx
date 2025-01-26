@@ -1,8 +1,17 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Button } from '../ui/button';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { Button } from "../ui/button";
+import * as Icons from "lucide-react";
 
 interface SupplyInventoryProps {
   data: Array<{
@@ -29,13 +38,26 @@ export const SupplyInventory: React.FC<SupplyInventoryProps> = ({ data }) => {
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(203, 213, 225, 0.3)" />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="rgba(203, 213, 225, 0.3)"
+            />
             <XAxis dataKey="category" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="inStock" fill="#4BC5BD" radius={[4, 4, 0, 0]} name="In Stock" />
-            <Bar dataKey="reorder" fill="#C5A572" radius={[4, 4, 0, 0]} name="Reorder Point" />
+            <Bar
+              dataKey="inStock"
+              fill="#4BC5BD"
+              radius={[4, 4, 0, 0]}
+              name="In Stock"
+            />
+            <Bar
+              dataKey="reorder"
+              fill="#C5A572"
+              radius={[4, 4, 0, 0]}
+              name="Reorder Point"
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

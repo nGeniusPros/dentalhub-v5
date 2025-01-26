@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   DollarSign,
@@ -17,9 +17,9 @@ import {
   Settings,
   FileText,
   HelpCircle,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { ROUTES } from '@/lib/constants/routes';
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ROUTES } from "@/lib/constants/routes";
 
 interface SidebarItem {
   label: string;
@@ -30,49 +30,73 @@ interface SidebarItem {
 
 const sidebarItems: { section: string; items: SidebarItem[] }[] = [
   {
-    section: 'QUICK ACCESS',
+    section: "QUICK ACCESS",
     items: [
-      { label: 'Revenue', icon: DollarSign, href: ROUTES.ADMIN.REVENUE },
-      { label: 'Active Patients', icon: Users, href: ROUTES.ADMIN.PATIENTS },
-      { label: 'Patient Satisfaction', icon: ThumbsUp, href: ROUTES.ADMIN.SATISFACTION },
-      { label: 'Treatment Success', icon: Activity, href: ROUTES.ADMIN.TREATMENTS },
-      { label: 'Demographics', icon: UserCircle, href: ROUTES.ADMIN.DEMOGRAPHICS },
-      { label: 'Monthly Reports', icon: BarChart2, href: ROUTES.ADMIN.REPORTS },
-      { label: 'Dashboard', icon: LayoutDashboard, href: ROUTES.ADMIN.DASHBOARD },
-      { label: 'AI Consultant', icon: HelpCircle, href: ROUTES.ADMIN.AI },
+      { label: "Revenue", icon: DollarSign, href: ROUTES.ADMIN.REVENUE },
+      { label: "Active Patients", icon: Users, href: ROUTES.ADMIN.PATIENTS },
+      {
+        label: "Patient Satisfaction",
+        icon: ThumbsUp,
+        href: ROUTES.ADMIN.SATISFACTION,
+      },
+      {
+        label: "Treatment Success",
+        icon: Activity,
+        href: ROUTES.ADMIN.TREATMENTS,
+      },
+      {
+        label: "Demographics",
+        icon: UserCircle,
+        href: ROUTES.ADMIN.DEMOGRAPHICS,
+      },
+      { label: "Monthly Reports", icon: BarChart2, href: ROUTES.ADMIN.REPORTS },
+      {
+        label: "Dashboard",
+        icon: LayoutDashboard,
+        href: ROUTES.ADMIN.DASHBOARD,
+      },
+      { label: "AI Consultant", icon: HelpCircle, href: ROUTES.ADMIN.AI },
     ],
   },
   {
-    section: 'CORE',
+    section: "CORE",
     items: [
-      { label: 'Patients', icon: Users, href: ROUTES.ADMIN.PATIENTS_LIST },
-      { label: 'Appointments', icon: Calendar, href: ROUTES.ADMIN.APPOINTMENTS },
-      { label: 'Analytics', icon: BarChart2, href: ROUTES.ADMIN.ANALYTICS },
-      { label: 'Staff', icon: Users, href: ROUTES.ADMIN.STAFF },
-      { label: 'HR', icon: UserCog, href: ROUTES.ADMIN.HR },
-      { label: 'Membership Plans', icon: FileText, href: ROUTES.ADMIN.PLANS },
+      { label: "Patients", icon: Users, href: ROUTES.ADMIN.PATIENTS_LIST },
+      {
+        label: "Appointments",
+        icon: Calendar,
+        href: ROUTES.ADMIN.APPOINTMENTS,
+      },
+      { label: "Analytics", icon: BarChart2, href: ROUTES.ADMIN.ANALYTICS },
+      { label: "Staff", icon: Users, href: ROUTES.ADMIN.STAFF },
+      { label: "HR", icon: UserCog, href: ROUTES.ADMIN.HR },
+      { label: "Membership Plans", icon: FileText, href: ROUTES.ADMIN.PLANS },
     ],
   },
   {
-    section: 'COMMUNICATIONS',
+    section: "COMMUNICATIONS",
     items: [
-      { label: 'SMS Campaigns', icon: MessagesSquare, href: ROUTES.ADMIN.SMS },
-      { label: 'Email Campaigns', icon: Mail, href: ROUTES.ADMIN.EMAIL },
-      { label: 'Voice Campaigns', icon: Phone, href: ROUTES.ADMIN.VOICE },
+      { label: "SMS Campaigns", icon: MessagesSquare, href: ROUTES.ADMIN.SMS },
+      { label: "Email Campaigns", icon: Mail, href: ROUTES.ADMIN.EMAIL },
+      { label: "Voice Campaigns", icon: Phone, href: ROUTES.ADMIN.VOICE },
     ],
   },
   {
-    section: 'SYSTEM',
+    section: "SYSTEM",
     items: [
-      { label: 'Contact Manager', icon: UserCircle, href: ROUTES.ADMIN.CONTACTS },
-      { label: 'Marketplace', icon: Store, href: ROUTES.ADMIN.MARKETPLACE },
-      { label: 'Settings', icon: Settings, href: ROUTES.ADMIN.SETTINGS },
+      {
+        label: "Contact Manager",
+        icon: UserCircle,
+        href: ROUTES.ADMIN.CONTACTS,
+      },
+      { label: "Marketplace", icon: Store, href: ROUTES.ADMIN.MARKETPLACE },
+      { label: "Settings", icon: Settings, href: ROUTES.ADMIN.SETTINGS },
     ],
   },
   {
-    section: 'RESOURCES',
+    section: "RESOURCES",
     items: [
-      { label: 'Resources', icon: HelpCircle, href: ROUTES.ADMIN.RESOURCES },
+      { label: "Resources", icon: HelpCircle, href: ROUTES.ADMIN.RESOURCES },
     ],
   },
 ];
@@ -85,17 +109,26 @@ export const AdminSidebar: React.FC = () => {
       {/* Logo */}
       <div className="p-6 border-b border-gray-200">
         <Link to={ROUTES.ADMIN.ROOT} className="flex items-center space-x-2">
-          <span className="text-xl font-bold text-[#1B2B85]">NGenius Dental</span>
+          <span className="text-xl font-bold text-[#1B2B85]">
+            NGenius Dental
+          </span>
         </Link>
-        <div className="text-xs text-gray-500 mt-1">Powered by NGenius Pros</div>
+        <div className="text-xs text-gray-500 mt-1">
+          Powered by NGenius Pros
+        </div>
       </div>
 
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto py-4">
         {sidebarItems.map((section, index) => (
-          <div key={section.section} className={cn('mb-6', index === 0 && 'mt-2')}>
+          <div
+            key={section.section}
+            className={cn("mb-6", index === 0 && "mt-2")}
+          >
             <div className="px-6 mb-2">
-              <h3 className="text-xs font-semibold text-gray-500">{section.section}</h3>
+              <h3 className="text-xs font-semibold text-gray-500">
+                {section.section}
+              </h3>
             </div>
             <div className="space-y-1">
               {section.items.map((item) => {
@@ -107,10 +140,10 @@ export const AdminSidebar: React.FC = () => {
                     key={item.label}
                     to={item.href}
                     className={cn(
-                      'flex items-center px-6 py-2 text-sm font-medium transition-colors',
+                      "flex items-center px-6 py-2 text-sm font-medium transition-colors",
                       isActive
-                        ? 'text-[#1B2B85] bg-[#1B2B85]/5'
-                        : 'text-gray-600 hover:text-[#1B2B85] hover:bg-[#1B2B85]/5'
+                        ? "text-[#1B2B85] bg-[#1B2B85]/5"
+                        : "text-gray-600 hover:text-[#1B2B85] hover:bg-[#1B2B85]/5",
                     )}
                   >
                     <Icon className="w-5 h-5 mr-3" />

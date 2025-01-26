@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { cn } from '../../../../lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { cn } from "../../../../lib/utils";
 
 interface ResourceCategoriesProps {
   selectedCategory: string;
@@ -10,16 +10,16 @@ interface ResourceCategoriesProps {
 
 export const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
   selectedCategory,
-  onCategoryChange
+  onCategoryChange,
 }) => {
   const categories = [
-    { id: 'all', name: 'All Resources', icon: 'LayoutGrid' },
-    { id: 'forms', name: 'Forms Library', icon: 'FileText' },
-    { id: 'education', name: 'Educational Resources', icon: 'GraduationCap' },
-    { id: 'manuals', name: 'Manuals & Guidelines', icon: 'BookOpen' },
-    { id: 'training', name: 'Training Materials', icon: 'Lightbulb' },
-    { id: 'templates', name: 'Document Templates', icon: 'Files' }, // Changed from FileTemplate to Files
-    { id: 'policies', name: 'Policies & Procedures', icon: 'Shield' }
+    { id: "all", name: "All Resources", icon: "LayoutGrid" },
+    { id: "forms", name: "Forms Library", icon: "FileText" },
+    { id: "education", name: "Educational Resources", icon: "GraduationCap" },
+    { id: "manuals", name: "Manuals & Guidelines", icon: "BookOpen" },
+    { id: "training", name: "Training Materials", icon: "Lightbulb" },
+    { id: "templates", name: "Document Templates", icon: "Files" }, // Changed from FileTemplate to Files
+    { id: "policies", name: "Policies & Procedures", icon: "Shield" },
   ];
 
   return (
@@ -40,7 +40,7 @@ export const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
                 "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors",
                 selectedCategory === category.id
                   ? "bg-primary text-white"
-                  : "hover:bg-gray-100 text-gray-700"
+                  : "hover:bg-gray-100 text-gray-700",
               )}
             >
               <Icon className="w-5 h-5" />

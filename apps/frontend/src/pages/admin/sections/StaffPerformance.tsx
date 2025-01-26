@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../components/ui/button';
-import { dashboardService } from '../../../services/dashboard';
-import { StaffMetrics } from '../../../types/dashboard';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../components/ui/button";
+import { dashboardService } from "../../../services/dashboard";
+import { StaffMetrics } from "../../../types/dashboard";
 
 export const StaffPerformance = () => {
   const [staffMetrics, setStaffMetrics] = useState<StaffMetrics[]>([]);
@@ -18,7 +18,9 @@ export const StaffPerformance = () => {
         const data = await dashboardService.getStaffMetrics();
         setStaffMetrics(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch staff metrics');
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch staff metrics",
+        );
       } finally {
         setLoading(false);
       }
@@ -43,7 +45,9 @@ export const StaffPerformance = () => {
     >
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Staff Performance</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Staff Performance
+          </h2>
           <p className="text-sm text-gray-500">Monthly staff metrics</p>
         </div>
         <Button variant="outline" size="sm">
@@ -69,15 +73,21 @@ export const StaffPerformance = () => {
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Patients</p>
-                <p className="font-medium text-gray-900">{staff.metrics.appointmentsCompleted}</p>
+                <p className="font-medium text-gray-900">
+                  {staff.metrics.appointmentsCompleted}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Satisfaction</p>
-                <p className="font-medium text-gray-900">{staff.metrics.patientSatisfaction}%</p>
+                <p className="font-medium text-gray-900">
+                  {staff.metrics.patientSatisfaction}%
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Revenue</p>
-                <p className="font-medium text-gray-900">${staff.metrics.revenue?.toLocaleString()}</p>
+                <p className="font-medium text-gray-900">
+                  ${staff.metrics.revenue?.toLocaleString()}
+                </p>
               </div>
             </div>
           </div>

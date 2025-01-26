@@ -1,9 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { formatCurrency } from '../../lib/utils/currency';
-import type { Timesheet, PayPeriod } from './types';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { formatCurrency } from "../../lib/utils/currency";
+import type { Timesheet, PayPeriod } from "./types";
 
 interface TimesheetSummaryProps {
   isLoading: boolean;
@@ -14,7 +14,7 @@ interface TimesheetSummaryProps {
 export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({
   isLoading,
   timesheets,
-  payPeriod
+  payPeriod,
 }) => {
   if (isLoading) {
     return (
@@ -70,7 +70,9 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({
             {timesheets.map((timesheet) => (
               <tr key={timesheet.employeeId}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="font-medium text-gray-900">{timesheet.name}</div>
+                  <div className="font-medium text-gray-900">
+                    {timesheet.name}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {timesheet.regularHours}

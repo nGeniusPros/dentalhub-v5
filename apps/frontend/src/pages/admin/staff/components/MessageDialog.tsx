@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
 
 interface MessageDialogProps {
   isOpen: boolean;
@@ -17,13 +17,13 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
   isOpen,
   onClose,
   onSend,
-  recipient
+  recipient,
 }) => {
   const [message, setMessage] = useState({
-    subject: '',
-    content: '',
-    priority: 'normal',
-    sendCopy: false
+    subject: "",
+    content: "",
+    priority: "normal",
+    sendCopy: false,
   });
 
   if (!isOpen) return null;
@@ -61,7 +61,9 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
             <input
               type="text"
               value={message.subject}
-              onChange={(e) => setMessage(prev => ({ ...prev, subject: e.target.value }))}
+              onChange={(e) =>
+                setMessage((prev) => ({ ...prev, subject: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
               required
             />
@@ -73,7 +75,9 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
             </label>
             <textarea
               value={message.content}
-              onChange={(e) => setMessage(prev => ({ ...prev, content: e.target.value }))}
+              onChange={(e) =>
+                setMessage((prev) => ({ ...prev, content: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
               rows={6}
               required
@@ -86,7 +90,9 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
             </label>
             <select
               value={message.priority}
-              onChange={(e) => setMessage(prev => ({ ...prev, priority: e.target.value }))}
+              onChange={(e) =>
+                setMessage((prev) => ({ ...prev, priority: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-200 rounded-lg"
             >
               <option value="low">Low</option>
@@ -100,7 +106,9 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
             <input
               type="checkbox"
               checked={message.sendCopy}
-              onChange={(e) => setMessage(prev => ({ ...prev, sendCopy: e.target.checked }))}
+              onChange={(e) =>
+                setMessage((prev) => ({ ...prev, sendCopy: e.target.checked }))
+              }
               className="rounded border-gray-300"
             />
             <span className="text-sm">Send me a copy</span>
@@ -110,9 +118,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Send Message
-            </Button>
+            <Button type="submit">Send Message</Button>
           </div>
         </form>
       </motion.div>

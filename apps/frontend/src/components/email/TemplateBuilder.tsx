@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { useSettings } from '../../contexts/SettingsContext';
-import { cn } from '../../lib/utils';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { useSettings } from "../../contexts/SettingsContext";
+import { cn } from "../../lib/utils";
 
 interface TemplateBuilderProps {
   onSave: (template: EmailTemplate) => void;
@@ -12,45 +12,45 @@ interface TemplateBuilderProps {
 
 export const TemplateBuilder: React.FC<TemplateBuilderProps> = ({
   onSave,
-  onCancel
+  onCancel,
 }) => {
   const { state } = useSettings();
   const { settings } = state;
 
   const [template, setTemplate] = useState<Partial<EmailTemplate>>({
-    name: '',
-    type: 'custom',
-    category: '',
+    name: "",
+    type: "custom",
+    category: "",
     tags: [],
-    content: '',
+    content: "",
   });
 
-  const [tag, setTag] = useState('');
+  const [tag, setTag] = useState("");
 
   const handleAddTag = () => {
     if (tag && !template.tags?.includes(tag)) {
-      setTemplate(prev => ({
+      setTemplate((prev) => ({
         ...prev,
-        tags: [...(prev.tags || []), tag]
+        tags: [...(prev.tags || []), tag],
       }));
-      setTag('');
+      setTag("");
     }
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    setTemplate(prev => ({
+    setTemplate((prev) => ({
       ...prev,
-      tags: prev.tags?.filter(t => t !== tagToRemove)
+      tags: prev.tags?.filter((t) => t !== tagToRemove),
     }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Add practice info to template content
     const practiceInfo = `
       <div style="margin-bottom: 20px;">
-        ${settings.branding.logo ? `<img src="${settings.branding.logo}" alt="${settings.general.practiceName}" style="max-width: 200px; margin-bottom: 10px;" />` : ''}
+        ${settings.branding.logo ? `<img src="${settings.branding.logo}" alt="${settings.general.practiceName}" style="max-width: 200px; margin-bottom: 10px;" />` : ""}
         <h2 style="color: ${settings.branding.colors.primary};">${settings.general.practiceName}</h2>
         <p>${settings.general.address}</p>
         <p>Phone: ${settings.general.phone}</p>
@@ -63,7 +63,7 @@ export const TemplateBuilder: React.FC<TemplateBuilderProps> = ({
       id: Date.now().toString(),
       content: practiceInfo + template.content,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     } as EmailTemplate);
   };
 
@@ -77,7 +77,9 @@ export const TemplateBuilder: React.FC<TemplateBuilderProps> = ({
           <input
             type="text"
             value={template.name}
-            onChange={(e) => setTemplate(prev => ({ ...prev, name: e.target.value }))}
+            onChange={(e) =>
+              setTemplate((prev) => ({ ...prev, name: e.target.value }))
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             required
           />
@@ -89,7 +91,9 @@ export const TemplateBuilder: React.FC<TemplateBuilderProps> = ({
           </label>
           <select
             value={template.category}
-            onChange={(e) => setTemplate(prev => ({ ...prev, category: e.target.value }))}
+            onChange={(e) =>
+              setTemplate((prev) => ({ ...prev, category: e.target.value }))
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             required
           >
@@ -110,7 +114,12 @@ export const TemplateBuilder: React.FC<TemplateBuilderProps> = ({
           </label>
           <select
             value={template.type}
-            onChange={(e) => setTemplate(prev => ({ ...prev, type: e.target.value as EmailTemplate['type'] }))}
+            onChange={(e) =>
+              setTemplate((prev) => ({
+                ...prev,
+                type: e.target.value as EmailTemplate["type"],
+              }))
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             required
           >
@@ -157,7 +166,7 @@ export const TemplateBuilder: React.FC<TemplateBuilderProps> = ({
               className="flex-1 px-4 py-2 border border-gray-200 rounded-lg"
               placeholder="Add tag..."
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   e.preventDefault();
                   handleAddTag();
                 }
@@ -175,7 +184,9 @@ export const TemplateBuilder: React.FC<TemplateBuilderProps> = ({
           </label>
           <textarea
             value={template.content}
-            onChange={(e) => setTemplate(prev => ({ ...prev, content: e.target.value }))}
+            onChange={(e) =>
+              setTemplate((prev) => ({ ...prev, content: e.target.value }))
+            }
             className="w-full h-64 px-4 py-2 border border-gray-200 rounded-lg font-mono"
             required
           />
@@ -185,9 +196,7 @@ export const TemplateBuilder: React.FC<TemplateBuilderProps> = ({
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit">
-            Save Template
-          </Button>
+          <Button type="submit">Save Template</Button>
         </div>
       </form>
     </div>

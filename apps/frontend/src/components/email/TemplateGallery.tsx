@@ -1,10 +1,10 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { TemplateBuilder } from './TemplateBuilder';
-import { cn } from '../../lib/utils';
-import type { EmailTemplate } from '../../types/email';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { TemplateBuilder } from "./TemplateBuilder";
+import { cn } from "../../lib/utils";
+import type { EmailTemplate } from "../../types/email";
 
 interface TemplateGalleryProps {
   templates: EmailTemplate[];
@@ -13,86 +13,96 @@ interface TemplateGalleryProps {
 
 const defaultTemplates: EmailTemplate[] = [
   {
-    id: 'recall-1',
-    name: 'Standard Recall',
-    type: 'recall',
-    thumbnail: 'https://images.unsplash.com/photo-1588776814546-daab30f310ce?auto=format&fit=crop&q=80&w=400',
-    content: '',
-    category: 'Recall',
-    tags: ['recall', 'checkup', 'cleaning'],
+    id: "recall-1",
+    name: "Standard Recall",
+    type: "recall",
+    thumbnail:
+      "https://images.unsplash.com/photo-1588776814546-daab30f310ce?auto=format&fit=crop&q=80&w=400",
+    content: "",
+    category: "Recall",
+    tags: ["recall", "checkup", "cleaning"],
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: 'birthday-1',
-    name: 'Birthday Celebration',
-    type: 'birthday',
-    thumbnail: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&q=80&w=400',
-    content: '',
-    category: 'Special Events',
-    tags: ['birthday', 'celebration', 'special offer'],
+    id: "birthday-1",
+    name: "Birthday Celebration",
+    type: "birthday",
+    thumbnail:
+      "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&q=80&w=400",
+    content: "",
+    category: "Special Events",
+    tags: ["birthday", "celebration", "special offer"],
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: 'newsletter-1',
-    name: 'Monthly Newsletter',
-    type: 'newsletter',
-    thumbnail: 'https://images.unsplash.com/photo-1586339949216-35c2747cc36d?auto=format&fit=crop&q=80&w=400',
-    content: '',
-    category: 'Newsletters',
-    tags: ['newsletter', 'updates', 'news'],
+    id: "newsletter-1",
+    name: "Monthly Newsletter",
+    type: "newsletter",
+    thumbnail:
+      "https://images.unsplash.com/photo-1586339949216-35c2747cc36d?auto=format&fit=crop&q=80&w=400",
+    content: "",
+    category: "Newsletters",
+    tags: ["newsletter", "updates", "news"],
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: 'event-1',
-    name: 'Practice Event',
-    type: 'event',
-    thumbnail: 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&q=80&w=400',
-    content: '',
-    category: 'Events',
-    tags: ['event', 'special', 'community'],
+    id: "event-1",
+    name: "Practice Event",
+    type: "event",
+    thumbnail:
+      "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&q=80&w=400",
+    content: "",
+    category: "Events",
+    tags: ["event", "special", "community"],
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: 'reactivation-1',
-    name: 'Patient Reactivation',
-    type: 'reactivation',
-    thumbnail: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=400',
-    content: '',
-    category: 'Reactivation',
-    tags: ['reactivation', 'welcome back', 'special offer'],
+    id: "reactivation-1",
+    name: "Patient Reactivation",
+    type: "reactivation",
+    thumbnail:
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=400",
+    content: "",
+    category: "Reactivation",
+    tags: ["reactivation", "welcome back", "special offer"],
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: 'referral-1',
-    name: 'Referral Request',
-    type: 'referral',
-    thumbnail: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=400',
-    content: '',
-    category: 'Referrals',
-    tags: ['referral', 'rewards', 'growth'],
+    id: "referral-1",
+    name: "Referral Request",
+    type: "referral",
+    thumbnail:
+      "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=400",
+    content: "",
+    category: "Referrals",
+    tags: ["referral", "rewards", "growth"],
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  }
+    updatedAt: new Date().toISOString(),
+  },
 ];
 export const TemplateGallery: React.FC<TemplateGalleryProps> = ({
   templates,
-  onSelect
+  onSelect,
 }) => {
-  const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
-  const [searchQuery, setSearchQuery] = React.useState('');
+  const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   const allTemplates = [...defaultTemplates, ...templates];
-  const categories = Array.from(new Set(allTemplates.map(t => t.category)));
+  const categories = Array.from(new Set(allTemplates.map((t) => t.category)));
 
-  const filteredTemplates = allTemplates.filter(template => {
-    const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
-    const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredTemplates = allTemplates.filter((template) => {
+    const matchesCategory =
+      selectedCategory === "all" || template.category === selectedCategory;
+    const matchesSearch =
+      template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      template.tags.some((tag) =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
     return matchesCategory && matchesSearch;
   });
 
@@ -109,18 +119,20 @@ export const TemplateGallery: React.FC<TemplateGalleryProps> = ({
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg"
           />
         </div>
-        <Button 
-          variant="outline" 
-          onClick={() => onSelect({
-            id: Date.now().toString(),
-            name: 'Custom Template',
-            type: 'custom',
-            content: '',
-            category: 'Custom',
-            tags: [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          })}
+        <Button
+          variant="outline"
+          onClick={() =>
+            onSelect({
+              id: Date.now().toString(),
+              name: "Custom Template",
+              type: "custom",
+              content: "",
+              category: "Custom",
+              tags: [],
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            })
+          }
         >
           <Icons.Plus className="w-4 h-4 mr-2" />
           Create Custom
@@ -129,15 +141,15 @@ export const TemplateGallery: React.FC<TemplateGalleryProps> = ({
 
       <div className="flex gap-2 overflow-x-auto pb-2">
         <Button
-          variant={selectedCategory === 'all' ? 'default' : 'outline'}
-          onClick={() => setSelectedCategory('all')}
+          variant={selectedCategory === "all" ? "default" : "outline"}
+          onClick={() => setSelectedCategory("all")}
         >
           All Templates
         </Button>
         {categories.map((category) => (
           <Button
             key={category}
-            variant={selectedCategory === category ? 'default' : 'outline'}
+            variant={selectedCategory === category ? "default" : "outline"}
             onClick={() => setSelectedCategory(category)}
           >
             {category}
@@ -152,7 +164,7 @@ export const TemplateGallery: React.FC<TemplateGalleryProps> = ({
             whileHover={{ scale: 1.02 }}
             className={cn(
               "bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden",
-              "hover:shadow-xl transition-all duration-200"
+              "hover:shadow-xl transition-all duration-200",
             )}
           >
             {template.thumbnail ? (
@@ -167,7 +179,9 @@ export const TemplateGallery: React.FC<TemplateGalleryProps> = ({
               </div>
             )}
             <div className="p-6">
-              <h3 className="font-medium text-gray-900 mb-2">{template.name}</h3>
+              <h3 className="font-medium text-gray-900 mb-2">
+                {template.name}
+              </h3>
               <div className="flex gap-2 mt-2">
                 {template.tags.map((tag) => (
                   <span

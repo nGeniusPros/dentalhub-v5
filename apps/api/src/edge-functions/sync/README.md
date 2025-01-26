@@ -16,12 +16,15 @@ This edge function handles calendar and contacts synchronization.
 ## Available Endpoints
 
 ### Synchronize Calendar or Contacts
+
 ```http
 POST /api/edge-functions/sync
 ```
+
 Synchronizes calendar or contacts based on the provided data and options.
 
 **Request Body:**
+
 ```json
 {
   "type": "calendar | contacts",
@@ -85,10 +88,12 @@ Synchronizes calendar or contacts based on the provided data and options.
 ## Error Handling
 
 The edge function includes comprehensive error handling with:
+
 - Detailed error responses
 - Logging for debugging
 
 ### Error Response Format
+
 ```json
 {
   "error": {
@@ -102,6 +107,7 @@ The edge function includes comprehensive error handling with:
 ## Configuration
 
 Key configuration options can be adjusted through environment variables:
+
 - Calendar provider settings
 - Contacts provider settings
 - Webhook settings
@@ -112,11 +118,13 @@ See `.env.example` for all available configuration options.
 ## Development
 
 ### Running Tests
+
 ```bash
 pnpm test:sync
 ```
 
 ### Adding New Features
+
 1. Define types in `types.ts`
 2. Implement service method in `service.ts`
 3. Add route in `index.ts`
@@ -125,6 +133,7 @@ pnpm test:sync
 ## Monitoring
 
 The edge function includes built-in monitoring for:
+
 - Sync success rates
 - Processing times
 - Error rates
@@ -133,6 +142,7 @@ The edge function includes built-in monitoring for:
 ## Security
 
 Security measures include:
+
 - Request validation
 - Secure error handling
 - Access control

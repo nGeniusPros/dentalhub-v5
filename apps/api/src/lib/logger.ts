@@ -1,11 +1,11 @@
-import pino from 'pino';
+import pino from "pino";
 
 export const logger = pino({
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  level: process.env.NODE_ENV === "production" ? "info" : "debug",
   formatters: {
-    level: (label) => ({ level: label })
+    level: (label) => ({ level: label }),
   },
-  timestamp: () => `,"time":"${new Date().toISOString()}"`
+  timestamp: () => `,"time":"${new Date().toISOString()}"`,
 });
 
 export type Logger = typeof logger;

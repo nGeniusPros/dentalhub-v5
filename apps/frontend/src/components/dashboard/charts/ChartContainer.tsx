@@ -1,12 +1,15 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
 
 interface ChartContainerProps {
   title: string;
   children: React.ReactNode;
 }
 
-export const ChartContainer: React.FC<ChartContainerProps> = ({ title, children }) => {
+export const ChartContainer: React.FC<ChartContainerProps> = ({
+  title,
+  children,
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

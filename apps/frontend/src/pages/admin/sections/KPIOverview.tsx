@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { dashboardService } from '../../../services/dashboard';
-import { Skeleton } from '../../../components/ui/skeleton';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { dashboardService } from "../../../services/dashboard";
+import { Skeleton } from "../../../components/ui/skeleton";
 
 interface DashboardStats {
   monthlyRevenue: {
@@ -39,27 +39,28 @@ interface DashboardStats {
   };
 }
 
-const StatCard = ({ 
-  icon, 
-  value, 
-  label, 
-  change, 
-  iconBgColor 
-}: { 
-  icon: React.ReactNode; 
-  value: string; 
-  label: string; 
+const StatCard = ({
+  icon,
+  value,
+  label,
+  change,
+  iconBgColor,
+}: {
+  icon: React.ReactNode;
+  value: string;
+  label: string;
   change?: number;
   iconBgColor: string;
 }) => (
   <div className="bg-white p-4 rounded-lg shadow-sm">
     <div className="flex items-start justify-between">
-      <div className={`p-2 rounded-lg ${iconBgColor}`}>
-        {icon}
-      </div>
+      <div className={`p-2 rounded-lg ${iconBgColor}`}>{icon}</div>
       {change !== undefined && (
-        <span className={`text-sm font-medium ${change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-          {change >= 0 ? '+' : ''}{change}%
+        <span
+          className={`text-sm font-medium ${change >= 0 ? "text-green-500" : "text-red-500"}`}
+        >
+          {change >= 0 ? "+" : ""}
+          {change}%
         </span>
       )}
     </div>
@@ -83,8 +84,8 @@ export const KPIOverview = () => {
         const data = await dashboardService.getStats();
         setStats(data);
       } catch (err) {
-        setError('Failed to load dashboard data. Please try again later.');
-        console.error('Dashboard stats error:', err);
+        setError("Failed to load dashboard data. Please try again later.");
+        console.error("Dashboard stats error:", err);
       } finally {
         setLoading(false);
       }
@@ -116,9 +117,9 @@ export const KPIOverview = () => {
   if (!stats) return null;
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
@@ -130,57 +131,57 @@ export const KPIOverview = () => {
       value: formatCurrency(stats.monthlyRevenue.value),
       label: "Monthly Revenue",
       change: stats.monthlyRevenue.change,
-      iconBgColor: "bg-blue-50"
+      iconBgColor: "bg-blue-50",
     },
     {
       icon: <Icons.Users className="w-6 h-6 text-purple-600" />,
       value: stats.patientGrowth.value.toLocaleString(),
       label: "Patient Growth",
       change: stats.patientGrowth.change,
-      iconBgColor: "bg-purple-50"
+      iconBgColor: "bg-purple-50",
     },
     {
       icon: <Icons.CheckCircle className="w-6 h-6 text-green-600" />,
       value: `${stats.treatmentAcceptance.value}%`,
       label: "Treatment Acceptance",
       change: stats.treatmentAcceptance.change,
-      iconBgColor: "bg-green-50"
+      iconBgColor: "bg-green-50",
     },
     {
       icon: <Icons.Calendar className="w-6 h-6 text-cyan-600" />,
       value: `${stats.appointmentFillRate.value}%`,
       label: "Appointment Fill Rate",
       change: stats.appointmentFillRate.change,
-      iconBgColor: "bg-cyan-50"
+      iconBgColor: "bg-cyan-50",
     },
     {
       icon: <Icons.FileText className="w-6 h-6 text-indigo-600" />,
       value: stats.insuranceClaims.value.toString(),
       label: "Insurance Claims",
       change: stats.insuranceClaims.change,
-      iconBgColor: "bg-indigo-50"
+      iconBgColor: "bg-indigo-50",
     },
     {
       icon: <Icons.Clock className="w-6 h-6 text-red-600" />,
       value: `${stats.averageWaitTime.value}min`,
       label: "Average Wait Time",
       change: stats.averageWaitTime.change,
-      iconBgColor: "bg-red-50"
+      iconBgColor: "bg-red-50",
     },
     {
       icon: <Icons.Star className="w-6 h-6 text-yellow-600" />,
       value: stats.patientSatisfaction.value.toFixed(1),
       label: "Patient Satisfaction",
       change: stats.patientSatisfaction.change,
-      iconBgColor: "bg-yellow-50"
+      iconBgColor: "bg-yellow-50",
     },
     {
       icon: <Icons.TrendingUp className="w-6 h-6 text-emerald-600" />,
       value: `${stats.staffProductivity.value}%`,
       label: "Staff Productivity",
       change: stats.staffProductivity.change,
-      iconBgColor: "bg-emerald-50"
-    }
+      iconBgColor: "bg-emerald-50",
+    },
   ];
 
   return (

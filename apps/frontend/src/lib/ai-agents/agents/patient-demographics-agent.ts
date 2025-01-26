@@ -1,7 +1,7 @@
-import { AIResponse, AgentConfig } from '../types/agent-types';
-import { AgentError } from '../types/errors';
-import { RequestManager } from '../infrastructure/request-manager';
-import { ResponseCache } from '../infrastructure/response-cache';
+import { AIResponse, AgentConfig } from "../types/agent-types";
+import { AgentError } from "../types/errors";
+import { RequestManager } from "../infrastructure/request-manager";
+import { ResponseCache } from "../infrastructure/response-cache";
 
 interface DemographicsMetadata {
   ageDistribution: Record<string, number>;
@@ -22,47 +22,53 @@ export class PatientDemographicsAgent {
     try {
       const demographics = await this.analyzeDemographicTrends(query);
       const geographic = await this.getGeographicAnalysis();
-      const retention = await this.getRetentionAnalysis(demographics, geographic);
+      const retention = await this.getRetentionAnalysis(
+        demographics,
+        geographic,
+      );
 
       const metadata: DemographicsMetadata = {
         ageDistribution: demographics.distribution,
         geographicData: geographic.data,
-        retentionRates: retention.rates
+        retentionRates: retention.rates,
       };
 
       return {
         content: this.formatAnalysis(demographics, geographic, retention),
         metadata,
-        confidence: this.calculateConfidence(demographics.reliability)
+        confidence: this.calculateConfidence(demographics.reliability),
       };
     } catch (error) {
       throw new AgentError(
-        'Failed to process demographics query',
-        'PATIENT_DEMOGRAPHICS',
-        'PROCESSING_ERROR',
+        "Failed to process demographics query",
+        "PATIENT_DEMOGRAPHICS",
+        "PROCESSING_ERROR",
         true,
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   private async analyzeDemographicTrends(query: string) {
-    return this.requestManager.executeWithRateLimit('PATIENT_DEMOGRAPHICS', async () => {
-      // Implementation using OpenAI Assistant ID: asst_yQRdJlXKhQKx76BHl2oZlmL4
-      return {
-        distribution: {},
-        trends: [],
-        insights: [],
-        reliability: 0
-      };
-    });
+    return this.requestManager.executeWithRateLimit(
+      "PATIENT_DEMOGRAPHICS",
+      async () => {
+        // Implementation using OpenAI Assistant ID: asst_yQRdJlXKhQKx76BHl2oZlmL4
+        return {
+          distribution: {},
+          trends: [],
+          insights: [],
+          reliability: 0,
+        };
+      },
+    );
   }
 
   private async getGeographicAnalysis() {
     return {
       data: {},
       clusters: [],
-      opportunities: []
+      opportunities: [],
     };
   }
 
@@ -70,12 +76,16 @@ export class PatientDemographicsAgent {
     return {
       rates: {},
       factors: [],
-      recommendations: []
+      recommendations: [],
     };
   }
 
-  private formatAnalysis(demographics: any, geographic: any, retention: any): string {
-    return '';
+  private formatAnalysis(
+    demographics: any,
+    geographic: any,
+    retention: any,
+  ): string {
+    return "";
   }
 
   private calculateConfidence(reliability: number): number {

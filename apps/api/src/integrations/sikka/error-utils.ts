@@ -1,17 +1,20 @@
-import { AxiosError } from 'axios';
-import { DentalAgentType } from '@dental/core/ai/types';
-import { SikkaErrorCode, SikkaErrorDetails } from '../../../../frontend/src/lib/ai-agents/types/errors';
+import { AxiosError } from "axios";
+import { DentalAgentType } from "@dental/core/ai/types";
+import {
+  SikkaErrorCode,
+  SikkaErrorDetails,
+} from "../../../../frontend/src/lib/ai-agents/types/errors";
 
 /**
  * Extracts error details from an Axios error response
  */
 export function extractErrorDetails(error: AxiosError): SikkaErrorDetails {
   return {
-    requestId: error.response?.headers['x-request-id'],
+    requestId: error.response?.headers["x-request-id"],
     statusCode: error.response?.status,
     path: error.config?.url,
     timestamp: new Date().toISOString(),
-    details: error.response?.data
+    details: error.response?.data,
   };
 }
 
@@ -37,8 +40,8 @@ export function mapHttpStatusToErrorCode(status: number): SikkaErrorCode {
     case 504:
       return SikkaErrorCode.GATEWAY_TIMEOUT;
     default:
-      return status >= 500 
-        ? SikkaErrorCode.SERVER_ERROR 
+      return status >= 500
+        ? SikkaErrorCode.SERVER_ERROR
         : SikkaErrorCode.INVALID_REQUEST;
   }
 }
@@ -55,13 +58,15 @@ export function isRetryableStatus(status: number): boolean {
  */
 export function createErrorMessage(
   error: AxiosError,
-  defaultMessage: string
+  defaultMessage: string,
 ): string {
   const response = error.response?.data;
-  return response?.error?.message 
-    || response?.message 
-    || error.message 
-    || defaultMessage;
+  return (
+    response?.error?.message ||
+    response?.message ||
+    error.message ||
+    defaultMessage
+  );
 }
 
 /**
@@ -70,7 +75,7 @@ export function createErrorMessage(
 export function logSikkaError(
   error: Error,
   details: SikkaErrorDetails,
-  agentType: DentalAgentType = DentalAgentType.SIKKA
+  agentType: DentalAgentType = DentalAgentType.SIKKA,
 ): void {
   console.error({
     timestamp: new Date().toISOString(),
@@ -78,6 +83,6 @@ export function logSikkaError(
     message: error.message,
     agentType,
     ...details,
-    stack: error.stack
+    stack: error.stack,
   });
 }

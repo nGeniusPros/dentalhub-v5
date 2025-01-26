@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
 
 interface EditDialogProps {
   isOpen: boolean;
@@ -14,7 +14,7 @@ export const EditDialog: React.FC<EditDialogProps> = ({
   isOpen,
   onClose,
   onSave,
-  data
+  data,
 }) => {
   const [formData, setFormData] = useState(data);
 
@@ -48,9 +48,7 @@ export const EditDialog: React.FC<EditDialogProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Save Changes
-            </Button>
+            <Button type="submit">Save Changes</Button>
           </div>
         </form>
       </motion.div>

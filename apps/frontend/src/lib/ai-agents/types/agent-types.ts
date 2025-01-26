@@ -1,24 +1,24 @@
 export type DentalAgentType =
-  | 'BRAIN_CONSULTANT'
-  | 'MARKETING_COACHING'
-  | 'DATA_RETRIEVAL'
-  | 'PROFITABILITY_APPOINTMENT'
-  | 'RECOMMENDATION'
-  | 'ANALYSIS'
-  | 'PATIENT_CARE'
-  | 'OPERATIONS'
-  | 'STAFF_TRAINING'
-  | 'LAB_CASE_MANAGER'
-  | 'PROCEDURE_CODE'
-  | 'SUPPLIES_MANAGER'
-  | 'MARKETING_ROI'
-  | 'HYGIENE_ANALYTICS'
-  | 'PATIENT_DEMOGRAPHICS'
-  | 'OSHA_COMPLIANCE'
-  | 'INSURANCE_VERIFICATION'
-  | 'DATA_ANALYSIS'
-  | 'REVENUE_HACK'
-  | 'STAFF_OPTIMIZATION';
+  | "BRAIN_CONSULTANT"
+  | "MARKETING_COACHING"
+  | "DATA_RETRIEVAL"
+  | "PROFITABILITY_APPOINTMENT"
+  | "RECOMMENDATION"
+  | "ANALYSIS"
+  | "PATIENT_CARE"
+  | "OPERATIONS"
+  | "STAFF_TRAINING"
+  | "LAB_CASE_MANAGER"
+  | "PROCEDURE_CODE"
+  | "SUPPLIES_MANAGER"
+  | "MARKETING_ROI"
+  | "HYGIENE_ANALYTICS"
+  | "PATIENT_DEMOGRAPHICS"
+  | "OSHA_COMPLIANCE"
+  | "INSURANCE_VERIFICATION"
+  | "DATA_ANALYSIS"
+  | "REVENUE_HACK"
+  | "STAFF_OPTIMIZATION";
 
 export interface AIResponse {
   content: string;
@@ -39,12 +39,12 @@ export interface AgentConfig {
   temperature?: number;
   maxTokens?: number;
   rateLimit: {
-    rpm: number;  // Requests per minute
-    tpm: number;  // Tokens per minute
+    rpm: number; // Requests per minute
+    tpm: number; // Tokens per minute
   };
   caching?: {
     enabled: boolean;
-    ttl: number;  // Time to live in seconds
+    ttl: number; // Time to live in seconds
   };
   retryConfig?: {
     maxRetries: number;
@@ -56,7 +56,7 @@ export interface AgentConfig {
 export interface AgentCapability {
   name: string;
   description: string;
-  confidence: number;  // 0-1 indicating how confident the agent is in this capability
+  confidence: number; // 0-1 indicating how confident the agent is in this capability
   parameters?: Record<string, unknown>;
 }
 

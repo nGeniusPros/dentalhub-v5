@@ -1,6 +1,6 @@
-import React from 'react';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
+import React from "react";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
 
 export const EmailFilter = () => {
   return (

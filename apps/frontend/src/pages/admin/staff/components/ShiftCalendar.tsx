@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { AddShiftModal } from './AddShiftModal';
-import { ViewShiftModal } from './ViewShiftModal';
-import { cn } from '../../../../../lib/utils';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { AddShiftModal } from "./AddShiftModal";
+import { ViewShiftModal } from "./ViewShiftModal";
+import { cn } from "../../../../../lib/utils";
 
 interface Shift {
   id: string;
@@ -13,7 +13,7 @@ interface Shift {
   startTime: string;
   endTime: string;
   date: string;
-  status: 'scheduled' | 'checked-in' | 'checked-out' | 'absent';
+  status: "scheduled" | "checked-in" | "checked-out" | "absent";
 }
 
 export const ShiftCalendar = () => {
@@ -22,23 +22,23 @@ export const ShiftCalendar = () => {
   const [showViewShift, setShowViewShift] = useState<Shift | null>(null);
   const [shifts, setShifts] = useState<Shift[]>([
     {
-      id: '1',
-      employeeName: 'Dr. Sarah Wilson',
-      role: 'Dentist',
-      startTime: '08:00',
-      endTime: '14:00',
-      date: '2024-03-15',
-      status: 'checked-in'
+      id: "1",
+      employeeName: "Dr. Sarah Wilson",
+      role: "Dentist",
+      startTime: "08:00",
+      endTime: "14:00",
+      date: "2024-03-15",
+      status: "checked-in",
     },
     {
-      id: '2',
-      employeeName: 'John Smith',
-      role: 'Hygienist',
-      startTime: '09:00',
-      endTime: '15:00',
-      date: '2024-03-15',
-      status: 'scheduled'
-    }
+      id: "2",
+      employeeName: "John Smith",
+      role: "Hygienist",
+      startTime: "09:00",
+      endTime: "15:00",
+      date: "2024-03-15",
+      status: "scheduled",
+    },
   ]);
 
   const getDaysInMonth = (date: Date) => {
@@ -77,14 +77,16 @@ export const ShiftCalendar = () => {
   };
 
   const handleUpdateShift = (updatedShift: Shift) => {
-    setShifts(shifts.map(shift => 
-      shift.id === updatedShift.id ? updatedShift : shift
-    ));
+    setShifts(
+      shifts.map((shift) =>
+        shift.id === updatedShift.id ? updatedShift : shift,
+      ),
+    );
     setShowViewShift(null);
   };
 
   const handleDeleteShift = (shiftId: string) => {
-    setShifts(shifts.filter(shift => shift.id !== shiftId));
+    setShifts(shifts.filter((shift) => shift.id !== shiftId));
     setShowViewShift(null);
   };
 
@@ -97,17 +99,28 @@ export const ShiftCalendar = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setSelectedDate(new Date(selectedDate.setMonth(selectedDate.getMonth() - 1)))}
+            onClick={() =>
+              setSelectedDate(
+                new Date(selectedDate.setMonth(selectedDate.getMonth() - 1)),
+              )
+            }
           >
             <Icons.ChevronLeft className="w-4 h-4" />
           </Button>
           <h3 className="text-lg font-semibold">
-            {selectedDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
+            {selectedDate.toLocaleString("default", {
+              month: "long",
+              year: "numeric",
+            })}
           </h3>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setSelectedDate(new Date(selectedDate.setMonth(selectedDate.getMonth() + 1)))}
+            onClick={() =>
+              setSelectedDate(
+                new Date(selectedDate.setMonth(selectedDate.getMonth() + 1)),
+              )
+            }
           >
             <Icons.ChevronRight className="w-4 h-4" />
           </Button>
@@ -119,28 +132,34 @@ export const ShiftCalendar = () => {
       </div>
 
       <div className="grid grid-cols-7 gap-px bg-gray-200 rounded-lg overflow-hidden">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-          <div key={day} className="bg-gray-50 p-2 text-center text-sm font-medium">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          <div
+            key={day}
+            className="bg-gray-50 p-2 text-center text-sm font-medium"
+          >
             {day}
           </div>
         ))}
         {days.map(({ date, isCurrentMonth }, index) => {
-          const dateStr = date.toISOString().split('T')[0];
-          const dayShifts = shifts.filter(shift => shift.date === dateStr);
+          const dateStr = date.toISOString().split("T")[0];
+          const dayShifts = shifts.filter((shift) => shift.date === dateStr);
 
           return (
             <div
               key={index}
               className={cn(
                 "bg-white p-2 min-h-[120px] relative",
-                !isCurrentMonth && "bg-gray-50"
+                !isCurrentMonth && "bg-gray-50",
               )}
             >
-              <span className={cn(
-                "text-sm font-medium",
-                !isCurrentMonth && "text-gray-400",
-                date.toDateString() === new Date().toDateString() && "text-primary"
-              )}>
+              <span
+                className={cn(
+                  "text-sm font-medium",
+                  !isCurrentMonth && "text-gray-400",
+                  date.toDateString() === new Date().toDateString() &&
+                    "text-primary",
+                )}
+              >
                 {date.getDate()}
               </span>
 
@@ -152,13 +171,18 @@ export const ShiftCalendar = () => {
                     className={cn(
                       "w-full text-left px-2 py-1 rounded text-xs",
                       "hover:bg-gray-100 transition-colors",
-                      shift.status === 'checked-in' && "bg-green-100 text-green-800",
-                      shift.status === 'checked-out' && "bg-blue-100 text-blue-800",
-                      shift.status === 'absent' && "bg-red-100 text-red-800",
-                      shift.status === 'scheduled' && "bg-gray-100 text-gray-800"
+                      shift.status === "checked-in" &&
+                        "bg-green-100 text-green-800",
+                      shift.status === "checked-out" &&
+                        "bg-blue-100 text-blue-800",
+                      shift.status === "absent" && "bg-red-100 text-red-800",
+                      shift.status === "scheduled" &&
+                        "bg-gray-100 text-gray-800",
                     )}
                   >
-                    <div className="font-medium truncate">{shift.employeeName}</div>
+                    <div className="font-medium truncate">
+                      {shift.employeeName}
+                    </div>
                     <div className="text-xs opacity-75">
                       {shift.startTime} - {shift.endTime}
                     </div>

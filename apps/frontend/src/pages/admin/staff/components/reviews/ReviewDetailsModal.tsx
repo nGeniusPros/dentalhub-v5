@@ -1,9 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
-import type { Review } from '../PerformanceReviews';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
+import type { Review } from "../PerformanceReviews";
 
 interface ReviewDetailsModalProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ export const ReviewDetailsModal: React.FC<ReviewDetailsModalProps> = ({
   isOpen,
   review,
   onClose,
-  onUpdate
+  onUpdate,
 }) => {
   if (!isOpen || !review) return null;
 
@@ -42,16 +42,22 @@ export const ReviewDetailsModal: React.FC<ReviewDetailsModalProps> = ({
         <div className="p-6 space-y-6">
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Review Details</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                Review Details
+              </h3>
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Status</span>
-                  <span className={cn(
-                    "px-2 py-1 text-xs font-medium rounded-full",
-                    review.status === 'completed' ? "bg-green-100 text-green-800" :
-                    review.status === 'scheduled' ? "bg-blue-100 text-blue-800" :
-                    "bg-yellow-100 text-yellow-800"
-                  )}>
+                  <span
+                    className={cn(
+                      "px-2 py-1 text-xs font-medium rounded-full",
+                      review.status === "completed"
+                        ? "bg-green-100 text-green-800"
+                        : review.status === "scheduled"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-yellow-100 text-yellow-800",
+                    )}
+                  >
                     {review.status}
                   </span>
                 </div>
@@ -75,7 +81,9 @@ export const ReviewDetailsModal: React.FC<ReviewDetailsModalProps> = ({
 
             {review.feedback && (
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Feedback</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Feedback
+                </h3>
                 <p className="text-gray-600">{review.feedback}</p>
               </div>
             )}
@@ -84,7 +92,9 @@ export const ReviewDetailsModal: React.FC<ReviewDetailsModalProps> = ({
           <div className="grid grid-cols-2 gap-6">
             {review.goals && (
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Goals</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Goals
+                </h3>
                 <ul className="space-y-2">
                   {review.goals.map((goal, index) => (
                     <li key={index} className="flex items-center gap-2">
@@ -98,7 +108,9 @@ export const ReviewDetailsModal: React.FC<ReviewDetailsModalProps> = ({
 
             {review.strengths && (
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Strengths</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Strengths
+                </h3>
                 <ul className="space-y-2">
                   {review.strengths.map((strength, index) => (
                     <li key={index} className="flex items-center gap-2">
@@ -113,7 +125,9 @@ export const ReviewDetailsModal: React.FC<ReviewDetailsModalProps> = ({
 
           {review.improvements && (
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Areas for Improvement</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                Areas for Improvement
+              </h3>
               <ul className="space-y-2">
                 {review.improvements.map((improvement, index) => (
                   <li key={index} className="flex items-center gap-2">
@@ -130,8 +144,8 @@ export const ReviewDetailsModal: React.FC<ReviewDetailsModalProps> = ({
           <Button variant="outline" onClick={onClose}>
             Close
           </Button>
-          {review.status !== 'completed' && (
-            <Button onClick={() => onUpdate({ status: 'completed' })}>
+          {review.status !== "completed" && (
+            <Button onClick={() => onUpdate({ status: "completed" })}>
               Mark as Completed
             </Button>
           )}

@@ -1,8 +1,15 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Button } from '../ui/button';
-import * as Icons from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { Button } from "../ui/button";
+import * as Icons from "lucide-react";
 
 interface CampaignOverviewProps {
   data: {
@@ -14,9 +21,9 @@ interface CampaignOverviewProps {
 
 export const CampaignOverview: React.FC<CampaignOverviewProps> = ({ data }) => {
   const pieData = [
-    { name: 'Email', value: data.email.sent, color: '#4BC5BD' },
-    { name: 'SMS', value: data.sms.sent, color: '#6B4C9A' },
-    { name: 'Voice', value: data.voice.attempted, color: '#C5A572' }
+    { name: "Email", value: data.email.sent, color: "#4BC5BD" },
+    { name: "SMS", value: data.sms.sent, color: "#6B4C9A" },
+    { name: "Voice", value: data.voice.attempted, color: "#C5A572" },
   ];
 
   return (

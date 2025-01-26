@@ -1,11 +1,11 @@
 export interface TimeOffRequest {
   id: string;
   employeeId: string;
-  type: 'vacation' | 'sick' | 'personal';
+  type: "vacation" | "sick" | "personal";
   startDate: string;
   endDate: string;
   reason: string;
-  status: 'pending' | 'approved' | 'denied';
+  status: "pending" | "approved" | "denied";
   submittedDate: string;
   reviewedBy?: string;
   reviewDate?: string;

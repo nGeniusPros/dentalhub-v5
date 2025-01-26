@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { useAuth } from '../../../../../contexts/AuthContext';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { useAuth } from "../../../../../contexts/AuthContext";
 
 interface EmployeeRecordsAccessProps {
   isOpen: boolean;
@@ -14,28 +14,39 @@ export const EmployeeRecordsAccess: React.FC<EmployeeRecordsAccessProps> = ({
   isOpen,
   onClose,
   onAccess,
-  employeeId
+  employeeId,
 }) => {
   const { user } = useAuth();
 
-  const hasHRAccess = user?.user_metadata?.role === 'admin' || 
-    user?.user_metadata?.role === 'hr';
+  const hasHRAccess =
+    user?.user_metadata?.role === "admin" || user?.user_metadata?.role === "hr";
 
   const accessLevels = [
-    { name: 'Personal Information', access: true },
-    { name: 'Performance Reviews', access: user?.user_metadata?.role === 'admin' },
-    { name: 'Salary Information', access: user?.user_metadata?.role === 'admin' },
-    { name: 'Medical Records', access: user?.user_metadata?.role === 'admin' || user?.user_metadata?.role === 'hr' },
-    { name: 'Training Records', access: true },
+    { name: "Personal Information", access: true },
+    {
+      name: "Performance Reviews",
+      access: user?.user_metadata?.role === "admin",
+    },
+    {
+      name: "Salary Information",
+      access: user?.user_metadata?.role === "admin",
+    },
+    {
+      name: "Medical Records",
+      access:
+        user?.user_metadata?.role === "admin" ||
+        user?.user_metadata?.role === "hr",
+    },
+    { name: "Training Records", access: true },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!hasHRAccess) {
-      alert('You do not have permission to access employee records');
+      alert("You do not have permission to access employee records");
       return;
     }
-    
+
     onAccess();
     onClose();
   };
@@ -65,7 +76,8 @@ export const EmployeeRecordsAccess: React.FC<EmployeeRecordsAccessProps> = ({
               <p className="text-sm font-medium">Restricted Access</p>
             </div>
             <p className="text-sm text-yellow-700 mt-1">
-              This area contains sensitive employee information and requires additional authentication.
+              This area contains sensitive employee information and requires
+              additional authentication.
             </p>
           </div>
 
@@ -76,8 +88,8 @@ export const EmployeeRecordsAccess: React.FC<EmployeeRecordsAccessProps> = ({
                 <p className="text-sm font-medium">Access Denied</p>
               </div>
               <p className="text-sm text-red-700 mt-1">
-                You do not have the required permissions to access employee records.
-                Please contact your administrator.
+                You do not have the required permissions to access employee
+                records. Please contact your administrator.
               </p>
             </div>
           )}
@@ -86,7 +98,7 @@ export const EmployeeRecordsAccess: React.FC<EmployeeRecordsAccessProps> = ({
             <>
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Records Access</h3>
-                
+
                 <div className="grid gap-3">
                   {accessLevels.map((level, index) => (
                     <motion.div
@@ -97,17 +109,23 @@ export const EmployeeRecordsAccess: React.FC<EmployeeRecordsAccessProps> = ({
                       className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200"
                     >
                       <div className="flex items-center space-x-3">
-                        <div className={`p-2 rounded-lg ${level.access ? 'bg-green-100' : 'bg-gray-100'}`}>
+                        <div
+                          className={`p-2 rounded-lg ${level.access ? "bg-green-100" : "bg-gray-100"}`}
+                        >
                           {level.access ? (
                             <Icons.Check className="w-4 h-4 text-green-600" />
                           ) : (
                             <Icons.Lock className="w-4 h-4 text-gray-400" />
                           )}
                         </div>
-                        <span className="font-medium text-gray-700">{level.name}</span>
+                        <span className="font-medium text-gray-700">
+                          {level.name}
+                        </span>
                       </div>
-                      <span className={`text-sm ${level.access ? 'text-green-600' : 'text-gray-400'}`}>
-                        {level.access ? 'Access Granted' : 'No Access'}
+                      <span
+                        className={`text-sm ${level.access ? "text-green-600" : "text-gray-400"}`}
+                      >
+                        {level.access ? "Access Granted" : "No Access"}
                       </span>
                     </motion.div>
                   ))}
@@ -118,9 +136,7 @@ export const EmployeeRecordsAccess: React.FC<EmployeeRecordsAccessProps> = ({
                 <button type="button" variant="outline" onClick={onClose}>
                   Cancel
                 </button>
-                <button type="submit">
-                  Access Records
-                </button>
+                <button type="submit">Access Records</button>
               </div>
             </>
           )}

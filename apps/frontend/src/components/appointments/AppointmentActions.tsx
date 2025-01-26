@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import * as Icons from 'lucide-react';
-import { Button } from '../ui/button';
-import { MessageDialog } from '../MessageDialog';
-import { ReminderDialog } from '../ReminderDialog';
-import { CommentDialog } from '../CommentDialog';
-import { EditDialog } from '../EditDialog';
-import supabase from '../../lib/supabase/client';
-import { syncManager } from '../../lib/utils/sync';
+import React, { useState, useEffect } from "react";
+import * as Icons from "lucide-react";
+import { Button } from "../ui/button";
+import { MessageDialog } from "../MessageDialog";
+import { ReminderDialog } from "../ReminderDialog";
+import { CommentDialog } from "../CommentDialog";
+import { EditDialog } from "../EditDialog";
+import supabase from "../../lib/supabase/client";
+import { syncManager } from "../../lib/utils/sync";
 
 interface AppointmentActionsProps {
   patient: string;
@@ -21,7 +21,7 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
   time,
   type,
   status,
-  id
+  id,
 }) => {
   const [showMessage, setShowMessage] = useState(false);
   const [showReminder, setShowReminder] = useState(false);
@@ -31,24 +31,25 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
 
   useEffect(() => {
     // Subscribe to relevant tables
-    syncManager.subscribeToTable('messages_notifications', (payload) => {
-      console.log('Messages/Notifications sync update:', payload);
+    syncManager.subscribeToTable("messages_notifications", (payload) => {
+      console.log("Messages/Notifications sync update:", payload);
     });
-    
-    syncManager.subscribeToTable('comments', (payload) => {
-      console.log('Comments sync update:', payload);
+
+    syncManager.subscribeToTable("comments", (payload) => {
+      console.log("Comments sync update:", payload);
     });
-    
-    syncManager.subscribeToTable('appointments', (payload) => {
-      console.log('Appointments sync update:', payload);
+
+    syncManager.subscribeToTable("appointments", (payload) => {
+      console.log("Appointments sync update:", payload);
     });
 
     // Fetch appointment details
     const fetchAppointment = async () => {
       try {
         const { data, error } = await supabase
-          .from('appointments')
-          .select(`
+          .from("appointments")
+          .select(
+            `
             *,
             patient:patients!inner(id, first_name, last_name, email, phone),
             provider:users!provider_id(id, email, raw_user_meta_data),
@@ -62,16 +63,17 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
               created_at,
               user:users(id, email, raw_user_meta_data)
             )
-          `)
-          .eq('id', id)
+          `,
+          )
+          .eq("id", id)
           .single();
         if (error) {
-          console.error('Error fetching appointment:', error);
+          console.error("Error fetching appointment:", error);
         } else {
           setAppointment(data);
         }
       } catch (error) {
-        console.error('Error fetching appointment:', error);
+        console.error("Error fetching appointment:", error);
       }
     };
 
@@ -79,17 +81,17 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
 
     // Cleanup subscriptions on unmount
     return () => {
-      syncManager.unsubscribeFromTable('messages_notifications');
-      syncManager.unsubscribeFromTable('comments');
-      syncManager.unsubscribeFromTable('appointments');
+      syncManager.unsubscribeFromTable("messages_notifications");
+      syncManager.unsubscribeFromTable("comments");
+      syncManager.unsubscribeFromTable("appointments");
     };
   }, [id, supabase, syncManager]);
 
   return (
     <>
       <div className="flex gap-2">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="sm"
           onClick={() => setShowMessage(true)}
           className="text-primary hover:text-primary-dark"
@@ -98,8 +100,8 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
           Message
         </Button>
 
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="sm"
           onClick={() => setShowReminder(true)}
           className="text-primary hover:text-primary-dark"
@@ -108,8 +110,8 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
           Remind
         </Button>
 
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="sm"
           onClick={() => setShowComment(true)}
           className="text-primary hover:text-primary-dark"
@@ -118,8 +120,8 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
           Comment
         </Button>
 
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="sm"
           onClick={() => setShowEdit(true)}
           className="text-primary hover:text-primary-dark"
@@ -135,7 +137,7 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
         onClose={() => setShowMessage(false)}
         recipient={{
           name: patient,
-          email: `${patient.toLowerCase().replace(' ', '.')}@example.com`
+          email: `${patient.toLowerCase().replace(" ", ".")}@example.com`,
         }}
       />
 
@@ -146,31 +148,31 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
         onSend={async (reminder) => {
           try {
             await syncManager.addOperation({
-              table: 'messages_notifications',
-              type: 'INSERT',
+              table: "messages_notifications",
+              type: "INSERT",
               data: {
                 message: reminder,
                 recipient: patient,
-                type: 'reminder',
-                status: 'scheduled',
+                type: "reminder",
+                status: "scheduled",
                 created_at: new Date().toISOString(),
                 scheduled_for: reminder.date,
               },
               timestamp: Date.now(),
             });
-            console.log('Reminder queued for scheduling');
+            console.log("Reminder queued for scheduling");
           } catch (error) {
-            console.error('Error queueing reminder:', error);
+            console.error("Error queueing reminder:", error);
           }
           setShowReminder(false);
         }}
         recipient={{
           name: patient,
           appointment: {
-            date: time.split(' ')[0],
-            time: time.split(' ')[1],
-            type: type
-          }
+            date: time.split(" ")[0],
+            time: time.split(" ")[1],
+            type: type,
+          },
         }}
       />
 
@@ -181,8 +183,8 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
         onSubmit={async (comment) => {
           try {
             await syncManager.addOperation({
-              table: 'comments',
-              type: 'INSERT',
+              table: "comments",
+              type: "INSERT",
               data: {
                 comment,
                 patient: patient,
@@ -191,9 +193,9 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
               },
               timestamp: Date.now(),
             });
-            console.log('Comment queued for adding');
+            console.log("Comment queued for adding");
           } catch (error) {
-            console.error('Error queueing comment:', error);
+            console.error("Error queueing comment:", error);
           }
           setShowComment(false);
         }}
@@ -208,8 +210,8 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
           onSave={async (data) => {
             try {
               await syncManager.addOperation({
-                table: 'appointments',
-                type: 'UPDATE',
+                table: "appointments",
+                type: "UPDATE",
                 data: {
                   id: id,
                   patient: data.patient,
@@ -220,9 +222,9 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
                 },
                 timestamp: Date.now(),
               });
-              console.log('Appointment update queued');
+              console.log("Appointment update queued");
             } catch (error) {
-              console.error('Error queueing appointment update:', error);
+              console.error("Error queueing appointment update:", error);
             }
             setShowEdit(false);
           }}

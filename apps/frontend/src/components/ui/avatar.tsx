@@ -1,6 +1,6 @@
-import React from 'react';
-import { createAvatar } from '@dicebear/core';
-import * as avatarStyles from '@dicebear/collection';
+import React from "react";
+import { createAvatar } from "@dicebear/core";
+import * as avatarStyles from "@dicebear/collection";
 
 interface AvatarProps {
   seed: string;
@@ -9,11 +9,11 @@ interface AvatarProps {
   className?: string;
 }
 
-export const Avatar: React.FC<AvatarProps> = ({ 
-  seed, 
-  style = 'initials',
+export const Avatar: React.FC<AvatarProps> = ({
+  seed,
+  style = "initials",
   size = 40,
-  className 
+  className,
 }) => {
   const avatar = createAvatar(avatarStyles[style], {
     seed,
@@ -21,9 +21,9 @@ export const Avatar: React.FC<AvatarProps> = ({
   });
 
   return (
-    <div 
+    <div
       className={className}
-      dangerouslySetInnerHTML={{ __html: avatar.toDataUriSync() }} 
+      dangerouslySetInnerHTML={{ __html: avatar.toDataUriSync() }}
     />
   );
 };

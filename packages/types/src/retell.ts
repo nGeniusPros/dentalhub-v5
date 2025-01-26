@@ -1,24 +1,24 @@
 export interface RetellCallStatus {
   callId: string;
-  status: 'scheduled' | 'in-progress' | 'completed' | 'failed' | 'cancelled';
+  status: "scheduled" | "in-progress" | "completed" | "failed" | "cancelled";
   startTime?: string;
   endTime?: string;
   duration?: number;
   participants: Array<{
-    type: 'agent' | 'customer';
+    type: "agent" | "customer";
     phoneNumber: string;
     name?: string;
   }>;
   recordingUrl?: string;
-  transcriptionStatus?: 'pending' | 'in-progress' | 'completed' | 'failed';
-  analysisStatus?: 'pending' | 'in-progress' | 'completed' | 'failed';
+  transcriptionStatus?: "pending" | "in-progress" | "completed" | "failed";
+  analysisStatus?: "pending" | "in-progress" | "completed" | "failed";
 }
 
 export interface RetellTranscription {
   callId: string;
   segments: Array<{
     speakerId: string;
-    speakerType: 'agent' | 'customer';
+    speakerType: "agent" | "customer";
     text: string;
     startTime: number;
     endTime: number;
@@ -35,7 +35,7 @@ export interface RetellAnalysis {
   callId: string;
   summary: string;
   sentiment: {
-    overall: 'positive' | 'neutral' | 'negative';
+    overall: "positive" | "neutral" | "negative";
     breakdown: {
       positive: number;
       neutral: number;
@@ -53,21 +53,21 @@ export interface RetellAnalysis {
   }>;
   actionItems: Array<{
     description: string;
-    priority: 'high' | 'medium' | 'low';
+    priority: "high" | "medium" | "low";
     assignedTo?: string;
     dueDate?: string;
   }>;
   patientConcerns?: Array<{
     type: string;
     description: string;
-    severity: 'high' | 'medium' | 'low';
+    severity: "high" | "medium" | "low";
     relatedTopics?: string[];
   }>;
   followUpRecommendations?: Array<{
     type: string;
     description: string;
     timeframe?: string;
-    priority: 'high' | 'medium' | 'low';
+    priority: "high" | "medium" | "low";
   }>;
 }
 
@@ -78,7 +78,7 @@ export interface RetellErrorDetails {
 }
 
 export interface RetellResponse<T> {
-  status: 'success' | 'error';
+  status: "success" | "error";
   message?: string;
   data?: T;
   error?: RetellErrorDetails;

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../../components/ui/button';
-import { cn } from '../../../../../lib/utils';
-import { useNotifications } from '../../../../../contexts/NotificationContext';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../../components/ui/button";
+import { cn } from "../../../../../lib/utils";
+import { useNotifications } from "../../../../../contexts/NotificationContext";
 
 interface AddDocumentModalProps {
   isOpen: boolean;
@@ -14,48 +14,48 @@ interface AddDocumentModalProps {
 export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
   isOpen,
   onClose,
-  onAdd
+  onAdd,
 }) => {
   const { dispatch: notifyDispatch } = useNotifications();
   const [document, setDocument] = useState({
-    name: '',
-    description: '',
-    category: '',
-    type: 'policy',
-    status: 'active',
+    name: "",
+    description: "",
+    category: "",
+    type: "policy",
+    status: "active",
     file: null as File | null,
     metadata: {
-      version: '1.0',
-      department: '',
+      version: "1.0",
+      department: "",
       approvalRequired: false,
-      reviewDate: '',
-      expirationDate: '',
+      reviewDate: "",
+      expirationDate: "",
       tags: [] as string[],
       assignedTo: [] as string[],
-      workflow: [] as string[]
-    }
+      workflow: [] as string[],
+    },
   });
 
-  const [currentTag, setCurrentTag] = useState('');
-  const [currentAssignee, setCurrentAssignee] = useState('');
+  const [currentTag, setCurrentTag] = useState("");
+  const [currentAssignee, setCurrentAssignee] = useState("");
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!document.file && document.type !== 'template') {
+
+    if (!document.file && document.type !== "template") {
       notifyDispatch({
-        type: 'ADD_NOTIFICATION',
+        type: "ADD_NOTIFICATION",
         payload: {
           id: Date.now().toString(),
-          type: 'alert',
-          title: 'File Required',
-          message: 'Please upload a document file to continue.',
+          type: "alert",
+          title: "File Required",
+          message: "Please upload a document file to continue.",
           timestamp: new Date().toISOString(),
           read: false,
-          priority: 'medium'
-        }
+          priority: "medium",
+        },
       });
       return;
     }
@@ -64,23 +64,23 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
       ...document,
       id: Date.now().toString(),
       uploadDate: new Date().toISOString(),
-      lastModified: new Date().toISOString()
+      lastModified: new Date().toISOString(),
     };
 
     onAdd(newDocument);
     onClose();
 
     notifyDispatch({
-      type: 'ADD_NOTIFICATION',
+      type: "ADD_NOTIFICATION",
       payload: {
         id: Date.now().toString(),
-        type: 'message',
-        title: 'Document Added',
+        type: "message",
+        title: "Document Added",
         message: `${document.name} has been added successfully.`,
         timestamp: new Date().toISOString(),
         read: false,
-        priority: 'medium'
-      }
+        priority: "medium",
+      },
     });
   };
 
@@ -97,23 +97,26 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
         ...document,
         metadata: {
           ...document.metadata,
-          tags: [...document.metadata.tags, currentTag]
-        }
+          tags: [...document.metadata.tags, currentTag],
+        },
       });
-      setCurrentTag('');
+      setCurrentTag("");
     }
   };
 
   const handleAddAssignee = () => {
-    if (currentAssignee && !document.metadata.assignedTo.includes(currentAssignee)) {
+    if (
+      currentAssignee &&
+      !document.metadata.assignedTo.includes(currentAssignee)
+    ) {
       setDocument({
         ...document,
         metadata: {
           ...document.metadata,
-          assignedTo: [...document.metadata.assignedTo, currentAssignee]
-        }
+          assignedTo: [...document.metadata.assignedTo, currentAssignee],
+        },
       });
-      setCurrentAssignee('');
+      setCurrentAssignee("");
     }
   };
 
@@ -143,7 +146,9 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
               <input
                 type="text"
                 value={document.name}
-                onChange={(e) => setDocument({ ...document, name: e.target.value })}
+                onChange={(e) =>
+                  setDocument({ ...document, name: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               />
@@ -155,7 +160,9 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
               </label>
               <textarea
                 value={document.description}
-                onChange={(e) => setDocument({ ...document, description: e.target.value })}
+                onChange={(e) =>
+                  setDocument({ ...document, description: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 rows={3}
                 required
@@ -168,7 +175,9 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
               </label>
               <select
                 value={document.category}
-                onChange={(e) => setDocument({ ...document, category: e.target.value })}
+                onChange={(e) =>
+                  setDocument({ ...document, category: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -188,7 +197,9 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
               </label>
               <select
                 value={document.type}
-                onChange={(e) => setDocument({ ...document, type: e.target.value })}
+                onChange={(e) =>
+                  setDocument({ ...document, type: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -223,7 +234,9 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => document.getElementById('file-upload')?.click()}
+                  onClick={() =>
+                    document.getElementById("file-upload")?.click()
+                  }
                 >
                   Browse Files
                 </Button>
@@ -239,8 +252,10 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
 
           {/* Metadata */}
           <div className="space-y-4">
-            <h3 className="text-sm font-medium text-gray-700">Document Metadata</h3>
-            
+            <h3 className="text-sm font-medium text-gray-700">
+              Document Metadata
+            </h3>
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-gray-500 mb-1">
@@ -248,10 +263,15 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
                 </label>
                 <select
                   value={document.metadata.department}
-                  onChange={(e) => setDocument({
-                    ...document,
-                    metadata: { ...document.metadata, department: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setDocument({
+                      ...document,
+                      metadata: {
+                        ...document.metadata,
+                        department: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value="">Select department...</option>
@@ -269,10 +289,15 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
                 <input
                   type="text"
                   value={document.metadata.version}
-                  onChange={(e) => setDocument({
-                    ...document,
-                    metadata: { ...document.metadata, version: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setDocument({
+                      ...document,
+                      metadata: {
+                        ...document.metadata,
+                        version: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   placeholder="e.g., 1.0"
                 />
@@ -285,10 +310,15 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
                 <input
                   type="date"
                   value={document.metadata.reviewDate}
-                  onChange={(e) => setDocument({
-                    ...document,
-                    metadata: { ...document.metadata, reviewDate: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setDocument({
+                      ...document,
+                      metadata: {
+                        ...document.metadata,
+                        reviewDate: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 />
               </div>
@@ -300,19 +330,22 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
                 <input
                   type="date"
                   value={document.metadata.expirationDate}
-                  onChange={(e) => setDocument({
-                    ...document,
-                    metadata: { ...document.metadata, expirationDate: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setDocument({
+                      ...document,
+                      metadata: {
+                        ...document.metadata,
+                        expirationDate: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm text-gray-500 mb-1">
-                Tags
-              </label>
+              <label className="block text-sm text-gray-500 mb-1">Tags</label>
               <div className="flex flex-wrap gap-2 mb-2">
                 {document.metadata.tags.map((tag, index) => (
                   <span
@@ -322,13 +355,17 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
                     {tag}
                     <button
                       type="button"
-                      onClick={() => setDocument({
-                        ...document,
-                        metadata: {
-                          ...document.metadata,
-                          tags: document.metadata.tags.filter((_, i) => i !== index)
-                        }
-                      })}
+                      onClick={() =>
+                        setDocument({
+                          ...document,
+                          metadata: {
+                            ...document.metadata,
+                            tags: document.metadata.tags.filter(
+                              (_, i) => i !== index,
+                            ),
+                          },
+                        })
+                      }
                       className="text-gray-500 hover:text-red-500"
                     >
                       <Icons.X className="w-3 h-3" />
@@ -344,7 +381,7 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-lg"
                   placeholder="Add tag..."
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === "Enter") {
                       e.preventDefault();
                       handleAddTag();
                     }
@@ -369,13 +406,17 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
                     {assignee}
                     <button
                       type="button"
-                      onClick={() => setDocument({
-                        ...document,
-                        metadata: {
-                          ...document.metadata,
-                          assignedTo: document.metadata.assignedTo.filter((_, i) => i !== index)
-                        }
-                      })}
+                      onClick={() =>
+                        setDocument({
+                          ...document,
+                          metadata: {
+                            ...document.metadata,
+                            assignedTo: document.metadata.assignedTo.filter(
+                              (_, i) => i !== index,
+                            ),
+                          },
+                        })
+                      }
                       className="text-gray-500 hover:text-red-500"
                     >
                       <Icons.X className="w-3 h-3" />
@@ -391,7 +432,7 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-lg"
                   placeholder="Add assignee..."
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === "Enter") {
                       e.preventDefault();
                       handleAddAssignee();
                     }
@@ -408,13 +449,15 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
                 <input
                   type="checkbox"
                   checked={document.metadata.approvalRequired}
-                  onChange={(e) => setDocument({
-                    ...document,
-                    metadata: {
-                      ...document.metadata,
-                      approvalRequired: e.target.checked
-                    }
-                  })}
+                  onChange={(e) =>
+                    setDocument({
+                      ...document,
+                      metadata: {
+                        ...document.metadata,
+                        approvalRequired: e.target.checked,
+                      },
+                    })
+                  }
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm">Requires Approval</span>
@@ -426,9 +469,13 @@ export const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button 
+            <Button
               type="submit"
-              disabled={!document.name || !document.description || (!document.file && document.type !== 'template')}
+              disabled={
+                !document.name ||
+                !document.description ||
+                (!document.file && document.type !== "template")
+              }
             >
               Add Document
             </Button>

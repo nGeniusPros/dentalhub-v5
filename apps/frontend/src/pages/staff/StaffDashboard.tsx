@@ -1,17 +1,17 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Link } from '@/components/ui/link';
-import { QuickActionsSection } from './components/QuickActionsSection';
-import { RecentActivitySection } from './components/RecentActivitySection';
-import { StatsSection } from './components/StatsSection';
-import { TasksSection } from './components/TasksSection';
-import { ScheduleSection } from './components/schedule/ScheduleSection';
-import { StaffWelcome } from './components/staff/StaffWelcome';
-import { MessageDialog } from './components/dialogs/MessageDialog';
-import { ReminderDialog } from './components/dialogs/ReminderDialog';
-import { CommentDialog } from './components/dialogs/CommentDialog';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Link } from "@/components/ui/link";
+import { QuickActionsSection } from "./components/QuickActionsSection";
+import { RecentActivitySection } from "./components/RecentActivitySection";
+import { StatsSection } from "./components/StatsSection";
+import { TasksSection } from "./components/TasksSection";
+import { ScheduleSection } from "./components/schedule/ScheduleSection";
+import { StaffWelcome } from "./components/staff/StaffWelcome";
+import { MessageDialog } from "./components/dialogs/MessageDialog";
+import { ReminderDialog } from "./components/dialogs/ReminderDialog";
+import { CommentDialog } from "./components/dialogs/CommentDialog";
+import { cn } from "@/lib/utils";
 
 interface Patient {
   id: string;
@@ -25,7 +25,9 @@ export const StaffDashboard: React.FC = () => {
   const [showMessage, setShowMessage] = React.useState(false);
   const [showReminder, setShowReminder] = React.useState(false);
   const [showComment, setShowComment] = React.useState(false);
-  const [selectedPatient, setSelectedPatient] = React.useState<Patient | null>(null);
+  const [selectedPatient, setSelectedPatient] = React.useState<Patient | null>(
+    null,
+  );
 
   return (
     <motion.div

@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { cn } from '../../../../lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { cn } from "../../../../lib/utils";
 
 interface ResourceGridProps {
   searchQuery: string;
@@ -13,44 +13,49 @@ interface ResourceGridProps {
 export const ResourceGrid: React.FC<ResourceGridProps> = ({
   searchQuery,
   selectedCategory,
-  selectedFilters
+  selectedFilters,
 }) => {
   const resources = [
     {
-      id: '1',
-      title: 'HIPAA Compliance Guide',
-      description: 'Comprehensive guide to HIPAA compliance',
-      type: 'document',
-      category: 'compliance',
-      lastUpdated: '2024-03-01',
+      id: "1",
+      title: "HIPAA Compliance Guide",
+      description: "Comprehensive guide to HIPAA compliance",
+      type: "document",
+      category: "compliance",
+      lastUpdated: "2024-03-01",
       required: true,
-      tags: ['compliance', 'hipaa', 'required']
+      tags: ["compliance", "hipaa", "required"],
     },
     {
-      id: '2',
-      title: 'Patient Intake Form',
-      description: 'Standard patient intake form template',
-      type: 'form',
-      category: 'clinical',
-      lastUpdated: '2024-02-15',
+      id: "2",
+      title: "Patient Intake Form",
+      description: "Standard patient intake form template",
+      type: "form",
+      category: "clinical",
+      lastUpdated: "2024-02-15",
       required: false,
-      tags: ['forms', 'patient', 'intake']
-    }
+      tags: ["forms", "patient", "intake"],
+    },
   ];
 
-  const filteredResources = resources.filter(resource => {
-    const matchesSearch = searchQuery === '' || 
+  const filteredResources = resources.filter((resource) => {
+    const matchesSearch =
+      searchQuery === "" ||
       resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       resource.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      resource.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      resource.tags.some((tag) =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
 
-    const matchesCategory = selectedCategory === 'all' || 
-      resource.category === selectedCategory;
+    const matchesCategory =
+      selectedCategory === "all" || resource.category === selectedCategory;
 
-    const matchesFilters = selectedFilters.length === 0 ||
-      (selectedFilters.includes('required') && resource.required) ||
-      (selectedFilters.includes('new') && 
-        new Date(resource.lastUpdated) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+    const matchesFilters =
+      selectedFilters.length === 0 ||
+      (selectedFilters.includes("required") && resource.required) ||
+      (selectedFilters.includes("new") &&
+        new Date(resource.lastUpdated) >
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
 
     return matchesSearch && matchesCategory && matchesFilters;
   });
@@ -65,13 +70,19 @@ export const ResourceGrid: React.FC<ResourceGridProps> = ({
           className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow"
         >
           <div className="flex items-center gap-3 mb-4">
-            <div className={cn(
-              "p-2 rounded-lg",
-              resource.type === 'document' && "bg-blue-100 text-blue-600",
-              resource.type === 'form' && "bg-green-100 text-green-600"
-            )}>
-              {resource.type === 'document' && <Icons.FileText className="w-5 h-5" />}
-              {resource.type === 'form' && <Icons.ClipboardList className="w-5 h-5" />}
+            <div
+              className={cn(
+                "p-2 rounded-lg",
+                resource.type === "document" && "bg-blue-100 text-blue-600",
+                resource.type === "form" && "bg-green-100 text-green-600",
+              )}
+            >
+              {resource.type === "document" && (
+                <Icons.FileText className="w-5 h-5" />
+              )}
+              {resource.type === "form" && (
+                <Icons.ClipboardList className="w-5 h-5" />
+              )}
             </div>
             <div>
               <h3 className="font-medium text-gray-900">{resource.title}</h3>

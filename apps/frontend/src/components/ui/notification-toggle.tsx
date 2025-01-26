@@ -1,9 +1,9 @@
-import React from 'react';
-import { Toggle } from './toggle';
-import { useSettings } from '../../contexts/SettingsContext';
+import React from "react";
+import { Toggle } from "./toggle";
+import { useSettings } from "../../contexts/SettingsContext";
 
 interface NotificationToggleProps {
-  type: keyof Settings['notifications'];
+  type: keyof Settings["notifications"];
   title: string;
   description: string;
 }
@@ -11,7 +11,7 @@ interface NotificationToggleProps {
 export const NotificationToggle: React.FC<NotificationToggleProps> = ({
   type,
   title,
-  description
+  description,
 }) => {
   const { state, updateSettings } = useSettings();
   const { settings } = state;
@@ -20,8 +20,8 @@ export const NotificationToggle: React.FC<NotificationToggleProps> = ({
     await updateSettings({
       notifications: {
         ...settings.notifications,
-        [type]: checked
-      }
+        [type]: checked,
+      },
     });
   };
 
@@ -31,10 +31,7 @@ export const NotificationToggle: React.FC<NotificationToggleProps> = ({
         <p className="font-medium text-gray-900">{title}</p>
         <p className="text-sm text-gray-500">{description}</p>
       </div>
-      <Toggle
-        checked={settings.notifications[type]}
-        onChange={handleToggle}
-      />
+      <Toggle checked={settings.notifications[type]} onChange={handleToggle} />
     </div>
   );
 };

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { FormTypeSelector } from './FormTypeSelector';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { FormTypeSelector } from "./FormTypeSelector";
 
 interface AddResourceModalProps {
   isOpen: boolean;
@@ -13,29 +13,29 @@ interface AddResourceModalProps {
 export const AddResourceModal: React.FC<AddResourceModalProps> = ({
   isOpen,
   onClose,
-  onAdd
+  onAdd,
 }) => {
   const [resource, setResource] = useState({
-    title: '',
-    description: '',
-    category: '',
-    formType: '',
-    section: '',
-    type: 'internal',
-    url: '',
+    title: "",
+    description: "",
+    category: "",
+    formType: "",
+    section: "",
+    type: "internal",
+    url: "",
     file: null as File | null,
     metadata: {
-      version: '1.0',
-      status: 'draft',
+      version: "1.0",
+      status: "draft",
       approvalRequired: false,
       workflow: [] as string[],
       permissions: [] as string[],
       tags: [] as string[],
-      expirationDate: '',
-      reviewDate: '',
-      department: '',
-      language: 'en'
-    }
+      expirationDate: "",
+      reviewDate: "",
+      department: "",
+      language: "en",
+    },
   });
 
   if (!isOpen) return null;
@@ -70,7 +70,9 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
             <input
               type="text"
               value={resource.title}
-              onChange={(e) => setResource({ ...resource, title: e.target.value })}
+              onChange={(e) =>
+                setResource({ ...resource, title: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               required
             />
@@ -82,7 +84,9 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
             </label>
             <textarea
               value={resource.description}
-              onChange={(e) => setResource({ ...resource, description: e.target.value })}
+              onChange={(e) =>
+                setResource({ ...resource, description: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               rows={3}
             />
@@ -95,7 +99,9 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
               </label>
               <select
                 value={resource.category}
-                onChange={(e) => setResource({ ...resource, category: e.target.value })}
+                onChange={(e) =>
+                  setResource({ ...resource, category: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
@@ -116,25 +122,29 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
               </label>
               <select
                 value={resource.section}
-                onChange={(e) => setResource({ ...resource, section: e.target.value })}
+                onChange={(e) =>
+                  setResource({ ...resource, section: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 required
               >
                 <option value="">Select section...</option>
-                {resource.category === 'forms' && (
+                {resource.category === "forms" && (
                   <>
                     <option value="hr">HR Forms</option>
                     <option value="clinical">Clinical Forms</option>
                     <option value="administrative">Administrative Forms</option>
                   </>
                 )}
-                {resource.category === 'education' && (
+                {resource.category === "education" && (
                   <>
                     <option value="clinical">Clinical Resources</option>
-                    <option value="administrative">Administrative Resources</option>
+                    <option value="administrative">
+                      Administrative Resources
+                    </option>
                   </>
                 )}
-                {resource.category === 'manuals' && (
+                {resource.category === "manuals" && (
                   <>
                     <option value="staff">Staff Manuals</option>
                     <option value="provider">Provider Manuals</option>
@@ -149,7 +159,9 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
             <div>
               <FormTypeSelector
                 selectedType={resource.formType}
-                onTypeChange={(type) => setResource({ ...resource, formType: type })}
+                onTypeChange={(type) =>
+                  setResource({ ...resource, formType: type })
+                }
                 category={resource.category}
               />
             </div>
@@ -163,10 +175,15 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
               <input
                 type="text"
                 value={resource.metadata.department}
-                onChange={(e) => setResource({
-                  ...resource,
-                  metadata: { ...resource.metadata, department: e.target.value }
-                })}
+                onChange={(e) =>
+                  setResource({
+                    ...resource,
+                    metadata: {
+                      ...resource.metadata,
+                      department: e.target.value,
+                    },
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               />
             </div>
@@ -176,10 +193,15 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
               </label>
               <select
                 value={resource.metadata.language}
-                onChange={(e) => setResource({
-                  ...resource,
-                  metadata: { ...resource.metadata, language: e.target.value }
-                })}
+                onChange={(e) =>
+                  setResource({
+                    ...resource,
+                    metadata: {
+                      ...resource.metadata,
+                      language: e.target.value,
+                    },
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
               >
                 <option value="en">English</option>
@@ -197,8 +219,10 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
-                  checked={resource.type === 'internal'}
-                  onChange={() => setResource({ ...resource, type: 'internal', url: '' })}
+                  checked={resource.type === "internal"}
+                  onChange={() =>
+                    setResource({ ...resource, type: "internal", url: "" })
+                  }
                   className="rounded border-gray-300"
                 />
                 <span>Upload File</span>
@@ -206,8 +230,10 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
-                  checked={resource.type === 'external'}
-                  onChange={() => setResource({ ...resource, type: 'external', file: null })}
+                  checked={resource.type === "external"}
+                  onChange={() =>
+                    setResource({ ...resource, type: "external", file: null })
+                  }
                   className="rounded border-gray-300"
                 />
                 <span>External Link</span>
@@ -215,7 +241,7 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
             </div>
           </div>
 
-          {resource.type === 'external' ? (
+          {resource.type === "external" ? (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 URL
@@ -223,10 +249,12 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
               <input
                 type="url"
                 value={resource.url}
-                onChange={(e) => setResource({ ...resource, url: e.target.value })}
+                onChange={(e) =>
+                  setResource({ ...resource, url: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 placeholder="https://"
-                required={resource.type === 'external'}
+                required={resource.type === "external"}
               />
             </div>
           ) : (
@@ -236,9 +264,14 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
               </label>
               <input
                 type="file"
-                onChange={(e) => setResource({ ...resource, file: e.target.files?.[0] || null })}
+                onChange={(e) =>
+                  setResource({
+                    ...resource,
+                    file: e.target.files?.[0] || null,
+                  })
+                }
                 className="w-full"
-                required={resource.type === 'internal'}
+                required={resource.type === "internal"}
               />
             </div>
           )}
@@ -257,13 +290,17 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
                     {tag}
                     <button
                       type="button"
-                      onClick={() => setResource({
-                        ...resource,
-                        metadata: {
-                          ...resource.metadata,
-                          tags: resource.metadata.tags.filter((_, i) => i !== index)
-                        }
-                      })}
+                      onClick={() =>
+                        setResource({
+                          ...resource,
+                          metadata: {
+                            ...resource.metadata,
+                            tags: resource.metadata.tags.filter(
+                              (_, i) => i !== index,
+                            ),
+                          },
+                        })
+                      }
                       className="text-gray-500 hover:text-red-500"
                     >
                       <Icons.X className="w-3 h-3" />
@@ -275,7 +312,7 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
                   placeholder="Add tag..."
                   className="px-3 py-1 border border-gray-200 rounded-full text-sm"
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === "Enter") {
                       e.preventDefault();
                       const value = (e.target as HTMLInputElement).value.trim();
                       if (value && !resource.metadata.tags.includes(value)) {
@@ -283,10 +320,10 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
                           ...resource,
                           metadata: {
                             ...resource.metadata,
-                            tags: [...resource.metadata.tags, value]
-                          }
+                            tags: [...resource.metadata.tags, value],
+                          },
                         });
-                        (e.target as HTMLInputElement).value = '';
+                        (e.target as HTMLInputElement).value = "";
                       }
                     }
                   }}
@@ -302,10 +339,15 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
                 <input
                   type="date"
                   value={resource.metadata.reviewDate}
-                  onChange={(e) => setResource({
-                    ...resource,
-                    metadata: { ...resource.metadata, reviewDate: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setResource({
+                      ...resource,
+                      metadata: {
+                        ...resource.metadata,
+                        reviewDate: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 />
               </div>
@@ -316,10 +358,15 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
                 <input
                   type="date"
                   value={resource.metadata.expirationDate}
-                  onChange={(e) => setResource({
-                    ...resource,
-                    metadata: { ...resource.metadata, expirationDate: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setResource({
+                      ...resource,
+                      metadata: {
+                        ...resource.metadata,
+                        expirationDate: e.target.value,
+                      },
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                 />
               </div>
@@ -330,10 +377,15 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
                 <input
                   type="checkbox"
                   checked={resource.metadata.approvalRequired}
-                  onChange={(e) => setResource({
-                    ...resource,
-                    metadata: { ...resource.metadata, approvalRequired: e.target.checked }
-                  })}
+                  onChange={(e) =>
+                    setResource({
+                      ...resource,
+                      metadata: {
+                        ...resource.metadata,
+                        approvalRequired: e.target.checked,
+                      },
+                    })
+                  }
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm">Requires Approval</span>
@@ -345,9 +397,7 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Add Resource
-            </Button>
+            <Button type="submit">Add Resource</Button>
           </div>
         </form>
       </motion.div>

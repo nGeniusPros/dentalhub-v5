@@ -1,4 +1,4 @@
-import { AgentConfig, AgentConfigSchema } from './types';
+import { AgentConfig, AgentConfigSchema } from "./types";
 
 export class AgentRegistry {
   private static instance: AgentRegistry;
@@ -35,7 +35,7 @@ export class AgentRegistry {
     return {
       name,
       config,
-      process: () => Promise.resolve('Not implemented')
+      process: () => Promise.resolve("Not implemented"),
     };
   }
 }

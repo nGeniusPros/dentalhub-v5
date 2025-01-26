@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react';
-import { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-import { supabase, subscribeToChanges } from '../../lib/supabase/client';
+import { useEffect, useState } from "react";
+import {
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
+import { supabase, subscribeToChanges } from "../../lib/supabase/client";
 import {
   Appointment,
   Message,
   Notification,
   PatientRecord,
-  StaffSchedule
-} from '../../lib/supabase/database.types';
+  StaffSchedule,
+} from "../../lib/supabase/database.types";
 
-type RealtimeEvent = 'INSERT' | 'UPDATE' | 'DELETE' | '*';
+type RealtimeEvent = "INSERT" | "UPDATE" | "DELETE" | "*";
 
 interface UseRealtimeOptions<T> {
   table: string;
@@ -20,9 +23,15 @@ interface UseRealtimeOptions<T> {
 }
 
 export function useRealtime<T extends { id: string | number }>(
-  options: UseRealtimeOptions<T>
+  options: UseRealtimeOptions<T>,
 ) {
-  const { table, event = '*', initialData = [], onDataChange, filter } = options;
+  const {
+    table,
+    event = "*",
+    initialData = [],
+    onDataChange,
+    filter,
+  } = options;
   const [data, setData] = useState<T[]>(initialData);
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +42,7 @@ export function useRealtime<T extends { id: string | number }>(
       try {
         const { data: initialData, error } = await supabase
           .from(table)
-          .select('*');
+          .select("*");
 
         if (error) throw error;
 
@@ -41,7 +50,9 @@ export function useRealtime<T extends { id: string | number }>(
         setData(filteredData as T[]);
         if (onDataChange) onDataChange(filteredData as T[]);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to fetch data'));
+        setError(
+          err instanceof Error ? err : new Error("Failed to fetch data"),
+        );
       } finally {
         setLoading(false);
       }
@@ -52,7 +63,10 @@ export function useRealtime<T extends { id: string | number }>(
 
   // Realtime subscription
   useEffect(() => {
-    const unsubscribe = subscribeToChanges<T, RealtimePostgresChangesPayload<T>>(
+    const unsubscribe = subscribeToChanges<
+      T,
+      RealtimePostgresChangesPayload<T>
+    >(
       table,
       (payload) => {
         const newRecord = payload.new as T;
@@ -62,23 +76,25 @@ export function useRealtime<T extends { id: string | number }>(
           let updatedData = [...currentData];
 
           switch (payload.eventType) {
-            case 'INSERT':
+            case "INSERT":
               if (!filter || filter(newRecord)) {
                 updatedData = [...updatedData, newRecord];
               }
               break;
 
-            case 'UPDATE':
+            case "UPDATE":
               updatedData = updatedData.map((item) =>
-                item.id === (newRecord as any).id ? newRecord : item
+                item.id === (newRecord as any).id ? newRecord : item,
               );
               if (filter) {
                 updatedData = updatedData.filter(filter);
               }
               break;
 
-            case 'DELETE':
-              updatedData = updatedData.filter((item) => item.id !== (oldRecord as any).id);
+            case "DELETE":
+              updatedData = updatedData.filter(
+                (item) => item.id !== (oldRecord as any).id,
+              );
               break;
           }
 
@@ -86,7 +102,7 @@ export function useRealtime<T extends { id: string | number }>(
           return updatedData;
         });
       },
-      event
+      event,
     );
 
     return () => {
@@ -98,42 +114,52 @@ export function useRealtime<T extends { id: string | number }>(
     data,
     error,
     loading,
-    mutate: setData
+    mutate: setData,
   };
 }
 
 // Specialized hooks for specific features
-export function useAppointments(options: Omit<UseRealtimeOptions<Appointment>, 'table'> = {}) {
+export function useAppointments(
+  options: Omit<UseRealtimeOptions<Appointment>, "table"> = {},
+) {
   return useRealtime<Appointment>({
     ...options,
-    table: 'appointments'
+    table: "appointments",
   });
 }
 
-export function usePatientRecords(options: Omit<UseRealtimeOptions<PatientRecord>, 'table'> = {}) {
+export function usePatientRecords(
+  options: Omit<UseRealtimeOptions<PatientRecord>, "table"> = {},
+) {
   return useRealtime<PatientRecord>({
     ...options,
-    table: 'patient_records'
+    table: "patient_records",
   });
 }
 
-export function useStaffSchedules(options: Omit<UseRealtimeOptions<StaffSchedule>, 'table'> = {}) {
+export function useStaffSchedules(
+  options: Omit<UseRealtimeOptions<StaffSchedule>, "table"> = {},
+) {
   return useRealtime<StaffSchedule>({
     ...options,
-    table: 'staff_schedules'
+    table: "staff_schedules",
   });
 }
 
-export function useMessages(options: Omit<UseRealtimeOptions<Message>, 'table'> = {}) {
+export function useMessages(
+  options: Omit<UseRealtimeOptions<Message>, "table"> = {},
+) {
   return useRealtime<Message>({
     ...options,
-    table: 'messages'
+    table: "messages",
   });
 }
 
-export function useNotifications(options: Omit<UseRealtimeOptions<Notification>, 'table'> = {}) {
+export function useNotifications(
+  options: Omit<UseRealtimeOptions<Notification>, "table"> = {},
+) {
   return useRealtime<Notification>({
     ...options,
-    table: 'notifications'
+    table: "notifications",
   });
 }

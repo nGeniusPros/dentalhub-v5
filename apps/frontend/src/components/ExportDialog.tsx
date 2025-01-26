@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from './ui/button';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "./ui/button";
 
 interface ExportDialogProps {
   isOpen: boolean;
@@ -12,13 +12,13 @@ interface ExportDialogProps {
 export const ExportDialog: React.FC<ExportDialogProps> = ({
   isOpen,
   onClose,
-  onExport
+  onExport,
 }) => {
-  const [format, setFormat] = useState('csv');
+  const [format, setFormat] = useState("csv");
   const [options, setOptions] = useState({
-    dateRange: 'all',
+    dateRange: "all",
     includePersonalInfo: false,
-    includeSensitiveData: false
+    includeSensitiveData: false,
   });
 
   if (!isOpen) return null;
@@ -61,7 +61,9 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
             </label>
             <select
               value={options.dateRange}
-              onChange={(e) => setOptions(prev => ({ ...prev, dateRange: e.target.value }))}
+              onChange={(e) =>
+                setOptions((prev) => ({ ...prev, dateRange: e.target.value }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg"
             >
               <option value="all">All Time</option>
@@ -77,7 +79,12 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
               <input
                 type="checkbox"
                 checked={options.includePersonalInfo}
-                onChange={(e) => setOptions(prev => ({ ...prev, includePersonalInfo: e.target.checked }))}
+                onChange={(e) =>
+                  setOptions((prev) => ({
+                    ...prev,
+                    includePersonalInfo: e.target.checked,
+                  }))
+                }
                 className="rounded border-gray-300"
               />
               <span className="text-sm">Include Personal Information</span>
@@ -86,7 +93,12 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
               <input
                 type="checkbox"
                 checked={options.includeSensitiveData}
-                onChange={(e) => setOptions(prev => ({ ...prev, includeSensitiveData: e.target.checked }))}
+                onChange={(e) =>
+                  setOptions((prev) => ({
+                    ...prev,
+                    includeSensitiveData: e.target.checked,
+                  }))
+                }
                 className="rounded border-gray-300"
               />
               <span className="text-sm">Include Sensitive Data</span>
@@ -98,9 +110,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={() => onExport(format, options)}>
-            Export
-          </Button>
+          <Button onClick={() => onExport(format, options)}>Export</Button>
         </div>
       </motion.div>
     </div>

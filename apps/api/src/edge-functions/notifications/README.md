@@ -17,12 +17,15 @@ This edge function handles sending email and SMS notifications.
 ## Available Endpoints
 
 ### Send Notification
+
 ```http
 POST /api/edge-functions/notifications
 ```
+
 Sends an email or SMS notification.
 
 **Request Body:**
+
 ```json
 {
   "type": "email | sms",
@@ -80,10 +83,12 @@ Sends an email or SMS notification.
 ## Error Handling
 
 The edge function includes comprehensive error handling with:
+
 - Detailed error responses
 - Logging for debugging
 
 ### Error Response Format
+
 ```json
 {
   "error": {
@@ -97,6 +102,7 @@ The edge function includes comprehensive error handling with:
 ## Configuration
 
 Key configuration options can be adjusted through environment variables:
+
 - Email provider settings
 - SMS provider settings
 - Webhook settings
@@ -107,11 +113,13 @@ See `.env.example` for all available configuration options.
 ## Development
 
 ### Running Tests
+
 ```bash
 pnpm test:notifications
 ```
 
 ### Adding New Features
+
 1. Define types in `types.ts`
 2. Implement service method in `service.ts`
 3. Add route in `index.ts`
@@ -120,6 +128,7 @@ pnpm test:notifications
 ## Monitoring
 
 The edge function includes built-in monitoring for:
+
 - Notification success rates
 - Processing times
 - Error rates
@@ -128,6 +137,7 @@ The edge function includes built-in monitoring for:
 ## Security
 
 Security measures include:
+
 - Request validation
 - Secure error handling
 - Access control

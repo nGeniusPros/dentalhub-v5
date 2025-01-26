@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import type { MembershipTier } from '../../../../types/membership';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import type { MembershipTier } from "../../../../types/membership";
 
 interface CreatePlanModalProps {
   isOpen: boolean;
@@ -13,15 +13,15 @@ interface CreatePlanModalProps {
 export const CreatePlanModal: React.FC<CreatePlanModalProps> = ({
   isOpen,
   onClose,
-  onSave
+  onSave,
 }) => {
   const [plan, setPlan] = useState<Partial<MembershipTier>>({
-    name: '',
+    name: "",
     price: { monthly: 0, annual: 0 },
     benefits: [],
-    pointsMultiplier: 1
+    pointsMultiplier: 1,
   });
-  const [newBenefit, setNewBenefit] = useState('');
+  const [newBenefit, setNewBenefit] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,18 +33,18 @@ export const CreatePlanModal: React.FC<CreatePlanModalProps> = ({
 
   const addBenefit = () => {
     if (newBenefit.trim()) {
-      setPlan(prev => ({
+      setPlan((prev) => ({
         ...prev,
-        benefits: [...(prev.benefits || []), newBenefit.trim()]
+        benefits: [...(prev.benefits || []), newBenefit.trim()],
       }));
-      setNewBenefit('');
+      setNewBenefit("");
     }
   };
 
   const removeBenefit = (index: number) => {
-    setPlan(prev => ({
+    setPlan((prev) => ({
       ...prev,
-      benefits: prev.benefits?.filter((_, i) => i !== index)
+      benefits: prev.benefits?.filter((_, i) => i !== index),
     }));
   };
 
@@ -77,7 +77,9 @@ export const CreatePlanModal: React.FC<CreatePlanModalProps> = ({
             <input
               type="text"
               value={plan.name}
-              onChange={(e) => setPlan(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) =>
+                setPlan((prev) => ({ ...prev, name: e.target.value }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
               required
             />
@@ -92,10 +94,15 @@ export const CreatePlanModal: React.FC<CreatePlanModalProps> = ({
               <input
                 type="number"
                 value={plan.price?.monthly}
-                onChange={(e) => setPlan(prev => ({
-                  ...prev,
-                  price: { ...prev.price!, monthly: parseFloat(e.target.value) }
-                }))}
+                onChange={(e) =>
+                  setPlan((prev) => ({
+                    ...prev,
+                    price: {
+                      ...prev.price!,
+                      monthly: parseFloat(e.target.value),
+                    },
+                  }))
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 min="0"
                 step="0.01"
@@ -109,10 +116,15 @@ export const CreatePlanModal: React.FC<CreatePlanModalProps> = ({
               <input
                 type="number"
                 value={plan.price?.annual}
-                onChange={(e) => setPlan(prev => ({
-                  ...prev,
-                  price: { ...prev.price!, annual: parseFloat(e.target.value) }
-                }))}
+                onChange={(e) =>
+                  setPlan((prev) => ({
+                    ...prev,
+                    price: {
+                      ...prev.price!,
+                      annual: parseFloat(e.target.value),
+                    },
+                  }))
+                }
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 min="0"
                 step="0.01"
@@ -128,7 +140,12 @@ export const CreatePlanModal: React.FC<CreatePlanModalProps> = ({
             </label>
             <select
               value={plan.pointsMultiplier}
-              onChange={(e) => setPlan(prev => ({ ...prev, pointsMultiplier: parseInt(e.target.value) }))}
+              onChange={(e) =>
+                setPlan((prev) => ({
+                  ...prev,
+                  pointsMultiplier: parseInt(e.target.value),
+                }))
+              }
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value={1}>1x</option>
@@ -168,7 +185,7 @@ export const CreatePlanModal: React.FC<CreatePlanModalProps> = ({
                 className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 placeholder="Add a benefit..."
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === "Enter") {
                     e.preventDefault();
                     addBenefit();
                   }
@@ -184,9 +201,7 @@ export const CreatePlanModal: React.FC<CreatePlanModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Create Plan
-            </Button>
+            <Button type="submit">Create Plan</Button>
           </div>
         </form>
       </motion.div>

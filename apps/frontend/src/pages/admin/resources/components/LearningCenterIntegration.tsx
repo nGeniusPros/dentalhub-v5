@@ -1,17 +1,17 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export const LearningCenterIntegration = () => {
   const navigate = useNavigate();
-  
+
   const learningStats = {
     assignedCourses: 3,
     completedCourses: 12,
     certificationsExpiringSoon: 2,
-    availableCourses: 45
+    availableCourses: 45,
   };
 
   return (
@@ -25,7 +25,7 @@ export const LearningCenterIntegration = () => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => navigate('/admin-dashboard/learning')}
+          onClick={() => navigate("/admin-dashboard/learning")}
         >
           <Icons.ExternalLink className="w-4 h-4 mr-2" />
           Open
@@ -40,14 +40,18 @@ export const LearningCenterIntegration = () => {
               <Icons.BookOpen className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium">Assigned</span>
             </div>
-            <p className="text-2xl font-bold text-primary">{learningStats.assignedCourses}</p>
+            <p className="text-2xl font-bold text-primary">
+              {learningStats.assignedCourses}
+            </p>
           </div>
           <div className="p-3 bg-green-50 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <Icons.CheckCircle className="w-4 h-4 text-green-600" />
               <span className="text-sm font-medium">Completed</span>
             </div>
-            <p className="text-2xl font-bold text-green-600">{learningStats.completedCourses}</p>
+            <p className="text-2xl font-bold text-green-600">
+              {learningStats.completedCourses}
+            </p>
           </div>
         </div>
 
@@ -56,7 +60,7 @@ export const LearningCenterIntegration = () => {
           <Button
             variant="outline"
             className="w-full justify-start"
-            onClick={() => navigate('/admin-dashboard/learning/courses')}
+            onClick={() => navigate("/admin-dashboard/learning/courses")}
           >
             <Icons.GraduationCap className="w-4 h-4 mr-2" />
             Browse Courses
@@ -64,7 +68,7 @@ export const LearningCenterIntegration = () => {
           <Button
             variant="outline"
             className="w-full justify-start"
-            onClick={() => navigate('/admin-dashboard/learning/certifications')}
+            onClick={() => navigate("/admin-dashboard/learning/certifications")}
           >
             <Icons.Award className="w-4 h-4 mr-2" />
             Certifications
@@ -77,7 +81,7 @@ export const LearningCenterIntegration = () => {
           <Button
             variant="outline"
             className="w-full justify-start"
-            onClick={() => navigate('/admin-dashboard/learning/assignments')}
+            onClick={() => navigate("/admin-dashboard/learning/assignments")}
           >
             <Icons.ClipboardList className="w-4 h-4 mr-2" />
             Assignments
@@ -86,25 +90,41 @@ export const LearningCenterIntegration = () => {
 
         {/* Available Courses Preview */}
         <div>
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Available Courses</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">
+            Available Courses
+          </h3>
           <div className="space-y-2">
             {[
-              { title: 'HIPAA Compliance', type: 'Required', dueDate: '2024-04-15' },
-              { title: 'Customer Service', type: 'Optional', progress: '75%' },
-              { title: 'Safety Training', type: 'Required', dueDate: '2024-03-30' }
+              {
+                title: "HIPAA Compliance",
+                type: "Required",
+                dueDate: "2024-04-15",
+              },
+              { title: "Customer Service", type: "Optional", progress: "75%" },
+              {
+                title: "Safety Training",
+                type: "Required",
+                dueDate: "2024-03-30",
+              },
             ].map((course, index) => (
               <div
                 key={index}
                 className="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-                onClick={() => navigate(`/admin-dashboard/learning/courses/${index + 1}`)}
+                onClick={() =>
+                  navigate(`/admin-dashboard/learning/courses/${index + 1}`)
+                }
               >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium">{course.title}</p>
                     <div className="flex items-center gap-2">
-                      <span className={`text-xs ${
-                        course.type === 'Required' ? 'text-red-600' : 'text-gray-500'
-                      }`}>
+                      <span
+                        className={`text-xs ${
+                          course.type === "Required"
+                            ? "text-red-600"
+                            : "text-gray-500"
+                        }`}
+                      >
                         {course.type}
                       </span>
                       {course.dueDate && (

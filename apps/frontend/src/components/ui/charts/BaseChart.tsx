@@ -1,6 +1,6 @@
-import React from 'react';
-import { ResponsiveContainer } from 'recharts';
-import { cn } from '../../../lib/utils';
+import React from "react";
+import { ResponsiveContainer } from "recharts";
+import { cn } from "../../../lib/utils";
 
 interface BaseChartProps {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ export const BaseChart: React.FC<BaseChartProps> = ({
   children,
   title,
   className,
-  height = 300
+  height = 300,
 }) => {
   return (
     <div className={cn("bg-white p-6 rounded-xl shadow-lg", className)}>

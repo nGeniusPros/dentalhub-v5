@@ -1,10 +1,15 @@
-import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../components/ui/dialog';
-import { Button } from '../../../components/ui/button';
-import { Input } from '../../../components/ui/input';
-import { Label } from '../../../components/ui/label';
-import { Textarea } from '../../../components/ui/textarea';
-import { Campaign } from '../../../hooks/use-campaigns';
+import React from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../../components/ui/dialog";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
+import { Textarea } from "../../../components/ui/textarea";
+import { Campaign } from "../../../hooks/use-campaigns";
 
 interface EditCampaignDialogProps {
   isOpen: boolean;
@@ -20,13 +25,13 @@ export const EditCampaignDialog: React.FC<EditCampaignDialogProps> = ({
   onSave,
 }) => {
   const [formData, setFormData] = React.useState<Partial<Campaign>>({
-    name: campaign?.name || '',
-    script: campaign?.script || '',
-    targetAudience: campaign?.targetAudience || '',
+    name: campaign?.name || "",
+    script: campaign?.script || "",
+    targetAudience: campaign?.targetAudience || "",
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -42,7 +47,9 @@ export const EditCampaignDialog: React.FC<EditCampaignDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{campaign ? 'Edit Campaign' : 'Create Campaign'}</DialogTitle>
+          <DialogTitle>
+            {campaign ? "Edit Campaign" : "Create Campaign"}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
           <div className="grid gap-2">
@@ -80,9 +87,7 @@ export const EditCampaignDialog: React.FC<EditCampaignDialogProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              {campaign ? 'Update' : 'Create'}
-            </Button>
+            <Button type="submit">{campaign ? "Update" : "Create"}</Button>
           </div>
         </form>
       </DialogContent>

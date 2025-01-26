@@ -1,11 +1,11 @@
-import axios from 'axios';
-import { z } from 'zod';
-import { handleError } from '../utils/errorHandlers';
-import { rateLimiter } from '../utils/rateLimiter';
+import axios from "axios";
+import { z } from "zod";
+import { handleError } from "../utils/errorHandlers";
+import { rateLimiter } from "../utils/rateLimiter";
 
 // Validation schemas
 const RequestKeyResponse = z.object({
-  request_key: z.string()
+  request_key: z.string(),
 });
 
 export interface PaginationParams {
@@ -20,21 +20,24 @@ export async function getRequestKey(
   appId: string,
   appKey: string,
   masterId: string,
-  practiceKey: string
+  practiceKey: string,
 ): Promise<string> {
   try {
-    const response = await axios.post('https://api.sikkasoft.com/v4/request_key', {
-      grant_type: 'request_key',
-      office_id: masterId,
-      secret_key: practiceKey,
-      app_id: appId,
-      app_key: appKey
-    });
+    const response = await axios.post(
+      "https://api.sikkasoft.com/v4/request_key",
+      {
+        grant_type: "request_key",
+        office_id: masterId,
+        secret_key: practiceKey,
+        app_id: appId,
+        app_key: appKey,
+      },
+    );
 
     const parsed = RequestKeyResponse.parse(response.data);
     return parsed.request_key;
   } catch (error) {
-    throw handleError(error, 'Failed to get request key');
+    throw handleError(error, "Failed to get request key");
   }
 }
 
@@ -46,7 +49,7 @@ export async function getPaginatedData<T>(
   practiceId: string,
   endpoint: string,
   fields: string,
-  limit: number = 500
+  limit: number = 500,
 ): Promise<T[]> {
   const allData: T[] = [];
   let offset = 0;
@@ -60,19 +63,23 @@ export async function getPaginatedData<T>(
       const url = `https://api.sikkasoft.com/v4/${endpoint}`;
       const response = await axios.get(url, {
         headers: {
-          'request-key': requestKey
+          "request-key": requestKey,
         },
         params: {
           practice_id: practiceId,
           fields,
           offset,
-          limit
-        }
+          limit,
+        },
       });
 
       const responseData = response.data;
 
-      if (responseData && responseData.items && Array.isArray(responseData.items)) {
+      if (
+        responseData &&
+        responseData.items &&
+        Array.isArray(responseData.items)
+      ) {
         allData.push(...responseData.items);
         hasMore = responseData.items.length === limit;
       } else if (responseData && Array.isArray(responseData)) {
@@ -86,7 +93,6 @@ export async function getPaginatedData<T>(
       }
 
       offset += limit;
-
     } catch (error) {
       throw handleError(error, `Failed to fetch data from ${endpoint}`);
     }
@@ -102,7 +108,7 @@ export async function getSingleRecord<T>(
   requestKey: string,
   practiceId: string,
   endpoint: string,
-  fields: string
+  fields: string,
 ): Promise<T> {
   try {
     await rateLimiter.checkLimit();
@@ -110,12 +116,12 @@ export async function getSingleRecord<T>(
     const url = `https://api.sikkasoft.com/v4/${endpoint}`;
     const response = await axios.get(url, {
       headers: {
-        'request-key': requestKey
+        "request-key": requestKey,
       },
       params: {
         practice_id: practiceId,
-        fields
-      }
+        fields,
+      },
     });
 
     return response.data;
