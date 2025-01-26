@@ -1,68 +1,72 @@
-export type SikkaVerifyInsuranceResponse = {
-  status: string;
-  message?: string;
-  data?: any;
+import type {
+  SikkaVerifyInsuranceResponse,
+  SikkaCheckEligibilityResponse,
+  SikkaVerifyBenefitsResponse,
+  SikkaProcessClaimResponse,
+  SikkaErrorDetails
+} from '@dentalhub/types/sikka';
+
+import type {
+  RetellCallStatusResponse,
+  RetellTranscriptionResponse,
+  RetellAnalysisResponse,
+  RetellErrorDetails
+} from '@dentalhub/types/retell';
+
+export type {
+  SikkaVerifyInsuranceResponse,
+  SikkaCheckEligibilityResponse,
+  SikkaVerifyBenefitsResponse,
+  SikkaProcessClaimResponse,
+  RetellCallStatusResponse,
+  RetellTranscriptionResponse,
+  RetellAnalysisResponse
 };
 
-export type SikkaCheckEligibilityResponse = {
-    status: string;
-    message?: string;
-    data?: any;
-  };
-
-export type SikkaVerifyBenefitsResponse = {
-    status: string;
-    message?: string;
-    data?: any;
-  };
-
-export type SikkaProcessClaimResponse = {
-    status: string;
-    message?: string;
-    data?: any;
-  };
-
-export type RetellCallStatusResponse = {
-  status: string;
-  message?: string;
-  data?: any;
-};
-
-export type RetellTranscriptionResponse = {
-  transcription: string;
-  message?: string;
-  data?: any;
-};
-
-export type RetellAnalysisResponse = {
-  analysis: any;
-  message?: string;
-  data?: any;
-};
-
-export type OpenAICompletionResponse = {
+export interface OpenAICompletionResponse {
   id: string;
   object: string;
   created: number;
   model: string;
-  choices: {
+  choices: Array<{
     message?: {
+      role: 'assistant' | 'user' | 'system';
       content?: string | null;
     };
-  }[];
-};
+    text?: string;
+    index: number;
+    logprobs: null | {
+      tokens: string[];
+      token_logprobs: number[];
+      top_logprobs: Array<Record<string, number>>;
+      text_offset: number[];
+    };
+    finish_reason: 'stop' | 'length' | 'content_filter' | null;
+  }>;
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+}
 
-export type ExternalServiceError = {
+export interface ExternalServiceError {
   service: string;
   statusCode: number | undefined;
   message: string;
-  details: any;
-};
+  details: SikkaErrorDetails | RetellErrorDetails | Record<string, unknown>;
+}
 
-export type RateLimitError = {
-  message: string;
-};
+export class RateLimitError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'RateLimitError';
+  }
+}
 
-export type AuthenticationError = {
-  message: string;
-};
+export class AuthenticationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AuthenticationError';
+  }
+}

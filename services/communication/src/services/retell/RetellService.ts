@@ -1,5 +1,12 @@
 import WebSocket from 'ws';
-import { RetellConfig, CallEventPayload, CallResponse, CallConfig } from './types.js';
+import { 
+  RetellConfig, 
+  CallEventPayload, 
+  CallResponse, 
+  CallConfig,
+  RetellTranscriptionData,
+  RetellCallEndedData
+} from './types.js';
 
 export class RetellService {
   private config: RetellConfig;
@@ -25,16 +32,18 @@ export class RetellService {
           llm_config: config?.llmConfig,
           webhook_config: config?.webhookConfig || {
             url: process.env.RETELL_WEBHOOK_URL,
-            events: ['call.started', 'call.ended', 'call.transcription']
+            events: ['call.started', 'call.ended', 'call.transcription'] as const
           }
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to initiate call: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+        throw new Error(`Failed to initiate call: ${errorData.message || response.statusText}`);
       }
 
-      return await response.json();
+      const data = await response.json();
+      return data;
     } catch (error) {
       console.error('Error initiating call:', error);
       throw error;
@@ -42,9 +51,9 @@ export class RetellService {
   }
 
   connectWebSocket(callId: string, handlers: {
-    onTranscription?: (data: any) => void;
-    onCallEnded?: (data: any) => void;
-    onError?: (error: any) => void;
+    onTranscription?: (data: RetellTranscriptionData) => void;
+    onCallEnded?: (data: RetellCallEndedData) => void;
+    onError?: (error: Error) => void;
   }): void {
     try {
       this.ws = new WebSocket(`${this.config.wsUrl}?call_id=${callId}`);
@@ -54,24 +63,29 @@ export class RetellService {
       });
 
       this.ws.on('message', (data: string) => {
-        const event: CallEventPayload = JSON.parse(data);
+        try {
+          const event = JSON.parse(data) as CallEventPayload;
 
-        switch (event.eventType) {
-          case 'call.transcription':
-            handlers.onTranscription?.(event.data);
-            break;
-          case 'call.ended':
-            handlers.onCallEnded?.(event.data);
-            this.ws?.close();
-            break;
-          default:
-            console.log(`Unhandled event type: ${event.eventType}`);
+          switch (event.eventType) {
+            case 'call.transcription':
+              handlers.onTranscription?.(event.data);
+              break;
+            case 'call.ended':
+              handlers.onCallEnded?.(event.data);
+              this.ws?.close();
+              break;
+            default:
+              console.log(`Unhandled event type: ${event.eventType}`);
+          }
+        } catch (error) {
+          console.error('Error processing WebSocket message:', error);
+          handlers.onError?.(new Error('Failed to process WebSocket message'));
         }
       });
 
       this.ws.on('error', (error) => {
         console.error('WebSocket error:', error);
-        handlers.onError?.(error);
+        handlers.onError?.(error instanceof Error ? error : new Error('WebSocket error occurred'));
       });
 
       this.ws.on('close', () => {
@@ -79,7 +93,7 @@ export class RetellService {
       });
     } catch (error) {
       console.error('Error connecting to WebSocket:', error);
-      throw error;
+      throw error instanceof Error ? error : new Error('Failed to connect to WebSocket');
     }
   }
 
@@ -92,13 +106,14 @@ export class RetellService {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to get call recording: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+        throw new Error(`Failed to get call recording: ${errorData.message || response.statusText}`);
       }
 
       return await response.blob();
     } catch (error) {
       console.error('Error getting call recording:', error);
-      throw error;
+      throw error instanceof Error ? error : new Error('Failed to get call recording');
     }
   }
 
@@ -114,11 +129,12 @@ export class RetellService {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to update call config: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+        throw new Error(`Failed to update call config: ${errorData.message || response.statusText}`);
       }
     } catch (error) {
       console.error('Error updating call config:', error);
-      throw error;
+      throw error instanceof Error ? error : new Error('Failed to update call config');
     }
   }
 
@@ -130,6 +146,6 @@ export class RetellService {
   }
 }
 
-export const createRetellService = (config: RetellConfig): RetellService => {
+export function createRetellService(config: RetellConfig): RetellService {
   return new RetellService(config);
-};
+}

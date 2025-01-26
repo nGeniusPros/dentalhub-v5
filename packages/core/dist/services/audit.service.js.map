@@ -1,1 +1,0 @@
-{"version":3,"file":"audit.service.js","sourceRoot":"","sources":["../../src/services/audit.service.ts"],"names":[],"mappings":"AAAA,MAAM,OAAO,YAAY;IACvB,KAAK,CAAC,GAAG,CAAC,SAAiB,EAAE,QAAgB;QAC3C,2BAA2B;IAC7B,CAAC;CACF","sourcesContent":["export class AuditService {\r\n  async log(eventType: string, targetId: string) {\r\n    // Implementation goes here\r\n  }\r\n}"]}
