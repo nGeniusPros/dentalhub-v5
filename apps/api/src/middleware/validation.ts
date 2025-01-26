@@ -1,74 +1,66 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
+import { ErrorCode } from '../types/errors.js';
+import { logger } from '../lib/logger.js';
 
-const campaignSchema = z.object({
-  name: z.string().min(3),
-  type: z.enum(['voice', 'sms', 'email']),
-  audience: z.object({
-    filters: z.record(z.any())
-  }),
-  content: z.object({
-    template: z.string().min(10)
-  }),
-  schedule: z.object({
-    startDate: z.string().datetime(),
-    endDate: z.string().datetime().optional(),
-    timezone: z.string()
-  }).optional(),
-  settings: z.object({
-    retryCount: z.number().optional(),
-    retryDelay: z.number().optional(),
-    callbackUrl: z.string().url().optional()
-  }).optional(),
-  metadata: z.record(z.any()).optional()
-});
+// Generic validation middleware creator
+export const validateRequest = (schema: z.ZodSchema) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = schema.safeParse({
+        body: req.body,
+        query: req.query,
+        params: req.params,
+        headers: req.headers
+      });
 
-export const validateCampaign = (req: Request, res: Response, next: NextFunction) => {
-  try {
-    campaignSchema.parse(req.body);
-    next();
-  } catch (error: any) {
-    res.status(400).json({ message: 'Validation error', errors: error.errors });
-  }
+      if (!result.success) {
+        logger.warn('Validation failed', {
+          path: req.path,
+          issues: result.error.issues
+        });
+        
+        return res.status(400).json({
+          code: ErrorCode.INVALID_REQUEST_FORMAT,
+          message: 'Request validation failed',
+          issues: result.error.issues.map(issue => ({
+            field: issue.path.join('.'),
+            message: issue.message
+          })),
+          docs: 'https://docs.dentalhub.com/errors/INVALID_REQUEST_FORMAT'
+        });
+      }
+
+      // Attach validated data to request
+      req.validated = result.data;
+      next();
+    } catch (err) {
+      logger.error('Validation middleware error', { error: err });
+      res.status(500).json({
+        code: ErrorCode.SERVER_ERROR,
+        message: 'Internal validation system error'
+      });
+    }
+  };
 };
 
-import crypto from 'crypto';
-
-export const validateWebhookSignature = (req: Request, res: Response, next: NextFunction) => {
-		const signature = req.headers['x-retell-signature'];
-		const webhookSecret = process.env.RETELL_WEBHOOK_SECRET;
-
-		if (!webhookSecret) {
-				console.error('RETELL_WEBHOOK_SECRET is not configured');
-				return res.status(500).json({ error: 'Webhook secret not configured' });
-		}
-
-		if (!signature || typeof signature !== 'string') {
-				return res.status(401).json({ error: 'Missing webhook signature' });
-		}
-
-		try {
-				// Get raw body from the request
-				const rawBody = JSON.stringify(req.body);
-				
-				// Create HMAC using webhook secret
-				const hmac = crypto.createHmac('sha256', webhookSecret);
-				hmac.update(rawBody);
-				const calculatedSignature = hmac.digest('hex');
-
-				// Compare signatures using constant-time comparison
-				const isValid = crypto.timingSafeEqual(
-						Buffer.from(signature),
-						Buffer.from(calculatedSignature)
-				);
-
-				if (!isValid) {
-						return res.status(401).json({ error: 'Invalid webhook signature' });
-				}
-
-				next();
-		} catch (error) {
-				console.error('Error validating webhook signature:', error);
-				return res.status(401).json({ error: 'Invalid webhook signature' });
-		}
+// Common validation schemas
+export const ValidationSchemas = {
+  authLogin: z.object({
+    body: z.object({
+      email: z.string().email(),
+      password: z.string().min(8)
+    })
+  }),
+  resourceIdParam: z.object({
+    params: z.object({
+      id: z.string().uuid()
+    })
+  }),
+  paginationQuery: z.object({
+    query: z.object({
+      page: z.coerce.number().int().positive().default(1),
+      limit: z.coerce.number().int().positive().max(100).default(20)
+    })
+  })
 };

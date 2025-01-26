@@ -66,3 +66,4 @@ export async function synchronize(data, options) {
         }
     });
 }
+//# sourceMappingURL=service.js.map

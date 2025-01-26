@@ -1,5 +1,5 @@
 import { createClient } from 'redis';
-import { InfrastructureError } from '../../api/src/errors.js';
+import { InfrastructureError } from './errors/index.js';
 export class RedisClient {
     constructor(url) {
         this.url = url;
@@ -33,8 +33,14 @@ export class RedisClient {
             return this.client;
         }
         catch (error) {
-            throw new InfrastructureError('redis_connect', error, {
-                connectionUrl: this.url
+            if (error instanceof Error) {
+                throw new InfrastructureError('redis_connect', error, {
+                    connectionUrl: this.url
+                });
+            }
+            throw new InfrastructureError('redis_connect', null, {
+                connectionUrl: this.url,
+                error: String(error)
             });
         }
     }
@@ -43,7 +49,15 @@ export class RedisClient {
             await this.client.disconnect();
         }
         catch (error) {
-            throw new InfrastructureError('redis_disconnect', error);
+            if (error instanceof Error) {
+                throw new InfrastructureError('redis_disconnect', error, {
+                    connectionUrl: this.url
+                });
+            }
+            throw new InfrastructureError('redis_disconnect', null, {
+                connectionUrl: this.url,
+                error: String(error)
+            });
         }
     }
     async healthCheck() {
@@ -52,11 +66,16 @@ export class RedisClient {
             return ping === 'PONG';
         }
         catch (error) {
-            throw new InfrastructureError('redis_healthcheck', error);
+            if (error instanceof Error) {
+                throw new InfrastructureError('redis_healthcheck', error);
+            }
+            throw new InfrastructureError('redis_healthcheck', null, {
+                error: String(error)
+            });
         }
     }
 }
-export function createRedisClient() {
-    const url = process.env.REDIS_URL || 'redis://localhost:6379';
+export function createRedisClient(url) {
     return new RedisClient(url);
 }
+//# sourceMappingURL=redis.js.map

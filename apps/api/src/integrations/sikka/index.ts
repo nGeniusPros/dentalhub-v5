@@ -1,45 +1,51 @@
-import express from 'express';
+import { Router, Request, Response } from 'express';
 import { verifyInsurance, checkEligibility, verifyBenefits, processClaim } from './service';
 import { validateInsuranceRequest, validateEligibilityRequest, validateBenefitsRequest, validateClaimRequest } from './validators';
 import { handleError } from '../../utils/errorHandler';
+import { z } from 'zod';
 
-const router = express.Router();
+const router = Router();
+
+interface ApiResponse<T = unknown> {
+  data?: T;
+  error?: string | z.ZodError | unknown;
+}
 
 // Insurance verification endpoint
-router.post('/verify', validateInsuranceRequest, async (req, res) => {
+router.post('/verify', validateInsuranceRequest, async (req: Request, res: Response<ApiResponse>) => {
   try {
     const result = await verifyInsurance(req.body);
-    res.json(result);
+    return res.json({ data: result });
   } catch (error) {
     handleError(error, res);
   }
 });
 
 // Eligibility check endpoint
-router.post('/eligibility', validateEligibilityRequest, async (req, res) => {
+router.post('/eligibility', validateEligibilityRequest, async (req: Request, res: Response<ApiResponse>) => {
   try {
     const result = await checkEligibility(req.body);
-    res.json(result);
+    return res.json({ data: result });
   } catch (error) {
     handleError(error, res);
   }
 });
 
 // Benefits verification endpoint
-router.post('/benefits', validateBenefitsRequest, async (req, res) => {
+router.post('/benefits', validateBenefitsRequest, async (req: Request, res: Response<ApiResponse>) => {
   try {
     const result = await verifyBenefits(req.body);
-    res.json(result);
+    return res.json({ data: result });
   } catch (error) {
     handleError(error, res);
   }
 });
 
 // Claims processing endpoint
-router.post('/claims', validateClaimRequest, async (req, res) => {
+router.post('/claims', validateClaimRequest, async (req: Request, res: Response<ApiResponse>) => {
   try {
     const result = await processClaim(req.body);
-    res.json(result);
+    return res.json({ data: result });
   } catch (error) {
     handleError(error, res);
   }

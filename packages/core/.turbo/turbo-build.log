@@ -6843,15 +6843,15 @@ error TS2688: Cannot find type definition file for 'vite/client'.
 Files:              185
 Lines:            93782
 Identifiers:      88497
-Symbols:          85750
-Types:            10935
-Instantiations:   36401
-Memory used:    126436K
-I/O read:         0.17s
-I/O write:        0.01s
-Parse time:       2.25s
-Bind time:        0.42s
-Check time:       0.16s
-Emit time:        1.03s
-Total time:       3.86s
+Symbols:          61261
+Types:               89
+Instantiations:       0
+Memory used:    102908K
+I/O read:         0.12s
+I/O write:        0.00s
+Parse time:       1.36s
+Bind time:        0.23s
+Check time:       0.00s
+Emit time:        0.00s
+Total time:       1.59s
  ELIFECYCLE  Command failed with exit code 2.

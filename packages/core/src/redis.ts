@@ -1,5 +1,5 @@
 import { createClient } from 'redis';
-import { InfrastructureError } from '../../api/src/errors.js';
+import { InfrastructureError } from './errors/index.js';
 
 type RedisClientType = ReturnType<typeof createClient>;
 
@@ -17,8 +17,8 @@ export class RedisClient {
     this.setupEventHandlers();
   }
 
-  private setupEventHandlers() {
-    this.client.on('error', (err) => {
+  private setupEventHandlers(): void {
+    this.client.on('error', (err: Error) => {
       throw new InfrastructureError('redis_connection', err, {
         connectionUrl: this.url,
         attempt: this.connectionAttempts
@@ -35,36 +35,54 @@ export class RedisClient {
     });
   }
 
-  async connect() {
+  async connect(): Promise<RedisClientType> {
     try {
       await this.client.connect();
       return this.client;
     } catch (error) {
-      throw new InfrastructureError('redis_connect', error, {
-        connectionUrl: this.url
+      if (error instanceof Error) {
+        throw new InfrastructureError('redis_connect', error, {
+          connectionUrl: this.url
+        });
+      }
+      throw new InfrastructureError('redis_connect', null, {
+        connectionUrl: this.url,
+        error: String(error)
       });
     }
   }
 
-  async disconnect() {
+  async disconnect(): Promise<void> {
     try {
       await this.client.disconnect();
     } catch (error) {
-      throw new InfrastructureError('redis_disconnect', error);
+      if (error instanceof Error) {
+        throw new InfrastructureError('redis_disconnect', error, {
+          connectionUrl: this.url
+        });
+      }
+      throw new InfrastructureError('redis_disconnect', null, {
+        connectionUrl: this.url,
+        error: String(error)
+      });
     }
   }
 
-  async healthCheck() {
+  async healthCheck(): Promise<boolean> {
     try {
       const ping = await this.client.ping();
       return ping === 'PONG';
     } catch (error) {
-      throw new InfrastructureError('redis_healthcheck', error);
+      if (error instanceof Error) {
+        throw new InfrastructureError('redis_healthcheck', error);
+      }
+      throw new InfrastructureError('redis_healthcheck', null, {
+        error: String(error)
+      });
     }
   }
 }
 
-export function createRedisClient() {
-  const url = process.env.REDIS_URL || 'redis://localhost:6379';
+export function createRedisClient(url: string): RedisClient {
   return new RedisClient(url);
 }

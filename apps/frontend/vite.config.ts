@@ -1,29 +1,42 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '/',
   plugins: [react()],
   server: {
-    port: 3000,
-    strictPort: false,
+    port: 5173,
+    strictPort: true,
     host: true,
+    https: false,
     open: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: 'http://localhost:3000',
         changeOrigin: true,
-        secure: false
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
       },
     },
+    fs: {
+      strict: true,
+      allow: ['..']
+    }
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@utils': path.resolve(__dirname, './src/utils'),
       '@core': path.resolve(__dirname, '../../packages/core/src'),
+      '@components': path.resolve(__dirname, './src/components'),
+      '@contexts': path.resolve(__dirname, './src/contexts'),
+      '@types': path.resolve(__dirname, './src/types'),
+      '@lib': path.resolve(__dirname, './src/lib')
     },
   },
   optimizeDeps: {
@@ -31,10 +44,9 @@ export default defineConfig({
       'react',
       'react-dom',
       'react-router-dom',
-      'lucide-react',
-      '@radix-ui/react-tooltip',
-      'jotai',
-      'framer-motion'
+      '@supabase/supabase-js',
+      'framer-motion',
+      'recharts'
     ],
     exclude: [
       '@dentalhub/core'
@@ -43,6 +55,9 @@ export default defineConfig({
   build: {
     sourcemap: true,
     rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html')
+      },
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],

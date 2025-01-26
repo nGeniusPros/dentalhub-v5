@@ -1,12 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types.js';
-import { asyncHandler } from '../utils/asyncHandler.js';
-import { Router as ExpressRouter } from 'express';
+import { Database } from '../types/database.types';
+import { asyncHandler } from '../utils/asyncHandler';
 import { z } from 'zod';
-import { AppointmentService } from '../services/appointmentService.js';
-import { ValidationError, InfrastructureError } from '../errors.js';
-import subRoutes from './appointments/index.js';
+import { AppointmentService } from '../services/appointmentService';
+import { ValidationError, InfrastructureError } from '../errors';
+import subRoutes from './appointments/index';
 
 interface AuthenticatedRequest extends Request {
   supabase: SupabaseClient<Database>;
@@ -17,7 +16,7 @@ interface AuthenticatedRequest extends Request {
   };
 }
 
-const router: ExpressRouter = Router();
+const router = Router();
 
 const createAppointmentSchema = z.object({
   patient_id: z.string().min(1),
@@ -73,7 +72,7 @@ const cancelAppointmentSchema = z.object({
 });
 
 const addCommentSchema = z.object({
-		content: z.string().min(1),
+  content: z.string().min(1),
 });
 
 // Mount sub-routers
@@ -106,15 +105,6 @@ router.get('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =>
   if (error) {
     throw new InfrastructureError('get_appointments', error);
   }
-  }
-
-		const { start_date, end_date, status, provider_id, patient_id } = validationResult.data;
-  const appointmentService = new AppointmentService(req.supabase);
-  const { data: appointments, error } = await appointmentService.getAllAppointments(start_date, end_date, status, provider_id, patient_id);
-
-  if (error) {
-			return res.status(500).json({ error: error.message });
-  }
 
   return res.json(appointments);
 }));
@@ -123,7 +113,7 @@ router.get('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =>
 router.get('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   const validationResult = appointmentIdSchema.safeParse(req.params);
   if (!validationResult.success) {
-    return res.status(400).json({ error: 'Invalid appointment ID' });
+    throw new ValidationError('Invalid appointment ID', validationResult.error);
   }
 
   const { id } = validationResult.data;
@@ -131,7 +121,7 @@ router.get('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response)
   const { data: appointment, error } = await appointmentService.getAppointmentById(id);
 
   if (error) {
-    return res.status(500).json({ error: error.message });
+    throw new InfrastructureError('get_appointment', error);
   }
 
   return res.json(appointment);
@@ -141,22 +131,23 @@ router.get('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response)
 router.post('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   const validationResult = createAppointmentSchema.safeParse(req.body);
   if (!validationResult.success) {
-			return res.status(400).json({ error: 'Invalid appointment data' });
+    throw new ValidationError('Invalid appointment data', validationResult.error);
   }
 
-	const {
-				patient_id,
-				provider_id,
+  const {
+    patient_id,
+    provider_id,
     type,
     start_time,
     end_time,
     duration,
-			notes,
+    notes,
     resources,
     reminders
   } = validationResult.data;
+
   const appointmentService = new AppointmentService(req.supabase);
-  const { data: appointment, error: appointmentError } = await appointmentService.createAppointment({
+  const { data: appointment, error } = await appointmentService.createAppointment({
     patient_id,
     provider_id,
     type,
@@ -168,8 +159,8 @@ router.post('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =
     reminders
   }, req.user?.id);
 
-  if (appointmentError) {
-    return res.status(500).json({ error: appointmentError.message });
+  if (error) {
+    throw new InfrastructureError('create_appointment', error);
   }
 
   return res.status(201).json(appointment);
@@ -177,89 +168,97 @@ router.post('/', asyncHandler(async (req: AuthenticatedRequest, res: Response) =
 
 // Update appointment
 router.put('/:id', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const validationResult = updateAppointmentSchema.safeParse(req.body);
-	if (!validationResult.success) {
-    return res.status(400).json({ error: 'Invalid appointment data' });
+  const idValidation = appointmentIdSchema.safeParse(req.params);
+  if (!idValidation.success) {
+    throw new ValidationError('Invalid appointment ID', idValidation.error);
   }
 
-	const { id } = req.params;
+  const validationResult = updateAppointmentSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    throw new ValidationError('Invalid appointment data', validationResult.error);
+  }
+
+  const { id } = idValidation.data;
   const {
-				patient_id,
-			provider_id,
-				type,
-				status,
+    patient_id,
+    provider_id,
+    type,
+    status,
     start_time,
     end_time,
     duration,
     notes,
-			resources,
+    resources,
     reminders
   } = validationResult.data;
+
   const appointmentService = new AppointmentService(req.supabase);
-	const { data: appointment, error: appointmentError } = await appointmentService.updateAppointment(id, {
+  const { data: appointment, error } = await appointmentService.updateAppointment(id, {
     patient_id,
-				provider_id,
-			type,
-				status,
-				start_time,
+    provider_id,
+    type,
+    status,
+    start_time,
     end_time,
     duration,
     notes,
     resources,
-			reminders
+    reminders
   });
 
-  if (appointmentError) {
-			return res.status(500).json({ error: appointmentError.message });
+  if (error) {
+    throw new InfrastructureError('update_appointment', error);
   }
 
-	return res.json(appointment);
+  return res.json(appointment);
 }));
 
 // Cancel appointment
 router.post('/:id/cancel', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-		const validationResult = appointmentIdSchema.safeParse(req.params);
-		const cancelValidationResult = cancelAppointmentSchema.safeParse(req.body);
-		if (!validationResult.success) {
-				return res.status(400).json({ error: 'Invalid appointment ID' });
-		}
-		if (!cancelValidationResult.success) {
-				return res.status(400).json({ error: 'Invalid cancel data' });
-		}
+  const validationResult = appointmentIdSchema.safeParse(req.params);
+  const cancelValidationResult = cancelAppointmentSchema.safeParse(req.body);
+  
+  if (!validationResult.success) {
+    throw new ValidationError('Invalid appointment ID', validationResult.error);
+  }
+  if (!cancelValidationResult.success) {
+    throw new ValidationError('Invalid cancel data', cancelValidationResult.error);
+  }
 
-		const { id } = validationResult.data;
-		const { reason } = cancelValidationResult.data;
-		const appointmentService = new AppointmentService(req.supabase);
-		const { data: appointment, error } = await appointmentService.cancelAppointment(id, reason, req.user?.id);
+  const { id } = validationResult.data;
+  const { reason } = cancelValidationResult.data;
+  const appointmentService = new AppointmentService(req.supabase);
+  const { data: appointment, error } = await appointmentService.cancelAppointment(id, reason, req.user?.id);
 
-		if (error) {
-				return res.status(500).json({ error: error.message });
-		}
+  if (error) {
+    throw new InfrastructureError('cancel_appointment', error);
+  }
 
-		return res.json(appointment);
+  return res.json(appointment);
 }));
 
 // Add comment to appointment
 router.post('/:id/comments', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-		const validationResult = appointmentIdSchema.safeParse(req.params);
-		const commentValidationResult = addCommentSchema.safeParse(req.body);
-		if (!validationResult.success) {
-				return res.status(400).json({ error: 'Invalid appointment ID' });
-		}
-		if (!commentValidationResult.success) {
-				return res.status(400).json({ error: 'Invalid comment data' });
-		}
+  const validationResult = appointmentIdSchema.safeParse(req.params);
+  const commentValidationResult = addCommentSchema.safeParse(req.body);
+  
+  if (!validationResult.success) {
+    throw new ValidationError('Invalid appointment ID', validationResult.error);
+  }
+  if (!commentValidationResult.success) {
+    throw new ValidationError('Invalid comment data', commentValidationResult.error);
+  }
 
-		const { id } = validationResult.data;
-		const { content } = commentValidationResult.data;
-		const appointmentService = new AppointmentService(req.supabase);
-		const { data: comment, error } = await appointmentService.addCommentToAppointment(id, content, req.user?.id);
+  const { id } = validationResult.data;
+  const { content } = commentValidationResult.data;
+  const appointmentService = new AppointmentService(req.supabase);
+  const { data: comment, error } = await appointmentService.addCommentToAppointment(id, content, req.user?.id);
 
-		if (error) {
-				return res.status(500).json({ error: error.message });
-		}
+  if (error) {
+    throw new InfrastructureError('add_comment', error);
+  }
 
-		return res.status(201).json(comment);
+  return res.status(201).json(comment);
 }));
 
 export default router;

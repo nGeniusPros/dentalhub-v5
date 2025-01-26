@@ -36,6 +36,15 @@ export abstract class BaseAgent {
   }
 }
 
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      SUPABASE_URL: string;
+      SUPABASE_SERVICE_ROLE_KEY: string;
+    }
+  }
+}
+
 export interface PracticeMetrics {
   treatmentAcceptanceRate: number;
   productionHours: number;
@@ -52,12 +61,11 @@ export interface OperationalKPIs {
   patientSatisfaction?: number;
 }
 
-// Define missing types directly
-export type UserRole = 'admin' | 'provider' | 'staff' | 'assistant';
 export interface Patient {
   id: string;
   firstName: string;
   lastName: string;
   dateOfBirth: Date;
-};
+}
+
 export type { ProcedureCategoryMapping } from '@prisma/client';

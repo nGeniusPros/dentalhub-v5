@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
-import { rateLimit } from '@dental/core/middleware';
+import rateLimit from 'express-rate-limit';
 import assistantRoutes from './routes/ai/assistant-routes';
 import { createClient } from '@supabase/supabase-js';
 import { AuthenticatedRequest } from './middleware/auth';

@@ -134,3 +134,4 @@ function generateDocumentCacheKey(data, options) {
     };
     return `document-${JSON.stringify(key)}`;
 }
+//# sourceMappingURL=service.js.map

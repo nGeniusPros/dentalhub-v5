@@ -11,3 +11,4 @@ export class RateLimitError extends Error {
         this.name = 'RateLimitError';
     }
 }
+//# sourceMappingURL=errors.js.map

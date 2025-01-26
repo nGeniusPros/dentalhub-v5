@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { DollarSign, Users, CheckCircle, Calendar, FileText, Clock, Star, TrendingUp } from 'lucide-react';
 import { KPIOverview } from './components/KPIOverview';
 import { RevenueChart } from '@/components/charts/RevenueChart';
 import { PatientMetricsChart } from '@/components/charts/PatientMetricsChart';
@@ -52,110 +53,186 @@ const staffData = [
   {
     id: '3',
     name: 'Dr. Emily Rodriguez',
-    role: 'Dental Surgeon',
+    role: 'Pediatric Dentist',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=3',
     metrics: {
-      patientsSeen: 84,
-      satisfaction: 94,
-      efficiency: 90,
+      patientsSeen: 112,
+      satisfaction: 99,
+      efficiency: 94,
     },
   },
 ];
 
-const appointmentData = [
+const appointments = [
   {
     id: '1',
     patientName: 'John Smith',
+    date: '2025-01-25',
     time: '09:00 AM',
-    type: 'Check-up',
-    status: 'confirmed',
+    type: 'Cleaning',
+    status: 'scheduled' as const,
   },
   {
     id: '2',
-    patientName: 'Emma Davis',
+    patientName: 'Sarah Johnson',
+    date: '2025-01-25',
     time: '10:30 AM',
-    type: 'Cleaning',
-    status: 'in-progress',
+    type: 'Check-up',
+    status: 'completed' as const,
   },
   {
     id: '3',
     patientName: 'Michael Brown',
-    time: '11:45 AM',
-    type: 'Consultation',
-    status: 'scheduled',
+    date: '2025-01-25',
+    time: '02:00 PM',
+    type: 'Root Canal',
+    status: 'scheduled' as const,
   },
-  {
-    id: '4',
-    patientName: 'Sophie Wilson',
-    time: '02:15 PM',
-    type: 'Follow-up',
-    status: 'scheduled',
-  },
-] as const;
+];
+
+// Types
+interface KPICardProps {
+  icon: React.ReactNode;
+  title: string;
+  value: string | number;
+  change: number;
+  iconBgColor: string;
+}
+
+// Components
+const KPICard: React.FC<KPICardProps> = ({ icon, title, value, change, iconBgColor }) => (
+  <div className="bg-white rounded-lg p-6 shadow-sm">
+    <div className="flex items-center justify-between">
+      <div className={`${iconBgColor} p-3 rounded-lg`}>
+        {icon}
+      </div>
+      <span className={`text-sm ${change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+        {change >= 0 ? '+' : ''}{change}%
+      </span>
+    </div>
+    <div className="mt-4">
+      <h3 className="text-3xl font-semibold">{value}</h3>
+      <p className="text-gray-500 text-sm mt-1">{title}</p>
+    </div>
+  </div>
+);
 
 export const AdminDashboard: React.FC = () => {
-  const [selectedTimeRange, setSelectedTimeRange] = useState('week');
-
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="p-6 space-y-6 max-w-[1600px] mx-auto"
-    >
-      {/* Time Range Selector */}
-      <div className="flex justify-end space-x-2">
-        {['day', 'week', 'month', 'year'].map((range) => (
-          <Button
-            key={range}
-            variant={selectedTimeRange === range ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setSelectedTimeRange(range)}
-          >
-            {range.charAt(0).toUpperCase() + range.slice(1)}
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Practice Overview</h1>
+          <p className="text-gray-600">Welcome back, Admin</p>
+        </div>
+        <div className="flex gap-4">
+          <Button variant="outline" className="flex items-center gap-2">
+            <FileText className="w-4 h-4" />
+            Generate Report
           </Button>
-        ))}
+          <Button variant="outline" className="flex items-center gap-2">
+            AI Insights
+          </Button>
+          <Button className="flex items-center gap-2">
+            Add Staff
+          </Button>
+        </div>
       </div>
 
-      {/* KPI Overview */}
-      <KPIOverview timeRange={selectedTimeRange} />
+      {/* KPI Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <KPICard
+          icon={<DollarSign className="w-6 h-6 text-blue-600" />}
+          title="Monthly Revenue"
+          value="$145,678"
+          change={8}
+          iconBgColor="bg-blue-100"
+        />
+        <KPICard
+          icon={<Users className="w-6 h-6 text-purple-600" />}
+          title="Patient Growth"
+          value="3,456"
+          change={12}
+          iconBgColor="bg-purple-100"
+        />
+        <KPICard
+          icon={<CheckCircle className="w-6 h-6 text-amber-600" />}
+          title="Treatment Acceptance"
+          value="78%"
+          change={5}
+          iconBgColor="bg-amber-100"
+        />
+        <KPICard
+          icon={<Calendar className="w-6 h-6 text-teal-600" />}
+          title="Appointment Fill Rate"
+          value="92%"
+          change={3}
+          iconBgColor="bg-teal-100"
+        />
+      </div>
 
-      {/* Analytics Grid */}
+      {/* Secondary KPI Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <KPICard
+          icon={<FileText className="w-6 h-6 text-blue-600" />}
+          title="Insurance Claims"
+          value="245"
+          change={7}
+          iconBgColor="bg-blue-100"
+        />
+        <KPICard
+          icon={<Clock className="w-6 h-6 text-purple-600" />}
+          title="Average Wait Time"
+          value="12min"
+          change={-4}
+          iconBgColor="bg-purple-100"
+        />
+        <KPICard
+          icon={<Star className="w-6 h-6 text-amber-600" />}
+          title="Patient Satisfaction"
+          value="4.8"
+          change={2}
+          iconBgColor="bg-amber-100"
+        />
+        <KPICard
+          icon={<TrendingUp className="w-6 h-6 text-teal-600" />}
+          title="Staff Productivity"
+          value="94%"
+          change={6}
+          iconBgColor="bg-teal-100"
+        />
+      </div>
+
+      {/* Analytics Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <RevenueChart data={revenueData} timeRange={selectedTimeRange} />
-        </motion.div>
+        {/* Revenue Analytics */}
+        <div className="bg-white rounded-lg p-6 shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-lg font-semibold">Revenue Analytics</h2>
+              <p className="text-sm text-gray-500">Financial performance overview</p>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">Export</Button>
+              <Button variant="outline" size="sm">Filter</Button>
+            </div>
+          </div>
+          <RevenueChart data={revenueData} />
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <PatientMetricsChart data={patientData} timeRange={selectedTimeRange} />
-        </motion.div>
+        {/* Staff Performance */}
+        <div className="bg-white rounded-lg p-6 shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-lg font-semibold">Staff Performance</h2>
+              <p className="text-sm text-gray-500">Monthly staff metrics</p>
+            </div>
+            <Button variant="outline" size="sm">View All</Button>
+          </div>
+          <StaffPerformance data={staffData} />
+        </div>
       </div>
-
-      {/* Staff and Appointments Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <StaffPerformance staffMembers={staffData} />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <AppointmentOverview appointments={appointmentData} />
-        </motion.div>
-      </div>
-    </motion.div>
+    </div>
   );
 };

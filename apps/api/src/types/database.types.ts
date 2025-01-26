@@ -1,24 +1,26 @@
-// Generated types placeholder - Update after Supabase config is resolved
-export interface Database {
+// Generated types from Supabase database
+export type Database = {
   public: {
     Tables: {
-      appointments: {
+      user_profiles: {
         Row: {
           id: string;
-          patient_id: string;
-          provider_id: string;
-          start_time: string;
-          end_time: string;
-          status: 'scheduled' | 'completed' | 'canceled';
-          // ... other fields
+          role: 'admin' | 'dentist' | 'hygienist' | 'staff';
+          practice_id: string;
+          created_at: string;
+          updated_at: string;
         };
         Insert: {
-          // ... insert fields
+          id: string;
+          role: 'admin' | 'dentist' | 'hygienist' | 'staff';
+          practice_id: string;
         };
         Update: {
-          // ... update fields
+          role?: 'admin' | 'dentist' | 'hygienist' | 'staff';
+          practice_id?: string;
+          updated_at?: string;
         };
       };
     };
   };
-}
+};

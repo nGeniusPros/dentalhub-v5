@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { AuthenticatedRequest, requireAuth } from '../middleware/auth';
+import { AuthenticatedRequest, authMiddleware } from '../middleware/auth';
 import { asyncHandler } from '../utils/asyncHandler';
 import { z } from 'zod';
 import { DashboardService } from '../services/dashboardService';
@@ -8,7 +8,7 @@ import { ErrorCode } from '../types/errors';
 const router: Router = Router();
 
 // Apply authentication middleware to all dashboard routes
-router.use(requireAuth);
+router.use(authMiddleware);
 
 const dashboardStatsSchema = z.object({
   start_date: z.string().optional(),

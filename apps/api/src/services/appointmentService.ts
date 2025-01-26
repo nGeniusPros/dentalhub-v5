@@ -1,6 +1,29 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types.js';
 
+interface AppointmentResource {
+  id: string;
+  type: string;
+}
+
+interface AppointmentReminder {
+  type: string;
+  scheduled_time: string;
+}
+
+interface AppointmentData {
+  patient_id: string;
+  provider_id: string;
+  type: string;
+  start_time: string;
+  end_time: string;
+  duration: number;
+  notes?: string;
+  resources?: AppointmentResource[];
+  reminders?: AppointmentReminder[];
+  status?: string;
+}
+
 export class AppointmentService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
@@ -29,20 +52,22 @@ export class AppointmentService {
         )
       `);
 
-    if (start_date) {
-      query = query.gte('start_time', start_date);
+    const { startDate, endDate, status, providerId, patientId } = options;
+
+    if (startDate) {
+      query = query.gte('start_time', startDate);
     }
-    if (end_date) {
-      query = query.lte('end_time', end_date);
+    if (endDate) {
+      query = query.lte('end_time', endDate);
     }
     if (status) {
       query = query.eq('status', status);
     }
-    if (provider_id) {
-      query = query.eq('provider_id', provider_id);
+    if (providerId) {
+      query = query.eq('provider_id', providerId);
     }
-    if (patient_id) {
-      query = query.eq('patient_id', patient_id);
+    if (patientId) {
+      query = query.eq('patient_id', patientId);
     }
 
     return await query.order('start_time', { ascending: true });
@@ -71,13 +96,14 @@ export class AppointmentService {
       .single();
   }
 
-  async createAppointment(data: any, userId: string | undefined) {
+  async createAppointment(data: AppointmentData, userId: string | undefined) {
     const { resources, reminders, ...appointmentData } = data;
     const { data: appointment, error: appointmentError } = await this.supabase
       .from('appointments')
       .insert({
         ...appointmentData,
-        created_by: userId
+        created_by: userId,
+        status: 'scheduled'
       })
       .select()
       .single();
@@ -91,7 +117,7 @@ export class AppointmentService {
       const { error: resourceError } = await this.supabase
         .from('appointment_resources')
         .insert(
-          resources.map((resource: any) => ({
+          resources.map((resource) => ({
             appointment_id: appointment.id,
             resource_id: resource.id,
             resource_type: resource.type
@@ -108,7 +134,7 @@ export class AppointmentService {
       const { error: reminderError } = await this.supabase
         .from('appointment_reminders')
         .insert(
-          reminders.map((reminder: any) => ({
+          reminders.map((reminder) => ({
             appointment_id: appointment.id,
             type: reminder.type,
             scheduled_time: reminder.scheduled_time
@@ -120,15 +146,16 @@ export class AppointmentService {
       }
     }
 
-    return appointment;
+    return this.getAppointmentById(appointment.id);
   }
 
-  async updateAppointment(id: string, data: any) {
+  async updateAppointment(id: string, data: Partial<AppointmentData>) {
     const { resources, reminders, ...appointmentData } = data;
     const { data: appointment, error: appointmentError } = await this.supabase
       .from('appointments')
       .update({
-        ...appointmentData
+        ...appointmentData,
+        updated_at: new Date().toISOString()
       })
       .eq('id', id)
       .select()
@@ -139,7 +166,7 @@ export class AppointmentService {
     }
 
     // Update resources
-    if (resources) {
+    if (resources !== undefined) {
       await this.supabase
         .from('appointment_resources')
         .delete()
@@ -149,7 +176,7 @@ export class AppointmentService {
         const { error: resourceError } = await this.supabase
           .from('appointment_resources')
           .insert(
-            resources.map((resource: any) => ({
+            resources.map((resource) => ({
               appointment_id: id,
               resource_id: resource.id,
               resource_type: resource.type
@@ -163,7 +190,7 @@ export class AppointmentService {
     }
 
     // Update reminders
-    if (reminders) {
+    if (reminders !== undefined) {
       await this.supabase
         .from('appointment_reminders')
         .delete()
@@ -173,7 +200,7 @@ export class AppointmentService {
         const { error: reminderError } = await this.supabase
           .from('appointment_reminders')
           .insert(
-            reminders.map((reminder: any) => ({
+            reminders.map((reminder) => ({
               appointment_id: id,
               type: reminder.type,
               scheduled_time: reminder.scheduled_time
@@ -186,11 +213,11 @@ export class AppointmentService {
       }
     }
 
-    return appointment;
+    return this.getAppointmentById(id);
   }
 
   async cancelAppointment(id: string, reason: string, userId: string | undefined) {
-    return await this.supabase
+    const { data: appointment, error } = await this.supabase
       .from('appointments')
       .update({
         status: 'cancelled',
@@ -201,10 +228,16 @@ export class AppointmentService {
       .eq('id', id)
       .select()
       .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return this.getAppointmentById(id);
   }
 
   async addCommentToAppointment(id: string, content: string, userId: string | undefined) {
-    return await this.supabase
+    const { data: comment, error } = await this.supabase
       .from('appointment_comments')
       .insert({
         appointment_id: id,
@@ -216,5 +249,11 @@ export class AppointmentService {
         user:users(id, email, raw_user_meta_data)
       `)
       .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return comment;
   }
 }
