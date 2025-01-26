@@ -1,11 +1,35 @@
-export interface StaffMetrics {
-  id: string;
-  name: string;
-  role: string;
-  metrics: {
-    appointmentsCompleted: number;
-    patientSatisfaction: number;
-    revenue: number;
+export interface DashboardStats {
+  monthlyRevenue: {
+    value: number;
+    change: number;
+  };
+  patientGrowth: {
+    value: number;
+    change: number;
+  };
+  treatmentAcceptance: {
+    value: number;
+    change: number;
+  };
+  appointmentFillRate: {
+    value: number;
+    change: number;
+  };
+  insuranceClaims: {
+    value: number;
+    change: number;
+  };
+  averageWaitTime: {
+    value: number;
+    change: number;
+  };
+  patientSatisfaction: {
+    value: number;
+    change: number;
+  };
+  staffProductivity: {
+    value: number;
+    change: number;
   };
 }
 

@@ -23,8 +23,13 @@ export const PatientMetricsChart: React.FC<PatientMetricsChartProps> = ({
   data,
 }) => {
   return (
-    <div className="w-full h-[400px] bg-white rounded-lg shadow-sm p-4">
-      <h3 className="text-lg font-semibold mb-4">Patient Metrics</h3>
+    <div className="h-[400px]">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-lg font-semibold">Patient Growth</h2>
+          <p className="text-sm text-gray-500">Monthly patient acquisition metrics</p>
+        </div>
+      </div>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
@@ -35,14 +40,42 @@ export const PatientMetricsChart: React.FC<PatientMetricsChartProps> = ({
             bottom: 5,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
+          <CartesianGrid strokeDasharray="3 3" className="opacity-50" />
+          <XAxis 
+            dataKey="name" 
+            stroke="#64748b"
+            fontSize={12}
+          />
+          <YAxis 
+            stroke="#64748b"
+            fontSize={12}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "white",
+              border: "1px solid #e2e8f0",
+              borderRadius: "0.5rem",
+            }}
+          />
           <Legend />
-          <Bar dataKey="newPatients" fill="#8884d8" />
-          <Bar dataKey="returningPatients" fill="#82ca9d" />
-          <Bar dataKey="referrals" fill="#ffc658" />
+          <Bar 
+            dataKey="newPatients" 
+            name="New Patients"
+            fill="#312e81"
+            radius={[4, 4, 0, 0]}
+          />
+          <Bar 
+            dataKey="returningPatients" 
+            name="Returning Patients"
+            fill="#7e22ce"
+            radius={[4, 4, 0, 0]}
+          />
+          <Bar 
+            dataKey="referrals" 
+            name="Referrals"
+            fill="#0d9488"
+            radius={[4, 4, 0, 0]}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

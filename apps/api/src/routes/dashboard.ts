@@ -162,25 +162,49 @@ router.get(
 );
 
 router.get(
+  "/kpi-metrics",
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const { start_date, end_date } = dashboardStatsSchema.parse(req.query);
+      const dashboardService = new DashboardService(req.supabase);
+
+      const kpiMetrics = await dashboardService.getKPIMetrics(
+        req.user.id,
+        start_date,
+        end_date,
+      );
+      res.json(kpiMetrics);
+    } catch (error) {
+      console.error("Error fetching KPI metrics:", error);
+      res.status(500).json({
+        error: "Failed to fetch KPI metrics",
+        code: ErrorCode.INTERNAL_ERROR,
+        details: error instanceof Error ? error.message : undefined,
+      });
+    }
+  }),
+);
+
+router.get(
   "/appointment-overview",
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     try {
-      res.json({
-        appointmentStats: {
-          months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-          scheduled: [180, 195, 188, 200, 210, 205],
-          completed: [165, 180, 175, 190, 195, 190],
-          cancelled: [15, 15, 13, 10, 15, 15],
-        },
-        upcomingAppointments: [
-          { patient: "John Doe", time: "09:00 AM", type: "Checkup" },
-          { patient: "Jane Smith", time: "10:30 AM", type: "Cleaning" },
-          { patient: "Mike Johnson", time: "02:00 PM", type: "Filling" },
-        ],
-      });
+      const { start_date, end_date } = dashboardStatsSchema.parse(req.query);
+      const dashboardService = new DashboardService(req.supabase);
+
+      const appointmentOverview = await dashboardService.getAppointmentOverview(
+        req.user.id,
+        start_date,
+        end_date,
+      );
+      res.json(appointmentOverview);
     } catch (error) {
-      console.error("Error in appointment overview:", error);
-      res.status(500).json({ error: "Internal server error" });
+      console.error("Error fetching appointment overview:", error);
+      res.status(500).json({
+        error: "Failed to fetch appointment overview",
+        code: ErrorCode.INTERNAL_ERROR,
+        details: error instanceof Error ? error.message : undefined,
+      });
     }
   }),
 );

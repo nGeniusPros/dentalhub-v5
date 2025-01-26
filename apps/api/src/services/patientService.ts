@@ -1,17 +1,40 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "../types/database.types";
-import axios, { AxiosInstance } from "axios";
-import {
-  SIKKA_API_URL,
-  SIKKA_API_KEY,
-  SIKKA_PRACTICE_ID,
-} from "../integrations/sikka/config";
-import { MonitoringService, logger } from "./monitoring";
-import { ErrorCode, ServiceError } from "../types/errors";
-import type { PatientSearchCriteria, Patient, PatientInput } from "../types/patient";
+import axios from "axios";
+import { SIKKA_API_URL } from "../config";
+import { ServiceError, ErrorCode } from "../types/errors";
+import { MonitoringService } from "./monitoringService";
 
-// Service interface for better dependency injection
-export interface IPatientService {
+interface SikkaStartResponse {
+  scope: string;
+  request_key: string;
+  token_type: string;
+  expires_in: string;
+}
+
+interface SikkaPatient {
+  href: string;
+  patient_id: string;
+  first_name: string;
+  last_name: string;
+  date_of_birth?: string;
+  gender?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+}
+
+interface SikkaResponse<T> {
+  offset: string;
+  limit: string;
+  total_count: string;
+  items: T[];
+}
+
+interface IPatientService {
   createPatient(input: PatientInput): Promise<{ data: Patient | null; error: ServiceError | null }>;
   getPatient(id: string): Promise<{ data: Patient | null; error: ServiceError | null }>;
   updatePatient(
@@ -56,17 +79,10 @@ export interface IPatientService {
 }
 
 export class PatientService implements IPatientService {
-  protected readonly supabase: SupabaseClient<Database>;
-  protected readonly sikkaApi: AxiosInstance;
+  private supabase: SupabaseClient<Database>;
 
   constructor(supabase: SupabaseClient<Database>) {
     this.supabase = supabase;
-    this.sikkaApi = axios.create({
-      baseURL: SIKKA_API_URL,
-      headers: {
-        "x-api-key": SIKKA_API_KEY,
-      },
-    });
   }
 
   async createPatient(input: PatientInput): Promise<{ data: Patient | null; error: ServiceError | null }> {
@@ -91,7 +107,7 @@ export class PatientService implements IPatientService {
 
       return { data, error: null };
     } catch (err) {
-      logger.error("Error creating patient:", err);
+      console.error("Error creating patient:", err);
       return { 
         data: null, 
         error: err instanceof ServiceError ? err : new ServiceError(ErrorCode.UnknownError, "Unknown error occurred")
@@ -113,7 +129,7 @@ export class PatientService implements IPatientService {
 
       return { data, error: null };
     } catch (err) {
-      logger.error("Error getting patient:", err);
+      console.error("Error getting patient:", err);
       return { 
         data: null, 
         error: err instanceof ServiceError ? err : new ServiceError(ErrorCode.UnknownError, "Unknown error occurred")
@@ -155,7 +171,7 @@ export class PatientService implements IPatientService {
 
       return { data, error: null };
     } catch (err) {
-      logger.error("Error updating patient:", err);
+      console.error("Error updating patient:", err);
       return { 
         data: null, 
         error: err instanceof ServiceError ? err : new ServiceError(ErrorCode.UnknownError, "Unknown error occurred")
@@ -176,7 +192,7 @@ export class PatientService implements IPatientService {
 
       return { error: null };
     } catch (err) {
-      logger.error("Error deleting patient:", err);
+      console.error("Error deleting patient:", err);
       return { 
         error: err instanceof ServiceError ? err : new ServiceError(ErrorCode.UnknownError, "Unknown error occurred")
       };
@@ -201,7 +217,7 @@ export class PatientService implements IPatientService {
 
       return { data, error: null };
     } catch (err) {
-      logger.error("Error getting patient family members:", err);
+      console.error("Error getting patient family members:", err);
       return { 
         data: null, 
         error: err instanceof ServiceError ? err : new ServiceError(ErrorCode.UnknownError, "Unknown error occurred")
@@ -230,7 +246,7 @@ export class PatientService implements IPatientService {
 
       return { data, error: null };
     } catch (err) {
-      logger.error("Error adding family member:", err);
+      console.error("Error adding family member:", err);
       return { 
         data: null, 
         error: err instanceof ServiceError ? err : new ServiceError(ErrorCode.UnknownError, "Unknown error occurred")
@@ -272,7 +288,7 @@ export class PatientService implements IPatientService {
 
       return { data, error: null };
     } catch (err) {
-      logger.error("Error uploading patient document:", err);
+      console.error("Error uploading patient document:", err);
       return { 
         data: null, 
         error: err instanceof ServiceError ? err : new ServiceError(ErrorCode.UnknownError, "Unknown error occurred")
@@ -312,7 +328,7 @@ export class PatientService implements IPatientService {
 
       return { data, error: null };
     } catch (err) {
-      logger.error("Error searching patients:", err);
+      console.error("Error searching patients:", err);
       return { 
         data: null, 
         error: err instanceof ServiceError ? err : new ServiceError(ErrorCode.UnknownError, "Unknown error occurred")
@@ -333,7 +349,7 @@ export class PatientService implements IPatientService {
 
       return { data, error: null };
     } catch (err) {
-      logger.error("Error getting patient documents:", err);
+      console.error("Error getting patient documents:", err);
       return { 
         data: null, 
         error: err instanceof ServiceError ? err : new ServiceError(ErrorCode.UnknownError, "Unknown error occurred")
@@ -356,7 +372,7 @@ export class PatientService implements IPatientService {
 
       return { data, error: null };
     } catch (err) {
-      logger.error("Error updating patient medical history:", err);
+      console.error("Error updating patient medical history:", err);
       return { 
         data: null, 
         error: err instanceof ServiceError ? err : new ServiceError(ErrorCode.UnknownError, "Unknown error occurred")
@@ -395,7 +411,7 @@ export class PatientService implements IPatientService {
 
       return { data, error: null };
     } catch (err) {
-      logger.error("Error creating treatment plan:", err);
+      console.error("Error creating treatment plan:", err);
       return { 
         data: null, 
         error: err instanceof ServiceError ? err : new ServiceError(ErrorCode.UnknownError, "Unknown error occurred")
@@ -416,7 +432,7 @@ export class PatientService implements IPatientService {
 
       return { data, error: null };
     } catch (err) {
-      logger.error("Error getting patient treatment plans:", err);
+      console.error("Error getting patient treatment plans:", err);
       return { 
         data: null, 
         error: err instanceof ServiceError ? err : new ServiceError(ErrorCode.UnknownError, "Unknown error occurred")
@@ -424,80 +440,179 @@ export class PatientService implements IPatientService {
     }
   }
 
-  async syncPatientsFromSikka(): Promise<{ success: boolean; error: ServiceError | null }> {
+  private async getSikkaRequestKey(): Promise<string> {
     try {
-      const response = await this.sikkaApi.get(
-        `/practices/${SIKKA_PRACTICE_ID}/patients`,
-      );
-      const sikkaPatients = response.data;
-
-      if (!sikkaPatients || !Array.isArray(sikkaPatients)) {
-        await MonitoringService.logError(
-          new Error("Invalid Sikka patient data"),
-          ErrorCode.VALIDATION_ERROR,
-          { sikkaPatients },
-        );
-        return { success: false, error: new ServiceError(ErrorCode.VALIDATION_ERROR, "Invalid Sikka patient data") };
-      }
-
-      let updatedCount = 0;
-      let createdCount = 0;
-
-      for (const sikkaPatient of sikkaPatients) {
-        const { data: existingPatient } = await this.supabase
-          .from("patients")
-          .select("id")
-          .eq("id", sikkaPatient.patient_id)
-          .single();
-
-        if (existingPatient) {
-          // Update existing patient
-          await this.updatePatient(existingPatient.id, {
-            firstName: sikkaPatient.first_name,
-            lastName: sikkaPatient.last_name,
-            email: sikkaPatient.email,
-            phone: sikkaPatient.phone,
-            dateOfBirth: sikkaPatient.date_of_birth,
-            address: sikkaPatient.address,
-          });
-          updatedCount++;
-        } else {
-          // Create new patient
-          await this.createPatient({
-            firstName: sikkaPatient.first_name,
-            lastName: sikkaPatient.last_name,
-            email: sikkaPatient.email,
-            phone: sikkaPatient.phone,
-            dateOfBirth: sikkaPatient.date_of_birth,
-            address: sikkaPatient.address,
-          });
-          createdCount++;
+      // Get the request key directly
+      const response = await axios.post<SikkaStartResponse[]>(
+        `${SIKKA_API_URL}/session/start`,
+        {
+          app_id: process.env.SIKKA_APP_ID,
+          app_key: process.env.SIKKA_APP_KEY,
+          practice_id: process.env.SIKKA_PRACTICE_ID,
+          practice_key: process.env.SIKKA_P1_PRACTICE_KEY
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
+      );
+
+      console.log('Sikka start response:', response.data);
+
+      if (!response.data?.[0]?.request_key) {
+        throw new Error('Invalid response from Sikka API: missing request_key');
       }
 
-      logger.info(
-        `Synced patients from Sikka: ${createdCount} created, ${updatedCount} updated`,
-      );
-      return { success: true, error: null };
+      return response.data[0].request_key;
     } catch (error) {
-      await MonitoringService.logError(
-        error as Error,
-        ErrorCode.EXTERNAL_API_ERROR,
-        { service: "Sikka" },
-      );
-      return { success: false, error: new ServiceError(ErrorCode.EXTERNAL_API_ERROR, "Failed to sync patients from Sikka") };
+      if (axios.isAxiosError(error)) {
+        console.error('Sikka API error:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          headers: error.response?.headers
+        });
+        throw new Error(`Sikka API error: ${error.response?.data?.long_message || error.message}`);
+      }
+      throw error;
     }
   }
 
-  // Type guard for Sikka API response
-  private isSikkaPatientResponse(response: unknown): response is { patient_id: string; status: string } {
-    return (
-      typeof response === "object" &&
-      response !== null &&
-      "patient_id" in response &&
-      "status" in response &&
-      typeof response.patient_id === "string" &&
-      typeof response.status === "string"
-    );
+  private async endSikkaSession(requestKey: string): Promise<void> {
+    try {
+      const response = await axios.post(`${SIKKA_API_URL}/session/end`, 
+        {
+          request_key: requestKey,
+          app_id: process.env.SIKKA_APP_ID,
+          app_key: process.env.SIKKA_APP_KEY,
+          practice_id: process.env.SIKKA_PRACTICE_ID,
+          practice_key: process.env.SIKKA_P1_PRACTICE_KEY
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      console.log('Sikka session ended:', response.data);
+    } catch (error) {
+      console.error('Error ending Sikka session:', error);
+    }
+  }
+
+  async syncPatientsFromSikka(): Promise<{ success: boolean; error: ServiceError | null }> {
+    let requestKey: string | null = null;
+    try {
+      console.log('Starting Sikka patient sync...');
+      console.log('Environment variables:', {
+        SIKKA_APP_ID: process.env.SIKKA_APP_ID,
+        SIKKA_PRACTICE_ID: process.env.SIKKA_PRACTICE_ID
+      });
+
+      if (!process.env.SIKKA_APP_ID || !process.env.SIKKA_APP_KEY || 
+          !process.env.SIKKA_PRACTICE_ID || !process.env.SIKKA_P1_PRACTICE_KEY) {
+        throw new Error('Missing required Sikka API environment variables');
+      }
+
+      console.log('Getting Sikka request key...');
+      requestKey = await this.getSikkaRequestKey();
+      console.log('Got request key:', requestKey);
+
+      const response = await axios.get<SikkaResponse<SikkaPatient>[]>(
+        `${SIKKA_API_URL}/patients`,
+        {
+          params: {
+            request_key: requestKey,
+            app_id: process.env.SIKKA_APP_ID,
+            app_key: process.env.SIKKA_APP_KEY,
+            practice_id: process.env.SIKKA_PRACTICE_ID,
+            practice_key: process.env.SIKKA_P1_PRACTICE_KEY
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      ).catch(error => {
+        if (axios.isAxiosError(error)) {
+          console.error('Sikka API error:', {
+            status: error.response?.status,
+            data: error.response?.data,
+            headers: error.response?.headers,
+            config: error.config
+          });
+          throw new Error(`Sikka API error: ${error.response?.data?.long_message || error.message}`);
+        }
+        throw error;
+      });
+
+      console.log('Sikka API response:', {
+        status: response.status,
+        headers: response.headers,
+        data: response.data
+      });
+
+      if (!response.data?.[0]?.items) {
+        throw new Error('Invalid response from Sikka API: missing items array');
+      }
+
+      const sikkaPatients = response.data[0].items;
+      console.log(`Found ${sikkaPatients.length} patients from Sikka`);
+
+      // Process patients...
+      for (const patient of sikkaPatients) {
+        const { data: existingPatient } = await this.supabase
+          .from("patients")
+          .select("id")
+          .eq("id", patient.patient_id)
+          .single();
+
+        const patientData = {
+          id: patient.patient_id,
+          firstName: patient.first_name,
+          lastName: patient.last_name,
+          email: patient.email,
+          phone: patient.phone,
+          dateOfBirth: patient.date_of_birth,
+          address: patient.address,
+          city: patient.city,
+          state: patient.state,
+          zipCode: patient.zip,
+          lastSyncedAt: new Date().toISOString()
+        };
+
+        if (existingPatient) {
+          await this.supabase
+            .from("patients")
+            .update(patientData)
+            .eq("id", patient.patient_id);
+        } else {
+          await this.supabase
+            .from("patients")
+            .insert(patientData);
+        }
+      }
+
+      return { success: true, error: null };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Error syncing patients from Sikka:', message);
+      await MonitoringService.logError(
+        error instanceof Error ? error : new Error(message),
+        ErrorCode.EXTERNAL_API_ERROR,
+        { service: "Sikka" }
+      );
+      return {
+        success: false,
+        error: new ServiceError(
+          ErrorCode.EXTERNAL_API_ERROR,
+          `Failed to sync patients from Sikka: ${message}`
+        )
+      };
+    } finally {
+      if (requestKey) {
+        await this.endSikkaSession(requestKey);
+      }
+    }
   }
 }
