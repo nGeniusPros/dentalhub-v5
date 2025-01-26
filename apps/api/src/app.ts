@@ -6,7 +6,14 @@ import rateLimit from "express-rate-limit";
 import assistantRoutes from "./routes/ai/assistant-routes";
 import { createClient } from "@supabase/supabase-js";
 import { AuthenticatedRequest } from "./middleware/auth";
-import { dashboardRoutes } from "./routes/dashboard"; // Import dashboard routes
+import { openapiValidator, handleValidationError } from "./middleware/openapi-validator";
+import { errorHandler } from "./middleware/errorHandler";
+import { requestLogger } from "./middleware/requestLogger";
+import { dashboardRoutes } from "./routes/dashboard";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
@@ -21,7 +28,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Middleware
+// Basic middleware
 app.use(helmet());
 app.use(
   cors({
@@ -31,6 +38,15 @@ app.use(
 );
 app.use(compression());
 app.use(express.json());
+app.use(requestLogger);
+
+// Rate limiting
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+  }),
+);
 
 // Attach Supabase client to request
 app.use(
@@ -44,19 +60,18 @@ app.use(
   },
 );
 
-// Rate limiting
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-  }),
-);
+// Serve OpenAPI documentation
+app.use('/api-docs', express.static(path.join(__dirname, 'openapi')));
+
+// OpenAPI validation
+app.use(openapiValidator);
 
 // Routes
 app.use("/api/ai", assistantRoutes);
-app.use("/api/dashboard", dashboardRoutes); // Use dashboard routes
+app.use("/api/dashboard", dashboardRoutes);
 
 // Error handling
+app.use(handleValidationError);
 app.use(
   (
     err: Error,
@@ -74,5 +89,6 @@ app.use(
     });
   },
 );
+app.use(errorHandler);
 
 export default app;

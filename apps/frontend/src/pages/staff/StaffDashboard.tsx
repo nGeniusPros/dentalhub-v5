@@ -11,6 +11,7 @@ import { StaffWelcome } from "./components/staff/StaffWelcome";
 import { MessageDialog } from "./components/dialogs/MessageDialog";
 import { ReminderDialog } from "./components/dialogs/ReminderDialog";
 import { CommentDialog } from "./components/dialogs/CommentDialog";
+import { PerformanceSection } from "./components/PerformanceSection";
 import { cn } from "@/lib/utils";
 
 interface Patient {
@@ -45,6 +46,7 @@ export const StaffDashboard: React.FC = () => {
         <RecentActivitySection />
       </div>
       <ScheduleSection />
+      <PerformanceSection />
 
       <MessageDialog
         isOpen={showMessage}

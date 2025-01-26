@@ -1,7 +1,8 @@
-import { AgentConfig, DentalAgentType } from "../types/agent-types";
+import { AgentConfig, DentalAgentType, AIResponse, AgentMetadata } from "../types/agent-types";
 import { AgentError } from "../types/errors";
 import { RequestManager } from "../infrastructure/request-manager";
 import { ResponseCache } from "../infrastructure/response-cache";
+import { BaseAgent } from "./base-agent";
 import { DataRetrievalAgent } from "./data-retrieval-agent";
 import { ProfitabilityAppointmentAgent } from "./profitability-appointment-agent";
 import { StaffOptimizationAgent } from "./staff-optimization-agent";
@@ -54,16 +55,89 @@ interface ConsultationResponse {
   agentResponses: AgentResponse[];
 }
 
-export class HeadBrainConsultant {
+export class HeadBrainConsultant extends BaseAgent {
   private readonly requestManager: RequestManager;
   private readonly responseCache: ResponseCache;
-  private subAgents: Map<DentalAgentType, any>;
+  private subAgents: Map<DentalAgentType, BaseAgent>;
 
-  constructor(private readonly config: AgentConfig) {
+  constructor(config: AgentConfig) {
+    super(config);
     this.requestManager = RequestManager.getInstance();
     this.responseCache = ResponseCache.getInstance();
     this.subAgents = new Map();
     this.initializeSubAgents(config);
+  }
+
+  protected initializeMetadata(): AgentMetadata {
+    return {
+      capabilities: [
+        {
+          name: "practice_analysis",
+          description: "Analyze practice performance and metrics",
+          confidence: 0.9,
+          parameters: {
+            metrics: ["revenue", "patient_count", "appointment_fill_rate", "treatment_acceptance"],
+          },
+        },
+        {
+          name: "recommendations",
+          description: "Generate actionable recommendations",
+          confidence: 0.85,
+          parameters: {
+            categories: ["operations", "finance", "marketing", "staff"],
+          },
+        },
+      ],
+      specializations: [
+        "practice management",
+        "performance analysis",
+        "strategic planning",
+      ],
+      constraints: [
+        "requires practice metrics for accurate analysis",
+        "recommendations based on available data",
+      ],
+      version: "1.0.0",
+      lastUpdated: new Date().toISOString(),
+      supportedLanguages: ["en"],
+    };
+  }
+
+  protected async generateResponse(message: string): Promise<AIResponse> {
+    try {
+      const request: ConsultationRequest = {
+        query: message,
+        context: {
+          priority: "high",
+          timeframe: "immediate",
+          constraints: [],
+        },
+        preferences: {
+          detailLevel: "comprehensive",
+          format: ["text"],
+        },
+      };
+
+      const response = await this.processQuery(request);
+
+      return {
+        content: response.summary,
+        metadata: {
+          recommendations: response.recommendations,
+          prioritizedActions: response.prioritizedActions,
+          agentResponses: response.agentResponses,
+        },
+        confidence: this.calculateConfidence(response.agentResponses),
+      };
+    } catch (error) {
+      throw new AgentError(
+        "Failed to generate brain consultant response",
+        "HEAD_BRAIN_CONSULTANT",
+        "PROCESSING_ERROR",
+        true,
+        error instanceof Error ? error : undefined,
+      );
+    }
   }
 
   private initializeSubAgents(config: AgentConfig) {
@@ -102,18 +176,23 @@ export class HeadBrainConsultant {
     this.subAgents.set("DATA_ANALYSIS", new DataAnalysisAgent(config));
   }
 
-  async processQuery(
+  private async processQuery(
     request: ConsultationRequest,
   ): Promise<ConsultationResponse> {
     try {
       // 1. Determine relevant agents for the query
       const relevantAgents = await this.determineRelevantAgents(request);
 
-      // 2. Query each relevant agent
+      // 2. Query each relevant agent and pass context
       const agentResponses = await Promise.all(
-        relevantAgents.map((agentType) =>
-          this.queryAgent(this.subAgents.get(agentType), request),
-        ),
+        relevantAgents.map((agentType) => {
+          const agent = this.subAgents.get(agentType);
+          if (agent) {
+            agent.setContext(this.context);
+            return this.queryAgent(agent, request);
+          }
+          return null;
+        }).filter((response): response is Promise<AgentResponse> => response !== null),
       );
 
       // 3. Synthesize responses
@@ -139,58 +218,61 @@ export class HeadBrainConsultant {
   private async determineRelevantAgents(
     request: ConsultationRequest,
   ): Promise<DentalAgentType[]> {
-    return this.requestManager.executeWithRateLimit(
-      "HEAD_BRAIN_CONSULTANT",
-      async () => {
-        const assistantId = import.meta.env.VITE_OPENAI_BRAIN_CONSULTANT_ID;
+    return this.rateLimitRequest(async () => {
+      const analysis = await this.requestManager.createAssistantMessage(
+        this.config.assistantId || "",
+        {
+          role: "user",
+          content: JSON.stringify({
+            query: request.query,
+            context: {
+              ...request.context,
+              practiceMetrics: this.context.practiceMetrics,
+            },
+            preferences: request.preferences,
+            availableAgents: Array.from(this.subAgents.keys()),
+          }),
+        },
+      );
 
-        const analysis = await this.requestManager.createAssistantMessage(
-          assistantId,
-          {
-            role: "user",
-            content: JSON.stringify({
-              query: request.query,
-              context: request.context,
-              preferences: request.preferences,
-              availableAgents: Array.from(this.subAgents.keys()),
-            }),
-          },
-        );
-
-        try {
-          const relevantAgents = JSON.parse(analysis.content);
-          return relevantAgents.filter((agent: string) =>
-            this.subAgents.has(agent as DentalAgentType),
-          ) as DentalAgentType[];
-        } catch (error) {
-          console.error("Failed to parse relevant agents:", error);
-          return ["DATA_RETRIEVAL", "RECOMMENDATION"] as DentalAgentType[];
-        }
-      },
-    );
+      try {
+        const relevantAgents = JSON.parse(analysis.content);
+        return relevantAgents.filter((agent: string) =>
+          this.subAgents.has(agent as DentalAgentType),
+        ) as DentalAgentType[];
+      } catch (error) {
+        console.error("Failed to parse relevant agents:", error);
+        return ["DATA_RETRIEVAL", "RECOMMENDATION"] as DentalAgentType[];
+      }
+    });
   }
 
   private async queryAgent(
-    agent: any,
+    agent: BaseAgent,
     request: ConsultationRequest,
   ): Promise<AgentResponse> {
-    const cacheKey = `${agent.type}_${request.query}`;
-    const cachedResponse = await this.responseCache.get(cacheKey);
-
-    if (cachedResponse) {
-      return cachedResponse as AgentResponse;
+    const cacheKey = `${agent.constructor.name}_${request.query}_${JSON.stringify(this.context)}`;
+    
+    if (this.config.caching?.enabled) {
+      const cachedResponse = await this.responseCache.get(cacheKey);
+      if (cachedResponse) {
+        return cachedResponse as AgentResponse;
+      }
     }
 
-    const response = await agent.processQuery(request.query);
+    const response = await agent.processMessage(request.query);
     const agentResponse = {
-      agentType: agent.type,
+      agentType: agent.constructor.name as DentalAgentType,
       analysis: response.content,
       confidence: response.confidence || 0.8,
-      recommendations: response.recommendations || [],
+      recommendations: response.metadata?.recommendations || [],
       metadata: response.metadata || {},
     };
 
-    await this.responseCache.set(cacheKey, agentResponse, 3600); // Cache for 1 hour
+    if (this.config.caching?.enabled) {
+      await this.responseCache.set(cacheKey, agentResponse, this.config.caching.ttl);
+    }
+    
     return agentResponse;
   }
 
@@ -207,40 +289,38 @@ export class HeadBrainConsultant {
       effort: string;
     }>;
   }> {
-    return this.requestManager.executeWithRateLimit(
-      "HEAD_BRAIN_CONSULTANT",
-      async () => {
-        const assistantId = import.meta.env.VITE_OPENAI_BRAIN_CONSULTANT_ID;
+    return this.rateLimitRequest(async () => {
+      const synthesis = await this.requestManager.createAssistantMessage(
+        this.config.assistantId || "",
+        {
+          role: "user",
+          content: JSON.stringify({
+            query: request.query,
+            context: {
+              ...request.context,
+              practiceMetrics: this.context.practiceMetrics,
+            },
+            responses: responses,
+          }),
+        },
+      );
 
-        const synthesis = await this.requestManager.createAssistantMessage(
-          assistantId,
-          {
-            role: "user",
-            content: JSON.stringify({
-              query: request.query,
-              context: request.context,
-              preferences: request.preferences,
-              agentResponses: responses,
-            }),
-          },
-        );
+      try {
+        return JSON.parse(synthesis.content);
+      } catch (error) {
+        console.error("Failed to parse synthesis:", error);
+        return {
+          summary: "Failed to synthesize responses",
+          recommendations: [],
+          actions: [],
+        };
+      }
+    });
+  }
 
-        try {
-          const result = JSON.parse(synthesis.content);
-          return {
-            summary: result.summary || "",
-            recommendations: result.recommendations || [],
-            actions: result.actions || [],
-          };
-        } catch (error) {
-          console.error("Failed to parse synthesis:", error);
-          return {
-            summary: "Failed to synthesize responses",
-            recommendations: [],
-            actions: [],
-          };
-        }
-      },
-    );
+  private calculateConfidence(responses: AgentResponse[]): number {
+    if (responses.length === 0) return 0;
+    const totalConfidence = responses.reduce((sum, response) => sum + response.confidence, 0);
+    return totalConfidence / responses.length;
   }
 }

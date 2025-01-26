@@ -1,0 +1,365 @@
+openapi: 3.0.0
+info:
+  title: DentalHub Practice Management API
+  version: 1.0.0
+  description: AI-driven dental practice management system API
+
+servers:
+  - url: http://localhost:3001/api
+    description: Development server
+  - url: https://api.dentalhub.com/v1
+    description: Production server
+  - url: https://sandbox.api.dentalhub.com/v1
+    description: Sandbox server
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Patient:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        address:
+          type: string
+        medicalHistory:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    TreatmentPlan:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        patientId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        procedures:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              name:
+                type: string
+              cost:
+                type: number
+              duration:
+                type: string
+        estimatedCost:
+          type: number
+        duration:
+          type: string
+        status:
+          type: string
+          enum: [pending, approved, in_progress, completed, cancelled]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AgentResponse:
+      type: object
+      properties:
+        content:
+          type: string
+          description: Natural language analysis or response
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: AI confidence level in the response
+        metadata:
+          type: object
+          description: Additional structured data from the analysis
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+            - INVALID_CREDENTIALS
+            - UNAUTHORIZED
+            - TOKEN_EXPIRED
+            - INVALID_TOKEN
+            - INVALID_REQUEST_FORMAT
+            - MISSING_REQUIRED_FIELD
+            - INVALID_FIELD_FORMAT
+            - VALIDATION_ERROR
+            - DATABASE_ERROR
+            - QUERY_ERROR
+            - STORAGE_ERROR
+            - FILE_UPLOAD_ERROR
+            - EXTERNAL_API_ERROR
+            - API_RESPONSE_ERROR
+            - API_TIMEOUT_ERROR
+            - SERVER_ERROR
+            - SERVICE_UNAVAILABLE
+            - RATE_LIMIT_EXCEEDED
+            - UNKNOWN_ERROR
+        message:
+          type: string
+        details:
+          type: object
+
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    ForbiddenError:
+      description: Not enough privileges to access the resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    ValidationError:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    NotFoundError:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+paths:
+  /patients:
+    get:
+      tags: [Patients]
+      summary: List all patients
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: List of patients
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Patient'
+                  pagination:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      pages:
+                        type: integer
+                      current:
+                        type: integer
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+    post:
+      tags: [Patients]
+      summary: Create a new patient
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstName
+                - lastName
+                - email
+                - phone
+                - dateOfBirth
+                - address
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                phone:
+                  type: string
+                dateOfBirth:
+                  type: string
+                  format: date
+                address:
+                  type: string
+                medicalHistory:
+                  type: string
+      responses:
+        '201':
+          description: Patient created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /patients/{patientId}/treatment-plans:
+    post:
+      tags: [Treatment Plans]
+      summary: Create a treatment plan for a patient
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: patientId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - procedures
+                - estimatedCost
+                - duration
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                procedures:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      name:
+                        type: string
+                      cost:
+                        type: number
+                      duration:
+                        type: string
+                estimatedCost:
+                  type: number
+                duration:
+                  type: string
+      responses:
+        '201':
+          description: Treatment plan created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TreatmentPlan'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /analytics/operational:
+    post:
+      tags: [Analytics]
+      summary: Analyze operational efficiency
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+                metrics:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - patient_wait_time
+                      - appointment_utilization
+                      - revenue_per_hour
+                      - staff_productivity
+      responses:
+        '200':
+          description: Operational analysis results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'

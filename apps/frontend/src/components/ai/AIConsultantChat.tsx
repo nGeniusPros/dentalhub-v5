@@ -4,19 +4,25 @@ import * as Icons from "lucide-react";
 import { Button } from "../ui/button";
 import { useAIConsultant } from "../../hooks/use-ai-consultant";
 import type { AIConsultantPrompt } from "../../lib/types/ai";
+import { AgentFactory } from "../../lib/ai-agents/factory/agent-factory";
+import type { AgentMessage, AgentContext } from "../../lib/ai-agents/types/agent-types";
 
 interface AIConsultantChatProps {
   selectedQuestion?: string;
+  practiceMetrics?: AgentContext["practiceMetrics"];
 }
 
 export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({
   selectedQuestion,
+  practiceMetrics,
 }) => {
   const [question, setQuestion] = useState("");
-  const [messages, setMessages] = useState<
-    Array<{ role: "user" | "assistant"; content: string }>
-  >([]);
-  const { generateInsight, loading, error } = useAIConsultant();
+  const [messages, setMessages] = useState<AgentMessage[]>([]);
+  const [thinking, setThinking] = useState(false);
+  const { loading, error } = useAIConsultant();
+
+  const agentFactory = AgentFactory.getInstance();
+  const brainConsultant = agentFactory.getAgent("BRAIN_CONSULTANT");
 
   useEffect(() => {
     if (selectedQuestion) {
@@ -24,37 +30,66 @@ export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({
     }
   }, [selectedQuestion]);
 
+  useEffect(() => {
+    if (practiceMetrics) {
+      agentFactory.updateContext({
+        practiceMetrics,
+        sessionData: {
+          startTime: new Date().toISOString(),
+          interactions: 0,
+          lastInteraction: new Date().toISOString(),
+        },
+      });
+    }
+  }, [practiceMetrics]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!question.trim()) return;
+    if (!question.trim() || thinking) return;
 
-    // Add user message
-    setMessages((prev) => [...prev, { role: "user", content: question }]);
-
-    const prompt: AIConsultantPrompt = {
-      metrics: {
-        monthlyRevenue: 150000,
-        patientCount: 1200,
-        appointmentFillRate: 75,
-        treatmentAcceptance: 65,
-      },
-      focusArea: "operations",
-      question: question,
+    const userMessage: AgentMessage = {
+      role: "user",
+      content: question,
+      timestamp: new Date().toISOString(),
     };
 
-    const insight = await generateInsight(prompt);
-    if (insight) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: insight.description,
-        },
-      ]);
-    }
+    setMessages((prev) => [...prev, userMessage]);
+    setThinking(true);
 
-    setQuestion("");
+    try {
+      const response = await brainConsultant.processMessage(question);
+
+      const assistantMessage: AgentMessage = {
+        role: "assistant",
+        content: response.content,
+        timestamp: new Date().toISOString(),
+        metadata: response.metadata,
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      // Update agent context with new interaction
+      agentFactory.updateContext({
+        sessionData: {
+          interactions: messages.length + 2,
+          lastInteraction: new Date().toISOString(),
+        },
+      });
+    } catch (err) {
+      const errorMessage: AgentMessage = {
+        role: "assistant",
+        content: "I apologize, but I encountered an error processing your request. Please try again.",
+        timestamp: new Date().toISOString(),
+        metadata: {
+          error: err instanceof Error ? err.message : "Unknown error occurred",
+        },
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setThinking(false);
+      setQuestion("");
+    }
   };
 
   return (
@@ -89,9 +124,31 @@ export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({
                 }`}
               >
                 {message.content}
+                {message.metadata?.recommendations && (
+                  <div className="mt-2 text-sm">
+                    <strong>Recommendations:</strong>
+                    <ul className="list-disc list-inside mt-1">
+                      {(message.metadata.recommendations as string[]).map((rec, idx) => (
+                        <li key={idx}>{rec}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </motion.div>
           ))}
+          {thinking && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex justify-start"
+            >
+              <div className="bg-gray-100 text-gray-900 p-3 rounded-lg flex items-center gap-2">
+                <Icons.Loader2 className="w-4 h-4 animate-spin" />
+                Thinking...
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
 
@@ -101,24 +158,22 @@ export const AIConsultantChat: React.FC<AIConsultantChatProps> = ({
             type="text"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Ask about your practice performance..."
-            className="w-full px-4 py-2 pr-12 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
-            disabled={loading}
+            placeholder="Type your question here..."
+            className="w-full pr-24 pl-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            disabled={thinking}
           />
           <Button
             type="submit"
-            disabled={loading}
-            className="absolute right-2 top-1/2 -translate-y-1/2 !p-1 hover:bg-gray-100"
+            disabled={!question.trim() || thinking}
+            className="absolute right-1 top-1 bg-primary text-white hover:bg-primary/90"
           >
-            {loading ? (
-              <Icons.Loader2 className="w-5 h-5 animate-spin text-primary" />
+            {thinking ? (
+              <Icons.Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <Icons.Send className="w-5 h-5 text-primary" />
+              <Icons.Send className="w-4 h-4" />
             )}
           </Button>
         </div>
-
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
       </form>
     </div>
   );

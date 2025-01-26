@@ -34,7 +34,8 @@ export interface AIResponse {
 
 export interface AgentConfig {
   id: string;
-  assistantId: string;
+  apiKey: string;
+  assistantId?: string;
   model?: string;
   temperature?: number;
   maxTokens?: number;
@@ -49,15 +50,17 @@ export interface AgentConfig {
   retryConfig?: {
     maxRetries: number;
     backoffFactor: number;
-    initialDelayMs: number;
+    initialDelay: number;
   };
 }
 
 export interface AgentCapability {
   name: string;
   description: string;
-  confidence: number; // 0-1 indicating how confident the agent is in this capability
+  confidence: number;
   parameters?: Record<string, unknown>;
+  requiredData?: string[];
+  outputFormat?: string;
 }
 
 export interface AgentMetadata {
@@ -65,4 +68,31 @@ export interface AgentMetadata {
   specializations: string[];
   constraints: string[];
   version: string;
+  lastUpdated: string;
+  supportedLanguages: string[];
+}
+
+export interface AgentMessage {
+  role: "user" | "assistant" | "system";
+  content: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface AgentContext {
+  practiceMetrics?: {
+    revenue?: number;
+    patientCount?: number;
+    appointmentFillRate?: number;
+    treatmentAcceptance?: number;
+  };
+  userPreferences?: {
+    language?: string;
+    notificationPreferences?: string[];
+  };
+  sessionData?: {
+    startTime: string;
+    interactions: number;
+    lastInteraction: string;
+  };
 }

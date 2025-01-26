@@ -29,15 +29,17 @@ export interface Module {
 
 export interface Badge {
   id: string;
-  name: string;
+  title: string;
   description: string;
-  icon: string;
-  color: string;
-  points: number;
-  progress?: number;
+  category: "Achievement" | "Skill" | "Completion" | "Excellence";
+  rarity: "Common" | "Rare" | "Epic" | "Legendary";
   unlocked: boolean;
+  progress?: number;
+  criteria?: Array<{
+    description: string;
+    completed: boolean;
+  }>;
   unlockedAt?: string;
-  requirements?: string[];
 }
 
 export interface Challenge {
@@ -51,69 +53,84 @@ export interface Challenge {
     id: string;
     title: string;
     points: number;
-    completed?: boolean;
+    completed: boolean;
   }>;
-  requirements?: string[];
 }
 
 export interface Certification {
   id: string;
-  name: string;
-  issuer: string;
+  title: string;
   description: string;
-  earnedDate: string;
-  expirationDate: string;
-  status: "active" | "expiring" | "expired";
-  skills: string[];
-  credentialId: string;
-  thumbnail?: string;
-  validationUrl?: string;
-  requirements?: string[];
+  status: "not_started" | "in_progress" | "completed";
+  validUntil?: string;
+  estimatedTime: string;
+  level?: "Beginner" | "Intermediate" | "Advanced";
+  progress?: number;
+  requirements?: Array<{
+    description: string;
+    completed: boolean;
+  }>;
 }
 
 export interface Assignment {
   id: string;
   title: string;
   description: string;
+  status: "pending" | "completed" | "overdue";
   dueDate: string;
-  status: "pending" | "in_progress" | "submitted" | "graded";
-  grade?: number;
-  feedback?: string;
-  type: "quiz" | "assessment" | "project";
-  points: number;
-  timeEstimate: string;
-  attachments?: Array<{
-    name: string;
-    type: string;
-    size: string;
-  }>;
+  points?: number;
+  estimatedTime?: string;
+  courseId?: string;
 }
 
 export interface LearningPath {
   id: string;
-  name: string;
+  title: string;
   description: string;
-  category: string;
   progress: number;
-  milestones: Array<{
+  stages: Array<{
     id: string;
     title: string;
+    description: string;
     completed: boolean;
-  }>;
-  rewards: Array<{
-    type: "points" | "badge" | "certificate";
-    value: number | string;
-    unlockedAt?: string;
+    current: boolean;
+    courses: Array<{
+      id: string;
+      title: string;
+      completed: boolean;
+    }>;
   }>;
 }
 
-export interface GameElement {
+export interface Reward {
   id: string;
-  type: "points" | "badge" | "level" | "achievement";
-  name: string;
+  title: string;
   description: string;
-  value: number | string;
-  icon: string;
-  unlocked: boolean;
-  unlockedAt?: string;
+  pointsRequired: number;
+  userPoints: number;
+  category?: "Premium" | "Professional" | "Achievement";
+  expiryDate?: string;
+}
+
+export interface LearningStats {
+  coursesCompleted: number;
+  badgesEarned: number;
+  learningHours: string;
+  pointsEarned: number;
+  trends: {
+    coursesCompletedTrend: number;
+    badgesEarnedTrend: number;
+    learningHoursTrend: number;
+    pointsEarnedTrend: number;
+  };
+}
+
+export interface LeaderboardEntry {
+  id: string;
+  name: string;
+  role: string;
+  points: number;
+  avatar?: string;
+  rank: number;
+  trend: number;
 }
