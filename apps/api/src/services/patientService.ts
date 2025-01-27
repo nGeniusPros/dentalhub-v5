@@ -80,6 +80,7 @@ interface IPatientService {
 
 export class PatientService implements IPatientService {
   private supabase: SupabaseClient<Database>;
+  private token: string | null = null;
 
   constructor(supabase: SupabaseClient<Database>) {
     this.supabase = supabase;
@@ -440,16 +441,63 @@ export class PatientService implements IPatientService {
     }
   }
 
+  private async getAuthorizedPractices() {
+    try {
+      // First get list of all authorized practices
+      const listResponse = await axios.get(`${SIKKA_API_URL}/authorized_practices`, {
+        headers: {
+          'app-id': process.env.SIKKA_APP_ID,
+          'app-key': process.env.SIKKA_APP_KEY,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('Authorized practices list:', listResponse.data);
+
+      // Handle both array and object responses
+      const practicesList = Array.isArray(listResponse.data) ? listResponse.data : [listResponse.data];
+      const practiceId = `D${process.env.SIKKA_PRACTICE_ID}`;
+      const practice = practicesList.find((p: any) => p.office_id === practiceId);
+      
+      if (!practice) {
+        throw new Error(`Practice ID ${practiceId} not found in authorized practices list`);
+      }
+
+      // Get detailed practice info
+      const response = await axios.get(`${SIKKA_API_URL}/authorized_practices/${practiceId}`, {
+        headers: {
+          'app-id': process.env.SIKKA_APP_ID,
+          'app-key': process.env.SIKKA_APP_KEY,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('Practice details response:', response.data);
+
+      // Handle both array and object responses
+      const practiceDetails = Array.isArray(response.data) ? response.data[0] : response.data;
+      if (!practiceDetails) {
+        throw new Error(`Could not get details for practice ID ${practiceId}`);
+      }
+
+      return practiceDetails;
+    } catch (error) {
+      console.error('Error getting authorized practices:', error);
+      throw error;
+    }
+  }
+
   private async getSikkaRequestKey(): Promise<string> {
     try {
-      // Get the request key directly
-      const response = await axios.post<SikkaStartResponse[]>(
-        `${SIKKA_API_URL}/session/start`,
+      // Get request key
+      const response = await axios.post(
+        `${SIKKA_API_URL}/request_key`,
         {
+          grant_type: "request_key",
+          office_id: process.env.SIKKA_PRACTICE_ID,
+          secret_key: process.env.SIKKA_P1_PRACTICE_KEY,
           app_id: process.env.SIKKA_APP_ID,
-          app_key: process.env.SIKKA_APP_KEY,
-          practice_id: process.env.SIKKA_PRACTICE_ID,
-          practice_key: process.env.SIKKA_P1_PRACTICE_KEY
+          app_key: process.env.SIKKA_APP_KEY
         },
         {
           headers: {
@@ -458,13 +506,13 @@ export class PatientService implements IPatientService {
         }
       );
 
-      console.log('Sikka start response:', response.data);
+      console.log('Request key response:', response.data);
 
-      if (!response.data?.[0]?.request_key) {
+      if (!response.data?.request_key) {
         throw new Error('Invalid response from Sikka API: missing request_key');
       }
 
-      return response.data[0].request_key;
+      return response.data.request_key;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Sikka API error:', {
@@ -478,23 +526,16 @@ export class PatientService implements IPatientService {
     }
   }
 
-  private async endSikkaSession(requestKey: string): Promise<void> {
+  private async endSikkaSession(token: string): Promise<void> {
     try {
-      const response = await axios.post(`${SIKKA_API_URL}/session/end`, 
-        {
-          request_key: requestKey,
-          app_id: process.env.SIKKA_APP_ID,
-          app_key: process.env.SIKKA_APP_KEY,
-          practice_id: process.env.SIKKA_PRACTICE_ID,
-          practice_key: process.env.SIKKA_P1_PRACTICE_KEY
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+      await axios.post(`${SIKKA_API_URL}/auth/logout`, {
+        token
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
         }
-      );
-      console.log('Sikka session ended:', response.data);
+      });
+      console.log('Sikka session ended');
     } catch (error) {
       console.error('Error ending Sikka session:', error);
     }
@@ -519,16 +560,10 @@ export class PatientService implements IPatientService {
       console.log('Got request key:', requestKey);
 
       const response = await axios.get<SikkaResponse<SikkaPatient>[]>(
-        `${SIKKA_API_URL}/patients`,
+        `${SIKKA_API_URL}/patients?practice_id=${process.env.SIKKA_PRACTICE_ID}`,
         {
-          params: {
-            request_key: requestKey,
-            app_id: process.env.SIKKA_APP_ID,
-            app_key: process.env.SIKKA_APP_KEY,
-            practice_id: process.env.SIKKA_PRACTICE_ID,
-            practice_key: process.env.SIKKA_P1_PRACTICE_KEY
-          },
           headers: {
+            'request-key': requestKey,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           }

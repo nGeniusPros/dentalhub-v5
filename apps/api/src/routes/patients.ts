@@ -76,46 +76,14 @@ interface ApiResponse<T = unknown> {
 
 const getPatientsHandler = async (req: Request, res: Response<ApiResponse>) => {
   try {
-    const env = envSchema.parse(process.env);
-
-    const requestKey = await getRequestKey(
-      env.SIKKA_APP_ID,
-      env.SIKKA_APP_KEY,
-      env.SIKKA_P1_MASTER_CUSTOMER_ID,
-      env.SIKKA_P1_PRACTICE_KEY,
-    );
-
-    const patients = await getPaginatedData<SikkaPatient>(
-      requestKey,
-      env.SIKKA_P1_PRACTICE_ID,
-      "patients",
-      "patient_id,firstname,lastname,email,birthdate,status,address_line1,address_line2,city,state,zipcode,cell,first_visit,last_visit,preferred_name,preferred_contact,preferred_communication_method,cust_id,provider_id,guarantor_id,primary_insurance_company_id,primary_relationship,subscriber_id,primary_medical_insurance,primary_medical_insurance_id,primary_medical_relationship,primary_medical_subscriber_id,other_referral,patient_referral",
-    );
-
-    const transformedPatients = patients.map(transformPatientData);
-
-    // Insert patients in batches of 50 for better performance
-    const batchSize = 50;
-    for (let i = 0; i < transformedPatients.length; i += batchSize) {
-      const batch = transformedPatients.slice(i, i + batchSize);
-      try {
-        const { error } = await supabase.from("patients").upsert(batch, {
-          onConflict: "id",
-        });
-        if (error) {
-          throw new InfrastructureError("insert_patients", error);
-        }
-      } catch (error) {
-        throw new InfrastructureError("insert_patients_batch", error as Error);
-      }
+    const patientService = new PatientService(supabase);
+    const { error } = await patientService.syncPatientsFromSikka();
+    if (error) {
+      return res.status(500).json({ error: error.message });
     }
-
     return res.json({ message: "Patients data synced successfully" });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
-    }
-    console.error("Error fetching or inserting patients:", error);
+    console.error("Error syncing patients from Sikka:", error);
     return res
       .status(500)
       .json({
